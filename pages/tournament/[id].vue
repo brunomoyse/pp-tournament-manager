@@ -14,9 +14,16 @@
                             <div :class="[
                                 'w-2 h-2 rounded-full',
                                 connectionStatus === 'connected' ? 'bg-green-500' : 
-                                connectionStatus === 'reconnecting' ? 'bg-yellow-500' : 'bg-red-500'
+                                connectionStatus === 'reconnecting' ? 'bg-orange-500' : 'bg-red-500'
                             ]"></div>
-                            <span class="text-sm text-white capitalize">{{ connectionStatus === 'connected' ? 'Connected' : connectionStatus }}</span>
+                            <span :class="[
+                                'text-sm capitalize font-medium',
+                                connectionStatus === 'connected' ? 'text-green-500' : 
+                                connectionStatus === 'reconnecting' ? 'text-orange-500' : 'text-red-500'
+                            ]">{{ 
+                                connectionStatus === 'connected' ? 'Connected' : 
+                                connectionStatus === 'reconnecting' ? 'Reconnecting' : 'Offline'
+                            }}</span>
                         </div>
                     </div>
                 </div>
@@ -747,9 +754,10 @@
 import { settingsOutline, megaphoneOutline, personAddOutline, trophyOutline, peopleOutline, timeOutline, playOutline, pauseOutline, playSkipBackOutline, playSkipForwardOutline, cafeOutline, searchOutline, qrCodeOutline, checkmarkCircleOutline, refreshOutline, locationOutline, ellipsisVerticalOutline, shuffleOutline, scaleOutline, removeCircleOutline, moveOutline, closeOutline } from 'ionicons/icons'
 import { useTournamentData } from '@/composables/useTournamentData'
 import { useTournamentClock } from '@/composables/useTournamentClock'
+import { useNetworkStatus } from '@/composables/useNetworkStatus'
 
 const route = useRoute()
-const connectionStatus = ref<'connected' | 'disconnected' | 'reconnecting'>('connected')
+const { connectionStatus, isOnline } = useNetworkStatus()
 const lastUpdate = ref(Date.now())
 
 const tabs = [
@@ -885,16 +893,19 @@ const getSeatPosition = (seatIndex: number, totalSeats: number) => {
     }
 }
 
-// Fake polling / connection changes
-const poll = setInterval(() => {
+// Update last update timestamp when connection status changes
+watch(connectionStatus, () => {
     lastUpdate.value = Date.now()
-    if (Math.random() < 0.05) {
-        connectionStatus.value = 'reconnecting'
-        setTimeout(() => (connectionStatus.value = 'connected'), 2000)
-    }
-}, 5000)
+})
 
-onBeforeUnmount(() => clearInterval(poll))
+// Update timestamp periodically when connected
+const updateTimer = setInterval(() => {
+    if (connectionStatus.value === 'connected') {
+        lastUpdate.value = Date.now()
+    }
+}, 30000) // Update every 30 seconds when connected
+
+onBeforeUnmount(() => clearInterval(updateTimer))
 </script>
 
 <style>

@@ -13,6 +13,7 @@
     "@capacitor/android": "^7.4.2",
     "@capacitor/core": "^7.4.2",
     "@capacitor/ios": "^7.4.2",
+    "@capacitor/network": "^7.0.2",
     "@nuxtjs/ionic": "^1.0.0",
     "@pinia/nuxt": "^0.11.2",
     "@tailwindcss/vite": "^4.1.11",

@@ -16,6 +16,37 @@
   --color-muted: #94a3b8;
   --color-border: #54545f;
 
+  /* Standard Color Scales - OKLCH format for Tailwind v4 */
+  --color-green-400: oklch(0.816 0.177 145.477);
+  --color-green-500: oklch(0.792 0.209 151.711);
+  --color-green-600: oklch(0.744 0.208 152.592);
+  --color-red-400: oklch(0.741 0.139 23.374);
+  --color-red-500: oklch(0.704 0.191 22.216);
+  --color-red-600: oklch(0.648 0.198 20.409);
+  --color-blue-400: oklch(0.735 0.110 237.692);
+  --color-blue-500: oklch(0.669 0.149 235.341);
+  --color-blue-600: oklch(0.607 0.170 232.692);
+  --color-yellow-400: oklch(0.878 0.127 83.605);
+  --color-yellow-500: oklch(0.835 0.142 85.594);
+  --color-yellow-600: oklch(0.751 0.146 86.474);
+  --color-orange-400: oklch(0.823 0.155 59.669);
+  --color-orange-500: oklch(0.786 0.171 60.814);
+  --color-orange-600: oklch(0.735 0.169 60.814);
+  --color-purple-400: oklch(0.747 0.155 305.353);
+  --color-purple-500: oklch(0.681 0.188 307.207);
+  --color-purple-600: oklch(0.618 0.196 308.848);
+  --color-gray-100: oklch(0.975 0.001 286.3);
+  --color-gray-200: oklch(0.943 0.004 285.82);
+  --color-gray-300: oklch(0.884 0.005 286.42);
+  --color-gray-400: oklch(0.695 0.004 286.05);
+  --color-gray-500: oklch(0.533 0.007 285.8);
+  --color-gray-600: oklch(0.435 0.006 285.82);
+  --color-gray-700: oklch(0.351 0.007 285.43);
+  --color-gray-800: oklch(0.248 0.009 284.28);
+  --color-gray-900: oklch(0.156 0.004 285.82);
+  --color-white: oklch(1 0 0);
+  --color-black: oklch(0 0 0);
+
   /* Font Family */
   --font-family-sans: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-family-roboto: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
