@@ -3,12 +3,12 @@
         <ion-toolbar>
             <ion-title slot="start">
                 <div>
-                    <h1 class="text-2xl font-bold">Tournament Manager</h1>
+                    <h1 class="text-2xl font-bold text-pp-text-primary">Tournament Manager</h1>
                     <div class="flex items-center gap-2">
-                        <p class="text-sm opacity-70">Liège Poker Club</p>
+                        <p class="text-sm opacity-70 text-pp-text-secondary">Liège Poker Club</p>
                         <div class="flex items-center gap-1">
                             <div :class="['w-2 h-2 rounded-full', statusDot]" />
-                            <span class="text-xs opacity-70 capitalize">{{ connectionStatus }}</span>
+                            <span class="text-xs opacity-70 capitalize text-pp-text-secondary">{{ connectionStatus }}</span>
                         </div>
                     </div>
                 </div>
@@ -45,9 +45,9 @@ const selectedId = computed({
 const statusDot = computed(() => {
     switch (props.connectionStatus) {
         case 'connected':
-            return 'bg-green-500'
+            return 'bg-pp-accent-gold'
         case 'reconnecting':
-            return 'bg-yellow-500 animate-pulse'
+            return 'bg-pp-text-secondary animate-pulse'
         default:
             return 'bg-red-500'
     }
@@ -55,11 +55,11 @@ const statusDot = computed(() => {
 
 function statusColor(status: Tournament['status']) {
     return status === 'running'
-        ? 'bg-green-500'
+        ? 'bg-pp-accent-gold'
         : status === 'paused'
-            ? 'bg-yellow-500'
+            ? 'bg-pp-text-secondary'
             : status === 'upcoming'
                 ? 'bg-blue-500'
-                : 'bg-gray-500'
+                : 'bg-pp-border'
 }
 </script>

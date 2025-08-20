@@ -1,5 +1,87 @@
 @import "tailwindcss";
 
+/* Tailwind v4 Custom Theme Configuration */
+@theme {
+  /* Custom Color Palette */
+  --color-pp-bg-primary: #18181a;
+  --color-pp-bg-secondary: #24242a;
+  --color-pp-accent-gold: #fee78a;
+  --color-pp-text-primary: #fee78a;
+  --color-pp-text-secondary: #94a3b8;
+  --color-pp-border: #54545f;
+
+  /* Override semantic colors */
+  --color-primary: #fee78a;
+  --color-secondary: #ffffff;
+  --color-muted: #94a3b8;
+  --color-border: #54545f;
+
+  /* Font Family */
+  --font-family-sans: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-roboto: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Global dark theme override */
+html, body {
+  background-color: #18181a !important;
+  color: #ffffff !important;
+}
+
+/* Ionic component overrides for dark theme */
+ion-content {
+  --background: #18181a !important;
+  --color: #ffffff !important;
+}
+
+ion-page {
+  --background: #18181a !important;
+  --color: #ffffff !important;
+}
+
+ion-card, .ion-card {
+  --background: #24242a !important;
+  --color: #ffffff !important;
+  background-color: #24242a !important;
+  color: #ffffff !important;
+}
+
+ion-tab-bar {
+  --background: transparent !important;
+  --color: #94a3b8 !important;
+  --color-selected: #fee78a !important;
+}
+
+ion-select {
+  --color: #fee78a !important;
+  --placeholder-color: #94a3b8 !important;
+}
+
+/* Allow Tailwind colors to work properly */
+
+.bg-white {
+  background-color: #24242a !important;
+}
+
+/* Specific dark theme enforcement - only for custom classes */
+.bg-pp-bg-primary {
+  background-color: #18181a !important;
+}
+
+.bg-pp-bg-secondary {
+  background-color: #24242a !important;
+}
+
+.card, .ion-card {
+  background-color: #24242a !important;
+  color: #ffffff !important;
+}
+
+/* Ensure tab content has dark background */
+ion-tab {
+  --background: #18181a !important;
+  background-color: #18181a !important;
+}
+
 /* Hide scrollbars globally - comprehensive approach */
 ::-webkit-scrollbar {
   display: none;

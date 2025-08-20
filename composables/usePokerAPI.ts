@@ -710,8 +710,8 @@ export function usePaginatedTournaments(clubId?: Ref<string | undefined>, dateRa
   }
 }
 
-// Tournament Clock Subscription
-export function useTournamentClock(tournamentId: Ref<string> | string) {
+// Tournament Clock Subscription - available via useTournamentClock.ts
+export function useTournamentClockSubscription(tournamentId: Ref<string> | string) {
   const variables = computed(() => {
     const id = isRef(tournamentId) ? tournamentId.value : tournamentId
     return { tournamentId: id }

@@ -19,7 +19,7 @@ import {
 
 .pp-app {
   font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #18181a;
+  background-color: #18181a;
 }
 
 .pp-tabbar {
@@ -54,7 +54,7 @@ import {
 
 .pp-tab-button:hover:not([aria-selected="true"]) {
   --color: #fee78a;
-  background: rgba(254, 231, 138, 0.1);
+  background: rgb(254 231 138 / 0.1);
 }
 
 .pp-tab-button[aria-selected="true"] {
