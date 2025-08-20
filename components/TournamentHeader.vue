@@ -1,0 +1,65 @@
+<template>
+    <ion-header>
+        <ion-toolbar>
+            <ion-title slot="start">
+                <div>
+                    <h1 class="text-2xl font-bold">Tournament Manager</h1>
+                    <div class="flex items-center gap-2">
+                        <p class="text-sm opacity-70">Liège Poker Club</p>
+                        <div class="flex items-center gap-1">
+                            <div :class="['w-2 h-2 rounded-full', statusDot]" />
+                            <span class="text-xs opacity-70 capitalize">{{ connectionStatus }}</span>
+                        </div>
+                    </div>
+                </div>
+            </ion-title>
+
+            <ion-buttons slot="end">
+                <ion-note class="mr-3">Last update: {{ new Date(lastUpdate).toLocaleTimeString() }}</ion-note>
+                <ion-select 
+                    v-model="selectedId"
+                    placeholder="Select Tournament"
+                    interface="popover"
+                    class="min-w-[200px]"
+                >
+                    <ion-select-option v-for="t in tournaments" :key="t.id" :value="t.id">
+                        {{ t.name }}
+                    </ion-select-option>
+                </ion-select>
+            </ion-buttons>
+        </ion-toolbar>
+    </ion-header>
+</template>
+
+<script setup lang="ts">
+import type { Tournament } from '~/types/tournament'
+
+const props = defineProps<{ tournaments: Tournament[]; lastUpdate: number; connectionStatus: 'connected' | 'disconnected' | 'reconnecting'; modelValue: string }>()
+const emit = defineEmits<{ (e: 'update:modelValue', v: string): void }>()
+
+const selectedId = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value)
+})
+
+const statusDot = computed(() => {
+    switch (props.connectionStatus) {
+        case 'connected':
+            return 'bg-green-500'
+        case 'reconnecting':
+            return 'bg-yellow-500 animate-pulse'
+        default:
+            return 'bg-red-500'
+    }
+})
+
+function statusColor(status: Tournament['status']) {
+    return status === 'running'
+        ? 'bg-green-500'
+        : status === 'paused'
+            ? 'bg-yellow-500'
+            : status === 'upcoming'
+                ? 'bg-blue-500'
+                : 'bg-gray-500'
+}
+</script>
