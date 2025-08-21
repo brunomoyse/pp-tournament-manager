@@ -934,6 +934,11 @@
 </template>
 
 <script setup lang="ts">
+// Protect this page with authentication
+definePageMeta({
+  middleware: 'auth'
+})
+
 import { settingsOutline, megaphoneOutline, personAddOutline, trophyOutline, peopleOutline, timeOutline, playOutline, pauseOutline, playSkipBackOutline, playSkipForwardOutline, cafeOutline, searchOutline, qrCodeOutline, checkmarkCircleOutline, refreshOutline, locationOutline, ellipsisVerticalOutline, shuffleOutline, scaleOutline, removeCircleOutline, moveOutline, closeOutline, expandOutline, contractOutline, refresh } from 'ionicons/icons'
 import { useTournamentData } from '@/composables/useTournamentData'
 import { useTournamentClock, useTournamentClockSync } from '@/composables/useTournamentClock'

@@ -167,6 +167,7 @@ import type { LoginCredentials } from '~/composables/useAuth'
 
 const { t } = useI18n()
 const router = useRouter()
+const route = useRoute()
 const { login, loginWithGoogle, isLoading, isLoggingIn, isGoogleLogging, authError } = useAuth()
 
 // Form state
@@ -235,8 +236,9 @@ const handleLogin = async () => {
     const user = await login(credentials, rememberMe.value)
     
     if (user) {
-      // Redirect to home or intended page
-      router.replace('/')
+      // Redirect to intended page or home
+      const redirectTo = (route.query.redirect as string) || '/'
+      router.replace(redirectTo)
     }
   } catch (error) {
     console.error('Login failed:', error)
@@ -264,7 +266,9 @@ const handleGoogleLogin = async () => {
             const user = await loginWithGoogle(mockGoogleToken)
             
             if (user) {
-              router.replace('/')
+              // Redirect to intended page or home
+              const redirectTo = (route.query.redirect as string) || '/'
+              router.replace(redirectTo)
             }
           },
         },
