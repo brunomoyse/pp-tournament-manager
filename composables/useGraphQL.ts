@@ -10,7 +10,7 @@ import type {
 } from '~/types/graphql'
 
 // Default configuration
-const DEFAULT_ENDPOINT = process.env.NUXT_GRAPHQL_ENDPOINT || 'https://pocketpair.be/api/graphql'
+const DEFAULT_ENDPOINT = process.env.NUXT_GRAPHQL_ENDPOINT || 'http://localhost:8080/graphql'
 const DEFAULT_OPTIONS: GraphQLClientOptions = {
   endpoint: DEFAULT_ENDPOINT,
   headers: {

@@ -177,67 +177,248 @@
                     <div class="px-8 py-6">
                         <div class="grid grid-cols-2 gap-8">
                             <!-- Tournament Clock Card -->
-                            <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-                                <div class="flex items-center gap-3 mb-8">
-                                    <ion-icon :icon="timeOutline" class="w-6 h-6 text-pp-text-primary"></ion-icon>
-                                    <h3 class="text-xl font-semibold text-pp-text-primary">Tournament Clock</h3>
+                            <div class="tournament-clock-card bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border relative" style="background-color: #24242a !important;">
+                                <div class="flex items-center justify-between mb-8 fullscreen-header">
+                                    <div class="flex items-center gap-3">
+                                        <ion-icon :icon="timeOutline" class="w-6 h-6 text-pp-text-primary"></ion-icon>
+                                        <h3 class="text-xl font-semibold text-pp-text-primary">Tournament Clock</h3>
+                                        <!-- Connection Status Indicator -->
+                                        <div class="flex items-center gap-2">
+                                            <div :class="[
+                                                'w-2 h-2 rounded-full',
+                                                clock.connected ? 'bg-green-500 animate-pulse' : 'bg-gray-500'
+                                            ]"></div>
+                                            <span class="text-xs text-white/60">
+                                                {{ clock.connected ? 'Live' : 'Local' }}
+                                            </span>
+                                            <!-- Error indicator -->
+                                            <div v-if="clock.error" class="flex items-center gap-1 text-red-400">
+                                                <ion-icon :icon="closeOutline" class="w-3 h-3"></ion-icon>
+                                                <span class="text-xs">Error</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button 
+                                        @click="toggleFullscreen"
+                                        class="p-2 rounded-lg hover:bg-pp-border transition-colors duration-200 fullscreen-toggle"
+                                        title="Toggle Fullscreen"
+                                    >
+                                        <ion-icon :icon="expandOutline" class="w-5 h-5 text-pp-text-primary"></ion-icon>
+                                    </button>
                                 </div>
                                 
-                                <!-- Large Time Display -->
-                                <div class="text-center mb-8">
-                                    <div class="text-8xl font-bold text-pp-text-primary mb-2">{{ clock.timeRemaining }}</div>
-                                    <div class="text-white text-lg">Time Remaining</div>
+                                <!-- Normal View -->
+                                <div class="normal-view">
+                                    <!-- Large Time Display -->
+                                    <div class="text-center mb-8">
+                                        <div class="text-8xl font-bold text-pp-text-primary mb-2">{{ clock.timeRemaining }}</div>
+                                        <div class="text-white text-lg">Time Remaining</div>
+                                    </div>
+
+                                    <!-- Current and Next Blinds -->
+                                    <div class="grid grid-cols-2 gap-8 mb-8">
+                                        <div class="text-center">
+                                            <div class="text-3xl font-bold text-pp-text-primary mb-1">{{ currentTournament.blinds }}</div>
+                                            <div class="text-white">Current Blinds</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-3xl font-bold text-pp-text-primary mb-1">{{ currentTournament.nextBlinds }}</div>
+                                            <div class="text-white">Next Blinds</div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <!-- Current and Next Blinds -->
-                                <div class="grid grid-cols-2 gap-8 mb-8">
-                                    <div class="text-center">
-                                        <div class="text-3xl font-bold text-pp-text-primary mb-1">{{ currentTournament.blinds }}</div>
-                                        <div class="text-white">Current Blinds</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="text-3xl font-bold text-pp-text-primary mb-1">{{ currentTournament.nextBlinds }}</div>
-                                        <div class="text-white">Next Blinds</div>
+                                <!-- Fullscreen View -->
+                                <div class="fullscreen-view hidden">
+                                    <div class="flex h-full">
+                                        <!-- Left Sidebar - Payouts -->
+                                        <div class="w-1/5 max-w-md min-w-[320px] bg-pp-bg-primary/50 p-4 lg:p-6 xl:p-8 border-r border-pp-border flex-shrink-0">
+                                            <h2 class="text-2xl lg:text-3xl xl:text-4xl font-bold text-pp-accent-gold mb-6 lg:mb-8 text-center">Payouts</h2>
+                                            
+                                            <div class="space-y-3 lg:space-y-4">
+                                                <!-- Prize Pool -->
+                                                <div class="bg-gradient-to-br from-pp-accent-gold/30 to-pp-accent-gold/10 rounded-xl p-4 lg:p-5 xl:p-6 border border-pp-accent-gold/40">
+                                                    <div class="text-pp-accent-gold text-lg lg:text-xl xl:text-2xl mb-2">Total Prize Pool</div>
+                                                    <div class="text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-pp-accent-gold">{{ formatPrice(currentTournament.prizePool || currentTournament.registrations * 100) }}</div>
+                                                </div>
+
+                                                <!-- Paid Positions Overview -->
+                                                <div class="bg-pp-bg-secondary/50 rounded-xl p-4 lg:p-5 xl:p-6">
+                                                    <div class="text-white/60 text-lg lg:text-xl xl:text-2xl mb-3">Places Paid</div>
+                                                    <div class="text-3xl lg:text-4xl xl:text-5xl font-bold text-pp-text-primary text-center mb-2">
+                                                        {{ currentTournament.paidPositions || Math.ceil(currentTournament.registrations * 0.15) }}
+                                                    </div>
+                                                    <div class="text-lg lg:text-xl xl:text-2xl text-white/60 text-center">Min Cash: {{ formatPrice(currentTournament.minCash || 200) }}</div>
+                                                </div>
+
+                                                <!-- Top 3 Payouts -->
+                                                <div class="bg-pp-bg-secondary/50 rounded-xl p-4 lg:p-5 xl:p-6">
+                                                    <div class="text-white/60 text-lg lg:text-xl xl:text-2xl mb-3">Top Payouts</div>
+                                                    <div class="space-y-2 lg:space-y-3">
+                                                        <div class="flex justify-between items-center">
+                                                            <span class="text-xl lg:text-2xl xl:text-3xl text-pp-accent-gold font-bold">1st</span>
+                                                            <span class="text-xl lg:text-2xl xl:text-3xl text-white font-bold">{{ formatPrice(currentTournament.firstPlace || currentTournament.registrations * 30) }}</span>
+                                                        </div>
+                                                        <div class="flex justify-between items-center">
+                                                            <span class="text-lg lg:text-xl xl:text-2xl text-white/70">2nd</span>
+                                                            <span class="text-lg lg:text-xl xl:text-2xl text-white">{{ formatPrice(currentTournament.secondPlace || currentTournament.registrations * 20) }}</span>
+                                                        </div>
+                                                        <div class="flex justify-between items-center">
+                                                            <span class="text-lg lg:text-xl xl:text-2xl text-white/70">3rd</span>
+                                                            <span class="text-lg lg:text-xl xl:text-2xl text-white">{{ formatPrice(currentTournament.thirdPlace || currentTournament.registrations * 15) }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Main Content Area -->
+                                        <div class="flex-1 flex flex-col justify-center px-6 lg:px-12 xl:px-16 2xl:px-24 min-w-0">
+                                            <!-- Tournament Name -->
+                                            <div class="text-center mb-4 lg:mb-6 xl:mb-8">
+                                                <h1 class="text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-pp-accent-gold">{{ currentTournament.name }}</h1>
+                                            </div>
+                                            
+                                            <!-- Timer Section -->
+                                            <div class="text-center mb-6 lg:mb-8 xl:mb-10">
+                                                <div class="timer-display text-pp-text-primary font-bold mb-3 font-mono fullscreen-timer">
+                                                    {{ clock.timeRemaining }}
+                                                </div>
+                                                <div class="flex items-center justify-center gap-4 lg:gap-6 xl:gap-8">
+                                                    <div class="text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl text-white/70 uppercase tracking-wider">Level {{ clock.currentLevel }}</div>
+                                                    <div class="text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl text-pp-accent-gold font-bold">{{ clock.blinds }}</div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Blinds Section - Stacked Vertically -->
+                                            <div class="max-w-4xl xl:max-w-5xl 2xl:max-w-6xl mx-auto w-full space-y-4 lg:space-y-6">
+                                                <!-- Current Level -->
+                                                <div class="bg-pp-bg-primary/50 rounded-2xl p-4 lg:p-6 xl:p-8 border border-pp-accent-gold/30">
+                                                    <div class="flex items-center justify-between">
+                                                        <div class="flex items-center gap-4 lg:gap-6">
+                                                            <div class="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl text-pp-accent-gold uppercase tracking-wider">Level {{ clock.currentLevel }}</div>
+                                                            <div class="text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-pp-accent-gold/70">Current Blinds</div>
+                                                        </div>
+                                                        <div class="flex items-center gap-4 lg:gap-6 xl:gap-8">
+                                                            <div class="text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold text-white">
+                                                                {{ clock.blinds }}
+                                                            </div>
+                                                            <div v-if="clockSync.ante?.value" class="text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl text-white/70">
+                                                                Ante: {{ clockSync.ante.value }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Next Level -->
+                                                <div class="bg-pp-bg-primary/30 rounded-xl p-3 lg:p-5 xl:p-6 border border-pp-border">
+                                                    <div class="flex items-center justify-between">
+                                                        <div class="flex items-center gap-4 lg:gap-6">
+                                                            <div class="text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-white/70 uppercase tracking-wider">Level {{ clock.currentLevel + 1 }}</div>
+                                                            <div class="text-base lg:text-lg xl:text-xl 2xl:text-2xl text-white/50">Next Blinds</div>
+                                                        </div>
+                                                        <div class="flex items-center gap-4 lg:gap-6 xl:gap-8">
+                                                            <div class="text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-white/70">
+                                                                {{ clock.nextBlinds }}
+                                                            </div>
+                                                            <div v-if="clockSync.nextLevel?.value?.ante" class="text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-white/50">
+                                                                Ante: {{ clockSync.nextLevel.value.ante }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Right Sidebar - Stats -->
+                                        <div class="w-1/5 max-w-md min-w-[320px] bg-pp-bg-primary/50 p-4 lg:p-6 xl:p-8 border-l border-pp-border flex-shrink-0">
+                                            <h2 class="text-2xl lg:text-3xl xl:text-4xl font-bold text-pp-accent-gold mb-6 lg:mb-8 text-center">Tournament Info</h2>
+                                            
+                                            <div class="space-y-4 lg:space-y-6">
+                                                <!-- Players Remaining -->
+                                                <div class="bg-pp-bg-secondary/50 rounded-xl p-4 lg:p-5 xl:p-6">
+                                                    <div class="text-white/60 text-lg lg:text-xl xl:text-2xl mb-2">Players Remaining</div>
+                                                    <div class="text-3xl lg:text-4xl xl:text-5xl font-bold text-pp-text-primary">
+                                                        {{ currentTournament.playersRemaining || currentTournament.registrations }}/{{ currentTournament.registrations }}
+                                                    </div>
+                                                    <div class="text-base lg:text-lg xl:text-xl text-white/50 mt-1">
+                                                        {{ currentTournament.registrations - (currentTournament.playersRemaining || currentTournament.registrations) }} eliminated
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Chip Info -->
+                                                <div class="bg-pp-bg-secondary/50 rounded-xl p-4 lg:p-5 xl:p-6">
+                                                    <div class="text-white/60 text-lg lg:text-xl xl:text-2xl mb-2">Total Chips in Play</div>
+                                                    <div class="text-2xl lg:text-3xl xl:text-4xl font-bold text-white">{{ formatChips(currentTournament.totalChips || currentTournament.registrations * 10000) }}</div>
+                                                </div>
+                                                
+                                                <!-- Average Stack -->
+                                                <div class="bg-pp-bg-secondary/50 rounded-xl p-4 lg:p-5 xl:p-6">
+                                                    <div class="text-white/60 text-lg lg:text-xl xl:text-2xl mb-2">Average Stack</div>
+                                                    <div class="text-2xl lg:text-3xl xl:text-4xl font-bold text-white">{{ formatChips(currentTournament.averageStack || 10000) }}</div>
+                                                </div>
+                                                
+                                                <!-- Next Break -->
+                                                <div class="bg-pp-accent-gold/20 rounded-xl p-4 lg:p-5 xl:p-6 border border-pp-accent-gold/30">
+                                                    <div class="text-pp-accent-gold text-lg lg:text-xl xl:text-2xl mb-2">Next Break</div>
+                                                    <div class="text-2xl lg:text-3xl xl:text-4xl font-bold text-white">After Level {{ (currentTournament.nextBreakLevel || 6) - 1 }}</div>
+                                                    <div class="text-base lg:text-lg xl:text-xl text-white/60 mt-1">{{ currentTournament.nextBreakTime || 'In ' + ((currentTournament.nextBreakLevel || 6) - currentTournament.currentLevel) + ' levels' }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <!-- Start/Pause Button -->
                                 <button 
                                     :class="[
-                                        'w-full py-4 rounded-lg text-white font-medium text-lg mb-6 flex items-center justify-center gap-2',
-                                        clock.running ? 'bg-pp-text-primary' : 'bg-pp-text-primary'
+                                        'w-full py-4 rounded-lg font-medium text-lg mb-6 flex items-center justify-center gap-2 transition-all duration-200',
+                                        clock.running 
+                                            ? 'bg-red-600 hover:bg-red-700 text-white' 
+                                            : 'bg-pp-accent-gold hover:bg-yellow-600 text-pp-bg-primary',
+                                        clock.loading ? 'opacity-75 cursor-not-allowed' : ''
                                     ]"
-                                    @click="clock.running ? clock.pause() : clock.start()"
+                                    @click="clock.toggleClock"
+                                    :disabled="clock.loading"
                                 >
-                                    <ion-icon :icon="clock.running ? pauseOutline : playOutline" class="w-5 h-5"></ion-icon>
+                                    <ion-icon v-if="clock.loading" :icon="refresh" class="w-5 h-5 animate-spin"></ion-icon>
+                                    <ion-icon v-else :icon="clock.running ? pauseOutline : playOutline" class="w-5 h-5"></ion-icon>
                                     {{ clock.running ? 'Pause' : 'Start' }}
                                 </button>
 
-                                <!-- Control Buttons Row 1 -->
-                                <div class="grid grid-cols-2 gap-4 mb-4">
-                                    <button class="py-3 px-4 border border-pp-border rounded-lg text-white font-medium flex items-center justify-center gap-2 hover:bg-pp-text-primary hover:text-pp-bg-primary">
-                                        <ion-icon :icon="playSkipBackOutline" class="w-4 h-4"></ion-icon>
-                                        Previous Level
-                                    </button>
-                                    <button class="py-3 px-4 border border-pp-border rounded-lg text-white font-medium flex items-center justify-center gap-2 hover:bg-pp-text-primary hover:text-pp-bg-primary">
-                                        <ion-icon :icon="playSkipForwardOutline" class="w-4 h-4"></ion-icon>
-                                        Next Level
-                                    </button>
-                                </div>
-
-                                <!-- Control Buttons Row 2 -->
-                                <div class="grid grid-cols-2 gap-4">
-                                    <button class="py-3 px-4 border border-pp-border rounded-lg text-white font-medium flex items-center justify-center gap-2 hover:bg-pp-text-primary hover:text-pp-bg-primary">
-                                        <ion-icon :icon="cafeOutline" class="w-4 h-4"></ion-icon>
-                                        Start Break
-                                    </button>
-                                    <button 
-                                        class="py-3 px-4 border border-pp-border rounded-lg text-white font-medium flex items-center justify-center gap-2 hover:bg-pp-text-primary hover:text-pp-bg-primary"
-                                        @click="showAnnouncementModal"
-                                    >
-                                        <ion-icon :icon="megaphoneOutline" class="w-4 h-4"></ion-icon>
-                                        Announce
-                                    </button>
+                                <!-- Control Buttons -->
+                                <div class="flex flex-col items-center gap-3">
+                                    <div class="flex gap-3">
+                                        <button 
+                                            @click="clock.previousLevel"
+                                            :disabled="clock.loading"
+                                            class="py-4 px-6 bg-pp-bg-primary border border-pp-border rounded-lg text-white font-medium flex items-center justify-center gap-2 hover:bg-pp-text-primary hover:text-pp-bg-primary transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            <ion-icon :icon="playSkipBackOutline" class="w-4 h-4"></ion-icon>
+                                            Previous Level
+                                        </button>
+                                        <button 
+                                            @click="clock.advanceLevel"
+                                            :disabled="clock.loading"
+                                            class="py-4 px-6 bg-pp-bg-primary border border-pp-border rounded-lg text-white font-medium flex items-center justify-center gap-2 hover:bg-pp-text-primary hover:text-pp-bg-primary transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            <ion-icon :icon="playSkipForwardOutline" class="w-4 h-4"></ion-icon>
+                                            Next Level
+                                        </button>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <button class="py-4 px-6 bg-pp-bg-primary border border-pp-border rounded-lg text-white font-medium flex items-center justify-center gap-2 hover:bg-pp-text-primary hover:text-pp-bg-primary transition-all duration-200">
+                                            <ion-icon :icon="cafeOutline" class="w-4 h-4"></ion-icon>
+                                            Start Break
+                                        </button>
+                                        <button 
+                                            class="py-4 px-6 bg-pp-bg-primary border border-pp-border rounded-lg text-white font-medium flex items-center justify-center gap-2 hover:bg-pp-text-primary hover:text-pp-bg-primary transition-all duration-200"
+                                            @click="showAnnouncementModal"
+                                        >
+                                            <ion-icon :icon="megaphoneOutline" class="w-4 h-4"></ion-icon>
+                                            Announce
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -280,7 +461,7 @@
                                         <div :class="[
                                             'text-sm font-medium',
                                             level.level === currentTournament.currentLevel 
-                                                ? 'text-gray-300' 
+                                                ? 'text-pp-bg-primary' 
                                                 : 'text-white'
                                         ]">
                                             {{ level.duration }}
@@ -354,23 +535,25 @@
                                 <div 
                                     v-for="player in filteredPlayers" 
                                     :key="player.id"
-                                    class="p-6 flex items-center justify-between hover:bg-pp-text-primary hover:text-pp-bg-primary"
+                                    class="p-3 flex items-center justify-between"
                                 >
                                     <!-- Player Info -->
                                     <div class="flex items-center gap-4">
                                         <!-- Avatar -->
-                                        <div class="w-12 h-12 bg-pp-text-secondary rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                        <div class="w-10 h-10 bg-pp-text-secondary rounded-full flex items-center justify-center text-white font-bold text-base">
                                             {{ getInitials(player.name) }}
                                         </div>
                                         
                                         <!-- Player Details -->
                                         <div>
-                                            <h3 class="font-semibold text-white text-lg">{{ player.name }}</h3>
-                                            <p class="text-white">{{ player.email }}</p>
-                                            <p class="text-white text-sm">
-                                                Registered: {{ player.registrationTime }}
-                                                <span v-if="player.tableNumber"> • Table {{ player.tableNumber }}, Seat {{ player.seatNumber }}</span>
-                                            </p>
+                                            <h3 class="font-semibold text-white text-base">{{ player.name }}</h3>
+                                            <div class="flex items-center gap-3 text-white text-sm">
+                                                <span>{{ player.email }}</span>
+                                                <span class="text-white text-xs">
+                                                    Registered: {{ player.registrationTime }}
+                                                    <span v-if="player.tableNumber"> • Table {{ player.tableNumber }}, Seat {{ player.seatNumber }}</span>
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -751,9 +934,9 @@
 </template>
 
 <script setup lang="ts">
-import { settingsOutline, megaphoneOutline, personAddOutline, trophyOutline, peopleOutline, timeOutline, playOutline, pauseOutline, playSkipBackOutline, playSkipForwardOutline, cafeOutline, searchOutline, qrCodeOutline, checkmarkCircleOutline, refreshOutline, locationOutline, ellipsisVerticalOutline, shuffleOutline, scaleOutline, removeCircleOutline, moveOutline, closeOutline } from 'ionicons/icons'
+import { settingsOutline, megaphoneOutline, personAddOutline, trophyOutline, peopleOutline, timeOutline, playOutline, pauseOutline, playSkipBackOutline, playSkipForwardOutline, cafeOutline, searchOutline, qrCodeOutline, checkmarkCircleOutline, refreshOutline, locationOutline, ellipsisVerticalOutline, shuffleOutline, scaleOutline, removeCircleOutline, moveOutline, closeOutline, expandOutline, contractOutline, refresh } from 'ionicons/icons'
 import { useTournamentData } from '@/composables/useTournamentData'
-import { useTournamentClock } from '@/composables/useTournamentClock'
+import { useTournamentClock, useTournamentClockSync } from '@/composables/useTournamentClock'
 import { useNetworkStatus } from '@/composables/useNetworkStatus'
 
 const route = useRoute()
@@ -818,10 +1001,97 @@ const selectedTournament = ref<string>((route.params.id as string) || tournament
 
 const currentTournament = computed(() => tournaments.value.find(t => t.id === selectedTournament.value)!)
 
-// Keep page clock in sync with composable for demo
-const clock = reactive({
-    ...useTournamentClock(currentTournament.value.timeRemaining || '15:00'),
+// Tournament ID from route params or default test ID
+const tournamentId = computed(() => route.params.id as string || '10004444-4444-4444-4444-444444444444')
+
+// Use synchronized clock with GraphQL subscription
+const clockSync = useTournamentClockSync(tournamentId.value)
+
+// Fallback to local clock for demo mode
+const localClock = useTournamentClock(currentTournament.value.timeRemaining || '15:00')
+
+// Choose between sync and local clock based on connection
+const clock = computed(() => {
+    if (clockSync.connected) {
+        return {
+            timeRemaining: clockSync.timeRemaining.value,
+            running: clockSync.running.value,
+            // Use real GraphQL mutations when connected
+            start: clockSync.toggleClock,
+            pause: clockSync.toggleClock,
+            currentLevel: clockSync.currentLevel.value,
+            blinds: clockSync.blindsText.value,
+            nextBlinds: clockSync.nextBlindsText.value,
+            status: clockSync.status.value,
+            isBreak: clockSync.isBreak.value,
+            error: clockSync.error.value,
+            connected: clockSync.connected.value,
+            // Clock control functions
+            startClock: clockSync.startClock,
+            pauseClock: clockSync.pauseClock,
+            resumeClock: clockSync.resumeClock,
+            toggleClock: clockSync.toggleClock,
+            advanceLevel: clockSync.advanceLevel,
+            previousLevel: clockSync.previousLevel,
+            // Loading states
+            loading: clockSync.startLoading.value || clockSync.pauseLoading.value || clockSync.resumeLoading.value
+        }
+    } else {
+        // Fallback to local clock
+        return {
+            timeRemaining: localClock.timeRemaining.value,
+            running: localClock.running.value,
+            start: localClock.start,
+            pause: localClock.pause,
+            currentLevel: currentTournament.value.currentLevel,
+            blinds: currentTournament.value.blinds,
+            nextBlinds: currentTournament.value.nextBlinds,
+            status: 'local',
+            isBreak: false,
+            error: null,
+            connected: false,
+            // Local functions (for demo mode)
+            startClock: localClock.start,
+            pauseClock: localClock.pause,
+            resumeClock: localClock.start,
+            toggleClock: () => localClock.running.value ? localClock.pause() : localClock.start(),
+            advanceLevel: () => console.log('Local mode: advance level'),
+            previousLevel: () => console.log('Local mode: previous level'),
+            loading: false
+        }
+    }
 })
+
+const formatChips = (chips: number) => {
+    if (chips >= 1000000) {
+        return `${(chips / 1000000).toFixed(1)}M`
+    } else if (chips >= 1000) {
+        return `${(chips / 1000).toFixed(0)}K`
+    }
+    return chips.toString()
+}
+
+const formatPrice = (amount: number) => {
+    return new Intl.NumberFormat('fr-BE', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    }).format(amount)
+}
+
+const toggleFullscreen = () => {
+    const clockCard = document.querySelector('.tournament-clock-card')
+    if (!clockCard) return
+    
+    if (!document.fullscreenElement) {
+        clockCard.requestFullscreen().catch(err => {
+            console.error('Error attempting to enable fullscreen:', err)
+        })
+    } else {
+        document.exitFullscreen()
+    }
+}
 
 watch(
     () => clock.timeRemaining,
@@ -937,6 +1207,60 @@ onBeforeUnmount(() => clearInterval(updateTimer))
   --background: #24242a;
   border: 1px solid rgba(254, 231, 138, 0.6);
   box-shadow: 0 2px 8px 0 rgb(254 231 138 / 0.2);
+}
+
+/* Fullscreen styles for tournament clock */
+.tournament-clock-card:fullscreen {
+    display: flex;
+    flex-direction: column;
+    background-color: #1a1a1f !important;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* Hide normal view in fullscreen */
+.tournament-clock-card:fullscreen .normal-view {
+    display: none;
+}
+
+.tournament-clock-card:fullscreen .fullscreen-header {
+    display: none;
+}
+
+/* Show fullscreen view only in fullscreen */
+.tournament-clock-card:fullscreen .fullscreen-view {
+    display: block !important;
+    height: 100vh;
+}
+
+/* Position fullscreen toggle button */
+.tournament-clock-card:fullscreen .fullscreen-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: rgba(36, 36, 42, 0.9);
+    backdrop-filter: blur(10px);
+    display: block !important;
+}
+
+/* Hide all other buttons in fullscreen */
+.tournament-clock-card:fullscreen button:not(.fullscreen-toggle) {
+    display: none;
+}
+
+/* Responsive timer scaling */
+.fullscreen-timer {
+    font-size: clamp(8rem, 18vw, 20rem);
+    line-height: 1;
+}
+
+/* Extra large screens (4K+) */
+@media (min-width: 2560px) {
+    .fullscreen-timer {
+        font-size: clamp(16rem, 20vw, 24rem);
+    }
 }
 
 /* Make sure tab labels are visible */
