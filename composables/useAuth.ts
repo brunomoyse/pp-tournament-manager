@@ -20,9 +20,9 @@ export interface AuthResponse {
 
 // Authentication API endpoints
 const AUTH_CONFIG = {
-  baseUrl: process.env.NUXT_AUTH_BASE_URL || 'https://pocketpair.be/api',
-  registerUrl: process.env.NUXT_AUTH_REGISTER_URL || 'https://pocketpair.be/api/oauth/register',
-  loginUrl: process.env.NUXT_AUTH_LOGIN_URL || 'https://pocketpair.be/api/oauth/login',
+  baseUrl: process.env.NUXT_AUTH_BASE_URL || 'http://localhost:8080',
+  registerUrl: process.env.NUXT_AUTH_REGISTER_URL || 'http://localhost:8080/oauth/register',
+  loginUrl: process.env.NUXT_AUTH_LOGIN_URL || 'http://localhost:8080/oauth/login',
 }
 
 // GraphQL mutations for authentication

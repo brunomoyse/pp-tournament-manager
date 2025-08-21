@@ -1,34 +1,31 @@
 <template>
     <ion-card>
         <ion-list>
-            <ion-item v-for="p in players" :key="p.id" lines="full">
-                <ion-avatar slot="start">
-                    <div class="w-full h-full bg-primary/20 flex items-center justify-center">
-                        <span class="text-sm font-bold text-primary">{{ initials(p.name) }}</span>
+            <ion-item v-for="p in players" :key="p.id" lines="none" class="compact-player-item">
+                <div slot="start" class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center mr-3">
+                    <span class="text-xs font-bold text-primary">{{ initials(p.name) }}</span>
+                </div>
+                <ion-label class="py-2">
+                    <div class="flex items-center gap-2">
+                        <h3 class="font-semibold text-sm">{{ p.name }}</h3>
+                        <ion-badge :color="statusColor(p.status)" class="text-xs">{{ p.status }}</ion-badge>
+                        <ion-note v-if="p.tableNumber" class="text-xs">Table {{ p.tableNumber }}, Seat {{ p.seatNumber }}</ion-note>
                     </div>
-                </ion-avatar>
-                <ion-label>
-                    <h2>{{ p.name }}</h2>
-                    <p>{{ p.email }}</p>
-                    <p>
-                        <ion-note>Registered: {{ p.registrationTime }}</ion-note>
-                        <ion-note v-if="p.tableNumber"> • Table {{ p.tableNumber }}, Seat {{ p.seatNumber }}</ion-note>
-                    </p>
+                    <div class="flex items-center gap-3 mt-1">
+                        <p class="text-xs text-gray-500">{{ p.email }}</p>
+                        <ion-note class="text-xs">{{ p.registrationTime }}</ion-note>
+                    </div>
                 </ion-label>
-                <ion-badge slot="end" :color="statusColor(p.status)">{{ p.status }}</ion-badge>
-                <ion-buttons slot="end">
-                    <ion-button v-if="p.status === 'registered'" fill="outline" size="small">
-                        <ion-icon slot="start" :icon="checkmarkCircleOutline"></ion-icon>
-                        Check In
+                <ion-buttons slot="end" class="gap-1">
+                    <ion-button v-if="p.status === 'registered'" fill="clear" size="small" class="text-xs">
+                        <ion-icon slot="icon-only" :icon="checkmarkCircleOutline"></ion-icon>
                     </ion-button>
                     <template v-else-if="p.status === 'checked-in'">
-                        <ion-button fill="outline" size="small">
-                            <ion-icon slot="start" :icon="refreshOutline"></ion-icon>
-                            Undo
+                        <ion-button fill="clear" size="small" class="text-xs">
+                            <ion-icon slot="icon-only" :icon="refreshOutline"></ion-icon>
                         </ion-button>
-                        <ion-button fill="solid" size="small">
-                            <ion-icon slot="start" :icon="shuffleOutline"></ion-icon>
-                            Seat
+                        <ion-button fill="clear" size="small" class="text-xs">
+                            <ion-icon slot="icon-only" :icon="shuffleOutline"></ion-icon>
                         </ion-button>
                     </template>
                     <ion-button fill="clear" size="small">
@@ -63,3 +60,16 @@ function statusColor(status: Player['status']) {
     }
 }
 </script>
+<style scoped>
+.compact-player-item {
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+    --inner-padding-end: 8px;
+    --min-height: 48px;
+}
+.compact-player-item ion-button {
+    --padding-start: 4px;
+    --padding-end: 4px;
+    height: 28px;
+}
+</style>
