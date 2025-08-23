@@ -11,26 +11,3 @@ mutation LoginUser($input: UserLoginInput!) {
     }
   }
 }
-
-mutation Logout {
-  logout {
-    success
-  }
-}
-
-mutation UpdateProfile($input: UpdateProfileInput!) {
-  updateProfile(input: $input) {
-    id
-    email
-    username
-    first_name
-    last_name
-    phone
-    is_active
-    role
-    created_at
-    updated_at
-    display_preference
-    display_name
-  }
-}

@@ -122,13 +122,21 @@ import {
   logoGoogle,
 } from 'ionicons/icons'
 import { ref, computed } from 'vue'
-import { useAuth } from '~/composables/useAuth'
-import type { LoginCredentials } from '~/composables/useAuth'
+import { useAuthStore, type LoginCredentials } from '~/stores/useAuthStore'
 
 const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
-const { login, isLoading } = useAuth()
+const authStore = useAuthStore()
+const { login, isLoading, isAuthenticated } = authStore
+
+// Redirect if already authenticated
+watch(() => authStore.isAuthenticated, (authenticated) => {
+  if (authenticated) {
+    const redirectTo = (route.query.redirect as string) || '/'
+    router.replace(redirectTo)
+  }
+}, { immediate: true })
 
 // Form state
 const email = ref('')
@@ -193,15 +201,21 @@ const handleLogin = async () => {
       password: password.value,
     }
     
-    const user = await login(credentials, rememberMe.value)
-    
+    const user = await login(credentials)
     if (user) {
       // Redirect to intended page or home
       const redirectTo = (route.query.redirect as string) || '/'
-      router.replace(redirectTo)
+      
+      // Small delay to ensure store is fully updated before redirect
+      await nextTick()
+      await router.replace(redirectTo)
+    } else {
+      // Login failed - show error
+      emailError.value = 'Invalid email or password'
     }
   } catch (error) {
-    console.error('Login failed:', error)
+    // Show user-friendly error message
+    emailError.value = 'Login failed. Please check your credentials and try again.'
   }
 }
 

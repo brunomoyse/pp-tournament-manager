@@ -76,7 +76,9 @@
                 <span>{{ player.email }}</span>
                 <span class="text-white text-xs">
                   Registered: {{ player.registrationTime }}
+                    <!--
                   <span v-if="player.tableNumber"> • Table {{ player.tableNumber }}, Seat {{ player.seatNumber }}</span>
+                -->
                 </span>
               </div>
             </div>
@@ -130,25 +132,19 @@
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
 import { searchOutline, personAddOutline, qrCodeOutline, checkmarkCircleOutline, refreshOutline, locationOutline, ellipsisVerticalOutline } from 'ionicons/icons'
-import type { TournamentPlayer } from '~/types/user'
+import type {TournamentPlayer} from "~/types/user";
 
-const props = defineProps<{
-  tournamentPlayers: TournamentPlayer[]
-}>()
+const tournamentStore = useTournamentStore()
 
-const emit = defineEmits<{
-  registerPlayer: []
-  walkIn: []
-}>()
+// Replace with store
+const tournamentPlayers: Ref<TournamentPlayer[]> = computed(() => [])
 
 // Filters
 const playerSearch = ref('')
 const playerFilter = ref('all')
 
 const filteredPlayers = computed(() => {
-  if (!props.tournamentPlayers) return []
-  
-  return props.tournamentPlayers.filter(tp => {
+  return tournamentPlayers.value.filter(tp => {
     const player = {
       id: tp.user.id,
       name: `${tp.user.firstName} ${tp.user.lastName}`.trim() || tp.user.username,

@@ -72,19 +72,13 @@ query GetTournamentStructure($tournamentId: ID!) {
   }
 }
 
-mutation RegisterTournament($tournamentId: ID!) {
-  registerTournament(tournamentId: $tournamentId) {
+mutation RegisterTournament($input: RegisterForTournamentInput!) {
+  registerForTournament(input: $input) {
     id
+    tournamentId
+    userId
+    registrationTime
     status
-    registeredAt
-    seatNumber
-    tableNumber
-  }
-}
-
-mutation CancelRegistration($registrationId: ID!) {
-  cancelRegistration(registrationId: $registrationId) {
-    id
-    status
+    notes
   }
 }
