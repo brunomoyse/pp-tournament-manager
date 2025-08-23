@@ -5,3 +5,15 @@ query GetClubs {
     city
   }
 }
+
+query GetClubTables ($clubId: UUID!) {
+  clubTables(clubId: $clubId) {
+    id
+    clubId
+    tableNumber
+    maxSeats
+    tableName
+    location
+    isActive
+  }
+}

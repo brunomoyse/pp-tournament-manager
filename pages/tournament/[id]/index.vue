@@ -97,13 +97,7 @@
 
                 <ion-tab :tab="'seating'">
                     <div class="px-8 py-6">
-                        <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-                            <div class="flex items-center gap-3 mb-6">
-                                <IonIcon :icon="gridOutline" class="w-6 h-6 text-pp-text-primary" />
-                                <h3 class="text-xl font-semibold text-pp-text-primary">Table Management</h3>
-                            </div>
-                            <p class="text-white">Seating chart and table management will be available here.</p>
-                        </div>
+                        <TournamentSeatingManager />
                     </div>
                 </ion-tab>
 
@@ -128,13 +122,14 @@ definePageMeta({
     middleware: 'auth'
 })
 
-import { settingsOutline, gridOutline } from 'ionicons/icons'
+import { settingsOutline } from 'ionicons/icons'
 import { useNetworkStatus } from '@/composables/useNetworkStatus'
 import { useTournamentStore } from '~/stores/useTournamentStore'
 import TournamentStructureCard from "~/components/tournament/clock/TournamentStructureCard.vue";
 import TournamentStatusCard from "~/components/tournament/overview/TournamentStatusCard.vue";
 import TournamentPlayersCard from "~/components/tournament/overview/TournamentPlayersCard.vue";
 import TournamentPrizePool from "~/components/tournament/overview/TournamentPrizePool.vue";
+import TournamentSeatingManager from "~/components/tournament/seating/TournamentSeatingManager.vue";
 
 const { connectionStatus } = useNetworkStatus()
 const lastUpdate = ref(Date.now())
