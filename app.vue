@@ -1,9 +1,9 @@
 <template>
-  <IonApp class="pp-app">
-    <IonTabs>
-      <IonRouterOutlet />
-    </IonTabs>
-  </IonApp>
+    <IonApp class="pp-app">
+        <NuxtLayout>
+            <NuxtPage />
+        </NuxtLayout>
+    </IonApp>
 </template>
 
 <script setup lang="ts">

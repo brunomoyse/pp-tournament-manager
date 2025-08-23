@@ -1,0 +1,33 @@
+subscription TournamentClockUpdates($tournamentId: ID!) {
+  tournamentClockUpdates(tournamentId: $tournamentId) {
+    tournamentId
+    status
+    currentLevel
+    timeRemainingSeconds
+    smallBlind
+    bigBlind
+    ante
+    isBreak
+    nextLevelPreview {
+      smallBlind
+      bigBlind
+      ante
+    }
+  }
+}
+
+subscription TournamentRegistrations{
+  tournamentRegistrations {
+    tournamentId
+    player {
+      user {
+        firstName
+        lastName
+      }
+      registration {
+        registrationTime
+      }
+    }
+    eventType
+  }
+}
