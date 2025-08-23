@@ -1,0 +1,90 @@
+query GetTournaments($clubId: UUID, $from: DateTime, $to: DateTime, $status: TournamentStatus, $limit: Int, $offset: Int) {
+  tournaments(clubId: $clubId, from: $from, to: $to, status: $status, limit: $limit, offset: $offset) {
+    id
+    title
+    description
+    clubId
+    startTime
+    endTime
+    buyInCents
+    seatCap
+    status
+    liveStatus
+    createdAt
+    updatedAt
+  }
+}
+
+query GetTournamentComplete($tournamentId: UUID!) {
+  tournamentComplete(tournamentId: $tournamentId) {
+    # Static tournament data
+    tournament {
+      id
+      title
+      description
+      clubId
+      startTime
+      endTime
+      buyInCents
+      seatCap
+      status
+      liveStatus
+      createdAt
+      updatedAt
+      club {
+        id
+        name
+        city
+      }
+    }
+
+    # Live state (clock, blinds, level info)
+    liveState {
+      id
+      currentLevel
+      playersRemaining
+      breakUntil
+      currentSmallBlind
+      currentBigBlind
+      currentAnte
+      levelStartedAt
+      levelDurationMinutes
+      createdAt
+      updatedAt
+    }
+
+    # Registration count
+    totalRegistered
+  }
+}
+
+query GetTournamentStructure($tournamentId: ID!) {
+  tournamentStructure(tournamentId: $tournamentId) {
+    id
+    tournamentId
+    levelNumber
+    smallBlind
+    bigBlind
+    ante
+    durationMinutes
+    isBreak
+    breakDurationMinutes
+  }
+}
+
+mutation RegisterTournament($tournamentId: ID!) {
+  registerTournament(tournamentId: $tournamentId) {
+    id
+    status
+    registeredAt
+    seatNumber
+    tableNumber
+  }
+}
+
+mutation CancelRegistration($registrationId: ID!) {
+  cancelRegistration(registrationId: $registrationId) {
+    id
+    status
+  }
+}

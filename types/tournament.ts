@@ -1,48 +1,69 @@
+import type { Club } from './user'
+
+export interface TournamentComplete {
+    tournament: Tournament
+    liveState?: TournamentLiveState
+    totalRegistered: number
+}
+
 export interface Tournament {
     id: string
-    name: string
-    status: 'upcoming' | 'running' | 'paused' | 'finished'
-    registrations: number
-    checkedIn: number
-    maxPlayers: number
+    title: string
+    description: string
+    startTime: string
+    endTime: string
+    buyInCents: number
+    status: TournamentStatus
+    liveStatus: TournamentLiveStatus
+
+    club: Club
+}
+
+export type TournamentStatus = 'UPCOMING' | 'IN_PROGRESS' | 'COMPLETED'
+export type TournamentLiveStatus = 'NOT_STARTED' | 'REGISTRATION_OPEN' | 'LATE_REGISTRATION' | 'IN_PROGRESS' | 'BREAK' | 'FINAL_TABLE' | 'FINISHED'
+
+export interface TournamentLiveState {
+    id: string
     currentLevel: number
-    totalLevels: number
-    timeRemaining: string
-    blinds: string
-    nextBlinds: string
-    prizePool: string
+    playersRemaining: number
+    breakUntil?: string
+    currentSmallBlind: number
+    currentBigBlind: number
+    currentAnte?: number
+    levelStartedAt: string
+    levelDurationMinutes: number
+    createdAt: string
+    updatedAt: string
 }
 
-export interface Player {
+export interface TournamentRegistration {
     id: string
-    name: string
-    email: string
-    phone: string
-    status: 'registered' | 'checked-in' | 'seated' | 'eliminated'
-    tableNumber?: number
-    seatNumber?: number
-    registrationTime: string
+    tournament_id: string
+    user_id: string
+    registration_time: string,
+    status: string,
+    notes?: string
 }
 
-export interface TableModel {
+export interface TournamentResult {
+    id: string,
+    tournamentId: string,
+    userId: string,
+    finalPosition: number,
+    prizeCents: number,
+    points: number,
+    notes?: string,
+    createdAt: string,
+}
+
+export interface TournamentStructure {
     id: string
-    number: number
-    seats: (Player | null)[]
-    maxSeats: number
-    status: 'active' | 'breaking' | 'broken'
-}
-
-export interface ActivityItem {
-    time: string
-    action: string
-    details: string
-    type: 'checkin' | 'level' | 'registration' | 'seating' | 'other'
-}
-
-export interface BlindLevel {
-    level: number
+    tournamentId: string
+    levelNumber: number
     smallBlind: number
     bigBlind: number
     ante: number
-    duration: string
+    durationMinutes: number
+    isBreak: boolean
+    breakDurationMinutes?: number
 }

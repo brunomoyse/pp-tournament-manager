@@ -1,0 +1,73 @@
+query GetUserProfile($id: ID!) {
+  user(id: $id) {
+    id
+    email
+    username
+    first_name
+    last_name
+    phone
+    is_active
+    role
+    created_at
+    updated_at
+  }
+}
+
+query GetUserRegistrations($userId: ID!, $status: String) {
+  userRegistrations(userId: $userId, status: $status) {
+    id
+    registeredAt
+    status
+    seatNumber
+    tableNumber
+    tournament {
+      id
+      name
+      type
+      status
+      buyIn
+      startTime
+      club {
+        id
+        name
+      }
+    }
+  }
+}
+
+query GetTournamentHistory($userId: ID!, $clubId: ID, $limit: Int, $offset: Int) {
+  tournamentHistory(userId: $userId, clubId: $clubId, limit: $limit, offset: $offset) {
+    id
+    position
+    totalPlayers
+    winnings
+    roi
+    playedAt
+    tournament {
+      id
+      name
+      type
+      buyIn
+      startTime
+      club {
+        id
+        name
+      }
+    }
+  }
+}
+
+query SearchUsers($query: String!, $clubId: ID, $limit: Int) {
+  searchUsers(query: $query, clubId: $clubId, limit: $limit) {
+    id
+    email
+    username
+    first_name
+    last_name
+    phone
+    is_active
+    role
+    created_at
+    updated_at
+  }
+}
