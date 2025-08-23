@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-8">
+  <div class="space-y-6 pb-8">
     <!-- Players Toolbar -->
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-4">
@@ -56,70 +56,61 @@
 
     <!-- Players List -->
     <div class="bg-pp-bg-secondary rounded-2xl shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-      <div class="divide-y divide-pp-border">
+      <div class="divide-y divide-pp-border max-h-[450px] overflow-y-auto">
         <div 
           v-for="player in filteredPlayers" 
           :key="player.id"
-          class="p-3 flex items-center justify-between"
+          class="p-2 flex items-center justify-between"
         >
           <!-- Player Info -->
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-3">
             <!-- Avatar -->
-            <div class="w-10 h-10 bg-pp-text-secondary rounded-full flex items-center justify-center text-white font-bold text-base">
+            <div class="w-8 h-8 bg-pp-text-secondary rounded-full flex items-center justify-center text-white font-bold text-sm">
               {{ getInitials(player.name) }}
             </div>
             
             <!-- Player Details -->
             <div>
-              <h3 class="font-semibold text-white text-base">{{ player.name }}</h3>
-              <div class="flex items-center gap-3 text-white text-sm">
-                <span>{{ player.email }}</span>
-                <span class="text-white text-xs">
-                  Registered: {{ player.registrationTime }}
-                    <!--
-                  <span v-if="player.tableNumber"> • Table {{ player.tableNumber }}, Seat {{ player.seatNumber }}</span>
-                -->
-                </span>
-              </div>
+              <h3 class="font-semibold text-white text-sm">{{ player.name }}</h3>
             </div>
           </div>
 
           <!-- Status and Actions -->
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-3">
             <!-- Status Badge -->
             <span :class="[
-              'px-3 py-1 rounded-full text-sm font-medium',
+              'px-2 py-0.5 rounded-full text-xs font-medium',
               getStatusBadgeClass(player.status)
             ]">
               {{ player.status }}
             </span>
 
             <!-- Action Buttons -->
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1">
               <!-- Check In Button -->
               <button 
                 v-if="player.status === 'registered'"
-                class="px-3 py-2 border border-pp-text-primary text-pp-text-primary rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-pp-text-primary hover:text-pp-bg-primary"
+                class="px-2 py-1 border border-pp-text-primary text-pp-text-primary rounded-lg text-xs font-medium flex items-center gap-1 hover:bg-pp-text-primary hover:text-pp-bg-primary"
               >
-                <IonIcon :icon="checkmarkCircleOutline" class="w-4 h-4" />
+                <IonIcon :icon="checkmarkCircleOutline" class="w-3 h-3" />
                 Check In
               </button>
               
               <!-- Undo and Seat Buttons -->
               <template v-else-if="player.status === 'checked-in'">
-                <button class="px-3 py-2 border border-pp-text-primary text-pp-text-primary rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-pp-text-primary hover:text-pp-bg-primary">
-                  <IonIcon :icon="refreshOutline" class="w-4 h-4" />
+                <button class="px-2 py-1 border border-pp-text-primary text-pp-text-primary rounded-lg text-xs font-medium flex items-center gap-1 hover:bg-pp-text-primary hover:text-pp-bg-primary">
+                  <IonIcon :icon="refreshOutline" class="w-3 h-3" />
                   Undo
                 </button>
-                <button class="px-3 py-2 bg-pp-text-primary text-pp-bg-primary rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-pp-accent-gold hover:text-pp-bg-primary">
-                  <IonIcon :icon="locationOutline" class="w-4 h-4" />
+                <button class="px-2 py-1 bg-pp-text-primary text-pp-bg-primary rounded-lg text-xs font-medium flex items-center gap-1 hover:bg-pp-accent-gold hover:text-pp-bg-primary">
+                  <IonIcon :icon="locationOutline" class="w-3 h-3" />
                   Seat
                 </button>
               </template>
 
               <!-- More Actions Button -->
-              <button class="p-2 text-white hover:text-white hover:bg-pp-border rounded-lg">
-                <IonIcon :icon="ellipsisVerticalOutline" class="w-4 h-4" />
+              <button class="p-1 text-white hover:text-white hover:bg-pp-border rounded-lg">
+                <IonIcon :icon="ellipsisVerticalOutline" class="w-3 h-3" />
               </button>
             </div>
           </div>
@@ -132,12 +123,19 @@
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
 import { searchOutline, personAddOutline, qrCodeOutline, checkmarkCircleOutline, refreshOutline, locationOutline, ellipsisVerticalOutline } from 'ionicons/icons'
-import type {TournamentPlayer} from "~/types/user";
 
-const tournamentStore = useTournamentStore()
+const route = useRoute()
 
-// Replace with store
-const tournamentPlayers: Ref<TournamentPlayer[]> = computed(() => [])
+// Fetch tournament players
+const selectedTournamentId = route.params.id as string
+const playersData = await GqlGetTournamentPlayers({ 
+  tournamentId: selectedTournamentId 
+})
+
+// Get tournament players from the GraphQL response
+const tournamentPlayers = computed(() => 
+  playersData?.tournamentPlayers || []
+)
 
 // Filters
 const playerSearch = ref('')
@@ -145,9 +143,13 @@ const playerFilter = ref('all')
 
 const filteredPlayers = computed(() => {
   return tournamentPlayers.value.filter(tp => {
+    const firstName = tp.user.firstName || ''
+    const lastName = tp.user.lastName || ''
+    const username = tp.user.username || ''
+    const fullName = `${firstName} ${lastName}`.trim()
     const player = {
       id: tp.user.id,
-      name: `${tp.user.firstName} ${tp.user.lastName}`.trim() || tp.user.username,
+      name: fullName || username || 'Unknown',
       email: tp.user.email,
       status: tp.registration.status
     }
@@ -157,19 +159,26 @@ const filteredPlayers = computed(() => {
       player.email.toLowerCase().includes(playerSearch.value.toLowerCase())
     const matchesFilter = playerFilter.value === 'all' || player.status === playerFilter.value
     return matchesSearch && matchesFilter
-  }).map(tp => ({
-    id: tp.user.id,
-    name: `${tp.user.firstName} ${tp.user.lastName}`.trim() || tp.user.username,
-    email: tp.user.email,
-    status: tp.registration.status,
-    registrationTime: tp.registration.registrationTime,
-    notes: tp.registration.notes
-  }))
+  }).map(tp => {
+    const firstName = tp.user.firstName || ''
+    const lastName = tp.user.lastName || ''
+    const username = tp.user.username || ''
+    const fullName = `${firstName} ${lastName}`.trim()
+    return {
+      id: tp.user.id,
+      name: fullName || username || 'Unknown',
+      email: tp.user.email,
+      status: tp.registration.status,
+      registrationTime: tp.registration.registrationTime,
+      notes: tp.registration.notes
+    }
+  })
 })
 
 // Helper functions
-const getInitials = (name: string) => {
-  return name.split(' ').map(n => n[0]).join('').toUpperCase()
+const getInitials = (name: string | null | undefined) => {
+  if (!name) return '?'
+  return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
 }
 
 const getStatusBadgeClass = (status: string) => {
