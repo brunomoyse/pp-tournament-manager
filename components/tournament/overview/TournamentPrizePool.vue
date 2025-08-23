@@ -7,25 +7,16 @@
     <div class="space-y-6">
       <div class="text-4xl font-bold text-pp-text-primary mb-6">{{ prizePool || 'Loading...' }}</div>
       <div class="space-y-3">
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-white">1st Place</span>
-          <span class="font-semibold text-pp-text-primary">{{ formatPayout(0.4) }}</span>
+        <div 
+          v-for="position in payoutData?.tournamentPayout?.positions || []" 
+          :key="position.position"
+          class="flex items-center justify-between text-sm"
+        >
+          <span class="text-white">{{ getPositionLabel(position.position) }}</span>
+          <span class="font-semibold text-pp-text-primary">{{ formatPayout(position.amountCents) }}</span>
         </div>
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-white">2nd Place</span>
-          <span class="font-semibold text-pp-text-primary">{{ formatPayout(0.25) }}</span>
-        </div>
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-white">3rd Place</span>
-          <span class="font-semibold text-pp-text-primary">{{ formatPayout(0.15) }}</span>
-        </div>
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-white">4th Place</span>
-          <span class="font-semibold text-pp-text-primary">{{ formatPayout(0.1) }}</span>
-        </div>
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-white">5th Place</span>
-          <span class="font-semibold text-pp-text-primary">{{ formatPayout(0.1) }}</span>
+        <div v-if="!payoutData?.tournamentPayout?.positions?.length" class="text-center text-white/60 py-4">
+          No payout structure defined
         </div>
       </div>
     </div>
@@ -37,31 +28,38 @@ import { IonIcon } from '@ionic/vue'
 import { trophyOutline } from 'ionicons/icons'
 import { useTournamentStore } from '~/stores/useTournamentStore'
 
-const tournamentStore = useTournamentStore()
+const route = useRoute()
 
-const tournament = computed(() => tournamentStore.tournament)
-const totalRegistered = computed(() => tournamentStore.totalRegistered)
-
-
-const prizePool = computed(() => {
-  if (!tournament.value || !totalRegistered.value) return '€0'
-  const totalCents = tournament.value.buyInCents * totalRegistered.value
-  const euros = totalCents / 100
-  return new Intl.NumberFormat('fr-BE', {
-    style: 'currency',
-    currency: 'EUR'
-  }).format(euros)
+// Fetch tournament payout data
+const selectedTournamentId = route.params.id as string
+const payoutData = await GqlGetTournamentPayout({ 
+  tournamentId: selectedTournamentId 
 })
 
-const formatPayout = (percentage: number) => {
-  if (!tournament.value || !totalRegistered.value) return '€0'
-  const totalCents = tournament.value.buyInCents * totalRegistered.value
-  const payoutAmount = Math.floor(totalCents * percentage / 100)
+const prizePool = computed(() => {
+  if (payoutData?.tournamentPayout?.totalPrizePool) {
+    const euros = payoutData.tournamentPayout.totalPrizePool / 100
+    return new Intl.NumberFormat('fr-BE', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(euros)
+  }
+  return '€0'
+})
+
+const formatPayout = (amountCents: number) => {
+  const euros = amountCents / 100
   return new Intl.NumberFormat('fr-BE', {
     style: 'currency',
     currency: 'EUR',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0
-  }).format(payoutAmount)
+  }).format(euros)
+}
+
+const getPositionLabel = (position: number) => {
+  const suffixes = ['st', 'nd', 'rd']
+  const suffix = position <= 3 ? suffixes[position - 1] : 'th'
+  return `${position}${suffix} Place`
 }
 </script>
