@@ -82,3 +82,22 @@ mutation RegisterTournament($input: RegisterForTournamentInput!) {
     notes
   }
 }
+
+query GetTournamentPlayers($tournamentId: UUID!) {
+  tournamentPlayers(tournamentId: $tournamentId) {
+    registration {
+      id
+      registrationTime
+      status
+      notes
+    }
+    user {
+      id
+      firstName
+      lastName
+      username
+      email
+      role
+    }
+  }
+}
