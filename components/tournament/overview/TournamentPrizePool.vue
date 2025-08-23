@@ -42,6 +42,7 @@ const tournamentStore = useTournamentStore()
 const tournament = computed(() => tournamentStore.tournament)
 const totalRegistered = computed(() => tournamentStore.totalRegistered)
 
+
 const prizePool = computed(() => {
   if (!tournament.value || !totalRegistered.value) return '€0'
   const totalCents = tournament.value.buyInCents * totalRegistered.value
