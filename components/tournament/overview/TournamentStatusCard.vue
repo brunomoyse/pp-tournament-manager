@@ -12,12 +12,12 @@
         </span>
       </div>
       <div class="flex items-center justify-between">
-        <span class="text-white">Level</span>
-        <span class="font-semibold text-white">{{ currentLevel }}/{{ totalLevels }}</span>
+        <span class="text-white">Current Level</span>
+        <span class="font-semibold text-white">{{ currentLevel }}</span>
       </div>
       <div class="flex items-center justify-between">
-        <span class="text-white">Time Left</span>
-        <span class="font-semibold text-white">{{ timeRemaining }}</span>
+        <span class="text-white">Level duration</span>
+        <span class="font-semibold text-white">{{ `${levelDuration}:00` }}</span>
       </div>
       <div class="flex items-center justify-between">
         <span class="text-white">Blinds</span>
@@ -38,17 +38,10 @@ const tournamentStore = useTournamentStore()
 const tournament = computed(() => tournamentStore.tournament)
 const liveState = computed(() => tournamentStore.liveState)
 
-// Props for external data that might not be in store
-const props = defineProps<{
-  timeRemaining?: number
-  totalLevels?: number
-}>()
-
 // Computed values
-const currentLevel = computed(() => liveState.value?.currentLevel || 1)
-const totalLevels = computed(() => props.totalLevels || 20)
-const timeRemaining = computed(() => props.timeRemaining || '15:00')
-const blindsText = computed(() => 
-  `${liveState.value?.currentSmallBlind || 25}/${liveState.value?.currentBigBlind || 50}`
+const currentLevel = computed(() => liveState.value?.currentLevel || 0)
+const levelDuration = computed(() => liveState.value?.levelDurationMinutes || 0)
+const blindsText = computed(() =>
+  `${liveState.value?.currentSmallBlind || 0}/${liveState.value?.currentBigBlind || 0}` // Replace with GQL subscription clock when available
 )
 </script>

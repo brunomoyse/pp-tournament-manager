@@ -57,17 +57,9 @@
                     <div class="px-8 py-6">
                         <!-- Three Column Grid -->
                         <div class="grid grid-cols-3 gap-8 mb-12">
-                            <TournamentStatusCard
-                                :tournament="tournament"
-                                :current-level="liveState?.currentLevel"
-                                :total-levels="blindStructure.length"
-                                :time-remaining="clock?.timeRemainingSeconds"
-                            />
+                            <TournamentStatusCard />
 
-                            <TournamentPlayersCard
-                                :tournament-players="tournamentPlayers"
-                                :players-remaining="playersRemaining"
-                            />
+                            <TournamentPlayersCard />
 
                             <TournamentPrizePool />
                         </div>
@@ -100,17 +92,9 @@
                     <div class="px-8 py-6">
                         <!-- Three Column Grid -->
                         <div class="grid grid-cols-3 gap-8 mb-12">
-                            <TournamentStatusCard
-                                :tournament="tournament"
-                                :current-level="liveState?.currentLevel"
-                                :total-levels="blindStructure.length"
-                                :time-remaining="clock?.timeRemainingSeconds"
-                            />
+                            <TournamentStatusCard />
 
-                            <TournamentPlayersCard
-                                :tournament-players="tournamentPlayers"
-                                :players-remaining="playersRemaining"
-                            />
+                            <TournamentPlayersCard />
 
                             <TournamentPrizePool />
                         </div>
@@ -139,11 +123,7 @@
 
                 <ion-tab :tab="'players'">
                     <div class="px-8 py-6">
-                        <TournamentPlayersTable
-                            :tournament-players="tournamentPlayers"
-                            @register-player="showRegisterModal"
-                            @walk-in="showWalkInModal"
-                        />
+                        <TournamentPlayersTable />
                     </div>
                 </ion-tab>
 
@@ -176,8 +156,6 @@
 </template>
 
 <script setup lang="ts">
-import type {ClockStatus, TournamentClock} from "~/types/clock";
-
 definePageMeta({
     middleware: 'auth'
 })
@@ -185,8 +163,6 @@ definePageMeta({
 import { settingsOutline, gridOutline } from 'ionicons/icons'
 import { useNetworkStatus } from '@/composables/useNetworkStatus'
 import { useTournamentStore } from '~/stores/useTournamentStore'
-import type { Tournament, TournamentLiveState, TournamentComplete, TournamentStructure } from '~/types/tournament'
-import type { TournamentPlayer } from '~/types/user'
 import TournamentStructureCard from "~/components/tournament/clock/TournamentStructureCard.vue";
 import TournamentStatusCard from "~/components/tournament/overview/TournamentStatusCard.vue";
 import TournamentPlayersCard from "~/components/tournament/overview/TournamentPlayersCard.vue";
@@ -197,30 +173,9 @@ const lastUpdate = ref(Date.now())
 const route = useRoute()
 const tournamentStore = useTournamentStore()
 
-// Reactive data refs
-const tournamentData = ref<any>(null)
-const structureData = ref<any>(null)
-
-const showRegisterModal = () => {
-    console.log('Show Register Modal')
-}
-
-const showWalkInModal = () => {
-    console.log('Show Walk-In Modal')
-}
-
 // Use store getters for reactive data
 const tournament = computed(() => tournamentStore.tournament)
 const liveState = computed(() => tournamentStore.liveState)
-const totalRegistered = computed(() => tournamentStore.totalRegistered)
-
-// Additional computed data from GraphQL responses
-const tournamentPlayers = computed((): TournamentPlayer[] => tournamentData.value?.tournamentPlayers || [])
-const activePlayers = computed(() => tournamentPlayers.value.filter((p: TournamentPlayer) => p.registration.status === 'active'))
-const playersRemaining = computed((): number => liveState.value?.playersRemaining || activePlayers.value.length)
-
-// Tournament structure computed from GraphQL
-const blindStructure = computed((): TournamentStructure[] => structureData.value?.tournamentStructure || [])
 
 const tabs = [
     { label: 'Overview', value: 'overview' },
@@ -229,52 +184,6 @@ const tabs = [
     { label: 'Seating', value: 'seating' },
     { label: 'Settings', value: 'settings' }
 ]
-
-// Use synchronized clock with GraphQL subscription
-//const clockSync = useTournamentClockSync("10004444-4444-4444-4444-444444444444")
-
-// Use synchronized clock with GraphQL subscription only
-
-const clock: Ref<TournamentClock> = ref({
-    id: '20004444-4444-4444-4444-444444444444',
-    tournamentUd: '20004444-4444-4444-4444-444444444444',
-    status: 'STOPPED',
-    currentLevel: 1,
-    timeRemainingSeconds: undefined,
-    levelStartedAt: undefined,
-    levelEndTime: undefined,
-    totalPauseDurationSeconds: 30,
-    autoAdvance: true,
-    currentStructure: undefined,
-    nextStructure: undefined,
-
-    toggleClock: () => {},
-    advanceLevel: () => {},
-})
-/*
-const clock = computed(() => {
-    return {
-        timeRemaining: clockSync.timeRemaining.value,
-        running: clockSync.running.value,
-        currentLevel: clockSync.currentLevel.value,
-        blinds: clockSync.blindsText.value,
-        nextBlinds: clockSync.nextBlindsText.value,
-        status: clockSync.status.value,
-        isBreak: clockSync.isBreak.value,
-        error: clockSync.error.value,
-        connected: clockSync.connected.value,
-        // Clock control functions
-        startClock: clockSync.startClock,
-        pauseClock: clockSync.pauseClock,
-        resumeClock: clockSync.resumeClock,
-        toggleClock: clockSync.toggleClock,
-        advanceLevel: clockSync.advanceLevel,
-        revertLevel: clockSync.revertLevel,
-        // Loading states
-        loading: clockSync.loading
-    }
-})
-*/
 
 // Update last update timestamp when connection status changes
 watch(connectionStatus, () => {
@@ -295,8 +204,11 @@ onBeforeUnmount(() => clearInterval(updateTimer))
 onMounted(async () => {
     const selectedTournamentId = route.params.id as string
     if (selectedTournamentId) {
-        const res = await GqlGetTournamentComplete({ tournamentId: selectedTournamentId })
-        tournamentStore.setSelectedTournament(res.tournamentComplete)
+        const resTournament = await GqlGetTournamentComplete({ tournamentId: selectedTournamentId })
+        tournamentStore.setSelectedTournament(resTournament.tournamentComplete)
+
+        const resStructure = await GqlGetTournamentStructure({ tournamentId: selectedTournamentId })
+        tournamentStore.setSelectedTournamentStructure(resStructure.tournamentStructure)
     }
 })
 

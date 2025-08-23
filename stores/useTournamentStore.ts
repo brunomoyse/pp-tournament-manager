@@ -1,24 +1,30 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { Tournament, TournamentComplete, TournamentLiveState } from '~/types/tournament'
+import type {Tournament, TournamentComplete, TournamentLiveState, TournamentStructure} from '~/types/tournament'
 import type { TournamentPlayer } from '~/types/user'
 
-export const useTournamentStore = defineStore('tournament', () => {
+export const useTournamentStore = defineStore('selectedTournament', () => {
   // State
-  const selectedTournamentId = ref<string | null>(null)
-  const tournamentData = ref<TournamentComplete | null>(null)
+  const selectedTournament = ref<TournamentComplete | null>(null)
+  const selectedTournamentStructure = ref<TournamentStructure | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
 
   // Getters
-  const tournament = computed((): Tournament | null => tournamentData.value?.tournament || null)
-  const liveState = computed((): TournamentLiveState | null => tournamentData.value?.liveState || null)
-  const totalRegistered = computed((): number => tournamentData.value?.totalRegistered || 0)
-  const hasSelectedTournament = computed(() => selectedTournamentId.value !== null)
+  const tournament = computed((): Tournament | null => selectedTournament.value?.tournament || null)
+  const liveState = computed((): TournamentLiveState | null => selectedTournament.value?.liveState || null)
+  const totalRegistered = computed((): number => selectedTournament.value?.totalRegistered || 0)
+  const structure = computed((): TournamentStructure | null => selectedTournamentStructure.value)
+
+  const hasSelectedTournament = computed(() => selectedTournament.value !== null)
 
   // Actions
   const setSelectedTournament = (data: TournamentComplete | null) => {
-    tournamentData.value = data
+    selectedTournament.value = data
+  }
+
+  const setSelectedTournamentStructure = (data: TournamentStructure | null) => {
+    selectedTournamentStructure.value = data
   }
 
   const setLoading = (isLoading: boolean) => {
@@ -29,15 +35,14 @@ export const useTournamentStore = defineStore('tournament', () => {
     error.value = errorMessage
   }
 
-  const clearTournamentData = () => {
-    tournamentData.value = null
+  const clearSelectedTournament = () => {
+    selectedTournament.value = null
     error.value = null
   }
 
   return {
     // State
-    selectedTournamentId: readonly(selectedTournamentId),
-    tournamentData: readonly(tournamentData),
+    selectedTournament: readonly(selectedTournament),
     loading: readonly(loading),
     error: readonly(error),
     
@@ -49,8 +54,9 @@ export const useTournamentStore = defineStore('tournament', () => {
     
     // Actions
     setSelectedTournament,
+    setSelectedTournamentStructure,
     setLoading,
     setError,
-    clearTournamentData
+    clearSelectedTournament
   }
 })
