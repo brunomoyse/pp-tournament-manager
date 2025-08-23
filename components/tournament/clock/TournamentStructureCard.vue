@@ -5,8 +5,9 @@
       <IonIcon :icon="layersOutline" class="w-6 h-6 text-white" />
     </div>
     
-    <div class="space-y-4 max-h-96 overflow-y-auto">
-      <div v-for="(level, index) in blindLevels" :key="index" 
+    <div ref="scrollContainer" class="space-y-4 max-h-96 overflow-y-auto scroll-smooth">
+      <div v-for="(level, index) in tournamentLevels" :key="index"
+           :ref="el => setCurrentLevelElement(el, index)"
            :class="[
              'flex items-center justify-between p-4 rounded-xl transition-all',
              index === currentLevelIndex 
@@ -24,10 +25,10 @@
           </div>
           <div>
             <div class="text-lg font-semibold text-pp-text-primary">
-              {{ level.smallBlind }}/{{ level.bigBlind }}
+              {{ level.isBreak ? 'BREAK' : `${level.smallBlind}/${level.bigBlind}` }}
             </div>
             <div class="text-sm text-white/60">
-              {{ level.duration }} minutes
+              {{ level.isBreak ? `${level.breakDurationMinutes || level.durationMinutes} minutes` : `${level.durationMinutes} minutes` }}
             </div>
           </div>
         </div>
@@ -39,7 +40,7 @@
       </div>
     </div>
 
-    <div v-if="blindLevels.length === 0" class="text-center py-8 text-white/60">
+    <div v-if="tournamentLevels && tournamentLevels.length === 0" class="text-center py-8 text-white/60">
       No blind structure available
     </div>
   </div>
@@ -49,33 +50,57 @@
 import { IonIcon } from '@ionic/vue'
 import { layersOutline } from 'ionicons/icons'
 import { useTournamentStore } from '~/stores/useTournamentStore'
+import type { ComponentPublicInstance } from 'vue'
 
 const tournamentStore = useTournamentStore()
+const tournamentLevels = computed(() => tournamentStore.structure)
 
-const props = defineProps<{
-  currentLevelIndex?: number
-}>()
-
-interface BlindLevel {
-  smallBlind: number
-  bigBlind: number
-  duration: number
-  ante?: number
-}
-
-const blindLevels = computed(() => {
-  const tournament = tournamentStore.tournamentData
-  if (!tournament?.blindStructure) return []
-  
-  return tournament.blindStructure.levels.map((level: any) => ({
-    smallBlind: level.smallBlind,
-    bigBlind: level.bigBlind,
-    duration: level.duration,
-    ante: level.ante
-  }))
-})
+const scrollContainer = ref<HTMLElement>()
+const currentLevelElement = ref<HTMLElement>()
 
 const currentLevelIndex = computed(() => {
-  return props.currentLevelIndex ?? tournamentStore.liveState?.currentLevel - 1 ?? 0
+    if (tournamentStore.clock?.currentLevel) {
+        return tournamentStore.clock.currentLevel - 1
+    }
+    return 0
+})
+
+// Function to set the current level element ref
+const setCurrentLevelElement = (el: Element | ComponentPublicInstance | null, index: number) => {
+    if (el && index === currentLevelIndex.value) {
+        currentLevelElement.value = el as HTMLElement
+    }
+}
+
+// Auto-scroll to current level when it changes
+const scrollToCurrentLevel = () => {
+    if (scrollContainer.value && currentLevelElement.value) {
+        const container = scrollContainer.value
+        const element = currentLevelElement.value
+        
+        // Calculate the optimal scroll position to keep current level near the top
+        const elementTop = element.offsetTop - container.offsetTop
+        
+        // Smooth scroll to position the current level near the top with some padding
+        container.scrollTo({
+            top: Math.max(0, elementTop - 20), // 20px offset from top, never negative
+            behavior: 'smooth'
+        })
+    }
+}
+
+// Watch for changes in current level and scroll accordingly
+watch(currentLevelIndex, () => {
+    // Use nextTick to ensure DOM has updated before scrolling
+    nextTick(() => {
+        scrollToCurrentLevel()
+    })
+}, { flush: 'post' })
+
+// Also scroll on mount if there's already a current level
+onMounted(() => {
+    nextTick(() => {
+        scrollToCurrentLevel()
+    })
 })
 </script>

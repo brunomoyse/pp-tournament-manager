@@ -88,38 +88,6 @@
                     </div>
                 </ion-tab>
 
-                <ion-tab :tab="'overview'">
-                    <div class="px-8 py-6">
-                        <!-- Three Column Grid -->
-                        <div class="grid grid-cols-3 gap-8 mb-12">
-                            <TournamentStatusCard />
-
-                            <TournamentPlayersCard />
-
-                            <TournamentPrizePool />
-                        </div>
-
-                        <!-- Recent Activity -->
-                        <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-                            <h3 class="text-xl font-semibold text-pp-text-primary mb-8">Recent Activity</h3>
-                            <div class="space-y-6">
-                                <div class="text-center py-8 text-white/60">
-                                    No recent activity
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </ion-tab>
-
-                <ion-tab :tab="'clock'">
-                    <div class="px-8 py-6">
-                        <div class="grid grid-cols-2 gap-8">
-                            <TournamentClockCard />
-
-                            <TournamentStructureCard />
-                        </div>
-                    </div>
-                </ion-tab>
 
                 <ion-tab :tab="'players'">
                     <div class="px-8 py-6">
@@ -209,6 +177,9 @@ onMounted(async () => {
 
         const resStructure = await GqlGetTournamentStructure({ tournamentId: selectedTournamentId })
         tournamentStore.setSelectedTournamentStructure(resStructure.tournamentStructure)
+
+        const resClock = await GqlGetTournamentClock({ tournamentId: selectedTournamentId })
+        tournamentStore.setSelectedTournamentClock(resClock.tournamentClock)
     }
 })
 

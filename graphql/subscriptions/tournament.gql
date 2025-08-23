@@ -1,17 +1,35 @@
 subscription TournamentClockUpdates($tournamentId: ID!) {
   tournamentClockUpdates(tournamentId: $tournamentId) {
+    id
     tournamentId
     status
     currentLevel
     timeRemainingSeconds
-    smallBlind
-    bigBlind
-    ante
-    isBreak
-    nextLevelPreview {
+    levelStartedAt
+    levelEndTime
+    totalPauseDurationSeconds
+    autoAdvance
+    currentStructure {
+      id
+      tournamentId
+      levelNumber
       smallBlind
       bigBlind
       ante
+      durationMinutes
+      isBreak
+      breakDurationMinutes
+    }
+    nextStructure {
+      id
+      tournamentId
+      levelNumber
+      smallBlind
+      bigBlind
+      ante
+      durationMinutes
+      isBreak
+      breakDurationMinutes
     }
   }
 }

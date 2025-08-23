@@ -7,6 +7,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/ionic',
     '@pinia/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
     'nuxt-graphql-client'
   ],
   ssr: false,
@@ -19,7 +20,7 @@ export default defineNuxtConfig({
   'graphql-client': {
     clients: {
       default: {
-        endpoint: process.env.NUXT_GRAPHQL_ENDPOINT || 'http://localhost:8080/graphql',
+        host: process.env.NUXT_GRAPHQL_ENDPOINT || 'http://localhost:8080/graphql',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -34,7 +35,7 @@ export default defineNuxtConfig({
         }
       },
     },
-    codegen: false, // Disable for now until we set up proper types
+    codegen: true, // Disable for now until we set up proper types
   },
   runtimeConfig: {
     public: {

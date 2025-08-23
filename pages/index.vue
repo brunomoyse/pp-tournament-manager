@@ -194,12 +194,8 @@ definePageMeta({
 
 import {
   IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonButton,
-  IonButtons,
   IonIcon,
   alertController
 } from '@ionic/vue'
@@ -212,12 +208,11 @@ import {
   flashOutline,
   statsChartOutline
 } from 'ionicons/icons'
-import { useAuth } from '~/composables/useAuth'
-import { useTournamentData } from '~/composables/useTournamentData'
+import { useAuthStore } from '~/stores/useAuthStore'
 
 const router = useRouter()
-const { currentUser, logout } = useAuth()
-const { tournaments } = useTournamentData()
+const authStore = useAuthStore()
+const { currentUser, logout } = authStore
 
 // Tournament statistics
 const activeTournaments = computed(() => 
