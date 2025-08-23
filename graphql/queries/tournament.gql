@@ -101,3 +101,15 @@ query GetTournamentPlayers($tournamentId: UUID!) {
     }
   }
 }
+
+query GetTournamentPayout($tournamentId: ID!) {
+  tournamentPayout(tournamentId: $tournamentId) {
+    totalPrizePool
+    playerCount
+    positions {
+      position
+      percentage
+      amountCents
+    }
+  }
+}
