@@ -7,7 +7,7 @@ on:
 
 env:
   DOCKER_REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.actor }}/pp-mobile-app:latest
+  IMAGE_NAME: ${{ github.actor }}/pp-tournament-manager:latest
 
 jobs:
   build_and_publish:
