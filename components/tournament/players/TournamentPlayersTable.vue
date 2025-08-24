@@ -90,10 +90,15 @@
               <!-- Check In Button -->
               <button 
                 v-if="player.status === 'REGISTERED'"
-                class="px-2 py-1 border border-pp-text-primary text-pp-text-primary rounded-lg text-xs font-medium flex items-center gap-1 hover:bg-pp-text-primary hover:text-pp-bg-primary"
+                @click="checkInPlayer(player.id)"
+                :disabled="checkingIn === player.id"
+                class="px-2 py-1 border border-pp-text-primary text-pp-text-primary rounded-lg text-xs font-medium flex items-center gap-1 hover:bg-pp-text-primary hover:text-pp-bg-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <IonIcon :icon="checkmarkCircleOutline" class="w-3 h-3" />
-                Check In
+                <IonIcon 
+                  :icon="checkingIn === player.id ? refreshOutline : checkmarkCircleOutline" 
+                  :class="['w-3 h-3', checkingIn === player.id && 'animate-spin']" 
+                />
+                {{ checkingIn === player.id ? 'Checking In...' : 'Check In' }}
               </button>
               
               <!-- Undo and Seat Buttons -->
@@ -123,8 +128,12 @@
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
 import { searchOutline, personAddOutline, qrCodeOutline, checkmarkCircleOutline, refreshOutline, locationOutline, ellipsisVerticalOutline } from 'ionicons/icons'
+import { AssignmentStrategy } from '@/types/seating'
 
 const route = useRoute()
+
+// State
+const checkingIn = ref<string | null>(null)
 
 // Fetch tournament players
 const selectedTournamentId = route.params.id as string
@@ -179,6 +188,41 @@ const filteredPlayers = computed(() => {
 const getInitials = (name: string | null | undefined) => {
   if (!name) return '?'
   return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+}
+
+// Check in player function
+const checkInPlayer = async (playerId: string) => {
+  try {
+    checkingIn.value = playerId
+    
+    const result = await GqlCheckInPlayer({
+      input: {
+        tournamentId: selectedTournamentId,
+        userId: playerId,
+        autoAssign: true,
+        assignmentStrategy: AssignmentStrategy.BALANCED
+      }
+    })
+    
+    if (result?.checkInPlayer) {
+      // Immediately update the player status in the local data
+      const playerIndex = playersData.tournamentPlayers?.findIndex(tp => tp.user.id === playerId)
+      if (playerIndex !== -1 && playersData.tournamentPlayers && result.checkInPlayer.registration) {
+        playersData.tournamentPlayers[playerIndex].registration.status = result.checkInPlayer.registration.status
+      }
+      
+      // Show success message if there's a message
+      if (result.checkInPlayer.message) {
+        console.log('Check-in successful:', result.checkInPlayer.message)
+      }
+    }
+    
+  } catch (error) {
+    console.error('Failed to check in player:', error)
+    // TODO: Show error notification to user
+  } finally {
+    checkingIn.value = null
+  }
 }
 
 const getStatusBadgeClass = (status: string) => {
