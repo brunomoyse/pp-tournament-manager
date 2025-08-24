@@ -117,8 +117,8 @@ export function useNetworkStatus() {
     }
   }
   
-  onMounted(() => {
-    startNetworkListener()
+  onMounted(async () => {
+    await startNetworkListener()
   })
   
   onUnmounted(() => {

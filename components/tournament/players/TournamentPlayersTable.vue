@@ -89,7 +89,7 @@
             <div class="flex items-center gap-1">
               <!-- Check In Button -->
               <button 
-                v-if="player.status === 'registered'"
+                v-if="player.status === 'REGISTERED'"
                 class="px-2 py-1 border border-pp-text-primary text-pp-text-primary rounded-lg text-xs font-medium flex items-center gap-1 hover:bg-pp-text-primary hover:text-pp-bg-primary"
               >
                 <IonIcon :icon="checkmarkCircleOutline" class="w-3 h-3" />
@@ -97,7 +97,7 @@
               </button>
               
               <!-- Undo and Seat Buttons -->
-              <template v-else-if="player.status === 'checked-in'">
+              <template v-else-if="player.status === 'CHECKED_IN'">
                 <button class="px-2 py-1 border border-pp-text-primary text-pp-text-primary rounded-lg text-xs font-medium flex items-center gap-1 hover:bg-pp-text-primary hover:text-pp-bg-primary">
                   <IonIcon :icon="refreshOutline" class="w-3 h-3" />
                   Undo

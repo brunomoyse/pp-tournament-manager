@@ -9,8 +9,6 @@
 <script setup lang="ts">
 import {
   IonApp,
-  IonTabs,
-  IonRouterOutlet,
 } from '@ionic/vue'
 </script>
 

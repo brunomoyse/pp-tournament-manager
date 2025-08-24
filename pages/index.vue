@@ -6,8 +6,8 @@
         <div class="flex items-center gap-4">
           <img src="/assets/icon-no-bg.png" alt="Pocket Pair Logo" class="w-12 h-12" />
           <div>
-            <h1 class="text-4xl font-bold text-pp-text-primary">Pocket Pair - Tournament Manager</h1>
-            <p class="text-white/70 text-lg">Welcome back, {{ currentUser?.firstName || currentUser?.username || 'User' }}!</p>
+            <h1 class="text-4xl font-bold text-pp-text-primary">{{ t('app.title') }}</h1>
+            <p class="text-white/70 text-lg">{{ t('messages.welcomeBack', { name: currentUser?.firstName || currentUser?.username || t('common.user') }) }}</p>
           </div>
         </div>
         <IonButton @click="handleLogout" fill="clear" class="text-white hover:text-pp-accent-gold">
@@ -23,30 +23,30 @@
           <!-- Active Tournaments Card -->
           <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
             <div class="flex items-center justify-between mb-8">
-              <h3 class="text-xl font-semibold text-pp-text-primary">Active Tournaments</h3>
+              <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('headings.activeTournaments') }}</h3>
               <IonIcon :icon="trophyOutline" class="w-6 h-6 text-pp-accent-gold" />
             </div>
             <div class="space-y-6">
               <div class="text-center">
                 <div class="text-4xl font-bold text-pp-text-primary mb-2">{{ activeTournaments.length }}</div>
-                <div class="text-white/60">Currently running</div>
+                <div class="text-white/60">{{ t('status.currentlyRunning') }}</div>
               </div>
               <div v-if="activeTournaments.length > 0" class="space-y-3">
-                <div class="text-sm text-white/60">Latest:</div>
+                <div class="text-sm text-white/60">{{ t('labels.latest') }}</div>
                 <div class="bg-pp-bg-primary/50 rounded-lg p-3 border border-pp-border">
                   <div class="font-medium text-white">{{ activeTournaments?.[0]?.title }}</div>
-                  <div class="text-sm text-white/60">Buy-in: {{ formatPrice(activeTournaments[0]?.buyInCents) }}</div>
+                  <div class="text-sm text-white/60">{{ t('labels.buyIn') }}: {{ formatPrice(activeTournaments[0]?.buyInCents) }}</div>
                 </div>
                 <button 
                   @click="activeTournaments[0]?.id && goToTournament(activeTournaments[0].id)"
                   class="w-full py-3 bg-pp-accent-gold text-pp-bg-primary rounded-lg font-medium hover:bg-pp-accent-gold/90 transition-colors"
                 >
-                  View Tournament
+                  {{ t('buttons.viewTournament') }}
                 </button>
               </div>
               <div v-else class="text-center py-4">
                 <IonIcon :icon="trophyOutline" class="w-8 h-8 text-white/30 mx-auto mb-2" />
-                <div class="text-white/60 text-sm">No active tournaments</div>
+                <div class="text-white/60 text-sm">{{ t('messages.noActiveTournaments') }}</div>
               </div>
             </div>
           </div>
@@ -54,21 +54,21 @@
           <!-- Players Statistics Card -->
           <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
             <div class="flex items-center justify-between mb-8">
-              <h3 class="text-xl font-semibold text-pp-text-primary">Players</h3>
+              <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('headings.players') }}</h3>
               <IonIcon :icon="peopleOutline" class="w-6 h-6 text-pp-accent-gold" />
             </div>
             <div class="space-y-6">
               <div class="text-center">
                 <div class="text-4xl font-bold text-pp-text-primary mb-2">...</div>
-                <div class="text-white/60">Total registered</div>
+                <div class="text-white/60">{{ t('labels.totalRegistered') }}</div>
               </div>
               <div class="space-y-3">
                 <div class="flex justify-between items-center text-sm">
-                  <span class="text-white/60">Active this month</span>
+                  <span class="text-white/60">{{ t('labels.activeThisMonth') }}</span>
                   <span class="text-pp-text-primary font-medium">{{ Math.floor(tournaments.length * 8) }}</span>
                 </div>
                 <div class="flex justify-between items-center text-sm">
-                  <span class="text-white/60">New this week</span>
+                  <span class="text-white/60">{{ t('labels.newThisWeek') }}</span>
                   <span class="text-pp-text-primary font-medium">{{ Math.floor(tournaments.length * 2) }}</span>
                 </div>
               </div>
@@ -84,7 +84,7 @@
           <!-- Quick Actions Card -->
           <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
             <div class="flex items-center justify-between mb-8">
-              <h3 class="text-xl font-semibold text-pp-text-primary">Quick Actions</h3>
+              <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('headings.quickActions') }}</h3>
               <IonIcon :icon="flashOutline" class="w-6 h-6 text-pp-accent-gold" />
             </div>
             <div class="space-y-4">
@@ -93,21 +93,21 @@
                 class="w-full py-4 bg-pp-accent-gold text-pp-bg-primary rounded-lg font-medium hover:bg-pp-accent-gold/90 transition-colors flex items-center justify-center gap-2"
               >
                 <IonIcon :icon="addOutline" class="w-5 h-5" />
-                Create Tournament
+                {{ t('buttons.createTournament') }}
               </button>
               <button 
                 @click="managePlayers"
                 class="w-full py-3 border border-pp-border text-white rounded-lg font-medium hover:bg-pp-border/20 transition-colors flex items-center justify-center gap-2"
               >
                 <IonIcon :icon="peopleOutline" class="w-5 h-5" />
-                Manage Players
+                {{ t('buttons.managePlayers') }}
               </button>
               <button 
                 @click="viewReports"
                 class="w-full py-3 border border-pp-border text-white rounded-lg font-medium hover:bg-pp-border/20 transition-colors flex items-center justify-center gap-2"
               >
                 <IonIcon :icon="statsChartOutline" class="w-5 h-5" />
-                View Reports
+                {{ t('buttons.viewReports') }}
               </button>
             </div>
           </div>
@@ -116,14 +116,14 @@
         <!-- Recent Tournaments Section -->
         <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
           <div class="flex items-center justify-between mb-8">
-            <h3 class="text-xl font-semibold text-pp-text-primary">Recent Tournaments</h3>
+            <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('headings.recentTournaments') }}</h3>
             <div class="flex items-center gap-3">
-              <span class="px-3 py-1 bg-pp-border/50 text-white rounded-full text-sm font-medium">{{ recentTournaments.length }} tournaments</span>
+              <span class="px-3 py-1 bg-pp-border/50 text-white rounded-full text-sm font-medium">{{ recentTournaments.length }} {{ t('labels.tournaments') }}</span>
               <button 
                 @click="viewAllTournaments"
                 class="px-4 py-2 border border-pp-border text-white rounded-lg font-medium hover:bg-pp-border/20 transition-colors text-sm"
               >
-                View All
+                {{ t('buttons.viewAll') }}
               </button>
             </div>
           </div>
@@ -168,14 +168,14 @@
             <div class="w-20 h-20 bg-pp-bg-primary rounded-2xl flex items-center justify-center mx-auto mb-6 border border-pp-border">
               <IonIcon :icon="trophyOutline" class="w-10 h-10 text-white/30" />
             </div>
-            <h4 class="text-lg font-medium text-white mb-2">No tournaments yet</h4>
-            <p class="text-white/60 mb-6">Create your first tournament to get started</p>
+            <h4 class="text-lg font-medium text-white mb-2">{{ t('messages.noTournamentsYet') }}</h4>
+            <p class="text-white/60 mb-6">{{ t('messages.createFirstTournament') }}</p>
             <button 
               @click="createTournament"
               class="px-6 py-3 bg-pp-accent-gold text-pp-bg-primary rounded-xl font-medium hover:bg-pp-accent-gold/90 transition-colors flex items-center gap-2 mx-auto"
             >
               <IonIcon :icon="addOutline" class="w-5 h-5" />
-              Create Tournament
+              {{ t('buttons.createTournament') }}
             </button>
           </div>
         </div>
@@ -210,10 +210,12 @@ import {
 } from 'ionicons/icons'
 import { useAuthStore } from '~/stores/useAuthStore'
 import {formatPrice} from "~/utils";
+import { useI18n } from '~/composables/useI18n';
 
 const router = useRouter()
 const authStore = useAuthStore()
 const clubStore = useClubStore()
+const { t } = useI18n()
 
 const { currentUser } = authStore
 const { club } = clubStore
@@ -238,36 +240,36 @@ const goToTournament = (id: string) => {
 
 const createTournament = async () => {
   const alert = await alertController.create({
-    header: 'Create Tournament',
-    message: 'Tournament creation feature coming soon!',
-    buttons: ['OK']
+    header: t('alerts.createTournament.header'),
+    message: t('alerts.createTournament.message'),
+    buttons: [t('common.ok')]
   })
   await alert.present()
 }
 
 const managePlayers = async () => {
   const alert = await alertController.create({
-    header: 'Player Management',
-    message: 'Player management feature coming soon!',
-    buttons: ['OK']
+    header: t('alerts.playerManagement.header'),
+    message: t('alerts.playerManagement.message'),
+    buttons: [t('common.ok')]
   })
   await alert.present()
 }
 
 const viewReports = async () => {
   const alert = await alertController.create({
-    header: 'Reports',
-    message: 'Tournament reports feature coming soon!',
-    buttons: ['OK']
+    header: t('alerts.reports.header'),
+    message: t('alerts.reports.message'),
+    buttons: [t('common.ok')]
   })
   await alert.present()
 }
 
 const viewAllTournaments = async () => {
   const alert = await alertController.create({
-    header: 'All Tournaments',
-    message: 'Tournament archive feature coming soon!',
-    buttons: ['OK']
+    header: t('alerts.allTournaments.header'),
+    message: t('alerts.allTournaments.message'),
+    buttons: [t('common.ok')]
   })
   await alert.present()
 }
@@ -279,9 +281,9 @@ const handleLogout = async () => {
 onMounted(async () => {
     if (!club) {
         const alert = await alertController.create({
-            header: 'No Club Found',
-            message: 'Please create or join a club to manage tournaments.',
-            buttons: ['OK']
+            header: t('alerts.noClub.header'),
+            message: t('alerts.noClub.message'),
+            buttons: [t('common.ok')]
         })
         await alert.present()
         return

@@ -9,7 +9,7 @@
                         <h1 class="text-4xl font-bold text-pp-text-primary">Pocket Pair - Tournament Manager</h1>
                     </div>
                     <div class="flex items-center gap-4">
-                        <span class="text-lg text-white">{{ tournament?.club?.name || 'Loading...' }}</span>
+                        <span class="text-lg text-white">{{ club?.name || t('status.loading') }}</span>
                         <div class="flex items-center gap-2">
                             <div :class="[
                                 'w-2 h-2 rounded-full',
@@ -21,17 +21,17 @@
                                 connectionStatus === 'connected' ? 'text-green-500' :
                                 connectionStatus === 'reconnecting' ? 'text-orange-500' : 'text-red-500'
                             ]">{{
-                                    connectionStatus === 'connected' ? 'Connected' :
-                                        connectionStatus === 'reconnecting' ? 'Reconnecting' : 'Offline'
+                                    connectionStatus === 'connected' ? t('status.connected') :
+                                        connectionStatus === 'reconnecting' ? t('status.reconnecting') : t('status.offline')
                                 }}</span>
                         </div>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <span class="text-sm text-white">Last update: {{ new Date(lastUpdate).toLocaleTimeString() }}</span>
+                    <span class="text-sm text-white">{{ t('labels.lastUpdate') }}: {{ new Date(lastUpdate).toLocaleTimeString() }}</span>
                     <div class="flex items-center gap-2">
                         <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span class="text-lg font-semibold text-white">{{ tournament?.title || 'Loading Tournament...' }}</span>
+                        <span class="text-lg font-semibold text-white">{{ tournament?.title || t('status.loadingTournament') }}</span>
                     </div>
                 </div>
             </div>
@@ -106,9 +106,9 @@
                         <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
                             <div class="flex items-center gap-3 mb-6">
                                 <ion-icon :icon="settingsOutline" class="w-6 h-6 text-pp-text-primary"></ion-icon>
-                                <h3 class="text-xl font-semibold text-pp-text-primary">Tournament Settings</h3>
+                                <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('headings.tournamentSettings') }}</h3>
                             </div>
-                            <p class="text-white">Tournament configuration and advanced settings will be available here.</p>
+                            <p class="text-white">{{ t('messages.tournamentConfigurationComingSoon') }}</p>
                         </div>
                     </div>
                 </ion-tab>
@@ -118,7 +118,7 @@
 </template>
 
 <script setup lang="ts">
-import type {Tournament} from "~/types/tournament";
+import { useI18n } from '~/composables/useI18n';
 
 definePageMeta({
     middleware: 'auth'
@@ -137,18 +137,21 @@ const { connectionStatus } = useNetworkStatus()
 const lastUpdate = ref(Date.now())
 const route = useRoute()
 const tournamentStore = useTournamentStore()
+const clubStore = useClubStore()
+const { t } = useI18n()
 
 // Use store getters for reactive data
 const tournament = computed(() => tournamentStore.tournament)
 const clock = computed(() => tournamentStore.clock)
+const club = computed(() => clubStore.club)
 
-const tabs = [
-    { label: 'Overview', value: 'overview' },
-    { label: 'Clock', value: 'clock' },
-    { label: 'Players', value: 'players' },
-    { label: 'Seating', value: 'seating' },
-    { label: 'Settings', value: 'settings' }
-]
+const tabs = computed(() => [
+    { label: t('tabs.overview'), value: 'overview' },
+    { label: t('tabs.clock'), value: 'clock' },
+    { label: t('tabs.players'), value: 'players' },
+    { label: t('tabs.seating'), value: 'seating' },
+    { label: t('tabs.settings'), value: 'settings' }
+])
 
 // Update last update timestamp when connection status changes
 watch(connectionStatus, () => {

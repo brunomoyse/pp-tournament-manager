@@ -13,5 +13,6 @@ query GetClubTables ($clubId: UUID!) {
     tableNumber
     maxSeats
     isActive
+    isAssigned
   }
 }
