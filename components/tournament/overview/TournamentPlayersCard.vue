@@ -51,6 +51,6 @@ import { useTournamentStore } from '~/stores/useTournamentStore'
 const tournamentStore = useTournamentStore()
 
 // Store data
-const totalRegistered = computed(() => tournamentStore.totalRegistered)
-const remainingPlayers = computed(() => tournamentStore.liveState?.playersRemaining || 0)
+const totalRegistered = computed(() => tournamentStore.registrations?.filter(r => r.status !== 'PENDING').length || 0)
+const remainingPlayers = computed(() => tournamentStore.registrations?.filter(r => r.status !== 'PENDING').length || 0)
 </script>

@@ -34,11 +34,11 @@
               <div v-if="activeTournaments.length > 0" class="space-y-3">
                 <div class="text-sm text-white/60">Latest:</div>
                 <div class="bg-pp-bg-primary/50 rounded-lg p-3 border border-pp-border">
-                  <div class="font-medium text-white">{{ activeTournaments[0].name }}</div>
-                  <div class="text-sm text-white/60">{{ activeTournaments[0].registrations }} players</div>
+                  <div class="font-medium text-white">{{ activeTournaments?.[0]?.title }}</div>
+                  <div class="text-sm text-white/60">Buy-in: {{ formatPrice(activeTournaments[0]?.buyInCents) }}</div>
                 </div>
                 <button 
-                  @click="goToTournament(activeTournaments[0].id)"
+                  @click="activeTournaments[0]?.id && goToTournament(activeTournaments[0].id)"
                   class="w-full py-3 bg-pp-accent-gold text-pp-bg-primary rounded-lg font-medium hover:bg-pp-accent-gold/90 transition-colors"
                 >
                   View Tournament
@@ -59,17 +59,17 @@
             </div>
             <div class="space-y-6">
               <div class="text-center">
-                <div class="text-4xl font-bold text-pp-text-primary mb-2">{{ totalPlayers }}</div>
+                <div class="text-4xl font-bold text-pp-text-primary mb-2">...</div>
                 <div class="text-white/60">Total registered</div>
               </div>
               <div class="space-y-3">
                 <div class="flex justify-between items-center text-sm">
                   <span class="text-white/60">Active this month</span>
-                  <span class="text-pp-text-primary font-medium">{{ Math.floor(totalPlayers * 0.8) }}</span>
+                  <span class="text-pp-text-primary font-medium">{{ Math.floor(tournaments.length * 8) }}</span>
                 </div>
                 <div class="flex justify-between items-center text-sm">
                   <span class="text-white/60">New this week</span>
-                  <span class="text-pp-text-primary font-medium">{{ Math.floor(totalPlayers * 0.1) }}</span>
+                  <span class="text-pp-text-primary font-medium">{{ Math.floor(tournaments.length * 2) }}</span>
                 </div>
               </div>
               <button 
@@ -128,40 +128,38 @@
             </div>
           </div>
           
-          <div v-if="recentTournaments.length > 0" class="space-y-4">
+          <div v-if="recentTournaments.length > 0" class="space-y-2">
             <div 
               v-for="tournament in recentTournaments" 
               :key="tournament.id"
-              class="flex items-center justify-between p-6 bg-pp-bg-primary/50 rounded-xl border border-pp-border hover:bg-pp-bg-primary/70 cursor-pointer transition-all group"
+              class="flex items-center justify-between p-4 bg-pp-bg-primary/50 rounded-lg border border-pp-border hover:bg-pp-bg-primary/70 cursor-pointer transition-all group"
               @click="goToTournament(tournament.id)"
             >
-              <div class="flex items-center gap-6">
-                <div class="w-16 h-16 bg-pp-bg-secondary rounded-xl flex items-center justify-center border border-pp-border group-hover:border-pp-accent-gold/30 transition-colors">
-                  <IonIcon :icon="trophyOutline" class="w-8 h-8 text-pp-accent-gold" />
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-pp-bg-secondary rounded-lg flex items-center justify-center border border-pp-border group-hover:border-pp-accent-gold/30 transition-colors">
+                  <IonIcon :icon="trophyOutline" class="w-6 h-6 text-pp-accent-gold" />
                 </div>
                 <div>
-                  <h4 class="text-lg font-semibold text-pp-text-primary mb-1">{{ tournament.name }}</h4>
-                  <div class="flex items-center gap-4 text-white/60 text-sm">
-                    <span>{{ tournament.registrations }} players</span>
+                  <h4 class="text-base font-semibold text-pp-text-primary mb-1">{{ tournament.title }}</h4>
+                  <div class="flex items-center gap-3 text-white/60 text-sm">
+                    <span>{{ (tournament.buyInCents / 100).toLocaleString('fr-BE', { style: 'currency', currency: 'EUR' }) }}</span>
                     <span>•</span>
-                    <span>{{ tournament.date }}</span>
-                    <span v-if="tournament.prizePool">•</span>
-                    <span v-if="tournament.prizePool" class="text-pp-accent-gold font-medium">{{ tournament.prizePool }}</span>
+                    <span>{{ new Date(tournament.startTime).toLocaleDateString('fr-BE') }}</span>
                   </div>
                 </div>
               </div>
-              <div class="flex items-center gap-4">
+              <div class="flex items-center gap-3">
                 <span :class="[
-                  'px-4 py-2 rounded-xl text-sm font-medium border',
-                  tournament.status === 'completed' 
+                  'px-3 py-1 rounded-lg text-xs font-medium border',
+                  tournament.status === 'COMPLETED'
                     ? 'bg-green-500/20 text-green-400 border-green-500/30'
-                    : tournament.status === 'running'
+                    : tournament.status === 'IN_PROGRESS'
                     ? 'bg-pp-accent-gold/20 text-pp-accent-gold border-pp-accent-gold/30'
                     : 'bg-blue-500/20 text-blue-400 border-blue-500/30'
                 ]">
                   {{ tournament.status }}
                 </span>
-                <IonIcon :icon="chevronForwardOutline" class="w-6 h-6 text-white/40 group-hover:text-pp-accent-gold transition-colors" />
+                <IonIcon :icon="chevronForwardOutline" class="w-5 h-5 text-white/40 group-hover:text-pp-accent-gold transition-colors" />
               </div>
             </div>
           </div>
@@ -188,6 +186,8 @@
 
 <script setup lang="ts">
 // Protect this page with authentication
+import type {GetTournamentsQuery} from "#gql";
+
 definePageMeta({
   middleware: 'auth'
 })
@@ -209,24 +209,26 @@ import {
   statsChartOutline
 } from 'ionicons/icons'
 import { useAuthStore } from '~/stores/useAuthStore'
+import {formatPrice} from "~/utils";
 
 const router = useRouter()
 const authStore = useAuthStore()
-const { currentUser, logout } = authStore
+const clubStore = useClubStore()
+
+const { currentUser } = authStore
+const { club } = clubStore
+
+const tournaments = ref<GetTournamentsQuery['tournaments']>([])
 
 // Tournament statistics
 const activeTournaments = computed(() => 
-  tournaments.value.filter(t => t.status === 'running' || t.status === 'registration')
+  tournaments.value.filter(t => t.status === 'IN_PROGRESS')
 )
 
 const recentTournaments = computed(() => 
   [...tournaments.value]
-    .sort((a, b) => new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime())
+    .sort((a, b) => new Date(b.startTime || '').getTime() - new Date(a.startTime || '').getTime())
     .slice(0, 5)
-)
-
-const totalPlayers = computed(() => 
-  tournaments.value.reduce((total, tournament) => total + tournament.registrations, 0)
 )
 
 // Actions
@@ -271,27 +273,25 @@ const viewAllTournaments = async () => {
 }
 
 const handleLogout = async () => {
-  const alert = await alertController.create({
-    header: 'Logout',
-    message: 'Are you sure you want to logout?',
-    buttons: [
-      {
-        text: 'Cancel',
-        role: 'cancel'
-      },
-      {
-        text: 'Logout',
-        role: 'confirm',
-        handler: async () => {
-          await logout()
-          router.replace('/login')
-        }
-      }
-    ]
-  })
-  
-  await alert.present()
+    //
 }
+
+onMounted(async () => {
+    if (!club) {
+        const alert = await alertController.create({
+            header: 'No Club Found',
+            message: 'Please create or join a club to manage tournaments.',
+            buttons: ['OK']
+        })
+        await alert.present()
+        return
+    }
+
+    const res = await GqlGetTournaments({ clubId: club.id})
+    tournaments.value = res.tournaments || []
+
+})
+
 </script>
 
 <style scoped>

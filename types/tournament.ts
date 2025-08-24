@@ -1,69 +1,58 @@
 import type { Club } from './user'
-
-export interface TournamentComplete {
-    tournament: Tournament
-    liveState?: TournamentLiveState
-    totalRegistered: number
-}
+import type {TournamentClock} from "~/types/clock";
 
 export interface Tournament {
-    id: string
-    title: string
-    description: string
-    startTime: string
-    endTime: string
-    buyInCents: number
-    status: TournamentStatus
-    liveStatus: TournamentLiveStatus
+    id: string;
+    buyInCents: number;
+    clubId?: string;
+    createdAt?: any;
+    description?: string | null;
+    endTime?: any | null;
+    liveStatus: TournamentLiveStatus;
+    seatCap?: number | null;
+    startTime: any;
+    status: TournamentStatus;
+    title: string;
+    updatedAt?: any;
 
-    club: Club
+    clock?: TournamentClock | null;
+    club?: Club;
+    registrations: TournamentRegistration[];
+    structure: TournamentStructure[];
 }
 
 export type TournamentStatus = 'UPCOMING' | 'IN_PROGRESS' | 'COMPLETED'
 export type TournamentLiveStatus = 'NOT_STARTED' | 'REGISTRATION_OPEN' | 'LATE_REGISTRATION' | 'IN_PROGRESS' | 'BREAK' | 'FINAL_TABLE' | 'FINISHED'
 
-export interface TournamentLiveState {
-    id: string
-    currentLevel: number
-    playersRemaining: number
-    breakUntil?: string
-    currentSmallBlind: number
-    currentBigBlind: number
-    currentAnte?: number
-    levelStartedAt: string
-    levelDurationMinutes: number
-    createdAt: string
-    updatedAt: string
+export interface TournamentRegistration {
+    id: string;
+    notes?: string | null;
+    registrationTime: any;
+    status: RegistrationStatus,
+    userId: string;
 }
 
-export interface TournamentRegistration {
-    id: string
-    tournament_id: string
-    user_id: string
-    registration_time: string,
-    status: string,
-    notes?: string
-}
+export type RegistrationStatus = 'REGISTERED' | 'CHECKED_IN' | 'SEATED' | 'BUSTED' | 'WAITLISTED' | 'CANCELLED' | 'NO_SHOW'
 
 export interface TournamentResult {
     id: string,
+    createdAt: string,
+    finalPosition: number,
+    notes?: string,
+    points: number,
+    prizeCents: number,
     tournamentId: string,
     userId: string,
-    finalPosition: number,
-    prizeCents: number,
-    points: number,
-    notes?: string,
-    createdAt: string,
 }
 
 export interface TournamentStructure {
-    id: string
-    tournamentId: string
-    levelNumber: number
-    smallBlind: number
-    bigBlind: number
-    ante: number
-    durationMinutes: number
-    isBreak: boolean
-    breakDurationMinutes?: number
+    id: string;
+    ante: number;
+    bigBlind: number;
+    breakDurationMinutes?: number | null;
+    durationMinutes: number;
+    isBreak: boolean;
+    levelNumber: number;
+    smallBlind: number;
+    tournamentId: string;
 }

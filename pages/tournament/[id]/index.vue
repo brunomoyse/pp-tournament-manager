@@ -82,7 +82,7 @@
                             <TournamentClockCard />
 
                             <TournamentStructureCard
-                                :current-level-index="(liveState?.currentLevel || 1) - 1"
+                                :current-level-index="(clock?.currentLevel || 1) - 1"
                             />
                         </div>
                     </div>
@@ -118,6 +118,8 @@
 </template>
 
 <script setup lang="ts">
+import type {Tournament} from "~/types/tournament";
+
 definePageMeta({
     middleware: 'auth'
 })
@@ -138,7 +140,7 @@ const tournamentStore = useTournamentStore()
 
 // Use store getters for reactive data
 const tournament = computed(() => tournamentStore.tournament)
-const liveState = computed(() => tournamentStore.liveState)
+const clock = computed(() => tournamentStore.clock)
 
 const tabs = [
     { label: 'Overview', value: 'overview' },
@@ -167,14 +169,8 @@ onBeforeUnmount(() => clearInterval(updateTimer))
 onMounted(async () => {
     const selectedTournamentId = route.params.id as string
     if (selectedTournamentId) {
-        const resTournament = await GqlGetTournamentComplete({ tournamentId: selectedTournamentId })
-        tournamentStore.setSelectedTournament(resTournament.tournamentComplete)
-
-        const resStructure = await GqlGetTournamentStructure({ tournamentId: selectedTournamentId })
-        tournamentStore.setSelectedTournamentStructure(resStructure.tournamentStructure)
-
-        const resClock = await GqlGetTournamentClock({ tournamentId: selectedTournamentId })
-        tournamentStore.setSelectedTournamentClock(resClock.tournamentClock)
+        const response = await GqlGetTournament({ id: selectedTournamentId })
+        if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
     }
 })
 

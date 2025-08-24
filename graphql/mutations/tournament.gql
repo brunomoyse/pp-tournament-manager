@@ -4,6 +4,5 @@ mutation AssignTableToTournament ($input: AssignTableToTournamentInput!) {
     tournamentId
     tableNumber
     maxSeats
-    tableName
   }
 }
