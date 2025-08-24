@@ -77,7 +77,7 @@ export const useAuthStore = defineStore('auth', () => {
           clubStore.setSelectedClub({
             id: user.managedClub.id,
             name: user.managedClub.name,
-            city: '' // managedClub doesn't include city, so default to empty string
+            city: ''
           })
         }
         

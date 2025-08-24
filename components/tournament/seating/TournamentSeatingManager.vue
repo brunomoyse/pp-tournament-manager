@@ -2,7 +2,7 @@
   <div class="space-y-6 pb-8">
     <!-- Table Management Header -->
     <div class="flex items-center justify-between">
-      <div class="flex items-center gap-4">
+      <div class="flex items-baseline gap-4">
         <h2 class="text-xl font-bold text-pp-text-primary">Table Management</h2>
         <span class="px-3 py-1 bg-pp-accent-gold/20 text-pp-accent-gold rounded-full text-sm font-medium">
           {{ activeTables }} Active Tables
@@ -74,7 +74,7 @@
     <!-- Assign Table Modal -->
     <AssignTableModal 
       :is-open="showAssignTableModal"
-      :club-id="tournament?.club?.id || ''"
+      :club-id="club?.id || ''"
       :club-name="tournament?.club?.name || ''"
       :tournament-id="selectedTournamentId"
       @close="showAssignTableModal = false"
@@ -92,6 +92,7 @@ import { useTournamentStore } from '~/stores/useTournamentStore'
 
 const route = useRoute()
 const tournamentStore = useTournamentStore()
+const clubStore = useClubStore()
 
 // State
 const showAssignTableModal = ref(false)
@@ -105,6 +106,7 @@ const { data: seatingData, refresh: refreshSeatingData } = await useLazyAsyncDat
 
 // Get tournament info for club details
 const tournament = computed(() => tournamentStore.tournament)
+const club = computed(() => clubStore.club)
 
 // Computed properties
 const activeTables = computed(() => {

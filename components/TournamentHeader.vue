@@ -23,7 +23,7 @@
                     class="min-w-[200px]"
                 >
                     <ion-select-option v-for="t in tournaments" :key="t.id" :value="t.id">
-                        {{ t.name }}
+                        {{ t.title }}
                     </ion-select-option>
                 </ion-select>
             </ion-buttons>
@@ -53,13 +53,4 @@ const statusDot = computed(() => {
     }
 })
 
-function statusColor(status: Tournament['status']) {
-    return status === 'running'
-        ? 'bg-pp-accent-gold'
-        : status === 'paused'
-            ? 'bg-pp-text-secondary'
-            : status === 'upcoming'
-                ? 'bg-blue-500'
-                : 'bg-pp-border'
-}
 </script>

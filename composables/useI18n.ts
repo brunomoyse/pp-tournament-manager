@@ -5,13 +5,13 @@ export const useI18n = () => {
   
   const switchLanguage = (lang: string) => {
     locale.value = lang
-    if (process.client) {
+    if (import.meta.client) {
       localStorage.setItem('locale', lang)
     }
   }
 
   // Load saved locale on mount
-  if (process.client) {
+  if (import.meta.client) {
     const savedLocale = localStorage.getItem('locale')
     if (savedLocale && availableLocales.includes(savedLocale)) {
       locale.value = savedLocale

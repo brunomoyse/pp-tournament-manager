@@ -110,16 +110,12 @@ import {
   IonInput,
   IonToggle,
   IonLabel,
-  IonSpinner,
-  alertController,
 } from '@ionic/vue'
 import {
   mailOutline,
   lockClosedOutline,
   eyeOutline,
   eyeOffOutline,
-  alertCircleOutline,
-  logoGoogle,
 } from 'ionicons/icons'
 import { ref, computed } from 'vue'
 import { useAuthStore, type LoginCredentials } from '~/stores/useAuthStore'

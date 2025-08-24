@@ -34,30 +34,56 @@
           <div 
             v-for="table in clubTables" 
             :key="table.id"
-            class="flex items-center justify-between p-3 bg-pp-bg-primary/30 rounded-xl border border-pp-border/50 hover:border-pp-accent-gold/50 transition-all"
+            :class="[
+              'flex items-center justify-between p-3 rounded-xl border transition-all',
+              table.isAssigned 
+                ? 'bg-pp-bg-primary/10 border-pp-border/30 opacity-50 cursor-not-allowed'
+                : 'bg-pp-bg-primary/30 border-pp-border/50 hover:border-pp-accent-gold/50'
+            ]"
           >
             <div class="flex items-center gap-3">
               <input 
                 :id="`table-${table.id}`"
                 v-model="selectedTableIds"
                 :value="table.id"
+                :disabled="table.isAssigned"
                 type="checkbox"
-                class="w-4 h-4 text-pp-accent-gold bg-pp-bg-primary border-pp-border rounded focus:ring-pp-accent-gold focus:ring-2"
+                :class="[
+                  'w-4 h-4 text-pp-accent-gold bg-pp-bg-primary border-pp-border rounded focus:ring-pp-accent-gold focus:ring-2',
+                  table.isAssigned && 'cursor-not-allowed opacity-50'
+                ]"
               />
-              <label :for="`table-${table.id}`" class="flex-1 cursor-pointer">
-                <div class="font-semibold text-white">
-                  {{ table.tableName || `Table ${table.tableNumber}` }}
+              <label 
+                :for="`table-${table.id}`" 
+                :class="[
+                  'flex-1',
+                  table.isAssigned ? 'cursor-not-allowed' : 'cursor-pointer'
+                ]"
+              >
+                <div :class="[
+                  'font-semibold',
+                  table.isAssigned ? 'text-white/40' : 'text-white'
+                ]">
+                  {{ `Table ${table.tableNumber}` }}
+                  {{ table.isAssigned ? ' (Already assigned)' : '' }}
                 </div>
-                <div class="text-xs text-white/60">
+                <div :class="[
+                  'text-xs',
+                  table.isAssigned ? 'text-white/30' : 'text-white/60'
+                ]">
                   {{ table.maxSeats }} seats • {{ table.location || 'No location' }}
                 </div>
               </label>
             </div>
             <div :class="[
               'px-2 py-1 rounded-full text-xs font-medium',
-              table.isActive ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+              table.isAssigned 
+                ? 'bg-gray-500/20 text-gray-400'
+                : table.isActive 
+                  ? 'bg-green-500/20 text-green-400' 
+                  : 'bg-red-500/20 text-red-400'
             ]">
-              {{ table.isActive ? 'Active' : 'Inactive' }}
+              {{ table.isAssigned ? 'Assigned' : table.isActive ? 'Active' : 'Inactive' }}
             </div>
           </div>
         </div>
@@ -99,9 +125,8 @@ interface ClubTable {
   clubId: string
   tableNumber: number
   maxSeats: number
-  tableName?: string | null
-  location?: string | null
   isActive: boolean
+  isAssigned?: boolean
 }
 
 interface Props {

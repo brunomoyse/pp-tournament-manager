@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "PocketPair"
+    "title": "Pocket Pair - Tournament Manager"
   },
   "auth": {
     "login": "Login",
@@ -44,7 +44,9 @@
     "googleAuth": "Google Authentication",
     "googleAuthInfo": "This will redirect you to Google to sign in. Continue?",
     "forgotPasswordInfo": "Enter your email address and we'll send you a link to reset your password.",
-    "sendResetLink": "Send Reset Link"
+    "sendResetLink": "Send Reset Link",
+    "invalidCredentials": "Invalid email or password",
+    "loginFailedGeneric": "Login failed. Please check your credentials and try again."
   },
   "common": {
     "ok": "OK",
@@ -52,6 +54,158 @@
     "close": "Close",
     "continue": "Continue",
     "pullToRefresh": "Pull to refresh",
-    "note": "Note"
+    "note": "Note",
+    "user": "User"
+  },
+  "headings": {
+    "activeTournaments": "Active Tournaments",
+    "players": "Players",
+    "quickActions": "Quick Actions",
+    "recentTournaments": "Recent Tournaments",
+    "tournamentSettings": "Tournament Settings",
+    "tournamentStatus": "Tournament Status",
+    "prizePool": "Prize Pool",
+    "blindStructure": "Blind Structure",
+    "tableManagement": "Table Management",
+    "tournamentClock": "Tournament Clock"
+  },
+  "labels": {
+    "latest": "Latest:",
+    "buyIn": "Buy-in",
+    "tournaments": "tournaments",
+    "totalRegistered": "Total registered",
+    "activeThisMonth": "Active this month",
+    "newThisWeek": "New this week",
+    "lastUpdate": "Last update",
+    "registered": "Registered",
+    "remaining": "Remaining",
+    "active": "Active",
+    "eliminated": "Eliminated",
+    "progress": "Progress",
+    "level": "Level",
+    "current": "Current",
+    "next": "Next",
+    "ante": "Ante",
+    "breakTime": "Break Time",
+    "break": "BREAK",
+    "status": "Status",
+    "currentLevel": "Current Level",
+    "levelDuration": "Level duration",
+    "blinds": "Blinds",
+    "place": "Place",
+    "table": "Table",
+    "tables": "Tables",
+    "seats": "seats",
+    "seatsOccupied": "seats occupied",
+    "seatedPlayers": "Seated Players:",
+    "seat": "Seat",
+    "activeTables": "Active Tables",
+    "minutes": "minutes",
+    "noLocation": "No location"
+  },
+  "buttons": {
+    "viewTournament": "View Tournament",
+    "createTournament": "Create Tournament",
+    "managePlayers": "Manage Players",
+    "viewReports": "View Reports",
+    "viewAll": "View All",
+    "registerPlayer": "Register Player",
+    "walkIn": "Walk-in",
+    "qrCheckIn": "QR Check-in",
+    "checkIn": "Check In",
+    "undo": "Undo",
+    "seat": "Seat",
+    "linkTables": "Link Table(s)",
+    "autoSeatNext": "Auto Seat Next",
+    "balanceTables": "Balance Tables",
+    "breakTable": "Break Table",
+    "start": "Start",
+    "pause": "Pause",
+    "resume": "Resume",
+    "previous": "Previous",
+    "reset": "Reset",
+    "next": "Next",
+    "cancel": "Cancel",
+    "link": "Link"
+  },
+  "status": {
+    "currentlyRunning": "Currently running",
+    "loading": "Loading...",
+    "loadingTournament": "Loading Tournament...",
+    "connected": "Connected",
+    "reconnecting": "Reconnecting",
+    "offline": "Offline",
+    "live": "LIVE",
+    "running": "Running",
+    "paused": "Paused",
+    "stopped": "Stopped",
+    "disconnected": "Disconnected",
+    "unknown": "Unknown",
+    "active": "Active",
+    "inactive": "Inactive",
+    "linking": "Linking..."
+  },
+  "messages": {
+    "welcomeBack": "Welcome back, {name}!",
+    "noActiveTournaments": "No active tournaments",
+    "noTournamentsYet": "No tournaments yet",
+    "createFirstTournament": "Create your first tournament to get started",
+    "tournamentConfigurationComingSoon": "Tournament configuration and advanced settings will be available here.",
+    "noRecentActivity": "No recent activity",
+    "clockDisconnected": "Clock Disconnected",
+    "noPayoutStructure": "No payout structure defined",
+    "noPlayersSeated": "No players seated",
+    "loadingSeatingChart": "Loading seating chart...",
+    "noTablesLinked": "No tables linked to this tournament",
+    "noBlindStructure": "No blind structure available",
+    "loadingClubTables": "Loading club tables...",
+    "selectTablesToAssign": "Select tables from {clubName} to assign to this tournament:",
+    "noTablesFound": "No tables found for this club",
+    "contactClubAdmin": "Contact your club administrator to add tables"
+  },
+  "alerts": {
+    "createTournament": {
+      "header": "Create Tournament",
+      "message": "Tournament creation feature coming soon!"
+    },
+    "playerManagement": {
+      "header": "Player Management",
+      "message": "Player management feature coming soon!"
+    },
+    "reports": {
+      "header": "Reports",
+      "message": "Tournament reports feature coming soon!"
+    },
+    "allTournaments": {
+      "header": "All Tournaments",
+      "message": "Tournament archive feature coming soon!"
+    },
+    "noClub": {
+      "header": "No Club Found",
+      "message": "Please create or join a club to manage tournaments."
+    }
+  },
+  "tabs": {
+    "overview": "Overview",
+    "clock": "Clock",
+    "players": "Players",
+    "seating": "Seating",
+    "settings": "Settings"
+  },
+  "filters": {
+    "allPlayers": "All Players",
+    "registered": "Registered",
+    "checkedIn": "Checked In",
+    "seated": "Seated",
+    "eliminated": "Eliminated"
+  },
+  "placeholders": {
+    "searchPlayers": "Search players...",
+    "selectTournament": "Select Tournament"
+  },
+  "modals": {
+    "linkClubTables": {
+      "title": "Link Club Tables"
+    }
   }
 }

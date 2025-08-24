@@ -1,0 +1,26 @@
+mutation CheckInPlayer($input: CheckInPlayerInput!) {
+  checkInPlayer(input: $input) {
+    registration {
+      status
+    }
+    seatAssignment {
+      clubTableId
+      seatNumber
+    }
+    message
+  }
+}
+
+input CheckInPlayerInput {
+  tournament_id: ID!
+  user_id: ID!
+  assignment_strategy: AssignmentStrategy
+  auto_assign: Boolean
+}
+
+enum AssignmentStrategy {
+  BALANCED
+  RANDOM
+  SEQUENTIAL
+  MANUAL
+}

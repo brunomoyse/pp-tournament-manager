@@ -21,7 +21,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
         return // Allow access
       }
     } catch (e) {
-      // Silently continue to backup check
+      // Silently continue to back up check
     }
   }
   
