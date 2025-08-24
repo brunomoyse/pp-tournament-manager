@@ -12,8 +12,6 @@ query GetClubTables ($clubId: UUID!) {
     clubId
     tableNumber
     maxSeats
-    tableName
-    location
     isActive
   }
 }

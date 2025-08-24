@@ -4,39 +4,45 @@ A professional poker tournament management application built with Nuxt 4, Ionic 
 
 ## Features
 
+### **Dashboard & Home**
+- **Tournament overview** with active tournaments display
+- **Recent tournaments list** with compact, sorted view (by start time)
+- **Statistics dashboard** with player and tournament metrics
+- **Quick actions** for creating tournaments and managing players
+
 ### **Tournament Management**
-- **Live Tournament Clock** with customizable blind structures
-- **Real-time player tracking** with registration and check-in status
-- **Advanced seating management** with poker table visualization
-- **Tournament overview** with activity feed and statistics
-- **Multi-tournament support** with easy switching between events
+- **Live tournament display** with detailed tournament information
+- **Real-time tournament status** tracking (UPCOMING, IN_PROGRESS, COMPLETED)
+- **Tournament structure** with blind levels and timing
+- **Player registration** and tournament participation tracking
+- **Multi-tournament support** with easy navigation
 
 ### **Clock & Blinds**
-- **Large countdown timer** with level progression
-- **Blind structure display** with current and next levels
-- **Break management** with automatic level advancement
-- **Pause/resume functionality** for tournament control
-- **Visual blind progression** with ante support
+- **Tournament clock** with real-time countdown
+- **Blind structure progression** with current and next levels
+- **Clock controls** (start, pause, resume, advance level)
+- **Break management** with automatic timing
+- **Level progression** with ante support
 
-### **Player Management**
-- **Player registration** with contact information
-- **Search and filtering** by name, status, and table
-- **Check-in tracking** with real-time status updates
-- **Player elimination** and seat management
-- **Registration statistics** and player counts
+### **Player Management**  
+- **Player registration** with comprehensive player data
+- **Tournament players list** with search and filtering
+- **Seating chart management** with table assignments
+- **Player status tracking** throughout tournaments
+- **Seating history** and player movement tracking
 
 ### **Seating System**
-- **Visual poker table layout** with 9-seat configuration
-- **Drag-and-drop player assignment** (planned)
-- **Table balancing tools** for optimal player distribution
-- **Seat management** with move and break table functions
-- **Real-time seating chart** updates
+- **Visual poker table layout** with seat assignments
+- **Table management** with assignment and balancing
+- **Seat assignment tracking** with stack sizes
+- **Unassigned players management**
+- **Real-time seating updates**
 
-### **Settings & Configuration**
-- **Tournament customization** with buy-in and structure settings
-- **Club management** with multiple venue support
-- **User preferences** and display options
-- **Export functionality** for results and reports
+### **Authentication & Clubs**
+- **JWT-based authentication** with secure login
+- **Club management** with automatic club selection from login
+- **User profile management** with role-based access
+- **Multi-club support** for tournament directors
 
 ## Tech Stack
 
@@ -44,10 +50,29 @@ A professional poker tournament management application built with Nuxt 4, Ionic 
 - **Mobile Framework**: [Ionic Vue 8](https://ionicframework.com/docs/vue/overview) - Cross-platform components
 - **Language**: [TypeScript](https://www.typescriptlang.org/) - Type-safe development
 - **Styling**: [Tailwind CSS 4](https://tailwindcss.com/) - Utility-first styling
+- **GraphQL**: [GraphQL-Request](https://github.com/jasonkuhrt/graphql-request) with auto-generated types
 - **Icons**: [Ionicons](https://ionic.io/ionicons) - Comprehensive icon library
-- **State Management**: [Pinia](https://pinia.vuejs.org/) - Vue state management
+- **State Management**: [Pinia](https://pinia.vuejs.org/) - Vue state management with persistence
 - **Internationalization**: [Vue I18n](https://vue-i18n.intlify.dev/) - Multi-language support
 - **Mobile**: [Capacitor 7](https://capacitorjs.com/) - Native mobile deployment
+
+## GraphQL Integration
+
+The application uses a fully-typed GraphQL client with:
+
+- **Auto-generated TypeScript types** from GraphQL schema
+- **Query & Mutation operations** for all tournament management
+- **Real-time subscriptions** for tournament clock and registrations
+- **Optimistic updates** and caching for smooth UX
+- **Error handling** and loading states
+
+### Key GraphQL Operations
+- `GetTournaments` - Fetch tournaments with filtering
+- `GetTournament` - Single tournament with full details
+- `GetTournamentPlayers` - Player registration data
+- `GetTournamentClock` - Real-time clock information
+- `TournamentClockUpdates` - Live clock subscription
+- `LoginUser` - Authentication with club data
 
 ## Getting Started
 
@@ -55,6 +80,7 @@ A professional poker tournament management application built with Nuxt 4, Ionic 
 
 - Node.js (v18 or higher)
 - npm or yarn package manager
+- GraphQL backend server running
 
 ### Installation
 
@@ -69,12 +95,17 @@ A professional poker tournament management application built with Nuxt 4, Ionic 
    npm install
    ```
 
-3. **Start development server**
+3. **Configure GraphQL endpoint**
+   ```bash
+   # Update nuxt.config.ts with your GraphQL endpoint
+   ```
+
+4. **Start development server**
    ```bash
    npm run dev
    ```
 
-4. **Open in browser**
+5. **Open in browser**
    ```
    http://localhost:3000
    ```
@@ -84,9 +115,12 @@ A professional poker tournament management application built with Nuxt 4, Ionic 
 ```bash
 # Development
 npm run dev          # Start development server
-npm run build        # Build for production
+npm run build        # Build for production  
 npm run preview      # Preview production build
 npm run generate     # Generate static site
+
+# Code Generation
+npm run codegen      # Generate GraphQL types (if configured)
 
 # Mobile Development
 npx cap add ios      # Add iOS platform
@@ -99,101 +133,123 @@ npx cap run android  # Run on Android emulator
 
 ```
 pp-tournament-manager/
+├── .nuxt/                    # Generated Nuxt files
+│   └── gql/                  # Generated GraphQL types
 ├── assets/
-│   ├── css/
-│   │   └── main.css           # Global styles & Ionic theme
-│   └── images/
-│       └── players/           # Player avatar images
+│   └── css/
+│       └── main.css          # Global styles & Ionic theme
 ├── components/
-│   ├── TournamentHeader.vue   # Header with tournament selector
 │   └── tournament/
-│       ├── BlindStructure.vue # Blind levels display
-│       ├── ClockPanel.vue     # Tournament timer
-│       ├── OverviewPanel.vue  # Tournament overview cards
-│       ├── PlayersList.vue    # Player management list
-│       ├── PlayersToolbar.vue # Player search and filters
-│       ├── RecentActivity.vue # Activity feed
-│       ├── SeatingTableCard.vue # Poker table visualization
-│       └── SeatingToolbar.vue # Seating management tools
+│       ├── overview/         # Tournament overview components
+│       ├── players/          # Player management components
+│       └── seating/          # Seating chart components
 ├── composables/
-│   ├── useAuth.ts            # Authentication logic
-│   ├── useGraphQL.ts         # GraphQL client setup
-│   ├── useI18n.ts            # Internationalization
-│   ├── usePlayerAvatar.ts    # Player avatar management
-│   ├── usePokerAPI.ts        # API integration
-│   ├── useTournamentClock.ts # Clock functionality
-│   └── useTournamentData.ts  # Tournament data management
-├── i18n/
-│   └── locales/
-│       ├── en.json           # English translations
-│       ├── fr.json           # French translations
-│       └── nl.json           # Dutch translations
+│   ├── useI18n.ts           # Internationalization
+│   ├── usePlayerAvatar.ts   # Player avatar management
+│   ├── useNetworkStatus.ts  # Network connectivity
+│   └── useGqlSubscription.ts # GraphQL subscriptions
+├── graphql/
+│   ├── queries/             # GraphQL query definitions
+│   │   ├── tournament.gql
+│   │   └── club.gql
+│   └── mutations/           # GraphQL mutation definitions
+│       ├── tournament.gql
+│       └── auth.gql
+├── middleware/
+│   └── auth.ts              # Authentication middleware
 ├── pages/
-│   ├── login.vue             # Authentication page
+│   ├── index.vue            # Dashboard/home page
+│   ├── login.vue            # Authentication page
 │   └── tournament/
-│       └── [id].vue          # Main tournament management page
+│       └── [id]/
+│           └── index.vue    # Tournament management page
+├── plugins/
+│   ├── auth.client.ts       # Auth plugin initialization
+│   ├── graphql-ws.client.ts # GraphQL WebSocket setup
+│   └── i18n.client.ts       # I18n plugin setup
 ├── stores/
-│   └── useClubStore.ts       # Club data management
+│   ├── useAuthStore.ts      # Authentication state
+│   ├── useClubStore.ts      # Club management state
+│   └── useTournamentStore.ts # Tournament state
 ├── types/
-│   ├── graphql.ts            # GraphQL type definitions
-│   └── tournament.ts         # Tournament data models
-├── app.vue                   # Root application component
-├── capacitor.config.ts       # Capacitor configuration
-├── ionic.config.json         # Ionic CLI configuration
-└── nuxt.config.ts           # Nuxt configuration
+│   ├── graphql.ts           # GraphQL type definitions
+│   ├── tournament.ts        # Tournament data models
+│   ├── user.ts              # User and club types
+│   └── clock.ts             # Tournament clock types
+├── app.vue                  # Root application component
+├── capacitor.config.ts      # Capacitor configuration
+└── nuxt.config.ts          # Nuxt configuration with GraphQL
 ```
 
 ## Design System
 
+### Color Scheme
+- **Primary Background**: `#18181a` (Dark theme)
+- **Secondary Background**: `#24242a` 
+- **Accent Gold**: Custom gold color for highlights
+- **Border Colors**: Subtle borders with opacity
+- **Text Colors**: Primary white with opacity variants
+
 ### Target Devices
 - **Primary**: iPad in landscape mode (1024x768)
 - **Secondary**: iPhone in portrait mode (375x812)
+- **Desktop**: Full responsive support
 
 ### Component Architecture
-- **Ion-tabs**: Main navigation between tournament sections
-- **Ion-cards**: Content containers with rounded corners
+- **Ion-page**: Full-screen containers
+- **Ion-content**: Scrollable content areas  
+- **Custom cards**: Tournament and player information
 - **Ion-buttons**: Action buttons with consistent styling
-- **Ion-badges**: Status indicators and counters
-- **Ion-progress-bar**: Timer and progress indicators
+- **Ion-icons**: Ionicons throughout the interface
 
 ### Key UI Patterns
-- **3-column layout** for overview section
-- **Large timer display** for clock section
-- **Search and filter toolbar** for players section
-- **Poker table visualization** for seating section
-- **Simple card layout** for settings section
+- **Dashboard cards**: 3-column grid layout for statistics
+- **Compact lists**: Tournament and player listings
+- **Status badges**: Color-coded tournament status
+- **Touch-friendly**: Large buttons and interactive areas
 
 ## Data Models
 
-### Tournament Interface
+### Tournament (GraphQL)
 ```typescript
 interface Tournament {
   id: string
-  name: string
-  status: 'upcoming' | 'running' | 'paused' | 'finished'
-  registrations: number
-  checkedIn: number
-  maxPlayers: number
-  currentLevel: number
-  totalLevels: number
-  timeRemaining: string
-  blinds: string
-  nextBlinds: string
-  prizePool: string
+  title: string
+  description?: string | null
+  clubId: string
+  startTime: any
+  endTime?: any | null
+  buyInCents: number
+  seatCap?: number | null
+  status: TournamentStatus
+  liveStatus: TournamentLiveStatus
+  createdAt: any
+  updatedAt: any
+}
+
+enum TournamentStatus {
+  UPCOMING = 'UPCOMING'
+  IN_PROGRESS = 'IN_PROGRESS' 
+  COMPLETED = 'COMPLETED'
 }
 ```
 
-### Player Interface
+### User & Club
 ```typescript
-interface Player {
+interface User {
+  id: string
+  email: string
+  username?: string | null
+  firstName: string
+  lastName?: string | null
+  role: Role
+  managedClub?: Club | null
+}
+
+interface Club {
   id: string
   name: string
-  email: string
-  phone: string
-  status: 'registered' | 'checked-in' | 'seated' | 'eliminated'
-  tableNumber?: number
-  seatNumber?: number
-  registrationTime: string
+  city?: string
 }
 ```
 
@@ -202,50 +258,45 @@ interface Player {
 ### Code Style
 - **Vue 3 Composition API** for all components
 - **TypeScript strict mode** enabled
-- **Tailwind CSS only** for styling (no custom CSS)
-- **Ionic components** preferred over custom UI elements
+- **Tailwind CSS** for styling with custom PP theme
+- **Ionic components** with custom styling integration
 
 ### State Management
-- **Composables** for business logic and API calls
-- **Pinia stores** for global state management
-- **Local state** for component-specific data
+- **Pinia stores** with persistence for auth, club, and tournament data
+- **GraphQL client** with auto-generated types
+- **Composables** for reusable business logic
+- **Local component state** for UI-specific data
 
-### Mobile Optimization
-- **Touch-friendly** button sizes (44px minimum)
-- **Responsive design** with breakpoints
-- **Pull-to-refresh** on main content areas
-- **Native scrolling** behavior
+### Localization
+- **Belgian-French locale** (fr-BE) for number and date formatting
+- **Euro currency formatting** with proper locale support
+- **Vue I18n** ready for multi-language expansion
 
-## API Integration
+## Authentication Flow
 
-The application is designed to integrate with a GraphQL backend providing:
+1. **Login page** with email/password
+2. **JWT token storage** in Pinia with persistence
+3. **GraphQL client** token injection
+4. **Automatic club selection** from user's managedClub
+5. **Route protection** via auth middleware
+6. **Token refresh** handling
 
-- **Tournament data** and live state management
-- **Player registration** and check-in workflows
-- **Real-time updates** via WebSocket subscriptions
-- **Authentication** and user management
-- **Club and venue** information
+## GraphQL Features
 
-See `composables/usePokerAPI.ts` for complete API integration patterns.
+### Type Safety
+- Fully generated TypeScript types from schema
+- Type-safe query and mutation functions
+- Automatic client generation with proper typing
 
-## Authentication
+### Real-time Features
+- Tournament clock subscriptions
+- Player registration updates
+- Live tournament status changes
 
-The app supports JWT-based authentication with:
-
-- **Login page** with username/password
-- **Token storage** in secure storage
-- **Route protection** via middleware
-- **Automatic token refresh** handling
-
-## Internationalization
-
-Multi-language support with complete UI translations:
-
-- **English** (`en`): Default language
-- **French** (`fr`): Français interface  
-- **Dutch** (`nl`): Nederlandse interface
-
-Language selection persists across sessions and affects all UI elements including dates, numbers, and form validation messages.
+### Error Handling
+- GraphQL error parsing and display
+- Network status monitoring
+- Optimistic updates with rollback
 
 ## Deployment
 
@@ -267,9 +318,11 @@ npx cap open android # For Android
 
 1. Follow Vue 3 Composition API patterns
 2. Use TypeScript for all new code
-3. Maintain Ionic component consistency
+3. Maintain GraphQL schema compatibility
 4. Test on both iPad and iPhone viewports
-5. Update translations for all languages
+5. Follow Ionic design patterns with custom styling
+6. Use Pinia for state management
+7. Implement proper error handling
 
 ## License
 

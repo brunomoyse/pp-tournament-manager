@@ -126,7 +126,7 @@
 import { IonIcon } from '@ionic/vue'
 import { timeOutline, playOutline, pauseOutline, playSkipForwardOutline, playSkipBackOutline, refreshOutline } from 'ionicons/icons'
 import {useGqlSubscription} from "~/composables/useGqlSubscription";
-import type { TournamentStructure } from '~/types/tournament';
+import {formatBlinds, formatTime} from "~/utils";
 import type {TournamentClock} from "~/types/clock";
 
 const route = useRoute()
@@ -185,19 +185,6 @@ watch(clockUpdates, (data: {tournamentClockUpdates: TournamentClock}) => {
         tournamentStore.setSelectedTournamentClock(data.tournamentClockUpdates)
     }
 })
-
-// Utility function to format seconds to MM:SS
-const formatTime = (seconds: number|undefined): string => {
-    if (seconds === undefined || seconds < 0) return '00:00'
-    const minutes = Math.floor(seconds / 60)
-    const remainingSeconds = seconds % 60
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
-}
-
-const formatBlinds = (structure: TournamentStructure | undefined): string => {
-    if (!structure) return '0/0'
-    return `${structure.smallBlind}/${structure.bigBlind}`
-}
 
 // Clock control functions
 const startClock = async () => await GqlStartTournamentClock({ tournamentId: selectedTournamentId })

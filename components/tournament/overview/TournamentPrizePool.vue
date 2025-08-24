@@ -13,7 +13,7 @@
           class="flex items-center justify-between text-sm"
         >
           <span class="text-white">{{ getPositionLabel(position.position) }}</span>
-          <span class="font-semibold text-pp-text-primary">{{ formatPayout(position.amountCents) }}</span>
+          <span class="font-semibold text-pp-text-primary">{{ formatPrice(position.amountCents) }}</span>
         </div>
         <div v-if="!payoutData?.tournamentPayout?.positions?.length" class="text-center text-white/60 py-4">
           No payout structure defined
@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
 import { trophyOutline } from 'ionicons/icons'
-import { useTournamentStore } from '~/stores/useTournamentStore'
+import {formatPrice} from "~/utils";
 
 const route = useRoute()
 
@@ -36,26 +36,7 @@ const payoutData = await GqlGetTournamentPayout({
   tournamentId: selectedTournamentId 
 })
 
-const prizePool = computed(() => {
-  if (payoutData?.tournamentPayout?.totalPrizePool) {
-    const euros = payoutData.tournamentPayout.totalPrizePool / 100
-    return new Intl.NumberFormat('fr-BE', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(euros)
-  }
-  return '€0'
-})
-
-const formatPayout = (amountCents: number) => {
-  const euros = amountCents / 100
-  return new Intl.NumberFormat('fr-BE', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(euros)
-}
+const prizePool = computed(() => formatPrice(payoutData?.tournamentPayout?.totalPrizePool))
 
 const getPositionLabel = (position: number) => {
   const suffixes = ['st', 'nd', 'rd']

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { useClubStore } from './useClubStore'
 // Use a flexible user type to match GraphQL response
 interface AuthUser {
   id: string
@@ -69,6 +70,17 @@ export const useAuthStore = defineStore('auth', () => {
       if (result?.loginUser?.token && result?.loginUser?.user) {
         const { token, user } = result.loginUser
         storeAuthState(token, user)
+        
+        // Store managedClub in club store if available
+        if (user.managedClub) {
+          const clubStore = useClubStore()
+          clubStore.setSelectedClub({
+            id: user.managedClub.id,
+            name: user.managedClub.name,
+            city: '' // managedClub doesn't include city, so default to empty string
+          })
+        }
+        
         return user
       }
       

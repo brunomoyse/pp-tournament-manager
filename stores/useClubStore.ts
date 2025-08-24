@@ -14,7 +14,7 @@ export const useClubStore = defineStore('club', () => {
 
   // Getters
   const hasSelectedClub = computed(() => selectedClub.value !== null)
-  const selectedClubName = computed(() => selectedClub.value?.name || 'Select Club')
+  const club = computed(() => selectedClub.value)
 
   // Actions
   const setSelectedClub = (club: Club | null) => {
@@ -47,14 +47,11 @@ export const useClubStore = defineStore('club', () => {
           // Invalid saved club, ignore
         }
       }
-      
-      // No valid saved club, select the first available
-      setSelectedClub(newClubs[0])
     }
   }
 
   const initializeFromStorage = () => {
-    if (process.client) {
+    if (import.meta.client) {
       const savedClub = localStorage.getItem('selectedClub')
       if (savedClub) {
         try {
@@ -74,7 +71,7 @@ export const useClubStore = defineStore('club', () => {
     
     // Getters
     hasSelectedClub,
-    selectedClubName,
+    club,
     
     // Actions
     setSelectedClub,

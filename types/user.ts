@@ -31,7 +31,7 @@ export interface TournamentPlayer {
 }
 
 export interface Club {
-    id: string
-    name: string
-    city: string
+    id: string;
+    name: string;
+    city?: string | null;
 }

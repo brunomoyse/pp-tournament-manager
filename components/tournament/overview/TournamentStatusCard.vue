@@ -17,11 +17,11 @@
       </div>
       <div class="flex items-center justify-between">
         <span class="text-white">Level duration</span>
-        <span class="font-semibold text-white">{{ `${levelDuration}:00` }}</span>
+        <span class="font-semibold text-white">{{ formatTime(levelTimeRemaining) }}</span>
       </div>
       <div class="flex items-center justify-between">
         <span class="text-white">Blinds</span>
-        <span class="font-semibold text-white">{{ blindsText }}</span>
+        <span class="font-semibold text-white">{{ formatBlinds(currentStructure) }}</span>
       </div>
     </div>
   </div>
@@ -31,17 +31,16 @@
 import { IonIcon } from '@ionic/vue'
 import { trophyOutline } from 'ionicons/icons'
 import { useTournamentStore } from '~/stores/useTournamentStore'
+import {formatBlinds, formatTime} from "~/utils";
 
 const tournamentStore = useTournamentStore()
 
 // Use store data
 const tournament = computed(() => tournamentStore.tournament)
-const liveState = computed(() => tournamentStore.liveState)
+const clock = computed(() => tournamentStore.clock)
 
 // Computed values
-const currentLevel = computed(() => liveState.value?.currentLevel || 0)
-const levelDuration = computed(() => liveState.value?.levelDurationMinutes || 0)
-const blindsText = computed(() =>
-  `${liveState.value?.currentSmallBlind || 0}/${liveState.value?.currentBigBlind || 0}` // Replace with GQL subscription clock when available
-)
+const currentLevel = computed(() => clock.value?.currentLevel || 0)
+const levelTimeRemaining = computed(() => clock.value?.timeRemainingSeconds || 0)
+const currentStructure = computed(() => clock.value?.currentStructure ?? undefined)
 </script>

@@ -15,46 +15,67 @@ query GetTournaments($clubId: UUID, $from: DateTime, $to: DateTime, $status: Tou
   }
 }
 
-query GetTournamentComplete($tournamentId: UUID!) {
-  tournamentComplete(tournamentId: $tournamentId) {
-    # Static tournament data
-    tournament {
+query GetTournament($id: UUID!) {
+  tournament(id: $id) {
+    id
+    title
+    description
+    startTime
+    endTime
+    buyInCents
+    status
+    liveStatus
+    structure {
       id
-      title
-      description
-      clubId
-      startTime
-      endTime
-      buyInCents
-      seatCap
+      tournamentId
+      levelNumber
+      smallBlind
+      bigBlind
+      ante
+      durationMinutes
+      isBreak
+      breakDurationMinutes
+    }
+    clock {
+      id
+      tournamentId
       status
-      liveStatus
-      createdAt
-      updatedAt
-      club {
+      currentLevel
+      timeRemainingSeconds
+      levelStartedAt
+      levelEndTime
+      totalPauseDurationSeconds
+      autoAdvance
+      currentStructure {
         id
-        name
-        city
+        tournamentId
+        levelNumber
+        smallBlind
+        bigBlind
+        ante
+        durationMinutes
+        isBreak
+        breakDurationMinutes
+      }
+      nextStructure {
+        id
+        tournamentId
+        levelNumber
+        smallBlind
+        bigBlind
+        ante
+        durationMinutes
+        isBreak
+        breakDurationMinutes
       }
     }
-
-    # Live state (clock, blinds, level info)
-    liveState {
+    registrations {
       id
-      currentLevel
-      playersRemaining
-      breakUntil
-      currentSmallBlind
-      currentBigBlind
-      currentAnte
-      levelStartedAt
-      levelDurationMinutes
-      createdAt
-      updatedAt
+      userId
+      registrationTime
+      status
+      notes
     }
-
-    # Registration count
-    totalRegistered
   }
 }
 

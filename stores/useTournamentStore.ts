@@ -1,33 +1,32 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type {Tournament, TournamentComplete, TournamentLiveState, TournamentStructure} from '~/types/tournament'
-import type { TournamentPlayer } from '~/types/user'
+import type {Tournament, TournamentRegistration, TournamentStructure} from '~/types/tournament'
 import type {TournamentClock} from "~/types/clock";
 
 export const useTournamentStore = defineStore('selectedTournament', () => {
   // State
-  const selectedTournament = ref<TournamentComplete | null>(null)
+  const selectedTournament = ref<Tournament | null>(null)
   const selectedTournamentStructure = ref<TournamentStructure[] | null>(null)
   const selectedTournamentClock = ref<TournamentClock | null>(null)
+  const selectedTournamentRegistrations = ref<TournamentRegistration[] | null>(null)
+
   const loading = ref(false)
   const error = ref<string | null>(null)
 
   // Getters
-  const tournament = computed((): Tournament | null => selectedTournament.value?.tournament || null)
-  const liveState = computed((): TournamentLiveState | null => selectedTournament.value?.liveState || null)
-  const totalRegistered = computed((): number => selectedTournament.value?.totalRegistered || 0)
+  const tournament = computed((): Tournament | null => selectedTournament.value || null)
   const structure = computed((): TournamentStructure[] | null => selectedTournamentStructure.value)
   const clock = computed((): TournamentClock | null => selectedTournamentClock.value || null)
+  const registrations = computed((): TournamentRegistration[] | null => selectedTournamentRegistrations.value || null)
 
   const hasSelectedTournament = computed(() => selectedTournament.value !== null)
 
   // Actions
-  const setSelectedTournament = (data: TournamentComplete | null) => {
+  const setSelectedTournament = (data: Tournament | null) => {
     selectedTournament.value = data
-  }
-
-  const setSelectedTournamentStructure = (data: TournamentStructure[] | null) => {
-    selectedTournamentStructure.value = data
+    selectedTournamentStructure.value = data?.structure || null
+    selectedTournamentClock.value = data?.clock || null
+    selectedTournamentRegistrations.value = data?.registrations || null
   }
 
   const setSelectedTournamentClock = (data: TournamentClock | null) => {
@@ -54,19 +53,19 @@ export const useTournamentStore = defineStore('selectedTournament', () => {
     error: readonly(error),
     
     // Getters
-    clock,
     hasSelectedTournament,
-    liveState,
+
+    clock,
+    registrations,
     structure,
-    totalRegistered,
     tournament,
     
     // Actions
-    clearSelectedTournament,
     setError,
     setLoading,
-    setSelectedTournament,
+
+    clearSelectedTournament,
     setSelectedTournamentClock,
-    setSelectedTournamentStructure,
+    setSelectedTournament,
   }
 })
