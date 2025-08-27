@@ -39,8 +39,12 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
+      apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:8080',
       graphqlEndpoint: process.env.NUXT_GRAPHQL_ENDPOINT || 'http://localhost:8080/graphql',
       graphqlWsEndpoint: process.env.NUXT_GRAPHQL_WS_ENDPOINT || 'ws://localhost:8080/graphql',
+      authBaseUrl: process.env.NUXT_AUTH_BASE_URL || 'http://localhost:8080',
+      authRegisterUrl: process.env.NUXT_AUTH_REGISTER_URL || 'http://localhost:8080/oauth/register',
+      authLoginUrl: process.env.NUXT_AUTH_LOGIN_URL || 'http://localhost:8080/oauth/login',
     }
   }
 })
