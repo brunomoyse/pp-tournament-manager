@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-6 pb-8">
+  <div class="space-y-6">
     <!-- Players Toolbar -->
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-4">
@@ -35,19 +35,12 @@
       <div class="flex items-center gap-3">
         <button 
           @click="$emit('registerPlayer')"
-          class="px-4 py-2 bg-pp-text-primary text-pp-bg-primary rounded-lg font-medium flex items-center gap-2 hover:bg-pp-accent-gold hover:text-pp-bg-primary"
+          class="pp-action-button pp-action-button--primary"
         >
           <IonIcon :icon="personAddOutline" class="w-4 h-4" />
           Register Player
         </button>
-        <button 
-          @click="$emit('walkIn')"
-          class="px-4 py-2 border border-pp-text-primary text-pp-text-primary rounded-lg font-medium flex items-center gap-2 hover:bg-pp-text-primary hover:text-pp-bg-primary"
-        >
-          <IonIcon :icon="personAddOutline" class="w-4 h-4" />
-          Walk-in
-        </button>
-        <button class="px-4 py-2 border border-pp-text-primary text-pp-text-primary rounded-lg font-medium flex items-center gap-2 hover:bg-pp-text-primary hover:text-pp-bg-primary">
+        <button class="pp-action-button pp-action-button--secondary">
           <IonIcon :icon="qrCodeOutline" class="w-4 h-4" />
           QR Check-in
         </button>
@@ -56,7 +49,7 @@
 
     <!-- Players List -->
     <div class="bg-pp-bg-secondary rounded-2xl shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-      <div class="divide-y divide-pp-border max-h-[450px] overflow-y-auto">
+      <div class="divide-y divide-pp-border">
         <div 
           v-for="player in filteredPlayers" 
           :key="player.id"
@@ -79,10 +72,10 @@
           <div class="flex items-center gap-3">
             <!-- Status Badge -->
             <span :class="[
-              'px-2 py-0.5 rounded-full text-xs font-medium',
-              getStatusBadgeClass(player.status)
+              'px-2 py-0.5 rounded-full text-xs font-medium border',
+              getRegistrationStatusClass(player.status)
             ]">
-              {{ player.status }}
+              {{ getRegistrationStatusLabel(player.status) }}
             </span>
 
             <!-- Action Buttons -->
@@ -92,7 +85,7 @@
                 v-if="player.status === 'REGISTERED'"
                 @click="checkInPlayer(player.id)"
                 :disabled="checkingIn === player.id"
-                class="px-2 py-1 border border-pp-text-primary text-pp-text-primary rounded-lg text-xs font-medium flex items-center gap-1 hover:bg-pp-text-primary hover:text-pp-bg-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                class="pp-action-button pp-action-button--secondary text-xs px-2 py-1"
               >
                 <IonIcon 
                   :icon="checkingIn === player.id ? refreshOutline : checkmarkCircleOutline" 
@@ -103,18 +96,18 @@
               
               <!-- Undo and Seat Buttons -->
               <template v-else-if="player.status === 'CHECKED_IN'">
-                <button class="px-2 py-1 border border-pp-text-primary text-pp-text-primary rounded-lg text-xs font-medium flex items-center gap-1 hover:bg-pp-text-primary hover:text-pp-bg-primary">
+                <button class="pp-action-button pp-action-button--secondary text-xs px-2 py-1">
                   <IonIcon :icon="refreshOutline" class="w-3 h-3" />
                   Undo
                 </button>
-                <button class="px-2 py-1 bg-pp-text-primary text-pp-bg-primary rounded-lg text-xs font-medium flex items-center gap-1 hover:bg-pp-accent-gold hover:text-pp-bg-primary">
+                <button class="pp-action-button pp-action-button--primary text-xs px-2 py-1">
                   <IonIcon :icon="locationOutline" class="w-3 h-3" />
                   Seat
                 </button>
               </template>
 
               <!-- More Actions Button -->
-              <button class="p-1 text-white hover:text-white hover:bg-pp-border rounded-lg">
+              <button class="pp-action-button pp-action-button--ghost p-1 text-xs">
                 <IonIcon :icon="ellipsisVerticalOutline" class="w-3 h-3" />
               </button>
             </div>
@@ -129,21 +122,28 @@
 import { IonIcon } from '@ionic/vue'
 import { searchOutline, personAddOutline, qrCodeOutline, checkmarkCircleOutline, refreshOutline, locationOutline, ellipsisVerticalOutline } from 'ionicons/icons'
 import { AssignmentStrategy } from '@/types/seating'
+import { getRegistrationStatusLabel, getRegistrationStatusClass } from '~/utils/registrationStatus'
 
 const route = useRoute()
+
+// Define emits
+const $emit = defineEmits<{
+  'player-checked-in': [data: { playerId: string, result: any }]
+}>()
 
 // State
 const checkingIn = ref<string | null>(null)
 
-// Fetch tournament players
+// Fetch tournament players with reactive data
 const selectedTournamentId = route.params.id as string
-const playersData = await GqlGetTournamentPlayers({ 
-  tournamentId: selectedTournamentId 
-})
+const { data: playersData, refresh: refreshPlayers } = await useLazyAsyncData(
+  `players-${selectedTournamentId}`,
+  () => GqlGetTournamentPlayers({ tournamentId: selectedTournamentId })
+)
 
 // Get tournament players from the GraphQL response
 const tournamentPlayers = computed(() => 
-  playersData?.tournamentPlayers || []
+  playersData.value?.tournamentPlayers || []
 )
 
 // Filters
@@ -205,16 +205,16 @@ const checkInPlayer = async (playerId: string) => {
     })
     
     if (result?.checkInPlayer) {
-      // Immediately update the player status in the local data
-      const playerIndex = playersData.tournamentPlayers?.findIndex(tp => tp.user.id === playerId)
-      if (playerIndex !== -1 && playersData.tournamentPlayers && result.checkInPlayer.registration) {
-        playersData.tournamentPlayers[playerIndex].registration.status = result.checkInPlayer.registration.status
-      }
+      // Refresh the players data to get updated information
+      await refreshPlayers()
       
       // Show success message if there's a message
       if (result.checkInPlayer.message) {
         console.log('Check-in successful:', result.checkInPlayer.message)
       }
+      
+      // Emit event to notify parent components that players data has changed
+      $emit('player-checked-in', { playerId, result: result.checkInPlayer })
     }
     
   } catch (error) {
@@ -225,18 +225,4 @@ const checkInPlayer = async (playerId: string) => {
   }
 }
 
-const getStatusBadgeClass = (status: string) => {
-  switch (status) {
-    case 'seated':
-      return 'bg-pp-accent-gold/20 text-pp-accent-gold'
-    case 'checked-in':
-      return 'bg-blue-500/20 text-blue-400'
-    case 'registered':
-      return 'bg-yellow-500/20 text-yellow-400'
-    case 'eliminated':
-      return 'bg-red-500/20 text-red-400'
-    default:
-      return 'bg-pp-border text-pp-text-primary'
-  }
-}
 </script>
