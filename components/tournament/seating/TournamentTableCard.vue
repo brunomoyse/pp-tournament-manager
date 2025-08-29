@@ -74,7 +74,7 @@
         >
           <div class="flex items-center gap-2">
             <span class="text-pp-accent-gold font-medium">Seat {{ seatData.assignment.seatNumber }}:</span>
-            <span class="text-white">{{ getPlayerDisplayName(seatData.player) }}</span>
+            <span class="text-white">{{ getPlayerFullName(seatData.player) }}</span>
           </div>
           <button 
             @click="removeSeatPlayer(seatData.assignment.seatNumber)"
@@ -88,12 +88,26 @@
         No players seated
       </div>
     </div>
+
+    <!-- Player Action Modal -->
+    <PlayerActionModal 
+      :is-open="showPlayerModal"
+      :player="selectedPlayer"
+      :table-number="table.tableNumber"
+      :seat-number="selectedSeatNumber"
+      :stack-size="selectedPlayerStackSize"
+      :current-status="selectedPlayerStatus"
+      @close="closePlayerModal"
+      @status-changed="handleStatusChanged"
+      @move-player="handleMovePlayer"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
 import { removeCircleOutline } from 'ionicons/icons'
+import PlayerActionModal from './PlayerActionModal.vue'
 
 interface Table {
   id: string
@@ -122,7 +136,16 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   seatPlayer: [data: { tableId: string, seatNumber: number, playerId: string }]
   removePlayer: [data: { tableId: string, seatNumber: number }]
+  statusChanged: [data: { playerId: string, status: string, stackSize?: number }]
+  movePlayer: [data: { playerId: string, fromTable: number, fromSeat: number }]
 }>()
+
+// Modal state
+const showPlayerModal = ref(false)
+const selectedPlayer = ref<any>(null)
+const selectedSeatNumber = ref(0)
+const selectedPlayerStackSize = ref<number | undefined>(undefined)
+const selectedPlayerStatus = ref('SEATED')
 
 // Computed properties
 const occupiedSeats = computed(() => props.seats?.length || 0)
@@ -136,8 +159,34 @@ const getSeatPlayer = (seatNumber: number) => {
 
 const getPlayerDisplayName = (player: any) => {
   if (!player) return ''
+  const firstName = player.firstName || ''
   const lastName = player.lastName || ''
-  return `${player.firstName} ${lastName}`.trim()
+  
+  // Format as "John D." to save space
+  if (firstName && lastName) {
+    return `${firstName} ${lastName.charAt(0)}.`
+  } else if (firstName) {
+    return firstName
+  } else if (lastName) {
+    return lastName
+  }
+  return 'Unknown'
+}
+
+const getPlayerFullName = (player: any) => {
+  if (!player) return ''
+  const firstName = player.firstName || ''
+  const lastName = player.lastName || ''
+  
+  // Return full name for the list
+  if (firstName && lastName) {
+    return `${firstName} ${lastName}`
+  } else if (firstName) {
+    return firstName
+  } else if (lastName) {
+    return lastName
+  }
+  return 'Unknown'
 }
 
 const getSeatPosition = (seatNumber: number) => {
@@ -271,12 +320,18 @@ const getNamePosition = (seatNumber: number) => {
 
 // Event handlers
 const handleSeatClick = (seatNumber: number) => {
-  const player = getSeatPlayer(seatNumber)
+  const seatData = props.seats?.find(s => s.assignment.seatNumber === seatNumber)
+  const player = seatData?.player
+  
   if (player) {
-    // Remove player
-    removeSeatPlayer(seatNumber)
+    // Open player action modal
+    selectedPlayer.value = player
+    selectedSeatNumber.value = seatNumber
+    selectedPlayerStackSize.value = seatData?.assignment?.stackSize
+    selectedPlayerStatus.value = 'SEATED' // Default status for seated players
+    showPlayerModal.value = true
   } else {
-    // TODO: Show player selection modal
+    // TODO: Show player selection modal for empty seats
     console.log('Show player selection for seat', seatNumber)
   }
 }
@@ -286,5 +341,24 @@ const removeSeatPlayer = (seatNumber: number) => {
     tableId: props.table.id, 
     seatNumber 
   })
+}
+
+// Modal event handlers
+const closePlayerModal = () => {
+  showPlayerModal.value = false
+  selectedPlayer.value = null
+  selectedSeatNumber.value = 0
+  selectedPlayerStackSize.value = undefined
+  selectedPlayerStatus.value = 'SEATED'
+}
+
+const handleStatusChanged = (data: { playerId: string, status: string, stackSize?: number }) => {
+  emit('statusChanged', data)
+  closePlayerModal()
+}
+
+const handleMovePlayer = (data: { playerId: string, fromTable: number, fromSeat: number }) => {
+  emit('movePlayer', data)
+  closePlayerModal()
 }
 </script>
