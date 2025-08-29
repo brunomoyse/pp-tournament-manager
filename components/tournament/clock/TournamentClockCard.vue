@@ -9,7 +9,7 @@
         <h3 class="text-xl font-bold text-pp-text-primary">Tournament Clock</h3>
       </div>
       <div v-if="clock?.status === 'RUNNING'" class="flex items-center gap-2 px-3 py-1 bg-pp-accent-gold/10 rounded-full">
-        <div class="w-2 h-2 bg-pp-accent-gold rounded-full animate-pulse"></div>
+        <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
         <span class="text-pp-accent-gold font-semibold text-xs">LIVE</span>
       </div>
     </div>
@@ -73,41 +73,41 @@
         @click="handleClockToggle"
         :class="[
           'w-full py-5 rounded-2xl font-bold text-xl uppercase tracking-wide transition-all duration-300',
-          'flex items-center justify-center gap-4 shadow-xl',
+          'flex items-center justify-center gap-4 shadow-xl min-h-[64px]',
           'transform hover:scale-[1.01] active:scale-[0.99]',
           clock?.status === 'RUNNING'
             ? 'bg-gradient-to-r from-pp-bg-primary to-pp-border border-2 border-pp-accent-gold text-pp-accent-gold hover:shadow-pp-accent-gold/20' 
             : 'bg-gradient-to-r from-pp-accent-gold to-pp-accent-gold/80 text-pp-bg-primary hover:shadow-pp-accent-gold/40'
         ]"
       >
-        <IonIcon :icon="getClockButtonIcon()" class="w-7 h-7" />
-        {{ getClockButtonText() }}
+        <IonIcon :icon="getClockButtonIcon()" class="w-7 h-7 flex-shrink-0" />
+        <span class="whitespace-nowrap">{{ getClockButtonText() }}</span>
       </button>
 
       <!-- Secondary Controls -->
       <div class="grid grid-cols-3 gap-3">
         <button 
           @click="revertLevel"
-          class="group bg-pp-bg-primary/60 hover:bg-pp-bg-primary border border-pp-border hover:border-pp-accent-gold/50 rounded-xl py-3 px-2 transition-all duration-200 flex flex-col items-center gap-2"
+          class="pp-action-button pp-action-button--secondary flex-col py-3"
         >
-          <IonIcon :icon="playSkipBackOutline" class="w-6 h-6 text-white/70 group-hover:text-pp-accent-gold group-hover:-translate-x-0.5 transition-all duration-200" />
-          <span class="text-xs font-semibold text-white/70 group-hover:text-white">Previous</span>
+          <IonIcon :icon="playSkipBackOutline" class="w-5 h-5" />
+          <span class="text-xs mt-1">Previous</span>
         </button>
         
         <button 
           @click="startClock"
-          class="group bg-pp-bg-primary/60 hover:bg-pp-bg-primary border border-pp-border hover:border-pp-accent-gold/50 rounded-xl py-3 px-2 transition-all duration-200 flex flex-col items-center gap-2"
+          class="pp-action-button pp-action-button--secondary flex-col py-3"
         >
-          <IonIcon :icon="refreshOutline" class="w-6 h-6 text-white/70 group-hover:text-pp-accent-gold group-hover:rotate-180 transition-all duration-500" />
-          <span class="text-xs font-semibold text-white/70 group-hover:text-white">Reset</span>
+          <IonIcon :icon="refreshOutline" class="w-5 h-5" />
+          <span class="text-xs mt-1">Reset</span>
         </button>
         
         <button 
           @click="advanceLevel"
-          class="group bg-pp-bg-primary/60 hover:bg-pp-bg-primary border border-pp-border hover:border-pp-accent-gold/50 rounded-xl py-3 px-2 transition-all duration-200 flex flex-col items-center gap-2"
+          class="pp-action-button pp-action-button--secondary flex-col py-3"
         >
-          <IonIcon :icon="playSkipForwardOutline" class="w-6 h-6 text-white/70 group-hover:text-pp-accent-gold group-hover:translate-x-0.5 transition-all duration-200" />
-          <span class="text-xs font-semibold text-white/70 group-hover:text-white">Next</span>
+          <IonIcon :icon="playSkipForwardOutline" class="w-5 h-5" />
+          <span class="text-xs mt-1">Next</span>
         </button>
       </div>
     </div>
@@ -125,66 +125,14 @@
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
 import { timeOutline, playOutline, pauseOutline, playSkipForwardOutline, playSkipBackOutline, refreshOutline } from 'ionicons/icons'
-import {useGqlSubscription} from "~/composables/useGqlSubscription";
 import {formatBlinds, formatTime} from "~/utils";
-import type {TournamentClock} from "~/types/clock";
 
 const route = useRoute()
 const tournamentStore = useTournamentStore();
 const clock = computed(() => tournamentStore.clock);
 
-const clockUpdateQuery = `
-    subscription TournamentClockUpdates($tournamentId: ID!) {
-      tournamentClockUpdates(tournamentId: $tournamentId) {
-        id
-        tournamentId
-        status
-        currentLevel
-        timeRemainingSeconds
-        levelStartedAt
-        levelEndTime
-        totalPauseDurationSeconds
-        autoAdvance
-        currentStructure {
-          id
-          tournamentId
-          levelNumber
-          smallBlind
-          bigBlind
-          ante
-          durationMinutes
-          isBreak
-          breakDurationMinutes
-        }
-        nextStructure {
-          id
-          tournamentId
-          levelNumber
-          smallBlind
-          bigBlind
-          ante
-          durationMinutes
-          isBreak
-          breakDurationMinutes
-        }
-      }
-    }
-`
-
-// Subscribe to real-time clock updates
+// Clock subscription is now handled globally in the main tournament page
 const selectedTournamentId = route.params.id as string
-const { data: clockUpdates } = useGqlSubscription({
-    query: clockUpdateQuery,
-    variables: { tournamentId: selectedTournamentId },
-    immediate: true
-})
-
-// Watch for subscription updates and update the store
-watch(clockUpdates, (data: {tournamentClockUpdates: TournamentClock}) => {
-    if (data?.tournamentClockUpdates) {
-        tournamentStore.setSelectedTournamentClock(data.tournamentClockUpdates)
-    }
-})
 
 // Clock control functions
 const startClock = async () => await GqlStartTournamentClock({ tournamentId: selectedTournamentId })
@@ -236,16 +184,4 @@ const getClockButtonText = () => {
     }
 }
 
-const getStatusText = () => {
-    if (!clock.value) return 'Disconnected'
-    
-    switch (clock.value.status) {
-        case 'RUNNING':
-            return 'Running'
-        case 'PAUSED':
-            return 'Paused'
-        default:
-            return 'Stopped'
-    }
-}
 </script>
