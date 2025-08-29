@@ -7,8 +7,11 @@
     <div class="space-y-6">
       <div class="flex items-center justify-between">
         <span class="text-white">Status</span>
-        <span class="px-3 py-1 bg-pp-accent-gold/20 text-pp-accent-gold rounded-full text-sm font-medium">
-          {{ tournament?.liveStatus || 'Unknown' }}
+        <span :class="[
+          'px-3 py-1 rounded-full text-sm font-medium border',
+          getTournamentStatusClass(tournament?.liveStatus || 'UNKNOWN')
+        ]">
+          {{ getTournamentStatusLabel(tournament?.liveStatus || 'UNKNOWN') }}
         </span>
       </div>
       <div class="flex items-center justify-between">
@@ -32,6 +35,7 @@ import { IonIcon } from '@ionic/vue'
 import { trophyOutline } from 'ionicons/icons'
 import { useTournamentStore } from '~/stores/useTournamentStore'
 import {formatBlinds, formatTime} from "~/utils";
+import { getTournamentStatusLabel, getTournamentStatusClass } from '~/utils/tournamentStatus'
 
 const tournamentStore = useTournamentStore()
 
