@@ -2,117 +2,108 @@
     <ion-page class="bg-pp-bg-primary">
         <!-- Custom Header -->
         <div class="bg-pp-bg-primary border-b border-pp-border px-8 py-6">
-            <div class="flex justify-between items-start">
-                <div>
-                    <div class="flex items-center gap-4 mb-2">
-                        <img src="/assets/icon-no-bg.png" alt="Pocket Pair Logo" class="w-12 h-12" />
-                        <h1 class="text-4xl font-bold text-pp-text-primary">Pocket Pair - Tournament Manager</h1>
+            <!-- Top row with title and status -->
+            <div class="flex justify-between items-start mb-6">
+                <div class="flex items-center gap-4 cursor-pointer" @click="goHome">
+                    <img src="/assets/icon-no-bg.png" alt="Pocket Pair Logo" class="w-12 h-12" />
+                    <h1 class="text-4xl font-bold text-pp-text-primary hover:text-pp-accent-gold transition-colors">Pocket Pair - Tournament Manager</h1>
+                </div>
+                <div class="text-right">
+                    <!-- Club name and tournament name -->
+                    <div class="text-lg font-semibold text-white mb-1">
+                        {{ club?.name || t('status.loading') }} - {{ tournament?.title || t('status.loadingTournament') }}
                     </div>
-                    <div class="flex items-center gap-4">
-                        <span class="text-lg text-white">{{ club?.name || t('status.loading') }}</span>
-                        <div class="flex items-center gap-2">
-                            <div :class="[
-                                'w-2 h-2 rounded-full',
-                                connectionStatus === 'connected' ? 'bg-green-500' :
-                                connectionStatus === 'reconnecting' ? 'bg-orange-500' : 'bg-red-500'
-                            ]"></div>
-                            <span :class="[
-                                'text-sm capitalize font-medium',
-                                connectionStatus === 'connected' ? 'text-green-500' :
-                                connectionStatus === 'reconnecting' ? 'text-orange-500' : 'text-red-500'
-                            ]">{{
-                                    connectionStatus === 'connected' ? t('status.connected') :
-                                        connectionStatus === 'reconnecting' ? t('status.reconnecting') : t('status.offline')
-                                }}</span>
-                        </div>
+                    <!-- Connection status -->
+                    <div class="flex items-center justify-end gap-2">
+                        <div :class="[
+                            'w-2 h-2 rounded-full',
+                            connectionStatus === 'connected' ? 'bg-green-500' :
+                            connectionStatus === 'reconnecting' ? 'bg-orange-500' : 'bg-red-500'
+                        ]"></div>
+                        <span :class="[
+                            'text-sm capitalize font-medium',
+                            connectionStatus === 'connected' ? 'text-green-500' :
+                            connectionStatus === 'reconnecting' ? 'text-orange-500' : 'text-red-500'
+                        ]">{{
+                                connectionStatus === 'connected' ? t('status.connected') :
+                                    connectionStatus === 'reconnecting' ? t('status.reconnecting') : t('status.offline')
+                            }}</span>
                     </div>
                 </div>
-                <div class="flex items-center gap-4">
-                    <span class="text-sm text-white">{{ t('labels.lastUpdate') }}: {{ new Date(lastUpdate).toLocaleTimeString() }}</span>
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span class="text-lg font-semibold text-white">{{ tournament?.title || t('status.loadingTournament') }}</span>
-                    </div>
-                </div>
+            </div>
+            
+            <!-- Full width tab navigation -->
+            <div class="grid grid-cols-5 gap-2 bg-pp-bg-secondary/50 p-2 rounded-2xl border border-pp-border">
+                <button
+                    v-for="tab in tabs"
+                    :key="tab.value"
+                    @click="activeTab = tab.value"
+                    :class="[
+                        'px-4 py-3 rounded-xl font-medium transition-all whitespace-nowrap',
+                        activeTab === tab.value
+                            ? 'bg-pp-bg-secondary text-pp-accent-gold border border-pp-accent-gold/40 shadow-sm'
+                            : 'text-white hover:bg-pp-bg-secondary/50'
+                    ]"
+                >
+                    {{ tab.label }}
+                </button>
             </div>
         </div>
 
         <ion-content class="bg-pp-bg-primary">
-            <!-- Ionic Tabs -->
-            <ion-tabs>
-                <ion-tab-bar slot="top" class="bg-transparent border-b-0 py-6 px-8">
-                    <div class="grid grid-cols-5 gap-2 bg-pp-bg-secondary/50 p-2 rounded-2xl border border-pp-border w-full">
-                        <ion-tab-button
-                            v-for="tab in tabs"
-                            :key="tab.value"
-                            :tab="tab.value"
-                            class="tab-button-custom-grid"
-                        >
-                            <ion-label class="text-base font-medium">{{ tab.label }}</ion-label>
-                        </ion-tab-button>
+            <!-- Tab Content -->
+            <div class="px-8 pt-4 pb-24">
+                <!-- Overview Tab -->
+                <div v-if="activeTab === 'overview'" class="">
+                    <!-- Three Column Grid -->
+                    <div class="grid grid-cols-3 gap-8 mb-12">
+                        <TournamentStatusCard />
+                        <TournamentPlayersCard />
+                        <TournamentPrizePool />
                     </div>
-                </ion-tab-bar>
 
-                <ion-tab :tab="'overview'">
-                    <div class="px-8 py-6">
-                        <!-- Three Column Grid -->
-                        <div class="grid grid-cols-3 gap-8 mb-12">
-                            <TournamentStatusCard />
-
-                            <TournamentPlayersCard />
-
-                            <TournamentPrizePool />
-                        </div>
-
-                        <!-- Recent Activity -->
-                        <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-                            <h3 class="text-xl font-semibold text-pp-text-primary mb-8">Recent Activity</h3>
-                            <div class="space-y-6">
-                                <div class="text-center py-8 text-white/60">
-                                    No recent activity
-                                </div>
+                    <!-- Recent Activity -->
+                    <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
+                        <h3 class="text-xl font-semibold text-pp-text-primary mb-8">Recent Activity</h3>
+                        <div class="space-y-6">
+                            <div class="text-center py-8 text-white/60">
+                                No recent activity
                             </div>
                         </div>
                     </div>
-                </ion-tab>
+                </div>
 
-                <ion-tab :tab="'clock'">
-                    <div class="px-8 py-6">
-                        <div class="grid grid-cols-2 gap-8">
-                            <TournamentClockCard />
+                <!-- Clock Tab -->
+                <div v-if="activeTab === 'clock'" class="">
+                    <div class="grid grid-cols-2 gap-8">
+                        <TournamentClockCard />
+                        <TournamentStructureCard
+                            :current-level-index="(clock?.currentLevel || 1) - 1"
+                        />
+                    </div>
+                </div>
 
-                            <TournamentStructureCard
-                                :current-level-index="(clock?.currentLevel || 1) - 1"
-                            />
+                <!-- Players Tab -->
+                <div v-if="activeTab === 'players'" class="">
+                    <TournamentPlayersTable @player-checked-in="handlePlayerCheckedIn" />
+                </div>
+
+                <!-- Seating Tab -->
+                <div v-if="activeTab === 'seating'" class="">
+                    <TournamentSeatingManager ref="seatingManager" />
+                </div>
+
+                <!-- Settings Tab -->
+                <div v-if="activeTab === 'settings'" class="">
+                    <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
+                        <div class="flex items-center gap-3 mb-6">
+                            <ion-icon :icon="settingsOutline" class="w-6 h-6 text-pp-text-primary"></ion-icon>
+                            <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('headings.tournamentSettings') }}</h3>
                         </div>
+                        <p class="text-white">{{ t('messages.tournamentConfigurationComingSoon') }}</p>
                     </div>
-                </ion-tab>
-
-
-                <ion-tab :tab="'players'">
-                    <div class="px-8 py-6">
-                        <TournamentPlayersTable />
-                    </div>
-                </ion-tab>
-
-                <ion-tab :tab="'seating'">
-                    <div class="px-8 py-6">
-                        <TournamentSeatingManager />
-                    </div>
-                </ion-tab>
-
-                <ion-tab :tab="'settings'">
-                    <div class="px-8 py-6">
-                        <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-                            <div class="flex items-center gap-3 mb-6">
-                                <ion-icon :icon="settingsOutline" class="w-6 h-6 text-pp-text-primary"></ion-icon>
-                                <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('headings.tournamentSettings') }}</h3>
-                            </div>
-                            <p class="text-white">{{ t('messages.tournamentConfigurationComingSoon') }}</p>
-                        </div>
-                    </div>
-                </ion-tab>
-            </ion-tabs>
+                </div>
+            </div>
         </ion-content>
     </ion-page>
 </template>
@@ -132,13 +123,21 @@ import TournamentStatusCard from "~/components/tournament/overview/TournamentSta
 import TournamentPlayersCard from "~/components/tournament/overview/TournamentPlayersCard.vue";
 import TournamentPrizePool from "~/components/tournament/overview/TournamentPrizePool.vue";
 import TournamentSeatingManager from "~/components/tournament/seating/TournamentSeatingManager.vue";
+import {useGqlSubscription} from "~/composables/useGqlSubscription";
+import type {TournamentClock} from "~/types/clock";
 
 const { connectionStatus } = useNetworkStatus()
-const lastUpdate = ref(Date.now())
 const route = useRoute()
+const router = useRouter()
 const tournamentStore = useTournamentStore()
 const clubStore = useClubStore()
 const { t } = useI18n()
+
+// Active tab state
+const activeTab = ref('overview')
+
+// Component refs
+const seatingManager = ref()
 
 // Use store getters for reactive data
 const tournament = computed(() => tournamentStore.tournament)
@@ -153,24 +152,89 @@ const tabs = computed(() => [
     { label: t('tabs.settings'), value: 'settings' }
 ])
 
-// Update last update timestamp when connection status changes
+// Navigation
+const goHome = () => {
+    router.push('/')
+}
+
+// Update connection status tracking
 watch(connectionStatus, () => {
-    lastUpdate.value = Date.now()
+    // Connection status changed, could update UI here if needed
 })
 
-// Update timestamp periodically when connected
-const updateTimer = setInterval(() => {
-    if (connectionStatus.value === 'connected') {
-        lastUpdate.value = Date.now()
-    }
-}, 30000) // Update every 30 seconds when connected
+// Cleanup on unmount
+onBeforeUnmount(() => {
+    // Component cleanup if needed
+})
 
-onBeforeUnmount(() => clearInterval(updateTimer))
+// Handle player check-in events
+const handlePlayerCheckedIn = async (data: { playerId: string, result: any }) => {
+    console.log('Player checked in:', data)
+    
+    // If seatingManager component is available, refresh its data
+    if (seatingManager.value && seatingManager.value.refreshSeatingData) {
+        await seatingManager.value.refreshSeatingData()
+    }
+}
+
+// Clock subscription setup
+const selectedTournamentId = route.params.id as string
+
+const clockUpdateQuery = `
+    subscription TournamentClockUpdates($tournamentId: ID!) {
+      tournamentClockUpdates(tournamentId: $tournamentId) {
+        id
+        tournamentId
+        status
+        currentLevel
+        timeRemainingSeconds
+        levelStartedAt
+        levelEndTime
+        totalPauseDurationSeconds
+        autoAdvance
+        currentStructure {
+          id
+          tournamentId
+          levelNumber
+          smallBlind
+          bigBlind
+          ante
+          durationMinutes
+          isBreak
+          breakDurationMinutes
+        }
+        nextStructure {
+          id
+          tournamentId
+          levelNumber
+          smallBlind
+          bigBlind
+          ante
+          durationMinutes
+          isBreak
+          breakDurationMinutes
+        }
+      }
+    }
+`
+
+// Subscribe to real-time clock updates globally
+const { data: clockUpdates } = useGqlSubscription({
+    query: clockUpdateQuery,
+    variables: { tournamentId: selectedTournamentId },
+    immediate: true
+})
+
+// Watch for subscription updates and update the store
+watch(clockUpdates, (data: {tournamentClockUpdates: TournamentClock}) => {
+    if (data?.tournamentClockUpdates) {
+        tournamentStore.setSelectedTournamentClock(data.tournamentClockUpdates)
+    }
+})
 
 // ---
 
 onMounted(async () => {
-    const selectedTournamentId = route.params.id as string
     if (selectedTournamentId) {
         const response = await GqlGetTournament({ id: selectedTournamentId })
         if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
