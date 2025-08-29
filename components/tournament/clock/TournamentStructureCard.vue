@@ -1,8 +1,12 @@
 <template>
-  <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-    <div class="flex items-center justify-between mb-8">
-      <h3 class="text-xl font-semibold text-pp-text-primary">Blind Structure</h3>
-      <IonIcon :icon="layersOutline" class="w-6 h-6 text-white" />
+  <div class="bg-pp-bg-secondary rounded-2xl p-4 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-pp-accent-gold/20 rounded-lg flex items-center justify-center">
+          <IonIcon :icon="layersOutline" class="w-4 h-4 text-pp-accent-gold" />
+        </div>
+        <h3 class="text-lg font-bold text-pp-text-primary">Blind Structure</h3>
+      </div>
     </div>
     
     <div ref="scrollContainer" class="space-y-4 max-h-96 overflow-y-auto scroll-smooth">
