@@ -2,41 +2,31 @@
   <div class="space-y-6 pb-8">
     <!-- Table Management Header -->
     <div class="flex items-center justify-between">
-      <div class="flex items-baseline gap-4">
+      <div class="flex items-center gap-4">
         <h2 class="text-xl font-bold text-pp-text-primary">Table Management</h2>
-        <span class="px-3 py-1 bg-pp-accent-gold/20 text-pp-accent-gold rounded-full text-sm font-medium">
-          {{ activeTables }} Active Tables
-        </span>
       </div>
       
       <!-- Action Buttons -->
       <div class="flex items-center gap-3">
         <button 
           @click="showAssignTableModal = true"
-          class="px-4 py-2 bg-pp-accent-gold hover:bg-pp-accent-gold/90 text-pp-bg-primary rounded-lg font-semibold flex items-center gap-2"
+          class="pp-action-button pp-action-button--primary"
         >
           <IonIcon :icon="linkOutline" class="w-4 h-4" />
           Link Table(s)
         </button>
         <button 
-          @click="autoSeatNext"
-          class="px-4 py-2 border border-pp-text-primary text-pp-text-primary hover:bg-pp-text-primary hover:text-pp-bg-primary rounded-lg font-semibold flex items-center gap-2"
-        >
-          <IonIcon :icon="shuffleOutline" class="w-4 h-4" />
-          Auto Seat Next
-        </button>
-        <button 
           @click="balanceTables"
-          class="px-4 py-2 border border-pp-text-primary text-pp-text-primary hover:bg-pp-text-primary hover:text-pp-bg-primary rounded-lg font-semibold flex items-center gap-2"
+          class="pp-action-button pp-action-button--secondary"
         >
           <IonIcon :icon="scaleOutline" class="w-4 h-4" />
           Balance Tables
         </button>
         <button 
           @click="breakTable"
-          class="px-4 py-2 border border-pp-text-primary text-pp-text-primary hover:bg-pp-text-primary hover:text-pp-bg-primary rounded-lg font-semibold flex items-center gap-2"
+          class="pp-action-button pp-action-button--danger"
         >
-          <IonIcon :icon="pauseCircleOutline" class="w-4 h-4" />
+          <IonIcon :icon="unlinkOutline" class="w-4 h-4" />
           Break Table
         </button>
       </div>
@@ -51,6 +41,8 @@
         :seats="tableData.seats"
         @seat-player="handleSeatPlayer"
         @remove-player="handleRemovePlayer"
+        @status-changed="handlePlayerStatusChanged"
+        @move-player="handlePlayerMove"
       />
     </div>
 
@@ -85,7 +77,7 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { shuffleOutline, scaleOutline, pauseCircleOutline, linkOutline } from 'ionicons/icons'
+import { scaleOutline, linkOutline, unlinkOutline } from 'ionicons/icons'
 import TournamentTableCard from './TournamentTableCard.vue'
 import AssignTableModal from './AssignTableModal.vue'
 import { useTournamentStore } from '~/stores/useTournamentStore'
@@ -108,17 +100,9 @@ const { data: seatingData, refresh: refreshSeatingData } = await useLazyAsyncDat
 const tournament = computed(() => tournamentStore.tournament)
 const club = computed(() => clubStore.club)
 
-// Computed properties
-const activeTables = computed(() => {
-  return seatingData.value?.tournamentSeatingChart?.tables?.length || 0
-})
+// Computed properties - removed activeTables as it's no longer used
 
 // Event handlers
-const autoSeatNext = () => {
-  // TODO: Implement auto-seat functionality
-  console.log('Auto seat next player')
-}
-
 const balanceTables = () => {
   // TODO: Implement table balancing
   console.log('Balance tables')
@@ -142,5 +126,20 @@ const handleRemovePlayer = (data: { tableId: string, seatNumber: number }) => {
 const handleTablesAssigned = async () => {
   // Refresh seating data after tables are assigned
   await refreshSeatingData()
+}
+
+const handlePlayerStatusChanged = async (data: { playerId: string, status: string, stackSize?: number }) => {
+  console.log('Player status changed:', data)
+  
+  // TODO: Implement GraphQL mutation to update player status
+  // For now, just refresh the seating data
+  await refreshSeatingData()
+}
+
+const handlePlayerMove = async (data: { playerId: string, fromTable: number, fromSeat: number }) => {
+  console.log('Move player requested:', data)
+  
+  // TODO: Implement player table move functionality
+  // This could open a modal to select the destination table and seat
 }
 </script>
