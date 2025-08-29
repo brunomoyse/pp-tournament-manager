@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-6 pb-8">
+  <div class="space-y-6 pb-8" data-seating-container>
     <!-- Table Management Header -->
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-4">
@@ -39,6 +39,7 @@
         :key="tableData.table.id"
         :table="tableData.table"
         :seats="tableData.seats"
+        data-table-card
         @seat-player="handleSeatPlayer"
         @remove-player="handleRemovePlayer"
         @status-changed="handlePlayerStatusChanged"

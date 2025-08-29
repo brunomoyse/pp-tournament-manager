@@ -85,7 +85,10 @@
 
                 <!-- Players Tab -->
                 <div v-if="activeTab === 'players'" class="">
-                    <TournamentPlayersTable @player-checked-in="handlePlayerCheckedIn" />
+                    <TournamentPlayersTable 
+                      @player-checked-in="handlePlayerCheckedIn" 
+                      @seat-player="handleSeatPlayer"
+                    />
                 </div>
 
                 <!-- Seating Tab -->
@@ -174,6 +177,65 @@ const handlePlayerCheckedIn = async (data: { playerId: string, result: any }) =>
     // If seatingManager component is available, refresh its data
     if (seatingManager.value && seatingManager.value.refreshSeatingData) {
         await seatingManager.value.refreshSeatingData()
+    }
+}
+
+// Handle seat player button click
+const handleSeatPlayer = async (data: { playerId: string, playerName: string }) => {
+    console.log('Seating player:', data)
+    
+    // Switch to seating tab
+    activeTab.value = 'seating'
+    
+    // Wait for the tab to render, then scroll to find the player
+    await nextTick()
+    
+    // Wait a bit more for the seating manager to load data
+    setTimeout(() => {
+        scrollToPlayer(data.playerId, data.playerName)
+    }, 500)
+}
+
+// Scroll to find a specific player in the seating area
+const scrollToPlayer = (playerId: string, playerName: string) => {
+    // Look for the player by name in table cards first
+    const tableCards = document.querySelectorAll('[data-table-card]')
+    let foundPlayerElement = null
+    
+    // Search for player name in seated players lists
+    tableCards.forEach(tableCard => {
+        const playerNameElements = tableCard.querySelectorAll('*')
+        playerNameElements.forEach(element => {
+            if (element.textContent && element.textContent.includes(playerName)) {
+                // Found the player name, use the parent table card
+                foundPlayerElement = tableCard
+            }
+        })
+    })
+    
+    if (foundPlayerElement) {
+        foundPlayerElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+        })
+        
+        // Add a temporary highlight effect
+        foundPlayerElement.classList.add('ring-4', 'ring-pp-accent-gold', 'ring-opacity-75')
+        setTimeout(() => {
+            foundPlayerElement?.classList.remove('ring-4', 'ring-pp-accent-gold', 'ring-opacity-75')
+        }, 3000)
+        
+        console.log(`Found and scrolled to ${playerName} in a table`)
+    } else {
+        // If not found in tables, player might be unassigned - scroll to top
+        const seatingContainer = document.querySelector('[data-seating-container]')
+        if (seatingContainer) {
+            seatingContainer.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            })
+            console.log(`Player ${playerName} might be unassigned - scrolled to seating area`)
+        }
     }
 }
 

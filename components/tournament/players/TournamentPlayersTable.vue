@@ -100,7 +100,10 @@
                   <IonIcon :icon="refreshOutline" class="w-3 h-3" />
                   Undo
                 </button>
-                <button class="pp-action-button pp-action-button--primary text-xs px-2 py-1">
+                <button 
+                  @click="handleSeatPlayer(player)"
+                  class="pp-action-button pp-action-button--primary text-xs px-2 py-1"
+                >
                   <IonIcon :icon="locationOutline" class="w-3 h-3" />
                   Seat
                 </button>
@@ -129,6 +132,7 @@ const route = useRoute()
 // Define emits
 const $emit = defineEmits<{
   'player-checked-in': [data: { playerId: string, result: any }]
+  'seat-player': [data: { playerId: string, playerName: string }]
 }>()
 
 // State
@@ -223,6 +227,14 @@ const checkInPlayer = async (playerId: string) => {
   } finally {
     checkingIn.value = null
   }
+}
+
+// Handle seat player button click
+const handleSeatPlayer = (player: any) => {
+  $emit('seat-player', { 
+    playerId: player.id, 
+    playerName: player.name 
+  })
 }
 
 </script>
