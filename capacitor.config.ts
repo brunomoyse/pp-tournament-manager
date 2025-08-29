@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-    appId: 'com.pocketpair.app',
-    appName: 'PocketPair',
+    appId: 'com.pocketpair.tournamentmanager',
+    appName: 'Pocket Pair Tournament Manager',
     webDir: 'dist',
     server: {
         androidScheme: 'https',
