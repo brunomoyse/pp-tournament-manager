@@ -39,7 +39,7 @@
                 </div>
                 <button 
                   @click="activeTournaments[0]?.id && goToTournament(activeTournaments[0].id)"
-                  class="w-full py-3 bg-pp-accent-gold text-pp-bg-primary rounded-lg font-medium hover:bg-pp-accent-gold/90 transition-colors"
+                  class="w-full pp-action-button pp-action-button--primary justify-center"
                 >
                   {{ t('buttons.viewTournament') }}
                 </button>
@@ -58,23 +58,27 @@
               <IonIcon :icon="peopleOutline" class="w-6 h-6 text-pp-accent-gold" />
             </div>
             <div class="space-y-6">
-              <div class="text-center">
-                <div class="text-4xl font-bold text-pp-text-primary mb-2">...</div>
-                <div class="text-white/60">{{ t('labels.totalRegistered') }}</div>
-              </div>
-              <div class="space-y-3">
-                <div class="flex justify-between items-center text-sm">
-                  <span class="text-white/60">{{ t('labels.activeThisMonth') }}</span>
-                  <span class="text-pp-text-primary font-medium">{{ Math.floor(tournaments.length * 8) }}</span>
+              <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                  <span class="text-white/70">Unique Players</span>
+                  <span class="text-pp-text-primary font-semibold">92</span>
                 </div>
-                <div class="flex justify-between items-center text-sm">
-                  <span class="text-white/60">{{ t('labels.newThisWeek') }}</span>
-                  <span class="text-pp-text-primary font-medium">{{ Math.floor(tournaments.length * 2) }}</span>
+                <div class="flex justify-between items-center">
+                  <span class="text-white/70">This Week</span>
+                  <span class="text-pp-text-primary font-semibold">38</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-white/70">Avg Buy-in</span>
+                  <span class="text-pp-text-primary font-semibold">25€</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-white/70">Regular Players</span>
+                  <span class="text-pp-text-primary font-semibold">67</span>
                 </div>
               </div>
               <button 
                 @click="managePlayers"
-                class="w-full py-3 border border-pp-border text-white rounded-lg font-medium hover:bg-pp-border/20 transition-colors"
+                class="w-full pp-action-button pp-action-button--secondary justify-center"
               >
                 Manage Players
               </button>
@@ -90,21 +94,21 @@
             <div class="space-y-4">
               <button 
                 @click="createTournament"
-                class="w-full py-4 bg-pp-accent-gold text-pp-bg-primary rounded-lg font-medium hover:bg-pp-accent-gold/90 transition-colors flex items-center justify-center gap-2"
+                class="w-full pp-action-button pp-action-button--primary justify-center"
               >
                 <IonIcon :icon="addOutline" class="w-5 h-5" />
                 {{ t('buttons.createTournament') }}
               </button>
               <button 
                 @click="managePlayers"
-                class="w-full py-3 border border-pp-border text-white rounded-lg font-medium hover:bg-pp-border/20 transition-colors flex items-center justify-center gap-2"
+                class="w-full pp-action-button pp-action-button--secondary justify-center"
               >
                 <IonIcon :icon="peopleOutline" class="w-5 h-5" />
                 {{ t('buttons.managePlayers') }}
               </button>
               <button 
                 @click="viewReports"
-                class="w-full py-3 border border-pp-border text-white rounded-lg font-medium hover:bg-pp-border/20 transition-colors flex items-center justify-center gap-2"
+                class="w-full pp-action-button pp-action-button--secondary justify-center"
               >
                 <IonIcon :icon="statsChartOutline" class="w-5 h-5" />
                 {{ t('buttons.viewReports') }}
@@ -151,13 +155,9 @@
               <div class="flex items-center gap-3">
                 <span :class="[
                   'px-3 py-1 rounded-lg text-xs font-medium border',
-                  tournament.status === 'COMPLETED'
-                    ? 'bg-green-500/20 text-green-400 border-green-500/30'
-                    : tournament.status === 'IN_PROGRESS'
-                    ? 'bg-pp-accent-gold/20 text-pp-accent-gold border-pp-accent-gold/30'
-                    : 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+                  getTournamentStatusClass(tournament.status)
                 ]">
-                  {{ tournament.status }}
+                  {{ getTournamentStatusLabel(tournament.status) }}
                 </span>
                 <IonIcon :icon="chevronForwardOutline" class="w-5 h-5 text-white/40 group-hover:text-pp-accent-gold transition-colors" />
               </div>
@@ -172,7 +172,7 @@
             <p class="text-white/60 mb-6">{{ t('messages.createFirstTournament') }}</p>
             <button 
               @click="createTournament"
-              class="px-6 py-3 bg-pp-accent-gold text-pp-bg-primary rounded-xl font-medium hover:bg-pp-accent-gold/90 transition-colors flex items-center gap-2 mx-auto"
+              class="pp-action-button pp-action-button--primary mx-auto"
             >
               <IonIcon :icon="addOutline" class="w-5 h-5" />
               {{ t('buttons.createTournament') }}
@@ -211,6 +211,7 @@ import {
 import { useAuthStore } from '~/stores/useAuthStore'
 import {formatPrice} from "~/utils";
 import { useI18n } from '~/composables/useI18n';
+import { getTournamentStatusLabel, getTournamentStatusClass } from '~/utils/tournamentStatus'
 
 const router = useRouter()
 const authStore = useAuthStore()
