@@ -60,3 +60,30 @@ export interface OAuthCallbackInput {
     code: string;
     csrfToken: string;
 }
+
+// Player management types
+export interface CreatePlayerInput {
+    email: string;
+    firstName: string;
+    lastName?: string;
+    username?: string;
+    phone?: string;
+    clubId: string;
+}
+
+export interface UpdatePlayerInput {
+    id: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    username?: string;
+    phone?: string;
+}
+
+export interface PlayerFormData {
+    email: string;
+    firstName: string;
+    lastName: string;
+    username: string;
+    phone: string;
+}

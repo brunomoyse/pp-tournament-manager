@@ -55,6 +55,7 @@
     "continue": "Continue",
     "pullToRefresh": "Pull to refresh",
     "note": "Note",
+    "edit": "Edit",
     "user": "User"
   },
   "headings": {
@@ -131,6 +132,7 @@
   "status": {
     "currentlyRunning": "Currently running",
     "loading": "Loading...",
+    "saving": "Saving...",
     "loadingTournament": "Loading Tournament...",
     "connected": "Connected",
     "reconnecting": "Reconnecting",
@@ -207,5 +209,37 @@
     "linkClubTables": {
       "title": "Link Club Tables"
     }
+  },
+  "players": {
+    "title": "Player Management",
+    "addPlayer": "Add Player",
+    "searchPlaceholder": "Search players...",
+    "allPlayers": "All players",
+    "activePlayers": "Active players",
+    "inactivePlayers": "Inactive players",
+    "playersFound": "player(s) found",
+    "noPlayersFound": "No players found",
+    "createFirstPlayer": "Start by adding your first player",
+    "active": "Active",
+    "inactive": "Inactive",
+    "deactivate": "Deactivate",
+    "reactivate": "Reactivate",
+    "createPlayer": "Create Player",
+    "editPlayer": "Edit Player",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "Enter first name",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Enter last name",
+    "emailPlaceholder": "player{'@'}email.com",
+    "usernamePlaceholder": "Enter a username",
+    "phone": "Phone",
+    "phonePlaceholder": "+32 xxx xx xx xx",
+    "create": "Create",
+    "save": "Save",
+    "deactivateConfirmTitle": "Deactivate player?",
+    "deactivateConfirmMessage": "Are you sure you want to deactivate {name}? This player will no longer be able to participate in tournaments.",
+    "saveFailed": "Failed to save player. Please try again.",
+    "deactivateFailed": "Failed to deactivate player. Please try again.",
+    "reactivateFailed": "Failed to reactivate player. Please try again."
   }
 }
