@@ -52,6 +52,38 @@
     "close": "Sluiten",
     "continue": "Doorgaan",
     "pullToRefresh": "Trek om te vernieuwen",
-    "note": "Opmerking"
+    "note": "Opmerking",
+    "edit": "Bewerken",
+    "user": "Gebruiker"
+  },
+  "status": {
+    "loading": "Laden...",
+    "saving": "Opslaan..."
+  },
+  "tournament": {
+    "createTournament": "Toernooi Aanmaken",
+    "editTournament": "Toernooi Bewerken",
+    "edit": "Toernooi Bewerken",
+    "basicInfo": "Basisinformatie",
+    "name": "Toernooinaam",
+    "namePlaceholder": "Voer toernooinaam in",
+    "description": "Beschrijving",
+    "descriptionPlaceholder": "Voer toernooi beschrijving in (optioneel)",
+    "startTime": "Starttijd",
+    "endTime": "Eindtijd",
+    "buyIn": "Buy-in",
+    "seatCap": "Maximaal Aantal Plaatsen",
+    "unlimited": "Onbeperkt",
+    "earlyBirdBonus": "Early Bird Bonus (fiches)",
+    "earlyBirdBonusPlaceholder": "Bonusfiches voor vroege registratie",
+    "blindStructure": "Blindstructuur",
+    "addLevel": "Niveau Toevoegen",
+    "break": "Pauze",
+    "level": "Niveau",
+    "minutes": "Min",
+    "status": "Status",
+    "create": "Aanmaken",
+    "save": "Opslaan",
+    "saveFailed": "Toernooi opslaan mislukt. Probeer opnieuw."
   }
 }

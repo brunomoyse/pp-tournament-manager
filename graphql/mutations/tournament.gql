@@ -63,3 +63,61 @@ mutation UpdateTournamentStatus($input: UpdateTournamentStatusInput!) {
     status
   }
 }
+
+mutation CreateTournament($input: CreateTournamentInput!) {
+  createTournament(input: $input) {
+    id
+    title
+    description
+    clubId
+    startTime
+    endTime
+    buyInCents
+    seatCap
+    status
+    liveStatus
+    earlyBirdBonusChips
+    createdAt
+    updatedAt
+    structure {
+      id
+      tournamentId
+      levelNumber
+      smallBlind
+      bigBlind
+      ante
+      durationMinutes
+      isBreak
+      breakDurationMinutes
+    }
+  }
+}
+
+mutation UpdateTournament($input: UpdateTournamentInput!) {
+  updateTournament(input: $input) {
+    id
+    title
+    description
+    clubId
+    startTime
+    endTime
+    buyInCents
+    seatCap
+    status
+    liveStatus
+    earlyBirdBonusChips
+    createdAt
+    updatedAt
+    structure {
+      id
+      tournamentId
+      levelNumber
+      smallBlind
+      bigBlind
+      ante
+      durationMinutes
+      isBreak
+      breakDurationMinutes
+    }
+  }
+}

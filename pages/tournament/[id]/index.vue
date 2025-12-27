@@ -99,12 +99,60 @@
                 <!-- Settings Tab -->
                 <div v-if="activeTab === 'settings'" class="">
                     <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-                        <div class="flex items-center gap-3 mb-6">
-                            <ion-icon :icon="settingsOutline" class="w-6 h-6 text-pp-text-primary"></ion-icon>
-                            <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('headings.tournamentSettings') }}</h3>
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center gap-3">
+                                <ion-icon :icon="settingsOutline" class="w-6 h-6 text-pp-text-primary"></ion-icon>
+                                <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('headings.tournamentSettings') }}</h3>
+                            </div>
+                            <button
+                                v-if="canEditTournament"
+                                @click="openEditModal"
+                                class="pp-action-button pp-action-button--primary"
+                            >
+                                <ion-icon :icon="createOutline" class="w-5 h-5" />
+                                {{ t('tournament.edit') }}
+                            </button>
                         </div>
-                        <p class="text-white">{{ t('messages.tournamentConfigurationComingSoon') }}</p>
+
+                        <!-- Tournament Info Display -->
+                        <div class="space-y-4" v-if="tournament">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-sm text-white/60">{{ t('tournament.name') }}</label>
+                                    <p class="text-white font-medium">{{ tournament.title }}</p>
+                                </div>
+                                <div>
+                                    <label class="text-sm text-white/60">{{ t('tournament.buyIn') }}</label>
+                                    <p class="text-white font-medium">{{ formatPrice(tournament.buyInCents) }}</p>
+                                </div>
+                                <div>
+                                    <label class="text-sm text-white/60">{{ t('tournament.startTime') }}</label>
+                                    <p class="text-white font-medium">{{ new Date(tournament.startTime).toLocaleString() }}</p>
+                                </div>
+                                <div>
+                                    <label class="text-sm text-white/60">{{ t('tournament.seatCap') }}</label>
+                                    <p class="text-white font-medium">{{ tournament.seatCap || t('tournament.unlimited') }}</p>
+                                </div>
+                                <div>
+                                    <label class="text-sm text-white/60">{{ t('tournament.status') }}</label>
+                                    <p class="text-white font-medium">{{ tournament.liveStatus }}</p>
+                                </div>
+                                <div v-if="tournament.description">
+                                    <label class="text-sm text-white/60">{{ t('tournament.description') }}</label>
+                                    <p class="text-white font-medium">{{ tournament.description }}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Edit Modal -->
+                    <TournamentFormModal
+                        :isOpen="showEditModal"
+                        :tournament="tournament"
+                        mode="edit"
+                        @close="closeEditModal"
+                        @saved="onTournamentUpdated"
+                    />
                 </div>
             </div>
         </ion-content>
@@ -118,7 +166,7 @@ definePageMeta({
     middleware: 'auth'
 })
 
-import { settingsOutline } from 'ionicons/icons'
+import { settingsOutline, createOutline } from 'ionicons/icons'
 import { useNetworkStatus } from '@/composables/useNetworkStatus'
 import { useTournamentStore } from '~/stores/useTournamentStore'
 import TournamentStructureCard from "~/components/tournament/clock/TournamentStructureCard.vue";
@@ -126,8 +174,10 @@ import TournamentStatusCard from "~/components/tournament/overview/TournamentSta
 import TournamentPlayersCard from "~/components/tournament/overview/TournamentPlayersCard.vue";
 import TournamentPrizePool from "~/components/tournament/overview/TournamentPrizePool.vue";
 import TournamentSeatingManager from "~/components/tournament/seating/TournamentSeatingManager.vue";
+import TournamentFormModal from "~/components/tournament/TournamentFormModal.vue";
 import {useGqlSubscription} from "~/composables/useGqlSubscription";
 import type {TournamentClock} from "~/types/clock";
+import { formatPrice } from "~/utils";
 
 const { connectionStatus } = useNetworkStatus()
 const route = useRoute()
@@ -146,6 +196,32 @@ const seatingManager = ref()
 const tournament = computed(() => tournamentStore.tournament)
 const clock = computed(() => tournamentStore.clock)
 const club = computed(() => clubStore.club)
+
+// Edit modal state
+const showEditModal = ref(false)
+
+// Check if tournament can be edited (not FINISHED)
+const canEditTournament = computed(() => {
+    return tournament.value && tournament.value.liveStatus !== 'FINISHED'
+})
+
+const openEditModal = () => {
+    showEditModal.value = true
+}
+
+const closeEditModal = () => {
+    showEditModal.value = false
+}
+
+const onTournamentUpdated = async () => {
+    closeEditModal()
+    // Refresh tournament data
+    const tournamentId = route.params.id as string
+    if (tournamentId) {
+        const response = await GqlGetTournament({ id: tournamentId })
+        if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
+    }
+}
 
 const tabs = computed(() => [
     { label: t('tabs.overview'), value: 'overview' },
