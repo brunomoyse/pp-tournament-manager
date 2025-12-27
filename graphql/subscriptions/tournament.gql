@@ -34,7 +34,7 @@ subscription TournamentClockUpdates($tournamentId: ID!) {
   }
 }
 
-subscription TournamentRegistrations($tournamentId: ID) {
+subscription TournamentRegistrations($tournamentId: ID!) {
   tournamentRegistrations(tournamentId: $tournamentId) {
     tournamentId
     player {
@@ -57,7 +57,7 @@ subscription TournamentRegistrations($tournamentId: ID) {
 }
 
 subscription SeatingChanges($clubId: ID!) {
-  seatingChanges(clubId: $clubId) {
+  clubSeatingChanges(clubId: $clubId) {
     eventType
     tournamentId
     clubId
@@ -82,8 +82,8 @@ subscription SeatingChanges($clubId: ID!) {
   }
 }
 
-subscription UserNotifications($userId: ID!) {
-  userNotifications(userId: $userId) {
+subscription UserNotifications {
+  userNotifications {
     id
     userId
     notificationType
