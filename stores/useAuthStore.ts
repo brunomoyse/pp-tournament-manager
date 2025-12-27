@@ -170,18 +170,18 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   return {
-    // State
-    currentUser: readonly(currentUser),
-    authToken: readonly(authToken),
-    isLoading: readonly(isLoading),
-    error: readonly(error),
-    
+    // State (not readonly - required for Pinia persistence plugin)
+    currentUser,
+    authToken,
+    isLoading,
+    error,
+
     // Getters
     isAuthenticated,
     hasClub,
     isVerified,
     isVip,
-    
+
     // Actions
     login,
     logout,
@@ -189,5 +189,7 @@ export const useAuthStore = defineStore('auth', () => {
     initialize,
   }
 }, {
-  persist: true
+  persist: {
+    pick: ['currentUser', 'authToken']
+  }
 })

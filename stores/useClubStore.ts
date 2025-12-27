@@ -72,9 +72,9 @@ export const useClubStore = defineStore('club', () => {
   }
 
   return {
-    // State
-    selectedClub: readonly(selectedClub),
-    clubs: readonly(clubs),
+    // State (not readonly - required for Pinia persistence plugin)
+    selectedClub,
+    clubs,
 
     // Getters
     hasSelectedClub,
@@ -87,5 +87,7 @@ export const useClubStore = defineStore('club', () => {
     clearSelectedClub
   }
 }, {
-  persist: true
+  persist: {
+    pick: ['selectedClub']
+  }
 })
