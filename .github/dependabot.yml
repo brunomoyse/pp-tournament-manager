@@ -1,0 +1,28 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    groups:
+      nuxt:
+        patterns:
+          - "nuxt*"
+          - "@nuxt/*"
+      vue:
+        patterns:
+          - "vue*"
+          - "@vue/*"
+      ionic:
+        patterns:
+          - "@ionic/*"
+          - "ionicons"
+      capacitor:
+        patterns:
+          - "@capacitor/*"
+      dev-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
