@@ -219,12 +219,6 @@ const handleLogin = async () => {
 const forgotPassword = async () => {
   console.warn('Forgot password functionality not implemented yet.')
 }
-
-// Error message helper
-const getErrorMessage = (errors: any[]): string => {
-  if (!errors || errors.length === 0) return ''
-  return errors[0]?.message || t('auth.loginFailed')
-}
 </script>
 
 <style scoped>
@@ -298,12 +292,6 @@ const getErrorMessage = (errors: any[]): string => {
   font-size: 32px;
   font-weight: 700;
   margin: 0 0 8px 0;
-}
-
-.pp-app-subtitle {
-  color: #94a3b8;
-  font-size: 16px;
-  margin: 0;
 }
 
 /* Form */
@@ -397,20 +385,6 @@ const getErrorMessage = (errors: any[]): string => {
   margin: 0;
 }
 
-/* Error Display */
-.pp-auth-error {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 20px;
-  color: #ef4444;
-  font-size: 14px;
-}
-
 /* Buttons */
 .pp-login-button {
   --background: linear-gradient(135deg, #fee78a, #fbbf24);
@@ -434,67 +408,12 @@ const getErrorMessage = (errors: any[]): string => {
   box-shadow: none;
 }
 
-/* Divider */
-.pp-divider {
-  position: relative;
-  text-align: center;
-  margin: 30px 0;
-  color: #64748b;
-  font-size: 14px;
-}
-
-.pp-divider::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: #54545f;
-}
-
 .pp-divider span {
   background: #18181a;
   padding: 0 16px;
   position: relative;
   z-index: 1;
 }
-
-/* Google Button */
-.pp-google-button {
-  --background: transparent;
-  --color: #e2e8f0;
-  --border-color: #54545f;
-  --border-radius: 12px;
-  height: 50px;
-  font-weight: 500;
-  margin-bottom: 30px;
-  transition: all 0.3s ease;
-}
-
-.pp-google-button:hover {
-  --border-color: #64748b;
-  --background: rgba(100, 116, 139, 0.1);
-}
-
-/* Links */
-
-.pp-register-link {
-  color: #94a3b8;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.pp-link-button {
-  --color: #fee78a;
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0;
-}
-
 
 /* Responsive Design */
 @media (max-width: 480px) {

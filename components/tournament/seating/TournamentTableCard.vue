@@ -138,6 +138,7 @@ const emit = defineEmits<{
   removePlayer: [data: { tableId: string, seatNumber: number }]
   statusChanged: [data: { playerId: string, status: string, stackSize?: number }]
   movePlayer: [data: { playerId: string, fromTable: number, fromSeat: number }]
+  selectPlayerForSeat: [data: { tableId: string, seatNumber: number }]
 }>()
 
 // Modal state
@@ -322,7 +323,7 @@ const getNamePosition = (seatNumber: number) => {
 const handleSeatClick = (seatNumber: number) => {
   const seatData = props.seats?.find(s => s.assignment.seatNumber === seatNumber)
   const player = seatData?.player
-  
+
   if (player) {
     // Open player action modal
     selectedPlayer.value = player
@@ -331,8 +332,11 @@ const handleSeatClick = (seatNumber: number) => {
     selectedPlayerStatus.value = 'SEATED' // Default status for seated players
     showPlayerModal.value = true
   } else {
-    // TODO: Show player selection modal for empty seats
-    console.log('Show player selection for seat', seatNumber)
+    // Emit event to parent to show player selection
+    emit('selectPlayerForSeat', {
+      tableId: props.table.id,
+      seatNumber
+    })
   }
 }
 

@@ -34,18 +34,62 @@ subscription TournamentClockUpdates($tournamentId: ID!) {
   }
 }
 
-subscription TournamentRegistrations{
-  tournamentRegistrations {
+subscription TournamentRegistrations($tournamentId: ID) {
+  tournamentRegistrations(tournamentId: $tournamentId) {
     tournamentId
     player {
       user {
+        id
         firstName
         lastName
+        username
+        email
       }
       registration {
+        id
         registrationTime
+        status
+        notes
       }
     }
     eventType
+  }
+}
+
+subscription SeatingChanges($clubId: ID!) {
+  seatingChanges(clubId: $clubId) {
+    eventType
+    tournamentId
+    clubId
+    affectedAssignment {
+      id
+      tournamentId
+      clubTableId
+      userId
+      seatNumber
+      stackSize
+      isCurrent
+      assignedAt
+    }
+    affectedPlayer {
+      id
+      firstName
+      lastName
+      username
+    }
+    message
+    timestamp
+  }
+}
+
+subscription UserNotifications($userId: ID!) {
+  userNotifications(userId: $userId) {
+    id
+    userId
+    notificationType
+    title
+    message
+    tournamentId
+    createdAt
   }
 }

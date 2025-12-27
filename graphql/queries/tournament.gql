@@ -125,12 +125,123 @@ query GetTournamentPlayers($tournamentId: UUID!) {
 
 query GetTournamentPayout($tournamentId: ID!) {
   tournamentPayout(tournamentId: $tournamentId) {
-    totalPrizePool
+    id
+    tournamentId
+    templateId
     playerCount
+    totalPrizePool
     positions {
       position
       percentage
       amountCents
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+query GetTournamentEntries($tournamentId: ID!) {
+  tournamentEntries(tournamentId: $tournamentId) {
+    id
+    tournamentId
+    userId
+    entryType
+    amountCents
+    chipsReceived
+    recordedBy
+    notes
+    createdAt
+    updatedAt
+  }
+}
+
+query GetTournamentEntryStats($tournamentId: ID!) {
+  tournamentEntryStats(tournamentId: $tournamentId) {
+    tournamentId
+    totalEntries
+    totalAmountCents
+    uniquePlayers
+    initialCount
+    rebuyCount
+    reEntryCount
+    addonCount
+  }
+}
+
+query GetLeaderboard($period: LeaderboardPeriod, $limit: Int, $clubId: UUID) {
+  leaderboard(period: $period, limit: $limit, clubId: $clubId) {
+    entries {
+      user {
+        id
+        firstName
+        lastName
+        username
+        email
+      }
+      rank
+      totalTournaments
+      totalBuyIns
+      totalWinnings
+      netProfit
+      totalItm
+      itmPercentage
+      roiPercentage
+      averageFinish
+      firstPlaces
+      finalTables
+      points
+    }
+    totalPlayers
+    period
+  }
+}
+
+query GetMyTournamentStatistics {
+  myTournamentStatistics {
+    last7Days {
+      totalItm
+      totalTournaments
+      totalWinnings
+      totalBuyIns
+      itmPercentage
+      roiPercentage
+    }
+    last30Days {
+      totalItm
+      totalTournaments
+      totalWinnings
+      totalBuyIns
+      itmPercentage
+      roiPercentage
+    }
+    lastYear {
+      totalItm
+      totalTournaments
+      totalWinnings
+      totalBuyIns
+      itmPercentage
+      roiPercentage
+    }
+  }
+}
+
+query GetMyRecentTournamentResults($limit: Int) {
+  myRecentTournamentResults(limit: $limit) {
+    result {
+      id
+      tournamentId
+      userId
+      finalPosition
+      prizeCents
+      points
+      notes
+      createdAt
+    }
+    tournament {
+      id
+      title
+      startTime
+      buyInCents
     }
   }
 }
