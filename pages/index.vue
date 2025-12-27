@@ -248,13 +248,8 @@ const createTournament = async () => {
   await alert.present()
 }
 
-const managePlayers = async () => {
-  const alert = await alertController.create({
-    header: t('alerts.playerManagement.header'),
-    message: t('alerts.playerManagement.message'),
-    buttons: [t('common.ok')]
-  })
-  await alert.present()
+const managePlayers = () => {
+  router.push('/players')
 }
 
 const viewReports = async () => {

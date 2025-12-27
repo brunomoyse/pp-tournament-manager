@@ -1,0 +1,39 @@
+mutation CreatePlayer($input: CreatePlayerInput!) {
+  createPlayer(input: $input) {
+    id
+    email
+    username
+    firstName
+    lastName
+    phone
+    isActive
+    role
+  }
+}
+
+mutation UpdatePlayer($input: UpdatePlayerInput!) {
+  updatePlayer(input: $input) {
+    id
+    email
+    username
+    firstName
+    lastName
+    phone
+    isActive
+    role
+  }
+}
+
+mutation DeactivatePlayer($id: ID!) {
+  deactivatePlayer(id: $id) {
+    id
+    isActive
+  }
+}
+
+mutation ReactivatePlayer($id: ID!) {
+  reactivatePlayer(id: $id) {
+    id
+    isActive
+  }
+}

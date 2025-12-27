@@ -52,6 +52,45 @@
     "close": "Fermer",
     "continue": "Continuer",
     "pullToRefresh": "Tirez pour actualiser",
-    "note": "Note"
+    "note": "Note",
+    "edit": "Modifier",
+    "user": "Utilisateur"
+  },
+  "status": {
+    "loading": "Chargement...",
+    "saving": "Enregistrement..."
+  },
+  "players": {
+    "title": "Gestion des Joueurs",
+    "addPlayer": "Ajouter un Joueur",
+    "searchPlaceholder": "Rechercher des joueurs...",
+    "allPlayers": "Tous les joueurs",
+    "activePlayers": "Joueurs actifs",
+    "inactivePlayers": "Joueurs inactifs",
+    "playersFound": "joueur(s) trouvé(s)",
+    "noPlayersFound": "Aucun joueur trouvé",
+    "createFirstPlayer": "Commencez par ajouter votre premier joueur",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "deactivate": "Désactiver",
+    "reactivate": "Réactiver",
+    "createPlayer": "Créer un Joueur",
+    "editPlayer": "Modifier le Joueur",
+    "firstName": "Prénom",
+    "firstNamePlaceholder": "Entrez le prénom",
+    "lastName": "Nom",
+    "lastNamePlaceholder": "Entrez le nom",
+    "emailPlaceholder": "joueur{'@'}email.com",
+    "usernamePlaceholder": "Entrez un nom d'utilisateur",
+    "phone": "Téléphone",
+    "phonePlaceholder": "+32 xxx xx xx xx",
+    "create": "Créer",
+    "save": "Enregistrer",
+    "deactivateConfirmTitle": "Désactiver le joueur ?",
+    "deactivateConfirmMessage": "Êtes-vous sûr de vouloir désactiver {name} ? Ce joueur ne pourra plus participer aux tournois.",
+    "saveFailed": "Échec de l'enregistrement du joueur. Veuillez réessayer.",
+    "deactivateFailed": "Échec de la désactivation du joueur. Veuillez réessayer.",
+    "reactivateFailed": "Échec de la réactivation du joueur. Veuillez réessayer.",
+    "backendNotReady": "Cette fonctionnalité n'est pas encore disponible. Le backend doit être mis à jour."
   }
 }
