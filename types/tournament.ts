@@ -218,3 +218,50 @@ export interface UpdateTournamentStatusInput {
     tournamentId: string;
     liveStatus: TournamentLiveStatus;
 }
+
+// Tournament Create/Update input types
+export interface TournamentStructureInput {
+    levelNumber: number;
+    smallBlind: number;
+    bigBlind: number;
+    ante: number;
+    durationMinutes: number;
+    isBreak: boolean;
+    breakDurationMinutes?: number;
+}
+
+export interface CreateTournamentInput {
+    clubId: string;
+    name: string;
+    description?: string;
+    startTime: string;
+    endTime?: string;
+    buyInCents: number;
+    seatCap?: number;
+    earlyBirdBonusChips?: number;
+    structure?: TournamentStructureInput[];
+}
+
+export interface UpdateTournamentInput {
+    id: string;
+    name?: string;
+    description?: string;
+    startTime?: string;
+    endTime?: string;
+    buyInCents?: number;
+    seatCap?: number;
+    earlyBirdBonusChips?: number;
+    structure?: TournamentStructureInput[];
+}
+
+// Form data type for the modal
+export interface TournamentFormData {
+    name: string;
+    description: string;
+    startTime: string;
+    endTime: string;
+    buyInCents: number;
+    seatCap: number | null;
+    earlyBirdBonusChips: number | null;
+    structure: TournamentStructureInput[];
+}

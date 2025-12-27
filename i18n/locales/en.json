@@ -210,6 +210,32 @@
       "title": "Link Club Tables"
     }
   },
+  "tournament": {
+    "createTournament": "Create Tournament",
+    "editTournament": "Edit Tournament",
+    "edit": "Edit Tournament",
+    "basicInfo": "Basic Information",
+    "name": "Tournament Name",
+    "namePlaceholder": "Enter tournament name",
+    "description": "Description",
+    "descriptionPlaceholder": "Enter tournament description (optional)",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "buyIn": "Buy-in",
+    "seatCap": "Seat Cap",
+    "unlimited": "Unlimited",
+    "earlyBirdBonus": "Early Bird Bonus (chips)",
+    "earlyBirdBonusPlaceholder": "Bonus chips for early registration",
+    "blindStructure": "Blind Structure",
+    "addLevel": "Add Level",
+    "break": "Break",
+    "level": "Level",
+    "minutes": "Min",
+    "status": "Status",
+    "create": "Create",
+    "save": "Save",
+    "saveFailed": "Failed to save tournament. Please try again."
+  },
   "players": {
     "title": "Player Management",
     "addPlayer": "Add Player",

@@ -181,6 +181,15 @@
         </div>
       </div>
     </IonContent>
+
+    <!-- Tournament Form Modal -->
+    <TournamentFormModal
+      :isOpen="showTournamentModal"
+      :tournament="null"
+      mode="create"
+      @close="closeTournamentModal"
+      @saved="onTournamentSaved"
+    />
   </IonPage>
 </template>
 
@@ -212,6 +221,7 @@ import { useAuthStore } from '~/stores/useAuthStore'
 import {formatPrice} from "~/utils";
 import { useI18n } from '~/composables/useI18n';
 import { getTournamentStatusLabel, getTournamentStatusClass } from '~/utils/tournamentStatus'
+import TournamentFormModal from '~/components/tournament/TournamentFormModal.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -222,6 +232,9 @@ const { currentUser } = authStore
 const { club } = clubStore
 
 const tournaments = ref<GetTournamentsQuery['tournaments']>([])
+
+// Modal state
+const showTournamentModal = ref(false)
 
 // Tournament statistics
 const activeTournaments = computed(() => 
@@ -239,13 +252,21 @@ const goToTournament = (id: string) => {
   router.push(`/tournament/${id}`)
 }
 
-const createTournament = async () => {
-  const alert = await alertController.create({
-    header: t('alerts.createTournament.header'),
-    message: t('alerts.createTournament.message'),
-    buttons: [t('common.ok')]
-  })
-  await alert.present()
+const createTournament = () => {
+  showTournamentModal.value = true
+}
+
+const closeTournamentModal = () => {
+  showTournamentModal.value = false
+}
+
+const onTournamentSaved = async () => {
+  closeTournamentModal()
+  // Refresh tournaments list
+  if (club) {
+    const res = await GqlGetTournaments({ clubId: club.id })
+    tournaments.value = res.tournaments || []
+  }
 }
 
 const managePlayers = () => {
