@@ -276,7 +276,8 @@ const viewAllTournaments = async () => {
 }
 
 const handleLogout = async () => {
-    //
+  await authStore.logout()
+  router.push('/login')
 }
 
 onMounted(async () => {
