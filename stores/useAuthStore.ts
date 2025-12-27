@@ -96,25 +96,53 @@ export const useAuthStore = defineStore('auth', () => {
   const logout = async (): Promise<void> => {
     isLoading.value = true
     error.value = null
-    
+
     try {
-      // @TODO: Call logout mutation
+      // Note: Backend doesn't have a logout mutation - JWT tokens expire naturally
+      // Just clear the local state
     } catch (err) {
       // Continue with local logout even if server request fails
     } finally {
       clearAuthState()
+      // Also clear club store
+      const clubStore = useClubStore()
+      clubStore.clearSelectedClub()
       isLoading.value = false
     }
   }
 
   const fetchMe = async (): Promise<AuthUser | null> => {
     if (!authToken.value) return null
-    
+
+    isLoading.value = true
     try {
-      // @TODO: Implement GqlMe query when available
-      return currentUser.value
-    } catch (err) {
+      const result = await GqlGetMe()
+
+      if (result?.me) {
+        const user = result.me as AuthUser
+        currentUser.value = user
+
+        // Update club store if user has a managed club
+        if (user.managedClub) {
+          const clubStore = useClubStore()
+          clubStore.setSelectedClub({
+            id: user.managedClub.id,
+            name: user.managedClub.name,
+            city: user.managedClub.city || ''
+          })
+        }
+
+        return user
+      }
+
       return null
+    } catch (err) {
+      // Token might be expired or invalid
+      console.error('Failed to fetch user:', err)
+      clearAuthState()
+      return null
+    } finally {
+      isLoading.value = false
     }
   }
 

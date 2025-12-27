@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "pocketpair-tournament-manager",
   "type": "module",
   "private": true,
   "scripts": {

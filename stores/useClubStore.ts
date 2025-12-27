@@ -64,19 +64,27 @@ export const useClubStore = defineStore('club', () => {
     }
   }
 
+  const clearSelectedClub = () => {
+    selectedClub.value = null
+    if (import.meta.client) {
+      localStorage.removeItem('selectedClub')
+    }
+  }
+
   return {
     // State
     selectedClub: readonly(selectedClub),
     clubs: readonly(clubs),
-    
+
     // Getters
     hasSelectedClub,
     club,
-    
+
     // Actions
     setSelectedClub,
     setClubs,
-    initializeFromStorage
+    initializeFromStorage,
+    clearSelectedClub
   }
 }, {
   persist: true
