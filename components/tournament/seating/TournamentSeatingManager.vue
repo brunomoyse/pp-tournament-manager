@@ -23,8 +23,8 @@
           <IonIcon :icon="scaleOutline" :class="['w-4 h-4', isBalancing && 'animate-spin']" />
           {{ isBalancing ? 'Balancing...' : 'Balance Tables' }}
         </button>
-        <button 
-          @click="breakTable"
+        <button
+          @click="openBreakTableModal"
           class="pp-action-button pp-action-button--danger"
         >
           <IonIcon :icon="unlinkOutline" class="w-4 h-4" />
@@ -150,6 +150,72 @@
         </div>
       </div>
     </div>
+
+    <!-- Break Table Modal -->
+    <div v-if="showBreakTableModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="closeBreakTableModal"></div>
+      <div class="relative bg-pp-bg-secondary rounded-2xl w-full max-w-md border border-pp-border shadow-2xl p-6" style="background-color: #24242a !important;">
+        <h2 class="text-xl font-bold text-pp-text-primary mb-2">Break Table</h2>
+        <p class="text-white/70 mb-4">Select an empty table to remove from the tournament:</p>
+
+        <div v-if="tablesWithStatus.length > 0" class="space-y-2 max-h-96 overflow-y-auto">
+          <div
+            v-for="tableData in tablesWithStatus"
+            :key="tableData.table.id"
+            :class="[
+              'flex items-center justify-between p-4 border rounded-lg transition-all',
+              tableData.isEmpty
+                ? 'bg-pp-bg-primary border-pp-border hover:border-red-500/50 cursor-pointer'
+                : 'bg-pp-bg-primary/50 border-pp-border/50 opacity-60 cursor-not-allowed'
+            ]"
+          >
+            <div class="flex items-center gap-3">
+              <div :class="[
+                'w-10 h-10 rounded-full flex items-center justify-center font-bold',
+                tableData.isEmpty
+                  ? 'bg-green-500/20 text-green-400'
+                  : 'bg-orange-500/20 text-orange-400'
+              ]">
+                {{ tableData.table.tableNumber }}
+              </div>
+              <div>
+                <div class="font-semibold text-white">Table {{ tableData.table.tableNumber }}</div>
+                <div class="text-sm text-white/60">
+                  {{ tableData.isEmpty ? 'Empty - can be removed' : `${tableData.seats?.length || 0} players seated` }}
+                </div>
+              </div>
+            </div>
+            <button
+              v-if="tableData.isEmpty"
+              @click="breakTable(tableData.table.id)"
+              :disabled="isBreakingTable"
+              class="px-3 py-1.5 bg-red-500/20 text-red-400 border border-red-500/30 rounded-lg text-sm font-medium hover:bg-red-500/30 transition-colors disabled:opacity-50"
+            >
+              {{ isBreakingTable ? 'Removing...' : 'Remove' }}
+            </button>
+            <span v-else class="px-3 py-1.5 text-orange-400 text-sm">
+              Has players
+            </span>
+          </div>
+        </div>
+
+        <div v-else class="text-center py-8 text-white/60">
+          No tables linked to this tournament.
+        </div>
+
+        <div v-if="tablesWithStatus.length > 0 && !hasEmptyTables" class="mt-4 p-3 bg-orange-500/10 border border-orange-500/30 rounded-lg">
+          <p class="text-orange-400 text-sm">
+            All tables have players seated. Move or eliminate players before breaking a table.
+          </p>
+        </div>
+
+        <div class="mt-4 flex justify-end">
+          <button @click="closeBreakTableModal" class="pp-action-button pp-action-button--secondary">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -209,10 +275,49 @@ const balanceTables = async () => {
   }
 }
 
-const breakTable = () => {
-  // Note: Breaking a table requires moving all players first, then unassigning the table
-  // This is a complex operation that may need a confirmation modal
-  alert('To break a table, first move all players to other tables, then the table can be unassigned.')
+// Break table modal state
+const showBreakTableModal = ref(false)
+const isBreakingTable = ref(false)
+
+// Get tables with their empty status
+const tablesWithStatus = computed(() => {
+  const tables = seatingData.value?.tournamentSeatingChart?.tables || []
+  return tables.map(tableData => ({
+    ...tableData,
+    isEmpty: !tableData.seats || tableData.seats.length === 0
+  }))
+})
+
+// Check if there are any empty tables
+const hasEmptyTables = computed(() => tablesWithStatus.value.some(t => t.isEmpty))
+
+const openBreakTableModal = () => {
+  showBreakTableModal.value = true
+}
+
+const closeBreakTableModal = () => {
+  showBreakTableModal.value = false
+}
+
+const breakTable = async (tableId: string) => {
+  if (isBreakingTable.value) return
+
+  isBreakingTable.value = true
+  try {
+    await GqlUnassignTableFromTournament({
+      input: {
+        tournamentId: selectedTournamentId,
+        clubTableId: tableId
+      }
+    })
+    await refreshSeatingData()
+    closeBreakTableModal()
+  } catch (error: any) {
+    console.error('Failed to break table:', error)
+    alert(error?.message || 'Failed to break table. Please try again.')
+  } finally {
+    isBreakingTable.value = false
+  }
 }
 
 const handleSeatPlayer = async (data: { tableId: string, seatNumber: number, playerId: string }) => {
