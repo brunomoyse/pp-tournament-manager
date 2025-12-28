@@ -7,6 +7,10 @@ mutation AssignTableToTournament ($input: AssignTableToTournamentInput!) {
   }
 }
 
+mutation UnassignTableFromTournament($input: UnassignTableFromTournamentInput!) {
+  unassignTableFromTournament(input: $input)
+}
+
 mutation AddTournamentEntry($input: AddTournamentEntryInput!) {
   addTournamentEntry(input: $input) {
     id
