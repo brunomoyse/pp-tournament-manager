@@ -46,6 +46,9 @@
     "forgotPasswordInfo": "Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
     "sendResetLink": "Envoyer le lien de réinitialisation"
   },
+  "headings": {
+    "regularPlayers": "Joueurs réguliers"
+  },
   "common": {
     "ok": "OK",
     "cancel": "Annuler",
@@ -87,6 +90,40 @@
     "create": "Créer",
     "save": "Enregistrer",
     "saveFailed": "Échec de l'enregistrement du tournoi. Veuillez réessayer."
+  },
+  "reports": {
+    "title": "Statistiques du Club",
+    "period": {
+      "allTime": "Tout le temps",
+      "last30Days": "30 derniers jours",
+      "last7Days": "7 derniers jours"
+    },
+    "leaderboard": "Classement",
+    "tournaments": "Tournois",
+    "players": "Joueurs",
+    "prizePool": "Cagnotte",
+    "avgBuyIn": "Buy-in moyen",
+    "topWinner": "Meilleur gagnant",
+    "mostGames": "Plus de parties",
+    "rank": "Rang",
+    "player": "Joueur",
+    "itmPercent": "ITM%",
+    "roiPercent": "ROI%",
+    "netProfit": "Profit net",
+    "points": "Points",
+    "noData": "Aucune donnée de tournoi"
+  },
+  "tournaments": {
+    "title": "Tous les Tournois",
+    "search": "Rechercher des tournois...",
+    "all": "Tous",
+    "upcoming": "À venir",
+    "inProgress": "En cours",
+    "completed": "Terminé",
+    "noTournaments": "Aucun tournoi trouvé",
+    "tryDifferentFilter": "Essayez une autre recherche ou un autre filtre",
+    "createFirst": "Créez votre premier tournoi pour commencer",
+    "seats": "places"
   },
   "players": {
     "title": "Gestion des Joueurs",

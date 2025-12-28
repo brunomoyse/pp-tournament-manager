@@ -135,7 +135,14 @@
                                 </div>
                                 <div>
                                     <label class="text-sm text-white/60">{{ t('tournament.status') }}</label>
-                                    <p class="text-white font-medium">{{ tournament.liveStatus }}</p>
+                                    <p class="mt-1">
+                                        <span :class="[
+                                            'px-3 py-1 rounded-full text-sm font-medium border',
+                                            getTournamentStatusClass(tournament.liveStatus || 'UNKNOWN')
+                                        ]">
+                                            {{ getTournamentStatusLabel(tournament.liveStatus || 'UNKNOWN') }}
+                                        </span>
+                                    </p>
                                 </div>
                                 <div v-if="tournament.description">
                                     <label class="text-sm text-white/60">{{ t('tournament.description') }}</label>
@@ -178,6 +185,7 @@ import TournamentFormModal from "~/components/tournament/TournamentFormModal.vue
 import {useGqlSubscription} from "~/composables/useGqlSubscription";
 import type {TournamentClock} from "~/types/clock";
 import { formatPrice } from "~/utils";
+import { getTournamentStatusLabel, getTournamentStatusClass } from '~/utils/tournamentStatus';
 
 const { connectionStatus } = useNetworkStatus()
 const route = useRoute()

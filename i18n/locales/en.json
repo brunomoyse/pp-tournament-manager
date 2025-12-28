@@ -68,7 +68,8 @@
     "prizePool": "Prize Pool",
     "blindStructure": "Blind Structure",
     "tableManagement": "Table Management",
-    "tournamentClock": "Tournament Clock"
+    "tournamentClock": "Tournament Clock",
+    "regularPlayers": "Regular Players"
   },
   "labels": {
     "latest": "Latest:",
@@ -237,6 +238,40 @@
     "create": "Create",
     "save": "Save",
     "saveFailed": "Failed to save tournament. Please try again."
+  },
+  "reports": {
+    "title": "Club Statistics",
+    "period": {
+      "allTime": "All Time",
+      "last30Days": "Last 30 Days",
+      "last7Days": "Last 7 Days"
+    },
+    "leaderboard": "Leaderboard",
+    "tournaments": "Tournaments",
+    "players": "Players",
+    "prizePool": "Prize Pool",
+    "avgBuyIn": "Avg Buy-in",
+    "topWinner": "Top Winner",
+    "mostGames": "Most Games",
+    "rank": "Rank",
+    "player": "Player",
+    "itmPercent": "ITM%",
+    "roiPercent": "ROI%",
+    "netProfit": "Net Profit",
+    "points": "Points",
+    "noData": "No tournament data yet"
+  },
+  "tournaments": {
+    "title": "All Tournaments",
+    "search": "Search tournaments...",
+    "all": "All",
+    "upcoming": "Upcoming",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "noTournaments": "No tournaments found",
+    "tryDifferentFilter": "Try a different search or filter",
+    "createFirst": "Create your first tournament to get started",
+    "seats": "seats"
   },
   "players": {
     "title": "Player Management",
