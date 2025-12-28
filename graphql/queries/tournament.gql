@@ -245,3 +245,21 @@ query GetMyRecentTournamentResults($limit: Int) {
     }
   }
 }
+
+query GetBlindStructureTemplates {
+  blindStructureTemplates {
+    id
+    name
+    description
+    levels {
+      levelNumber
+      smallBlind
+      bigBlind
+      ante
+      durationMinutes
+      isBreak
+      breakDurationMinutes
+    }
+    createdAt
+  }
+}

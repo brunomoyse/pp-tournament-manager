@@ -63,6 +63,25 @@ export interface TournamentStructure {
     breakDurationMinutes?: number | null;
 }
 
+// Blind Structure Template types
+export interface BlindStructureLevel {
+    levelNumber: number;
+    smallBlind: number;
+    bigBlind: number;
+    ante: number;
+    durationMinutes: number;
+    isBreak: boolean;
+    breakDurationMinutes?: number | null;
+}
+
+export interface BlindStructureTemplate {
+    id: string;
+    name: string;
+    description?: string | null;
+    levels: BlindStructureLevel[];
+    createdAt: string;
+}
+
 // Tournament Entry types (buy-ins, rebuys, add-ons)
 export type EntryType = 'INITIAL' | 'REBUY' | 'RE_ENTRY' | 'ADDON'
 
@@ -239,6 +258,7 @@ export interface CreateTournamentInput {
     buyInCents: number;
     seatCap?: number;
     earlyBirdBonusChips?: number;
+    templateId?: string;
     structure?: TournamentStructureInput[];
 }
 
@@ -251,6 +271,7 @@ export interface UpdateTournamentInput {
     buyInCents?: number;
     seatCap?: number;
     earlyBirdBonusChips?: number;
+    templateId?: string;
     structure?: TournamentStructureInput[];
 }
 
@@ -263,5 +284,5 @@ export interface TournamentFormData {
     buyInCents: number;
     seatCap: number | null;
     earlyBirdBonusChips: number | null;
-    structure: TournamentStructureInput[];
+    templateId: string;
 }
