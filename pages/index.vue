@@ -60,20 +60,20 @@
             <div class="space-y-6">
               <div class="space-y-4">
                 <div class="flex justify-between items-center">
-                  <span class="text-white/70">Unique Players</span>
-                  <span class="text-pp-text-primary font-semibold">92</span>
+                  <span class="text-white/70">{{ t('reports.players') }}</span>
+                  <span class="text-pp-text-primary font-semibold">{{ playerStats.uniquePlayers }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-white/70">This Week</span>
-                  <span class="text-pp-text-primary font-semibold">38</span>
+                  <span class="text-white/70">{{ t('reports.period.last7Days') }}</span>
+                  <span class="text-pp-text-primary font-semibold">{{ playerStats.thisWeek }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-white/70">Avg Buy-in</span>
-                  <span class="text-pp-text-primary font-semibold">25€</span>
+                  <span class="text-white/70">{{ t('reports.avgBuyIn') }}</span>
+                  <span class="text-pp-text-primary font-semibold">{{ formatPrice(playerStats.avgBuyIn) }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-white/70">Regular Players</span>
-                  <span class="text-pp-text-primary font-semibold">67</span>
+                  <span class="text-white/70">{{ t('headings.regularPlayers') }}</span>
+                  <span class="text-pp-text-primary font-semibold">{{ playerStats.regularPlayers }}</span>
                 </div>
               </div>
               <button 
@@ -195,7 +195,8 @@
 
 <script setup lang="ts">
 // Protect this page with authentication
-import type {GetTournamentsQuery} from "#gql";
+import type {GetTournamentsQuery, GetLeaderboardQuery} from "#gql";
+import type { LeaderboardPeriod } from '~/types/tournament';
 
 definePageMeta({
   middleware: 'auth'
@@ -232,9 +233,32 @@ const { currentUser } = authStore
 const { club } = clubStore
 
 const tournaments = ref<GetTournamentsQuery['tournaments']>([])
+const allTimeLeaderboard = ref<GetLeaderboardQuery['leaderboard'] | null>(null)
+const weekLeaderboard = ref<GetLeaderboardQuery['leaderboard'] | null>(null)
 
 // Modal state
 const showTournamentModal = ref(false)
+
+// Player statistics computed from leaderboard data
+const playerStats = computed(() => {
+  const entries = allTimeLeaderboard.value?.entries || []
+
+  // Unique players (all time)
+  const uniquePlayers = allTimeLeaderboard.value?.totalPlayers || 0
+
+  // Active this week
+  const thisWeek = weekLeaderboard.value?.totalPlayers || 0
+
+  // Average buy-in
+  const totalBuyIns = entries.reduce((sum, e) => sum + e.totalBuyIns, 0)
+  const totalTournaments = entries.reduce((sum, e) => sum + e.totalTournaments, 0)
+  const avgBuyIn = totalTournaments > 0 ? Math.round(totalBuyIns / totalTournaments) : 0
+
+  // Regular players (3+ tournaments)
+  const regularPlayers = entries.filter(e => e.totalTournaments >= 3).length
+
+  return { uniquePlayers, thisWeek, avgBuyIn, regularPlayers }
+})
 
 // Tournament statistics
 const activeTournaments = computed(() => 
@@ -273,22 +297,12 @@ const managePlayers = () => {
   router.push('/players')
 }
 
-const viewReports = async () => {
-  const alert = await alertController.create({
-    header: t('alerts.reports.header'),
-    message: t('alerts.reports.message'),
-    buttons: [t('common.ok')]
-  })
-  await alert.present()
+const viewReports = () => {
+  router.push('/reports')
 }
 
-const viewAllTournaments = async () => {
-  const alert = await alertController.create({
-    header: t('alerts.allTournaments.header'),
-    message: t('alerts.allTournaments.message'),
-    buttons: [t('common.ok')]
-  })
-  await alert.present()
+const viewAllTournaments = () => {
+  router.push('/tournaments')
 }
 
 const handleLogout = async () => {
@@ -307,9 +321,16 @@ onMounted(async () => {
         return
     }
 
-    const res = await GqlGetTournaments({ clubId: club.id})
-    tournaments.value = res.tournaments || []
+    // Fetch all data in parallel
+    const [tournamentsRes, allTimeRes, weekRes] = await Promise.all([
+        GqlGetTournaments({ clubId: club.id }),
+        GqlGetLeaderboard({ clubId: club.id, period: 'ALL_TIME' as LeaderboardPeriod, limit: 500 }),
+        GqlGetLeaderboard({ clubId: club.id, period: 'LAST_7_DAYS' as LeaderboardPeriod })
+    ])
 
+    tournaments.value = tournamentsRes.tournaments || []
+    allTimeLeaderboard.value = allTimeRes.leaderboard
+    weekLeaderboard.value = weekRes.leaderboard
 })
 
 </script>

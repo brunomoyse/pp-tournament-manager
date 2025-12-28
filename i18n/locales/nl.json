@@ -46,6 +46,9 @@
     "forgotPasswordInfo": "Voer je emailadres in en we sturen je een link om je wachtwoord te resetten.",
     "sendResetLink": "Reset Link Verzenden"
   },
+  "headings": {
+    "regularPlayers": "Vaste spelers"
+  },
   "common": {
     "ok": "OK",
     "cancel": "Annuleren",
@@ -59,6 +62,40 @@
   "status": {
     "loading": "Laden...",
     "saving": "Opslaan..."
+  },
+  "reports": {
+    "title": "Club Statistieken",
+    "period": {
+      "allTime": "Altijd",
+      "last30Days": "Laatste 30 dagen",
+      "last7Days": "Laatste 7 dagen"
+    },
+    "leaderboard": "Ranglijst",
+    "tournaments": "Toernooien",
+    "players": "Spelers",
+    "prizePool": "Prijzenpot",
+    "avgBuyIn": "Gem. Buy-in",
+    "topWinner": "Topwinnaar",
+    "mostGames": "Meeste spellen",
+    "rank": "Rang",
+    "player": "Speler",
+    "itmPercent": "ITM%",
+    "roiPercent": "ROI%",
+    "netProfit": "Netto winst",
+    "points": "Punten",
+    "noData": "Nog geen toernooigegevens"
+  },
+  "tournaments": {
+    "title": "Alle Toernooien",
+    "search": "Zoek toernooien...",
+    "all": "Alle",
+    "upcoming": "Aankomend",
+    "inProgress": "Bezig",
+    "completed": "Voltooid",
+    "noTournaments": "Geen toernooien gevonden",
+    "tryDifferentFilter": "Probeer een andere zoekopdracht of filter",
+    "createFirst": "Maak je eerste toernooi aan om te beginnen",
+    "seats": "plaatsen"
   },
   "tournament": {
     "createTournament": "Toernooi Aanmaken",
