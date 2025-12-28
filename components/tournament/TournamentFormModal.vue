@@ -123,92 +123,40 @@
           </div>
         </div>
 
-        <!-- Blind Structure Section -->
+        <!-- Blind Structure Template Section -->
         <div class="space-y-4">
-          <div class="flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-pp-text-primary">{{ t('tournament.blindStructure') }}</h3>
-            <button
-              type="button"
-              @click="addStructureLevel"
-              class="px-3 py-1 text-sm bg-pp-accent-gold/20 text-pp-accent-gold rounded-lg hover:bg-pp-accent-gold/30 transition-colors"
+          <h3 class="text-lg font-semibold text-pp-text-primary">{{ t('tournament.blindStructure') }}</h3>
+
+          <!-- Template Dropdown -->
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-2">
+              {{ t('tournament.selectTemplate') }} <span class="text-red-400">*</span>
+            </label>
+            <select
+              v-model="form.templateId"
+              required
+              class="w-full px-3 py-2 bg-pp-bg-primary border border-pp-border rounded-lg text-white focus:ring-2 focus:ring-pp-accent-gold focus:border-pp-accent-gold"
             >
-              <IonIcon :icon="addOutline" class="w-4 h-4 inline mr-1" />
-              {{ t('tournament.addLevel') }}
-            </button>
+              <option value="" disabled>{{ t('tournament.selectTemplatePlaceholder') }}</option>
+              <option v-for="template in templates" :key="template.id" :value="template.id">
+                {{ template.name }}
+              </option>
+            </select>
           </div>
 
-          <!-- Structure Levels -->
-          <div class="space-y-3 max-h-64 overflow-y-auto">
-            <div
-              v-for="(level, index) in form.structure"
-              :key="index"
-              class="p-3 bg-pp-bg-primary rounded-lg border border-pp-border"
-            >
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-medium text-white">
-                  {{ level.isBreak ? t('tournament.break') : t('tournament.level') + ' ' + level.levelNumber }}
-                </span>
-                <button
-                  type="button"
-                  @click="removeStructureLevel(index)"
-                  class="p-1 text-red-400 hover:text-red-300 transition-colors"
-                  :disabled="form.structure.length <= 1"
-                >
-                  <IonIcon :icon="trashOutline" class="w-4 h-4" />
-                </button>
-              </div>
+          <!-- Template Description -->
+          <p v-if="selectedTemplate?.description" class="text-sm text-white/60">
+            {{ selectedTemplate.description }}
+          </p>
 
-              <div class="grid grid-cols-5 gap-2">
-                <div>
-                  <label class="text-xs text-white/60">SB</label>
-                  <input
-                    v-model.number="level.smallBlind"
-                    type="number"
-                    min="0"
-                    :disabled="level.isBreak"
-                    class="w-full px-2 py-1 text-sm bg-pp-bg-secondary border border-pp-border rounded text-white disabled:opacity-50"
-                  />
-                </div>
-                <div>
-                  <label class="text-xs text-white/60">BB</label>
-                  <input
-                    v-model.number="level.bigBlind"
-                    type="number"
-                    min="0"
-                    :disabled="level.isBreak"
-                    class="w-full px-2 py-1 text-sm bg-pp-bg-secondary border border-pp-border rounded text-white disabled:opacity-50"
-                  />
-                </div>
-                <div>
-                  <label class="text-xs text-white/60">Ante</label>
-                  <input
-                    v-model.number="level.ante"
-                    type="number"
-                    min="0"
-                    :disabled="level.isBreak"
-                    class="w-full px-2 py-1 text-sm bg-pp-bg-secondary border border-pp-border rounded text-white disabled:opacity-50"
-                  />
-                </div>
-                <div>
-                  <label class="text-xs text-white/60">{{ t('tournament.minutes') }}</label>
-                  <input
-                    v-model.number="level.durationMinutes"
-                    type="number"
-                    min="1"
-                    class="w-full px-2 py-1 text-sm bg-pp-bg-secondary border border-pp-border rounded text-white"
-                  />
-                </div>
-                <div class="flex items-end">
-                  <label class="flex items-center gap-1 text-xs text-white/60 cursor-pointer">
-                    <input
-                      v-model="level.isBreak"
-                      type="checkbox"
-                      class="rounded border-pp-border"
-                      @change="onBreakToggle(level)"
-                    />
-                    {{ t('tournament.break') }}
-                  </label>
-                </div>
+          <!-- Template Preview -->
+          <div v-if="selectedTemplate" class="p-3 bg-pp-bg-primary rounded-lg border border-pp-border">
+            <p class="text-xs text-white/60 mb-2">{{ t('tournament.templatePreview') }}</p>
+            <div class="text-sm text-white/80 space-y-1 max-h-32 overflow-y-auto">
+              <div v-for="level in selectedTemplate.levels" :key="level.levelNumber" class="flex justify-between">
+                <span>{{ level.isBreak ? t('tournament.break') : t('tournament.level') + ' ' + level.levelNumber }}</span>
+                <span v-if="!level.isBreak">{{ level.smallBlind }}/{{ level.bigBlind }} ({{ level.ante > 0 ? 'Ante ' + level.ante : 'No Ante' }}) - {{ level.durationMinutes }}min</span>
+                <span v-else>{{ level.durationMinutes }}min</span>
               </div>
             </div>
           </div>
@@ -239,9 +187,9 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { closeOutline, refreshOutline, addOutline, trashOutline } from 'ionicons/icons'
+import { closeOutline, refreshOutline } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
-import type { Tournament, TournamentFormData, TournamentStructureInput } from '~/types/tournament'
+import type { Tournament, TournamentFormData, BlindStructureTemplate } from '~/types/tournament'
 
 interface Props {
   isOpen: boolean
@@ -258,14 +206,27 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const clubStore = useClubStore()
 
-// Default structure template
-const defaultStructure: TournamentStructureInput[] = [
-  { levelNumber: 1, smallBlind: 25, bigBlind: 50, ante: 0, durationMinutes: 20, isBreak: false },
-  { levelNumber: 2, smallBlind: 50, bigBlind: 100, ante: 0, durationMinutes: 20, isBreak: false },
-  { levelNumber: 3, smallBlind: 75, bigBlind: 150, ante: 25, durationMinutes: 20, isBreak: false },
-  { levelNumber: 4, smallBlind: 100, bigBlind: 200, ante: 25, durationMinutes: 20, isBreak: false },
-  { levelNumber: 5, smallBlind: 150, bigBlind: 300, ante: 50, durationMinutes: 20, isBreak: false },
-]
+// Fetch blind structure templates
+const templates = ref<BlindStructureTemplate[]>([])
+
+const fetchTemplates = async () => {
+  try {
+    const { blindStructureTemplates } = await GqlGetBlindStructureTemplates()
+    templates.value = blindStructureTemplates ?? []
+  } catch (error) {
+    console.error('Failed to fetch blind structure templates:', error)
+  }
+}
+
+// Fetch templates on component mount
+onMounted(() => {
+  fetchTemplates()
+})
+
+// Computed to get selected template details
+const selectedTemplate = computed(() => {
+  return templates.value.find(t => t.id === form.value.templateId)
+})
 
 // Form state
 const form = ref<TournamentFormData>({
@@ -276,7 +237,7 @@ const form = ref<TournamentFormData>({
   buyInCents: 0,
   seatCap: null,
   earlyBirdBonusChips: null,
-  structure: [...defaultStructure.map(s => ({ ...s }))]
+  templateId: ''
 })
 
 const saving = ref(false)
@@ -292,7 +253,7 @@ const isFormValid = computed(() => {
   return form.value.name.trim() &&
          form.value.startTime &&
          form.value.buyInCents >= 0 &&
-         form.value.structure.length > 0
+         form.value.templateId
 })
 
 // Helper to format date for datetime-local input
@@ -318,17 +279,7 @@ watch(() => props.isOpen, (isOpen) => {
       buyInCents: props.tournament.buyInCents,
       seatCap: props.tournament.seatCap || null,
       earlyBirdBonusChips: null,
-      structure: props.tournament.structure?.length > 0
-        ? props.tournament.structure.map(s => ({
-            levelNumber: s.levelNumber,
-            smallBlind: s.smallBlind,
-            bigBlind: s.bigBlind,
-            ante: s.ante,
-            durationMinutes: s.durationMinutes,
-            isBreak: s.isBreak,
-            breakDurationMinutes: s.breakDurationMinutes || undefined
-          }))
-        : [...defaultStructure.map(s => ({ ...s }))]
+      templateId: templates.value.length > 0 ? templates.value[0].id : ''
     }
   } else if (isOpen && props.mode === 'create') {
     form.value = {
@@ -339,42 +290,10 @@ watch(() => props.isOpen, (isOpen) => {
       buyInCents: 0,
       seatCap: null,
       earlyBirdBonusChips: null,
-      structure: [...defaultStructure.map(s => ({ ...s }))]
+      templateId: templates.value.length > 0 ? templates.value[0].id : ''
     }
   }
 })
-
-// Structure management
-const addStructureLevel = () => {
-  const lastLevel = form.value.structure[form.value.structure.length - 1]
-  const newLevel: TournamentStructureInput = {
-    levelNumber: form.value.structure.length + 1,
-    smallBlind: lastLevel ? lastLevel.bigBlind : 100,
-    bigBlind: lastLevel ? lastLevel.bigBlind * 2 : 200,
-    ante: lastLevel ? lastLevel.ante : 0,
-    durationMinutes: 20,
-    isBreak: false
-  }
-  form.value.structure.push(newLevel)
-}
-
-const removeStructureLevel = (index: number) => {
-  if (form.value.structure.length <= 1) return
-  form.value.structure.splice(index, 1)
-  // Renumber levels
-  form.value.structure.forEach((level, i) => {
-    level.levelNumber = i + 1
-  })
-}
-
-const onBreakToggle = (level: TournamentStructureInput) => {
-  if (level.isBreak) {
-    level.smallBlind = 0
-    level.bigBlind = 0
-    level.ante = 0
-    level.breakDurationMinutes = level.durationMinutes
-  }
-}
 
 // Submit handler
 const handleSubmit = async () => {
@@ -393,7 +312,7 @@ const handleSubmit = async () => {
           buyInCents: form.value.buyInCents,
           seatCap: form.value.seatCap || undefined,
           earlyBirdBonusChips: form.value.earlyBirdBonusChips || undefined,
-          structure: form.value.structure
+          templateId: form.value.templateId
         }
       })
     } else if (props.tournament) {
@@ -407,7 +326,7 @@ const handleSubmit = async () => {
           buyInCents: form.value.buyInCents,
           seatCap: form.value.seatCap || undefined,
           earlyBirdBonusChips: form.value.earlyBirdBonusChips || undefined,
-          structure: form.value.structure
+          templateId: form.value.templateId
         }
       })
     }
