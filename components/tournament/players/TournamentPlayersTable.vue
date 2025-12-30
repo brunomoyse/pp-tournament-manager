@@ -40,7 +40,10 @@
           <IonIcon :icon="personAddOutline" class="w-4 h-4" />
           Register Player
         </button>
-        <button class="pp-action-button pp-action-button--secondary">
+        <button
+          @click="$emit('qrCheckin')"
+          class="pp-action-button pp-action-button--secondary"
+        >
           <IonIcon :icon="qrCodeOutline" class="w-4 h-4" />
           QR Check-in
         </button>
@@ -133,6 +136,8 @@ const route = useRoute()
 const $emit = defineEmits<{
   'player-checked-in': [data: { playerId: string, result: any }]
   'seat-player': [data: { playerId: string, playerName: string }]
+  'registerPlayer': []
+  'qrCheckin': []
 }>()
 
 // State

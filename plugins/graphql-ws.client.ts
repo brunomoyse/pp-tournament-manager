@@ -7,7 +7,7 @@ export default defineNuxtPlugin((_nuxtApp) => {
     const token = useCookie<string | undefined>('auth_token') // or wherever your token lives
 
     // e.g. wss://api.example.com/graphql
-    const url = config.public.graphqlWsEndpoint || 'http://localhost:8080/graphql'
+    const url = config.public.graphqlWsEndpoint || 'ws://localhost:8080/graphql'
 
     const wsClient: Client | null = import.meta.client
         ? createClient({
