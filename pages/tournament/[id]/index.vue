@@ -85,11 +85,30 @@
 
                 <!-- Players Tab -->
                 <div v-if="activeTab === 'players'" class="">
-                    <TournamentPlayersTable 
-                      @player-checked-in="handlePlayerCheckedIn" 
+                    <TournamentPlayersTable
+                      @player-checked-in="handlePlayerCheckedIn"
                       @seat-player="handleSeatPlayer"
+                      @registerPlayer="showRegisterPlayerModal = true"
+                      @qrCheckin="showQRCheckinModal = true"
                     />
                 </div>
+
+                <!-- Register Player Modal -->
+                <RegisterPlayerModal
+                  :isOpen="showRegisterPlayerModal"
+                  :tournamentId="selectedTournamentId"
+                  :registeredPlayerIds="registeredPlayerIds"
+                  @close="showRegisterPlayerModal = false"
+                  @registered="handlePlayerRegistered"
+                />
+
+                <!-- QR Check-in Modal -->
+                <QRCheckinModal
+                  :isOpen="showQRCheckinModal"
+                  :tournamentId="selectedTournamentId"
+                  @close="showQRCheckinModal = false"
+                  @checkedIn="handleQRCheckedIn"
+                />
 
                 <!-- Seating Tab -->
                 <div v-if="activeTab === 'seating'" class="">
@@ -182,6 +201,8 @@ import TournamentPlayersCard from "~/components/tournament/overview/TournamentPl
 import TournamentPrizePool from "~/components/tournament/overview/TournamentPrizePool.vue";
 import TournamentSeatingManager from "~/components/tournament/seating/TournamentSeatingManager.vue";
 import TournamentFormModal from "~/components/tournament/TournamentFormModal.vue";
+import RegisterPlayerModal from "~/components/tournament/players/RegisterPlayerModal.vue";
+import QRCheckinModal from "~/components/tournament/players/QRCheckinModal.vue";
 import {useGqlSubscription} from "~/composables/useGqlSubscription";
 import type {TournamentClock} from "~/types/clock";
 import { formatPrice } from "~/utils";
@@ -193,6 +214,9 @@ const router = useRouter()
 const tournamentStore = useTournamentStore()
 const clubStore = useClubStore()
 const { t } = useI18n()
+
+// Tournament ID from route
+const selectedTournamentId = route.params.id as string
 
 // Active tab state
 const activeTab = ref('overview')
@@ -207,6 +231,21 @@ const club = computed(() => clubStore.club)
 
 // Edit modal state
 const showEditModal = ref(false)
+
+// Player modals state
+const showRegisterPlayerModal = ref(false)
+const showQRCheckinModal = ref(false)
+
+// Fetch tournament players for filtering in RegisterPlayerModal
+const { data: playersData, refresh: refreshPlayers } = await useLazyAsyncData(
+  `players-page-${selectedTournamentId}`,
+  () => GqlGetTournamentPlayers({ tournamentId: selectedTournamentId })
+)
+
+// Get registered player IDs to filter them out in search
+const registeredPlayerIds = computed(() => {
+  return (playersData.value?.tournamentPlayers || []).map((tp: any) => tp.user.id)
+})
 
 // Check if tournament can be edited (not FINISHED)
 const canEditTournament = computed(() => {
@@ -267,17 +306,35 @@ const handlePlayerCheckedIn = async (data: { playerId: string, result: any }) =>
 // Handle seat player button click
 const handleSeatPlayer = async (data: { playerId: string, playerName: string }) => {
     console.log('Seating player:', data)
-    
+
     // Switch to seating tab
     activeTab.value = 'seating'
-    
+
     // Wait for the tab to render, then scroll to find the player
     await nextTick()
-    
+
     // Wait a bit more for the seating manager to load data
     setTimeout(() => {
         scrollToPlayer(data.playerId, data.playerName)
     }, 500)
+}
+
+// Handle player registered via modal
+const handlePlayerRegistered = async (data: { playerId: string }) => {
+    console.log('Player registered:', data)
+    // Refresh players list
+    await refreshPlayers()
+}
+
+// Handle QR check-in
+const handleQRCheckedIn = async (data: { registrationId: string; result: any }) => {
+    console.log('Player checked in via QR:', data)
+    // Refresh players list
+    await refreshPlayers()
+    // If seatingManager component is available, refresh its data
+    if (seatingManager.value && seatingManager.value.refreshSeatingData) {
+        await seatingManager.value.refreshSeatingData()
+    }
 }
 
 // Scroll to find a specific player in the seating area
@@ -324,8 +381,6 @@ const scrollToPlayer = (playerId: string, playerName: string) => {
 }
 
 // Clock subscription setup
-const selectedTournamentId = route.params.id as string
-
 const clockUpdateQuery = `
     subscription TournamentClockUpdates($tournamentId: ID!) {
       tournamentClockUpdates(tournamentId: $tournamentId) {
@@ -373,7 +428,9 @@ const { data: clockUpdates } = useGqlSubscription({
 
 // Watch for subscription updates and update the store
 watch(clockUpdates, (data: {tournamentClockUpdates: TournamentClock}) => {
+    console.log('[TournamentPage] Clock subscription update received:', data)
     if (data?.tournamentClockUpdates) {
+        console.log('[TournamentPage] Updating store with clock:', data.tournamentClockUpdates)
         tournamentStore.setSelectedTournamentClock(data.tournamentClockUpdates)
     }
 })

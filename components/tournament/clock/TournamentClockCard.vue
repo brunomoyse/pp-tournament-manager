@@ -21,10 +21,10 @@
           'text-4xl font-mono font-black tracking-wider',
           clock?.status === 'RUNNING' ? 'text-pp-accent-gold' : 'text-pp-text-primary'
         ]">
-          {{ formatTime(clock?.timeRemainingSeconds) || '00:00' }}
+          {{ formatTime(timeRemaining) || '00:00' }}
         </div>
         <div class="text-white/50 font-medium text-xs uppercase tracking-wider">
-          {{ clock?.currentStructure?.isBreak ? 'Break Time' : `Level ${clock?.currentLevel || 1}` }}
+          {{ currentStructure?.isBreak ? 'Break Time' : `Level ${clock?.currentLevel || 1}` }}
         </div>
       </div>
     </div>
@@ -39,10 +39,10 @@
         <div class="bg-gradient-to-br from-pp-accent-gold/20 to-pp-accent-gold/5 rounded-lg p-3 border-2 border-pp-accent-gold/50">
           <div class="text-center">
             <div class="text-lg font-black text-pp-text-primary">
-              {{ clock?.currentStructure?.isBreak ? 'BREAK' : formatBlinds(clock?.currentStructure) || '0/0' }}
+              {{ currentStructure?.isBreak ? 'BREAK' : formatBlinds(currentStructure) || '0/0' }}
             </div>
-            <div v-if="clock?.currentStructure?.ante && !clock?.currentStructure?.isBreak" class="text-white/60 text-xs font-medium mt-1">
-              Ante: {{ clock.currentStructure.ante }}
+            <div v-if="currentStructure?.ante && !currentStructure?.isBreak" class="text-white/60 text-xs font-medium mt-1">
+              Ante: {{ currentStructure.ante }}
             </div>
           </div>
         </div>
@@ -56,10 +56,10 @@
         <div class="bg-pp-bg-primary/30 rounded-lg p-3 border-2 border-pp-border/50">
           <div class="text-center">
             <div class="text-lg font-black text-white/70">
-              {{ clock?.nextStructure?.isBreak ? 'BREAK' : formatBlinds(clock?.nextStructure) || '0/0' }}
+              {{ nextStructure?.isBreak ? 'BREAK' : formatBlinds(nextStructure) || '0/0' }}
             </div>
-            <div v-if="clock?.nextStructure?.ante && !clock?.nextStructure?.isBreak" class="text-white/40 text-xs font-medium mt-1">
-              Ante: {{ clock.nextStructure.ante }}
+            <div v-if="nextStructure?.ante && !nextStructure?.isBreak" class="text-white/40 text-xs font-medium mt-1">
+              Ante: {{ nextStructure.ante }}
             </div>
           </div>
         </div>
@@ -130,20 +130,179 @@ import {formatBlinds, formatTime} from "~/utils";
 const route = useRoute()
 const tournamentStore = useTournamentStore();
 const clock = computed(() => tournamentStore.clock);
+const structure = computed(() => tournamentStore.structure);
+
+// Local timer state for countdown
+const localTimeRemaining = ref<number | null>(null);
+let timerInterval: ReturnType<typeof setInterval> | null = null;
+
+// Get current structure with fallback to first level when clock hasn't started
+const currentStructure = computed(() => {
+  if (clock.value?.currentStructure) return clock.value.currentStructure;
+  // Fallback to first level from structure
+  if (structure.value?.length) {
+    const level1 = structure.value.find(s => s.levelNumber === 1);
+    return level1 || structure.value[0];
+  }
+  return null;
+});
+
+// Get next structure with fallback to second level when clock hasn't started
+const nextStructure = computed(() => {
+  if (clock.value?.nextStructure) return clock.value.nextStructure;
+  // Fallback to second level from structure
+  if (structure.value?.length) {
+    const level2 = structure.value.find(s => s.levelNumber === 2);
+    return level2 || structure.value[1];
+  }
+  return null;
+});
+
+// Calculate remaining time from levelEndTime
+const calculateRemainingTime = (): number => {
+  if (!clock.value?.levelEndTime) return 0;
+
+  if (clock.value?.status === 'RUNNING') {
+    // When running: remaining = levelEndTime - now
+    const endTime = new Date(clock.value.levelEndTime).getTime();
+    const now = Date.now();
+    return Math.max(0, Math.floor((endTime - now) / 1000));
+  }
+
+  return 0;
+};
+
+// Calculate remaining time when paused (using levelEndTime and pause time from server)
+const calculatePausedTime = (): number | null => {
+  // When paused, server should provide timeRemainingSeconds
+  // But if not, we can't calculate locally since we don't have pauseStartedAt
+  if (clock.value?.timeRemainingSeconds !== undefined && clock.value?.timeRemainingSeconds !== null) {
+    return clock.value.timeRemainingSeconds;
+  }
+  return null;
+};
+
+// Start local countdown timer
+const startLocalTimer = () => {
+  stopLocalTimer();
+  // Initial calculation
+  localTimeRemaining.value = calculateRemainingTime();
+  // Update every second
+  timerInterval = setInterval(() => {
+    localTimeRemaining.value = calculateRemainingTime();
+  }, 1000);
+};
+
+// Stop local countdown timer
+const stopLocalTimer = () => {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+};
+
+// Watch clock status to start/stop local timer
+watch(() => clock.value?.status, (newStatus, oldStatus) => {
+  console.log('[ClockCard] Status changed:', oldStatus, '->', newStatus)
+  console.log('[ClockCard] Clock data:', clock.value)
+  if (newStatus === 'RUNNING') {
+    startLocalTimer();
+  } else if (newStatus === 'PAUSED') {
+    // When paused, stop timer but preserve last known value as fallback
+    stopLocalTimer();
+    // Don't set localTimeRemaining to null - preserve it as fallback
+    console.log('[ClockCard] Paused - timeRemainingSeconds from server:', clock.value?.timeRemainingSeconds)
+  } else {
+    // When stopped, reset everything
+    stopLocalTimer();
+    localTimeRemaining.value = null;
+  }
+}, { immediate: true });
+
+// Resync timer when levelEndTime changes (server update)
+watch(() => clock.value?.levelEndTime, () => {
+  if (clock.value?.status === 'RUNNING') {
+    localTimeRemaining.value = calculateRemainingTime();
+  }
+});
+
+// Cleanup on unmount
+onUnmounted(() => {
+  stopLocalTimer();
+});
+
+// Get time remaining: use local timer when running, otherwise fall back to server value or structure
+const timeRemaining = computed(() => {
+  const status = clock.value?.status;
+
+  // When running, use local countdown for smooth updates
+  if (status === 'RUNNING' && localTimeRemaining.value !== null) {
+    return localTimeRemaining.value;
+  }
+
+  // When paused, use server-provided remaining time
+  if (status === 'PAUSED') {
+    const pausedTime = calculatePausedTime();
+    if (pausedTime !== null) {
+      return pausedTime;
+    }
+    // If server didn't provide time, try to preserve last known local time
+    if (localTimeRemaining.value !== null) {
+      return localTimeRemaining.value;
+    }
+  }
+
+  // For any status, try server-provided time first
+  if (clock.value?.timeRemainingSeconds !== undefined && clock.value?.timeRemainingSeconds !== null) {
+    return clock.value.timeRemainingSeconds;
+  }
+
+  // Fallback to current level duration when stopped or no data
+  if (currentStructure.value?.durationMinutes) {
+    return currentStructure.value.durationMinutes * 60;
+  }
+
+  return 0;
+});
 
 // Clock subscription is now handled globally in the main tournament page
 const selectedTournamentId = route.params.id as string
 
-// Clock control functions
-const startClock = async () => await GqlStartTournamentClock({ tournamentId: selectedTournamentId })
+// Clock control functions - update store directly from mutation response
+const startClock = async () => {
+  const response = await GqlStartTournamentClock({ tournamentId: selectedTournamentId })
+  if (response?.startTournamentClock) {
+    tournamentStore.setSelectedTournamentClock(response.startTournamentClock)
+  }
+}
 
-const pauseClock = async () => await GqlPauseTournamentClock({ tournamentId: selectedTournamentId })
+const pauseClock = async () => {
+  const response = await GqlPauseTournamentClock({ tournamentId: selectedTournamentId })
+  if (response?.pauseTournamentClock) {
+    tournamentStore.setSelectedTournamentClock(response.pauseTournamentClock)
+  }
+}
 
-const resumeClock = async () => await GqlResumeTournamentClock({ tournamentId: selectedTournamentId })
+const resumeClock = async () => {
+  const response = await GqlResumeTournamentClock({ tournamentId: selectedTournamentId })
+  if (response?.resumeTournamentClock) {
+    tournamentStore.setSelectedTournamentClock(response.resumeTournamentClock)
+  }
+}
 
-const advanceLevel = async () => await GqlAdvanceTournamentLevel({ tournamentId: selectedTournamentId })
+const advanceLevel = async () => {
+  const response = await GqlAdvanceTournamentLevel({ tournamentId: selectedTournamentId })
+  if (response?.advanceTournamentLevel) {
+    tournamentStore.setSelectedTournamentClock(response.advanceTournamentLevel)
+  }
+}
 
-const revertLevel = async () => await GqlRevertTournamentLevel({ tournamentId: selectedTournamentId })
+const revertLevel = async () => {
+  const response = await GqlRevertTournamentLevel({ tournamentId: selectedTournamentId })
+  if (response?.revertTournamentLevel) {
+    tournamentStore.setSelectedTournamentClock(response.revertTournamentLevel)
+  }
+}
 
 // Helper functions for template
 const handleClockToggle = async () => {

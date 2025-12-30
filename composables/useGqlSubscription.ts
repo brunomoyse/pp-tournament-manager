@@ -14,20 +14,30 @@ export function useGqlSubscription<TData = unknown, TVars extends Record<string,
     let dispose: (() => void) | null = null
 
     const execute = (vars?: TVars) => {
-        if (!$gqlWs) return
+        if (!$gqlWs) {
+            console.warn('[useGqlSubscription] WebSocket client not available')
+            return
+        }
         // cleanup previous
         dispose?.()
         connected.value = true
+        console.log('[useGqlSubscription] Subscribing with variables:', vars ?? opts.variables)
 
         dispose = $gqlWs.subscribe<ExecResult<TData>>(
             { query: opts.query, variables: vars ?? opts.variables },
             {
                 next: (res) => {
+                    console.log('[useGqlSubscription] Received:', res)
                     if (res?.data) data.value = res.data as TData
                     if (res?.errors?.length) error.value = res.errors
                 },
-                error: (err) => { error.value = err },
-                complete: () => { /* optional */ },
+                error: (err) => {
+                    console.error('[useGqlSubscription] Error:', err)
+                    error.value = err
+                },
+                complete: () => {
+                    console.log('[useGqlSubscription] Complete')
+                },
             }
         )
     }

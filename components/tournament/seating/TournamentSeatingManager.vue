@@ -55,11 +55,14 @@
     </div>
 
     <!-- No Tables State -->
-    <div v-else-if="!seatingData?.tournamentSeatingChart?.tables?.length" class="text-center py-12">
-      <div class="text-white/60 mb-4">No tables linked to this tournament</div>
-      <button 
+    <div v-else-if="!seatingData?.tournamentSeatingChart?.tables?.length" class="text-center py-16">
+      <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/10">
+        <IonIcon :icon="gridOutline" class="w-8 h-8 text-white/40" />
+      </div>
+      <div class="text-white/60 mb-6">No tables linked to this tournament</div>
+      <button
         @click="showAssignTableModal = true"
-        class="px-4 py-2 bg-pp-accent-gold text-pp-bg-primary rounded-lg font-semibold flex items-center gap-2 mx-auto"
+        class="pp-action-button pp-action-button--primary mx-auto"
       >
         <IonIcon :icon="linkOutline" class="w-4 h-4" />
         Link Table(s)
@@ -221,7 +224,7 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { scaleOutline, linkOutline, unlinkOutline } from 'ionicons/icons'
+import { scaleOutline, linkOutline, unlinkOutline, gridOutline } from 'ionicons/icons'
 import TournamentTableCard from './TournamentTableCard.vue'
 import AssignTableModal from './AssignTableModal.vue'
 import { useTournamentStore } from '~/stores/useTournamentStore'

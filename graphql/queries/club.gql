@@ -16,3 +16,4 @@ query GetClubTables ($clubId: UUID!) {
     isAssigned
   }
 }
+
