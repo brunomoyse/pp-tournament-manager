@@ -19,7 +19,7 @@
     "@tailwindcss/vite": "^4.1.18",
     "graphql-ws": "^6.0.7",
     "html5-qrcode": "^2.3.8",
-    "nuxt": "^4.2.2",
+    "nuxt": "^4.3.0",
     "nuxt-graphql-client": "^0.2.46",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
