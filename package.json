@@ -17,7 +17,7 @@
     "@nuxtjs/ionic": "^1.0.2",
     "@pinia/nuxt": "^0.11.3",
     "@tailwindcss/vite": "^4.1.18",
-    "graphql-ws": "^6.0.6",
+    "graphql-ws": "^6.0.7",
     "html5-qrcode": "^2.3.8",
     "nuxt": "^4.2.2",
     "nuxt-graphql-client": "^0.2.46",
