@@ -20,7 +20,7 @@
       </div>
       <div class="flex items-center justify-between">
         <span class="text-white">Level duration</span>
-        <span class="font-semibold text-white">{{ formatTime(levelTimeRemaining) }}</span>
+        <span class="font-semibold text-white">{{ formatDuration(levelTimeRemaining) }}</span>
       </div>
       <div class="flex items-center justify-between">
         <span class="text-white">Blinds</span>
@@ -34,7 +34,7 @@
 import { IonIcon } from '@ionic/vue'
 import { trophyOutline } from 'ionicons/icons'
 import { useTournamentStore } from '~/stores/useTournamentStore'
-import {formatBlinds, formatTime} from "~/utils";
+import {formatBlinds, formatDuration} from "~/utils";
 import { getTournamentStatusLabel, getTournamentStatusClass } from '~/utils/tournamentStatus'
 
 const tournamentStore = useTournamentStore()

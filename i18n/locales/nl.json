@@ -44,10 +44,9 @@
     "googleAuth": "Google Authenticatie",
     "googleAuthInfo": "Dit zal je doorverwijzen naar Google om in te loggen. Doorgaan?",
     "forgotPasswordInfo": "Voer je emailadres in en we sturen je een link om je wachtwoord te resetten.",
-    "sendResetLink": "Reset Link Verzenden"
-  },
-  "headings": {
-    "regularPlayers": "Vaste spelers"
+    "sendResetLink": "Reset Link Verzenden",
+    "invalidCredentials": "Ongeldig email of wachtwoord",
+    "loginFailedGeneric": "Inloggen mislukt. Controleer je inloggegevens en probeer opnieuw."
   },
   "common": {
     "ok": "OK",
@@ -59,9 +58,186 @@
     "edit": "Bewerken",
     "user": "Gebruiker"
   },
+  "headings": {
+    "activeTournaments": "Actieve Toernooien",
+    "players": "Spelers",
+    "quickActions": "Snelle Acties",
+    "recentTournaments": "Recente Toernooien",
+    "tournamentSettings": "Toernooi Instellingen",
+    "tournamentStatus": "Toernooi Status",
+    "prizePool": "Prijzenpot",
+    "blindStructure": "Blindstructuur",
+    "tableManagement": "Tafelbeheer",
+    "tournamentClock": "Toernooiklok",
+    "regularPlayers": "Vaste spelers"
+  },
+  "labels": {
+    "latest": "Laatste:",
+    "buyIn": "Buy-in",
+    "tournaments": "toernooien",
+    "totalRegistered": "Totaal ingeschreven",
+    "activeThisMonth": "Actief deze maand",
+    "newThisWeek": "Nieuw deze week",
+    "lastUpdate": "Laatste update",
+    "registered": "Ingeschreven",
+    "remaining": "Resterend",
+    "active": "Actief",
+    "eliminated": "Uitgeschakeld",
+    "progress": "Voortgang",
+    "level": "Niveau",
+    "current": "Huidig",
+    "next": "Volgend",
+    "ante": "Ante",
+    "breakTime": "Pauzetijd",
+    "break": "PAUZE",
+    "status": "Status",
+    "currentLevel": "Huidig Niveau",
+    "levelDuration": "Niveauduur",
+    "blinds": "Blinds",
+    "place": "Plaats",
+    "table": "Tafel",
+    "tables": "Tafels",
+    "seats": "plaatsen",
+    "seatsOccupied": "plaatsen bezet",
+    "seatedPlayers": "Gezeten Spelers:",
+    "seat": "Stoel",
+    "activeTables": "Actieve Tafels",
+    "minutes": "minuten",
+    "noLocation": "Geen locatie"
+  },
+  "buttons": {
+    "viewTournament": "Bekijk Toernooi",
+    "createTournament": "Toernooi Aanmaken",
+    "managePlayers": "Spelers Beheren",
+    "viewReports": "Rapporten Bekijken",
+    "viewAll": "Alles Bekijken",
+    "registerPlayer": "Speler Inschrijven",
+    "walkIn": "Walk-in",
+    "qrCheckIn": "QR Check-in",
+    "checkIn": "Inchecken",
+    "undo": "Ongedaan maken",
+    "seat": "Plaatsen",
+    "linkTables": "Tafel(s) Koppelen",
+    "autoSeatNext": "Volgende Automatisch Plaatsen",
+    "balanceTables": "Tafels Balanceren",
+    "breakTable": "Tafel Opheffen",
+    "start": "Starten",
+    "pause": "Pauzeren",
+    "resume": "Hervatten",
+    "previous": "Vorige",
+    "reset": "Resetten",
+    "next": "Volgende",
+    "cancel": "Annuleren",
+    "link": "Koppelen"
+  },
   "status": {
+    "currentlyRunning": "Momenteel bezig",
     "loading": "Laden...",
-    "saving": "Opslaan..."
+    "saving": "Opslaan...",
+    "loadingTournament": "Toernooi laden...",
+    "connected": "Verbonden",
+    "reconnecting": "Opnieuw verbinden",
+    "offline": "Offline",
+    "live": "LIVE",
+    "running": "Bezig",
+    "paused": "Gepauzeerd",
+    "stopped": "Gestopt",
+    "disconnected": "Niet verbonden",
+    "unknown": "Onbekend",
+    "active": "Actief",
+    "inactive": "Inactief",
+    "linking": "Koppelen..."
+  },
+  "messages": {
+    "welcomeBack": "Welkom terug, {name}!",
+    "noActiveTournaments": "Geen actieve toernooien",
+    "noTournamentsYet": "Nog geen toernooien",
+    "createFirstTournament": "Maak je eerste toernooi aan om te beginnen",
+    "tournamentConfigurationComingSoon": "Toernooi configuratie en geavanceerde instellingen worden hier binnenkort beschikbaar.",
+    "noRecentActivity": "Geen recente activiteit",
+    "clockDisconnected": "Klok Niet Verbonden",
+    "noPayoutStructure": "Geen uitbetalingsstructuur gedefinieerd",
+    "noPlayersSeated": "Geen spelers geplaatst",
+    "loadingSeatingChart": "Plaatsingsoverzicht laden...",
+    "noTablesLinked": "Geen tafels gekoppeld aan dit toernooi",
+    "noBlindStructure": "Geen blindstructuur beschikbaar",
+    "loadingClubTables": "Clubtafels laden...",
+    "selectTablesToAssign": "Selecteer tafels van {clubName} om toe te wijzen aan dit toernooi:",
+    "noTablesFound": "Geen tafels gevonden voor deze club",
+    "contactClubAdmin": "Neem contact op met je clubbeheerder om tafels toe te voegen"
+  },
+  "alerts": {
+    "createTournament": {
+      "header": "Toernooi Aanmaken",
+      "message": "Toernooi aanmaken wordt binnenkort beschikbaar!"
+    },
+    "playerManagement": {
+      "header": "Spelersbeheer",
+      "message": "Spelersbeheer wordt binnenkort beschikbaar!"
+    },
+    "reports": {
+      "header": "Rapporten",
+      "message": "Toernooi rapporten worden binnenkort beschikbaar!"
+    },
+    "allTournaments": {
+      "header": "Alle Toernooien",
+      "message": "Toernooi archief wordt binnenkort beschikbaar!"
+    },
+    "noClub": {
+      "header": "Geen Club Gevonden",
+      "message": "Maak een club aan of word lid om toernooien te beheren."
+    }
+  },
+  "tabs": {
+    "overview": "Overzicht",
+    "clock": "Klok",
+    "players": "Spelers",
+    "seating": "Plaatsing",
+    "settings": "Instellingen"
+  },
+  "filters": {
+    "allPlayers": "Alle Spelers",
+    "registered": "Ingeschreven",
+    "checkedIn": "Ingecheckt",
+    "seated": "Geplaatst",
+    "eliminated": "Uitgeschakeld"
+  },
+  "placeholders": {
+    "searchPlayers": "Spelers zoeken...",
+    "selectTournament": "Selecteer een Toernooi"
+  },
+  "modals": {
+    "linkClubTables": {
+      "title": "Clubtafels Koppelen"
+    }
+  },
+  "tournament": {
+    "createTournament": "Toernooi Aanmaken",
+    "editTournament": "Toernooi Bewerken",
+    "edit": "Toernooi Bewerken",
+    "basicInfo": "Basisinformatie",
+    "name": "Toernooinaam",
+    "namePlaceholder": "Voer toernooinaam in",
+    "description": "Beschrijving",
+    "descriptionPlaceholder": "Voer toernooi beschrijving in (optioneel)",
+    "startTime": "Starttijd",
+    "endTime": "Eindtijd",
+    "buyIn": "Buy-in",
+    "seatCap": "Maximaal Aantal Plaatsen",
+    "unlimited": "Onbeperkt",
+    "earlyBirdBonus": "Early Bird Bonus (fiches)",
+    "earlyBirdBonusPlaceholder": "Bonusfiches voor vroege registratie",
+    "blindStructure": "Blindstructuur",
+    "selectTemplate": "Structuur Sjabloon",
+    "selectTemplatePlaceholder": "Selecteer een blindstructuur sjabloon",
+    "templatePreview": "Structuur Voorbeeld",
+    "break": "Pauze",
+    "level": "Niveau",
+    "minutes": "Min",
+    "status": "Status",
+    "create": "Aanmaken",
+    "save": "Opslaan",
+    "saveFailed": "Toernooi opslaan mislukt. Probeer opnieuw."
   },
   "reports": {
     "title": "Club Statistieken",
@@ -97,32 +273,36 @@
     "createFirst": "Maak je eerste toernooi aan om te beginnen",
     "seats": "plaatsen"
   },
-  "tournament": {
-    "createTournament": "Toernooi Aanmaken",
-    "editTournament": "Toernooi Bewerken",
-    "edit": "Toernooi Bewerken",
-    "basicInfo": "Basisinformatie",
-    "name": "Toernooinaam",
-    "namePlaceholder": "Voer toernooinaam in",
-    "description": "Beschrijving",
-    "descriptionPlaceholder": "Voer toernooi beschrijving in (optioneel)",
-    "startTime": "Starttijd",
-    "endTime": "Eindtijd",
-    "buyIn": "Buy-in",
-    "seatCap": "Maximaal Aantal Plaatsen",
-    "unlimited": "Onbeperkt",
-    "earlyBirdBonus": "Early Bird Bonus (fiches)",
-    "earlyBirdBonusPlaceholder": "Bonusfiches voor vroege registratie",
-    "blindStructure": "Blindstructuur",
-    "selectTemplate": "Structuur Sjabloon",
-    "selectTemplatePlaceholder": "Selecteer een blindstructuur sjabloon",
-    "templatePreview": "Structuur Voorbeeld",
-    "break": "Pauze",
-    "level": "Niveau",
-    "minutes": "Min",
-    "status": "Status",
+  "players": {
+    "title": "Spelersbeheer",
+    "addPlayer": "Speler Toevoegen",
+    "searchPlaceholder": "Spelers zoeken...",
+    "allPlayers": "Alle spelers",
+    "activePlayers": "Actieve spelers",
+    "inactivePlayers": "Inactieve spelers",
+    "playersFound": "speler(s) gevonden",
+    "noPlayersFound": "Geen spelers gevonden",
+    "createFirstPlayer": "Begin met het toevoegen van je eerste speler",
+    "active": "Actief",
+    "inactive": "Inactief",
+    "deactivate": "Deactiveren",
+    "reactivate": "Heractiveren",
+    "createPlayer": "Speler Aanmaken",
+    "editPlayer": "Speler Bewerken",
+    "firstName": "Voornaam",
+    "firstNamePlaceholder": "Voer voornaam in",
+    "lastName": "Achternaam",
+    "lastNamePlaceholder": "Voer achternaam in",
+    "emailPlaceholder": "speler{'@'}email.com",
+    "usernamePlaceholder": "Voer een gebruikersnaam in",
+    "phone": "Telefoon",
+    "phonePlaceholder": "+32 xxx xx xx xx",
     "create": "Aanmaken",
     "save": "Opslaan",
-    "saveFailed": "Toernooi opslaan mislukt. Probeer opnieuw."
+    "deactivateConfirmTitle": "Speler deactiveren?",
+    "deactivateConfirmMessage": "Weet je zeker dat je {name} wilt deactiveren? Deze speler kan niet meer deelnemen aan toernooien.",
+    "saveFailed": "Speler opslaan mislukt. Probeer opnieuw.",
+    "deactivateFailed": "Speler deactiveren mislukt. Probeer opnieuw.",
+    "reactivateFailed": "Speler heractiveren mislukt. Probeer opnieuw."
   }
 }

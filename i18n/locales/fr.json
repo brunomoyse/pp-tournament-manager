@@ -44,10 +44,9 @@
     "googleAuth": "Authentification Google",
     "googleAuthInfo": "Ceci vous redirigera vers Google pour vous connecter. Continuer ?",
     "forgotPasswordInfo": "Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
-    "sendResetLink": "Envoyer le lien de réinitialisation"
-  },
-  "headings": {
-    "regularPlayers": "Joueurs réguliers"
+    "sendResetLink": "Envoyer le lien de réinitialisation",
+    "invalidCredentials": "Email ou mot de passe invalide",
+    "loginFailedGeneric": "Connexion échouée. Veuillez vérifier vos identifiants et réessayer."
   },
   "common": {
     "ok": "OK",
@@ -59,9 +58,158 @@
     "edit": "Modifier",
     "user": "Utilisateur"
   },
+  "headings": {
+    "activeTournaments": "Tournois Actifs",
+    "players": "Joueurs",
+    "quickActions": "Actions Rapides",
+    "recentTournaments": "Tournois Récents",
+    "tournamentSettings": "Paramètres du Tournoi",
+    "tournamentStatus": "Statut du Tournoi",
+    "prizePool": "Cagnotte",
+    "blindStructure": "Structure des Blindes",
+    "tableManagement": "Gestion des Tables",
+    "tournamentClock": "Horloge du Tournoi",
+    "regularPlayers": "Joueurs réguliers"
+  },
+  "labels": {
+    "latest": "Dernier :",
+    "buyIn": "Buy-in",
+    "tournaments": "tournois",
+    "totalRegistered": "Total inscrits",
+    "activeThisMonth": "Actifs ce mois",
+    "newThisWeek": "Nouveaux cette semaine",
+    "lastUpdate": "Dernière mise à jour",
+    "registered": "Inscrit",
+    "remaining": "Restants",
+    "active": "Actif",
+    "eliminated": "Éliminé",
+    "progress": "Progression",
+    "level": "Niveau",
+    "current": "Actuel",
+    "next": "Suivant",
+    "ante": "Ante",
+    "breakTime": "Temps de Pause",
+    "break": "PAUSE",
+    "status": "Statut",
+    "currentLevel": "Niveau Actuel",
+    "levelDuration": "Durée du niveau",
+    "blinds": "Blindes",
+    "place": "Place",
+    "table": "Table",
+    "tables": "Tables",
+    "seats": "places",
+    "seatsOccupied": "places occupées",
+    "seatedPlayers": "Joueurs Assis :",
+    "seat": "Siège",
+    "activeTables": "Tables Actives",
+    "minutes": "minutes",
+    "noLocation": "Aucun lieu"
+  },
+  "buttons": {
+    "viewTournament": "Voir le Tournoi",
+    "createTournament": "Créer un Tournoi",
+    "managePlayers": "Gérer les Joueurs",
+    "viewReports": "Voir les Rapports",
+    "viewAll": "Tout Voir",
+    "registerPlayer": "Inscrire un Joueur",
+    "walkIn": "Walk-in",
+    "qrCheckIn": "Check-in QR",
+    "checkIn": "Check-in",
+    "undo": "Annuler",
+    "seat": "Asseoir",
+    "linkTables": "Lier Table(s)",
+    "autoSeatNext": "Asseoir le Suivant",
+    "balanceTables": "Équilibrer les Tables",
+    "breakTable": "Supprimer la Table",
+    "start": "Démarrer",
+    "pause": "Pause",
+    "resume": "Reprendre",
+    "previous": "Précédent",
+    "reset": "Réinitialiser",
+    "next": "Suivant",
+    "cancel": "Annuler",
+    "link": "Lier"
+  },
   "status": {
+    "currentlyRunning": "En cours",
     "loading": "Chargement...",
-    "saving": "Enregistrement..."
+    "saving": "Enregistrement...",
+    "loadingTournament": "Chargement du Tournoi...",
+    "connected": "Connecté",
+    "reconnecting": "Reconnexion",
+    "offline": "Hors ligne",
+    "live": "EN DIRECT",
+    "running": "En cours",
+    "paused": "En pause",
+    "stopped": "Arrêté",
+    "disconnected": "Déconnecté",
+    "unknown": "Inconnu",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "linking": "Liaison..."
+  },
+  "messages": {
+    "welcomeBack": "Bon retour, {name} !",
+    "noActiveTournaments": "Aucun tournoi actif",
+    "noTournamentsYet": "Aucun tournoi pour le moment",
+    "createFirstTournament": "Créez votre premier tournoi pour commencer",
+    "tournamentConfigurationComingSoon": "La configuration du tournoi et les paramètres avancés seront bientôt disponibles ici.",
+    "noRecentActivity": "Aucune activité récente",
+    "clockDisconnected": "Horloge Déconnectée",
+    "noPayoutStructure": "Aucune structure de paiement définie",
+    "noPlayersSeated": "Aucun joueur assis",
+    "loadingSeatingChart": "Chargement du plan de table...",
+    "noTablesLinked": "Aucune table liée à ce tournoi",
+    "noBlindStructure": "Aucune structure de blindes disponible",
+    "loadingClubTables": "Chargement des tables du club...",
+    "selectTablesToAssign": "Sélectionnez les tables de {clubName} à assigner à ce tournoi :",
+    "noTablesFound": "Aucune table trouvée pour ce club",
+    "contactClubAdmin": "Contactez l'administrateur de votre club pour ajouter des tables"
+  },
+  "alerts": {
+    "createTournament": {
+      "header": "Créer un Tournoi",
+      "message": "La création de tournoi sera bientôt disponible !"
+    },
+    "playerManagement": {
+      "header": "Gestion des Joueurs",
+      "message": "La gestion des joueurs sera bientôt disponible !"
+    },
+    "reports": {
+      "header": "Rapports",
+      "message": "Les rapports de tournoi seront bientôt disponibles !"
+    },
+    "allTournaments": {
+      "header": "Tous les Tournois",
+      "message": "L'archive des tournois sera bientôt disponible !"
+    },
+    "noClub": {
+      "header": "Aucun Club Trouvé",
+      "message": "Veuillez créer ou rejoindre un club pour gérer des tournois."
+    }
+  },
+  "tabs": {
+    "overview": "Aperçu",
+    "clock": "Horloge",
+    "players": "Joueurs",
+    "seating": "Placement",
+    "settings": "Paramètres"
+  },
+  "filters": {
+    "allPlayers": "Tous les Joueurs",
+    "registered": "Inscrits",
+    "checkedIn": "Enregistrés",
+    "seated": "Assis",
+    "eliminated": "Éliminés"
+  },
+  "placeholders": {
+    "searchPlayers": "Rechercher des joueurs...",
+    "selectTournament": "Sélectionner un Tournoi"
+  },
+  "modals": {
+    "linkClubTables": {
+      "title": "Lier les Tables du Club"
+    }
   },
   "tournament": {
     "createTournament": "Créer un Tournoi",
@@ -155,7 +303,6 @@
     "deactivateConfirmMessage": "Êtes-vous sûr de vouloir désactiver {name} ? Ce joueur ne pourra plus participer aux tournois.",
     "saveFailed": "Échec de l'enregistrement du joueur. Veuillez réessayer.",
     "deactivateFailed": "Échec de la désactivation du joueur. Veuillez réessayer.",
-    "reactivateFailed": "Échec de la réactivation du joueur. Veuillez réessayer.",
-    "backendNotReady": "Cette fonctionnalité n'est pas encore disponible. Le backend doit être mis à jour."
+    "reactivateFailed": "Échec de la réactivation du joueur. Veuillez réessayer."
   }
 }

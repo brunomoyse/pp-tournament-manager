@@ -67,7 +67,7 @@
                 <span class="text-white/70 text-sm">{{ t('reports.prizePool') }}</span>
                 <IonIcon :icon="cashOutline" class="w-5 h-5 text-pp-accent-gold" />
               </div>
-              <div class="text-3xl font-bold text-pp-accent-gold">{{ formatPrice(stats.totalPrizePool) }}</div>
+              <div class="text-3xl font-bold text-pp-accent-gold">{{ formatPrice(stats.totalPrizePool, locale) }}</div>
             </div>
           </div>
 
@@ -79,7 +79,7 @@
                 <span class="text-white/70 text-sm">{{ t('reports.avgBuyIn') }}</span>
                 <IonIcon :icon="walletOutline" class="w-5 h-5 text-pp-accent-gold" />
               </div>
-              <div class="text-3xl font-bold text-pp-text-primary">{{ formatPrice(stats.avgBuyIn) }}</div>
+              <div class="text-3xl font-bold text-pp-text-primary">{{ formatPrice(stats.avgBuyIn, locale) }}</div>
             </div>
 
             <!-- Top Winner -->
@@ -89,7 +89,7 @@
                 <IonIcon :icon="ribbonOutline" class="w-5 h-5 text-pp-accent-gold" />
               </div>
               <div class="text-xl font-bold text-pp-text-primary truncate">{{ stats.topWinner?.name || '-' }}</div>
-              <div v-if="stats.topWinner" class="text-sm text-pp-accent-gold">{{ formatPrice(stats.topWinner.winnings) }}</div>
+              <div v-if="stats.topWinner" class="text-sm text-pp-accent-gold">{{ formatPrice(stats.topWinner.winnings, locale) }}</div>
             </div>
 
             <!-- Most Games -->
@@ -176,7 +176,7 @@
                     <!-- Net Profit -->
                     <td class="py-4 pr-4 text-right">
                       <span :class="entry.netProfit >= 0 ? 'text-green-400' : 'text-red-400'">
-                        {{ entry.netProfit >= 0 ? '+' : '' }}{{ formatPrice(entry.netProfit) }}
+                        {{ entry.netProfit >= 0 ? '+' : '' }}{{ formatPrice(entry.netProfit, locale) }}
                       </span>
                     </td>
                     <!-- Points -->
@@ -222,7 +222,7 @@ import { formatPrice } from '~/utils'
 
 const router = useRouter()
 const clubStore = useClubStore()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const { club } = clubStore
 

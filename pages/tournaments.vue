@@ -62,7 +62,7 @@
               <div>
                 <h4 class="text-base font-semibold text-pp-text-primary mb-1">{{ tournament.title }}</h4>
                 <div class="flex items-center gap-3 text-white/60 text-sm">
-                  <span>{{ formatPrice(tournament.buyInCents) }}</span>
+                  <span>{{ formatPrice(tournament.buyInCents, locale) }}</span>
                   <span>•</span>
                   <span>{{ formatDate(tournament.startTime) }}</span>
                   <span v-if="tournament.seatCap">•</span>
@@ -123,7 +123,7 @@ import { getTournamentStatusLabel, getTournamentStatusClass } from '~/utils/tour
 
 const router = useRouter()
 const clubStore = useClubStore()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const { club } = clubStore
 
@@ -161,7 +161,7 @@ const filteredTournaments = computed(() => {
 
 // Helper functions
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('fr-BE', {
+  return new Date(dateString).toLocaleDateString(locale.value, {
     day: 'numeric',
     month: 'short',
     year: 'numeric'
