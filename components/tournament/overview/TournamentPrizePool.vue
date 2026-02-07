@@ -13,7 +13,7 @@
           class="flex items-center justify-between text-sm"
         >
           <span class="text-white">{{ getPositionLabel(position.position) }}</span>
-          <span class="font-semibold text-pp-text-primary">{{ formatPrice(position.amountCents) }}</span>
+          <span class="font-semibold text-pp-text-primary">{{ formatPrice(position.amountCents, locale) }}</span>
         </div>
         <div v-if="!payoutData?.tournamentPayout?.positions?.length" class="text-center text-white/60 py-4">
           No payout structure defined
@@ -27,8 +27,10 @@
 import { IonIcon } from '@ionic/vue'
 import { trophyOutline } from 'ionicons/icons'
 import {formatPrice} from "~/utils";
+import { useI18n } from '~/composables/useI18n';
 
 const route = useRoute()
+const { locale } = useI18n()
 
 // Fetch tournament payout data
 const selectedTournamentId = route.params.id as string
@@ -36,7 +38,7 @@ const payoutData = await GqlGetTournamentPayout({
   tournamentId: selectedTournamentId 
 })
 
-const prizePool = computed(() => formatPrice(payoutData?.tournamentPayout?.totalPrizePool))
+const prizePool = computed(() => formatPrice(payoutData?.tournamentPayout?.totalPrizePool, locale.value))
 
 const getPositionLabel = (position: number) => {
   const suffixes = ['st', 'nd', 'rd']

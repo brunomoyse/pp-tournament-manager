@@ -142,7 +142,7 @@
                                 </div>
                                 <div>
                                     <label class="text-sm text-white/60">{{ t('tournament.buyIn') }}</label>
-                                    <p class="text-white font-medium">{{ formatPrice(tournament.buyInCents) }}</p>
+                                    <p class="text-white font-medium">{{ formatPrice(tournament.buyInCents, locale) }}</p>
                                 </div>
                                 <div>
                                     <label class="text-sm text-white/60">{{ t('tournament.startTime') }}</label>
@@ -213,7 +213,7 @@ const route = useRoute()
 const router = useRouter()
 const tournamentStore = useTournamentStore()
 const clubStore = useClubStore()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 // Tournament ID from route
 const selectedTournamentId = route.params.id as string

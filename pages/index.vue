@@ -35,7 +35,7 @@
                 <div class="text-sm text-white/60">{{ t('labels.latest') }}</div>
                 <div class="bg-pp-bg-primary/50 rounded-lg p-3 border border-pp-border">
                   <div class="font-medium text-white">{{ activeTournaments?.[0]?.title }}</div>
-                  <div class="text-sm text-white/60">{{ t('labels.buyIn') }}: {{ formatPrice(activeTournaments[0]?.buyInCents) }}</div>
+                  <div class="text-sm text-white/60">{{ t('labels.buyIn') }}: {{ formatPrice(activeTournaments[0]?.buyInCents, locale) }}</div>
                 </div>
                 <button 
                   @click="activeTournaments[0]?.id && goToTournament(activeTournaments[0].id)"
@@ -69,7 +69,7 @@
                 </div>
                 <div class="flex justify-between items-center">
                   <span class="text-white/70">{{ t('reports.avgBuyIn') }}</span>
-                  <span class="text-pp-text-primary font-semibold">{{ formatPrice(playerStats.avgBuyIn) }}</span>
+                  <span class="text-pp-text-primary font-semibold">{{ formatPrice(playerStats.avgBuyIn, locale) }}</span>
                 </div>
                 <div class="flex justify-between items-center">
                   <span class="text-white/70">{{ t('headings.regularPlayers') }}</span>
@@ -146,9 +146,9 @@
                 <div>
                   <h4 class="text-base font-semibold text-pp-text-primary mb-1">{{ tournament.title }}</h4>
                   <div class="flex items-center gap-3 text-white/60 text-sm">
-                    <span>{{ (tournament.buyInCents / 100).toLocaleString('fr-BE', { style: 'currency', currency: 'EUR' }) }}</span>
+                    <span>{{ formatPrice(tournament.buyInCents, locale) }}</span>
                     <span>•</span>
-                    <span>{{ new Date(tournament.startTime).toLocaleDateString('fr-BE') }}</span>
+                    <span>{{ new Date(tournament.startTime).toLocaleDateString(locale) }}</span>
                   </div>
                 </div>
               </div>
@@ -227,7 +227,7 @@ import TournamentFormModal from '~/components/tournament/TournamentFormModal.vue
 const router = useRouter()
 const authStore = useAuthStore()
 const clubStore = useClubStore()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const { currentUser } = authStore
 const { club } = clubStore

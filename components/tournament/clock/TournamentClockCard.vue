@@ -21,7 +21,7 @@
           'text-4xl font-mono font-black tracking-wider',
           clock?.status === 'RUNNING' ? 'text-pp-accent-gold' : 'text-pp-text-primary'
         ]">
-          {{ formatTime(timeRemaining) || '00:00' }}
+          {{ formatDuration(timeRemaining) || '00:00' }}
         </div>
         <div class="text-white/50 font-medium text-xs uppercase tracking-wider">
           {{ currentStructure?.isBreak ? 'Break Time' : `Level ${clock?.currentLevel || 1}` }}
@@ -125,7 +125,7 @@
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
 import { timeOutline, playOutline, pauseOutline, playSkipForwardOutline, playSkipBackOutline, refreshOutline } from 'ionicons/icons'
-import {formatBlinds, formatTime} from "~/utils";
+import {formatBlinds, formatDuration} from "~/utils";
 
 const route = useRoute()
 const tournamentStore = useTournamentStore();
