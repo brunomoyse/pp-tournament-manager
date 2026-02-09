@@ -20,19 +20,26 @@ export default defineNuxtPlugin(() => {
     })
 
     if (isAuthError) {
-      console.warn('Authentication error detected, redirecting to login...')
+      console.warn('Authentication error detected, attempting token refresh...')
 
-      // Clear auth state
       const authStore = useAuthStore()
-      authStore.logout()
 
-      // Get current path for redirect after login
-      const currentPath = router.currentRoute.value.fullPath
+      // Attempt to refresh the access token before logging out
+      authStore.refreshAccessToken().then((newToken) => {
+        if (!newToken) {
+          // Refresh failed — logout and redirect to login
+          authStore.logout()
 
-      // Redirect to login page
-      router.push({
-        path: '/login',
-        query: currentPath !== '/login' ? { redirect: currentPath } : undefined
+          const currentPath = router.currentRoute.value.fullPath
+
+          router.push({
+            path: '/login',
+            query: currentPath !== '/login' ? { redirect: currentPath } : undefined
+          })
+        }
+        // If refresh succeeded, the token is updated.
+        // The failed request won't be retried automatically —
+        // the user/component will need to re-trigger the operation.
       })
     }
   })

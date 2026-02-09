@@ -24,6 +24,9 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoading = ref(false)
   const error = ref<Error | null>(null)
 
+  // Token refresh timer
+  let refreshTimerId: ReturnType<typeof setTimeout> | null = null
+
   // Getters
   const isAuthenticated = computed(() => !!authToken.value && !!currentUser.value)
   const hasClub = computed(() => !!(currentUser.value as any)?.club)
@@ -34,7 +37,13 @@ export const useAuthStore = defineStore('auth', () => {
   const clearAuthState = () => {
     authToken.value = null
     currentUser.value = null
-    
+
+    // Clear refresh timer
+    if (refreshTimerId) {
+      clearTimeout(refreshTimerId)
+      refreshTimerId = null
+    }
+
     if (import.meta.client) {
       // Clear token from GraphQL client
       useGqlToken(null)
@@ -43,19 +52,78 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const setupTokenRefreshTimer = () => {
+    // Clear any existing timer
+    if (refreshTimerId) {
+      clearTimeout(refreshTimerId)
+      refreshTimerId = null
+    }
+
+    // Refresh 1 minute before expiry (access token = 15 min, refresh at 14 min)
+    const REFRESH_INTERVAL_MS = 14 * 60 * 1000
+    refreshTimerId = setTimeout(async () => {
+      const newToken = await refreshAccessToken()
+      if (newToken) {
+        setupTokenRefreshTimer()
+      }
+    }, REFRESH_INTERVAL_MS)
+  }
+
   const storeAuthState = (token: string, user: AuthUser) => {
     authToken.value = token
     currentUser.value = user
-    
+
     if (import.meta.client) {
       // Set token for GraphQL client
       useGqlToken(token)
-      
+
       // Force save to localStorage as backup (in case Pinia persistence fails)
       localStorage.setItem('auth-backup', JSON.stringify({
         authToken: token,
         currentUser: user
       }))
+
+      // Set up proactive token refresh
+      setupTokenRefreshTimer()
+    }
+  }
+
+  const refreshAccessToken = async (): Promise<string | null> => {
+    try {
+      const config = useRuntimeConfig()
+      const baseUrl = config.public.authBaseUrl as string
+
+      const response = await fetch(`${baseUrl}/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include',
+      })
+
+      if (!response.ok) {
+        return null
+      }
+
+      const data = await response.json()
+      const newToken = data.token
+
+      if (newToken) {
+        authToken.value = newToken
+
+        if (import.meta.client) {
+          useGqlToken(newToken)
+
+          // Update backup localStorage
+          localStorage.setItem('auth-backup', JSON.stringify({
+            authToken: newToken,
+            currentUser: currentUser.value
+          }))
+        }
+
+        return newToken
+      }
+
+      return null
+    } catch {
+      return null
     }
   }
 
@@ -63,14 +131,14 @@ export const useAuthStore = defineStore('auth', () => {
   const login = async (credentials: LoginCredentials): Promise<AuthUser | null> => {
     isLoading.value = true
     error.value = null
-    
+
     try {
       const result = await GqlLoginUser({ input: credentials })
-      
+
       if (result?.loginUser?.token && result?.loginUser?.user) {
         const { token, user } = result.loginUser
         storeAuthState(token, user)
-        
+
         // Store managedClub in club store if available
         if (user.managedClub) {
           const clubStore = useClubStore()
@@ -80,10 +148,10 @@ export const useAuthStore = defineStore('auth', () => {
             city: ''
           })
         }
-        
+
         return user
       }
-      
+
       return null
     } catch (err) {
       error.value = err as Error
@@ -98,8 +166,13 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
 
     try {
-      // Note: Backend doesn't have a logout mutation - JWT tokens expire naturally
-      // Just clear the local state
+      const config = useRuntimeConfig()
+      const baseUrl = config.public.authBaseUrl as string
+
+      await fetch(`${baseUrl}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      })
     } catch (err) {
       // Continue with local logout even if server request fails
     } finally {
@@ -146,7 +219,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const initialize = () => {
+  const initialize = async () => {
     if (import.meta.client) {
       // Always try to restore from backup localStorage if we don't have data
       if (!authToken.value || !currentUser.value) {
@@ -165,6 +238,26 @@ export const useAuthStore = defineStore('auth', () => {
         }
       } else {
         useGqlToken(authToken.value)
+      }
+
+      // If we have a token, validate it by fetching user data
+      if (authToken.value) {
+        const user = await fetchMe()
+        if (!user) {
+          // Token might be expired, try refreshing
+          const newToken = await refreshAccessToken()
+          if (newToken) {
+            // Refresh succeeded, fetch user again
+            await fetchMe()
+            setupTokenRefreshTimer()
+          } else {
+            // Refresh failed, clear auth state
+            clearAuthState()
+          }
+        } else {
+          // Token is valid, set up refresh timer
+          setupTokenRefreshTimer()
+        }
       }
     }
   }
@@ -187,6 +280,7 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     fetchMe,
     initialize,
+    refreshAccessToken,
   }
 }, {
   persist: {
