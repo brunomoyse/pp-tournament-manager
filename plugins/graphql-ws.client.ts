@@ -1,10 +1,11 @@
 // plugins/graphql-ws.client.ts
 import { createClient } from 'graphql-ws'
 import type { Client } from 'graphql-ws'
+import { useAuthStore } from '~/stores/useAuthStore'
 
 export default defineNuxtPlugin((_nuxtApp) => {
     const config = useRuntimeConfig()
-    const token = useCookie<string | undefined>('auth_token') // or wherever your token lives
+    const authStore = useAuthStore()
 
     // e.g. wss://api.example.com/graphql
     const url = config.public.graphqlWsEndpoint || 'ws://localhost:8080/graphql'
@@ -14,7 +15,7 @@ export default defineNuxtPlugin((_nuxtApp) => {
             url,
             connectionParams: async () => ({
                 // mirror the same auth as nuxt-graphql-client
-                headers: token.value ? { Authorization: `Bearer ${token.value}` } : undefined,
+                headers: authStore.authToken ? { Authorization: `Bearer ${authStore.authToken}` } : undefined,
             }),
             lazy: true,
             keepAlive: 15000,
