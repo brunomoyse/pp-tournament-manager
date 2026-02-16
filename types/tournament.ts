@@ -63,6 +63,22 @@ export interface TournamentStructure {
     breakDurationMinutes?: number | null;
 }
 
+// Payout Template types
+export interface PayoutStructureEntry {
+    position: number;
+    percentage: number;
+}
+
+export interface PayoutTemplate {
+    id: string;
+    name: string;
+    description?: string | null;
+    minPlayers: number;
+    maxPlayers?: number | null;
+    payoutStructure: PayoutStructureEntry[];
+    createdAt: string;
+}
+
 // Blind Structure Template types
 export interface BlindStructureLevel {
     levelNumber: number;
