@@ -6,11 +6,11 @@ import nl from '~/i18n/locales/nl.json'
 export default defineNuxtPlugin(({ vueApp }) => {
   const i18n = createI18n({
     legacy: false, // to remove with next i18n version
-    locale: 'en',
-    fallbackLocale: 'en',
+    locale: 'fr',
+    fallbackLocale: 'fr',
     messages: {
       en,
-      fr, 
+      fr,
       nl
     }
   })
