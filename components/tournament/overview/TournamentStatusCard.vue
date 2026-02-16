@@ -32,29 +32,10 @@
       </template>
     </div>
 
-    <!-- Current Status Info -->
-    <div class="space-y-6 mb-8">
-      <div class="flex items-center justify-between">
-        <span class="text-white">{{ t('labels.status') }}</span>
-        <span :class="[
-          'px-3 py-1 rounded-full text-sm font-medium border',
-          getTournamentStatusClass(tournament?.liveStatus || 'UNKNOWN')
-        ]">
-          {{ getTournamentStatusLabel(tournament?.liveStatus || 'UNKNOWN', t) }}
-        </span>
-      </div>
-      <div class="flex items-center justify-between">
-        <span class="text-white">{{ t('labels.currentLevel') }}</span>
-        <span class="font-semibold text-white">{{ displayLevel }}</span>
-      </div>
-      <div class="flex items-center justify-between">
-        <span class="text-white">{{ t('labels.levelDuration') }}</span>
-        <span class="font-semibold text-white">{{ displayDuration }}</span>
-      </div>
-      <div class="flex items-center justify-between">
-        <span class="text-white">{{ t('labels.blinds') }}</span>
-        <span class="font-semibold text-white">{{ displayBlinds }}</span>
-      </div>
+    <!-- Late Registration Info -->
+    <div v-if="tournament?.lateRegistrationLevel" class="flex items-center gap-2 mb-4 px-3 py-2 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+      <IonIcon :icon="timeOutline" class="w-4 h-4 text-orange-400 flex-shrink-0" />
+      <span class="text-sm text-orange-300">{{ t('labels.lateRegThroughLevel', { level: tournament.lateRegistrationLevel }) }}</span>
     </div>
 
     <!-- Action Buttons -->
@@ -102,10 +83,9 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { trophyOutline, chevronForwardOutline, refreshOutline } from 'ionicons/icons'
+import { trophyOutline, chevronForwardOutline, refreshOutline, timeOutline } from 'ionicons/icons'
 import { useTournamentStore } from '~/stores/useTournamentStore'
 import { useI18n } from '~/composables/useI18n'
-import { formatBlinds, formatDuration } from '~/utils'
 import { getTournamentStatusLabel, getTournamentStatusClass } from '~/utils/tournamentStatus'
 import type { TournamentLiveStatus } from '~/types/tournament'
 
@@ -120,39 +100,10 @@ const emit = defineEmits<{
 
 // Use store data
 const tournament = computed(() => tournamentStore.tournament)
-const clock = computed(() => tournamentStore.clock)
-const structure = computed(() => tournamentStore.structure)
 
 // Auto-scroll refs
 const stepperContainer = ref<HTMLElement | null>(null)
 const currentStatusEl = ref<HTMLElement | null>(null)
-
-// Computed values with fallback to tournament structure
-const currentLevel = computed(() => clock.value?.currentLevel || 1)
-
-const currentStructureFromLevel = computed(() => {
-  if (clock.value?.currentStructure) return clock.value.currentStructure
-  // Fallback: look up from tournament structure array by level number
-  const level = currentLevel.value
-  if (structure.value && level > 0) {
-    return structure.value.find(s => s.levelNumber === level) ?? undefined
-  }
-  return undefined
-})
-
-const levelTimeRemaining = computed(() => {
-  if (clock.value?.timeRemainingSeconds != null && clock.value.timeRemainingSeconds > 0) {
-    return clock.value.timeRemainingSeconds
-  }
-  // Fallback: show full duration in seconds from structure
-  const s = currentStructureFromLevel.value
-  if (s?.durationMinutes) return s.durationMinutes * 60
-  return 0
-})
-
-const displayLevel = computed(() => currentLevel.value)
-const displayDuration = computed(() => formatDuration(levelTimeRemaining.value))
-const displayBlinds = computed(() => formatBlinds(currentStructureFromLevel.value))
 
 // Status flow
 const statusFlow: TournamentLiveStatus[] = [
@@ -209,27 +160,35 @@ const availableActions = computed<StatusAction[]>(() => {
       break
     case 'REGISTRATION_OPEN':
       actions.push(
-        { label: t('statusWorkflow.actions.startLateRegistration'), targetStatus: 'LATE_REGISTRATION', variant: 'secondary', handler: () => confirmStatusChange(actions[0]) },
-        { label: t('statusWorkflow.actions.startTournament'), targetStatus: 'IN_PROGRESS', variant: 'primary', handler: () => confirmStatusChange(actions[1]) }
+        { label: t('statusWorkflow.actions.startTournament'), targetStatus: 'LATE_REGISTRATION', variant: 'primary', handler: () => confirmStatusChange(actions[0]) }
       )
       break
     case 'LATE_REGISTRATION':
-      actions.push({ label: t('statusWorkflow.actions.closeLateRegAndStart'), targetStatus: 'IN_PROGRESS', variant: 'primary', handler: () => confirmStatusChange(actions[0]) })
+      actions.push(
+        { label: t('statusWorkflow.actions.closeLateRegAndStart'), targetStatus: 'IN_PROGRESS', variant: 'warning', handler: () => confirmStatusChange(actions[0]) }
+      )
       break
     case 'IN_PROGRESS':
       actions.push(
-        { label: t('statusWorkflow.actions.callBreak'), targetStatus: 'BREAK', variant: 'warning', handler: () => confirmStatusChange(actions[0]) },
-        { label: t('statusWorkflow.actions.announceFinalTable'), targetStatus: 'FINAL_TABLE', variant: 'primary', handler: () => confirmStatusChange(actions[1]) }
+        { label: t('statusWorkflow.actions.callBreak'), targetStatus: 'BREAK', variant: 'warning', handler: () => confirmStatusChange(actions[0]) }
       )
       break
     case 'BREAK':
       actions.push({ label: t('statusWorkflow.actions.resumePlay'), targetStatus: 'IN_PROGRESS', variant: 'success', handler: () => confirmStatusChange(actions[0]) })
       break
     case 'FINAL_TABLE':
-      actions.push(
-        { label: t('results.enterResults'), key: 'enter-results', variant: 'primary', handler: () => emit('enter-results') },
-        { label: t('statusWorkflow.actions.endTournament'), targetStatus: 'FINISHED', variant: 'danger', handler: () => confirmStatusChange(actions[1]) }
-      )
+      {
+        const seatedCount = tournamentStore.registrations?.filter(r => r.status === 'SEATED').length || 0
+        if (seatedCount > 1) {
+          actions.push(
+            { label: t('statusWorkflow.actions.endTournament'), key: 'end-tournament', variant: 'danger', handler: () => emit('enter-results') }
+          )
+        } else {
+          actions.push(
+            { label: t('statusWorkflow.actions.endTournament'), targetStatus: 'FINISHED', variant: 'danger', handler: () => confirmStatusChange(actions[0]) }
+          )
+        }
+      }
       break
   }
 
@@ -241,7 +200,28 @@ const isUpdating = ref(false)
 const showConfirmDialog = ref(false)
 const pendingAction = ref<StatusAction | null>(null)
 
-const confirmStatusChange = (action: StatusAction) => {
+// Check if tournament has tables assigned
+const checkTablesAssigned = async (): Promise<boolean> => {
+  try {
+    const tournamentId = tournament.value?.id
+    if (!tournamentId) return false
+    const response = await GqlGetTournamentSeatingChart({ tournamentId })
+    const tables = response?.tournamentSeatingChart?.tables || []
+    return tables.length > 0
+  } catch {
+    return false
+  }
+}
+
+const confirmStatusChange = async (action: StatusAction) => {
+  // Block starting tournament if no tables are assigned
+  if (action.targetStatus === 'LATE_REGISTRATION') {
+    const hasTables = await checkTablesAssigned()
+    if (!hasTables) {
+      toast.error(t('toast.noTablesAssigned'))
+      return
+    }
+  }
   pendingAction.value = action
   showConfirmDialog.value = true
 }
@@ -268,11 +248,6 @@ const executeStatusChange = async () => {
 
     toast.success(t('toast.statusUpdateSuccess'))
     emit('status-changed', pendingAction.value.targetStatus)
-
-    // If entering FINAL_TABLE, emit enter-results event
-    if (pendingAction.value.targetStatus === 'FINAL_TABLE') {
-      emit('enter-results')
-    }
   } catch (error) {
     console.error('Failed to update tournament status:', error)
     toast.error(t('toast.statusUpdateFailed'))

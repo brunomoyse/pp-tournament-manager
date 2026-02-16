@@ -494,6 +494,14 @@ const submitResults = async () => {
 
     await GqlEnterTournamentResults({ input })
 
+    // Auto-finish the tournament after results are entered
+    await GqlUpdateTournamentStatus({
+      input: {
+        tournamentId: props.tournamentId,
+        liveStatus: 'FINISHED'
+      }
+    })
+
     errorMessage.value = ''
     toast.success(t('toast.resultsEnteredSuccess'))
     emit('results-entered')
