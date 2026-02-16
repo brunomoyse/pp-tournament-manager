@@ -6,11 +6,11 @@
         <div class="w-8 h-8 bg-pp-accent-gold/20 rounded-lg flex items-center justify-center">
           <IonIcon :icon="timeOutline" class="w-4 h-4 text-pp-accent-gold" />
         </div>
-        <h3 class="text-lg font-bold text-pp-text-primary">Tournament Clock</h3>
+        <h3 class="text-lg font-bold text-pp-text-primary">{{ t('headings.tournamentClock') }}</h3>
       </div>
       <div v-if="clock?.status === 'RUNNING'" class="flex items-center gap-2 px-3 py-1 bg-pp-accent-gold/10 rounded-full">
         <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-        <span class="text-pp-accent-gold font-semibold text-xs">LIVE</span>
+        <span class="text-pp-accent-gold font-semibold text-xs">{{ t('status.live') }}</span>
       </div>
     </div>
     
@@ -24,7 +24,7 @@
           {{ formatDuration(timeRemaining) || '00:00' }}
         </div>
         <div class="text-white/50 font-medium text-xs uppercase tracking-wider">
-          {{ currentStructure?.isBreak ? 'Break Time' : `Level ${clock?.currentLevel || 1}` }}
+          {{ currentStructure?.isBreak ? t('labels.breakTime') : `${t('labels.level')} ${clock?.currentLevel || 1}` }}
         </div>
       </div>
     </div>
@@ -34,15 +34,15 @@
       <!-- Current Blinds -->
       <div class="relative">
         <div class="absolute -top-2 left-4 bg-pp-bg-secondary px-2 z-10">
-          <span class="text-pp-accent-gold text-xs font-bold uppercase tracking-wider">Current</span>
+          <span class="text-pp-accent-gold text-xs font-bold uppercase tracking-wider">{{ t('labels.current') }}</span>
         </div>
         <div class="bg-gradient-to-br from-pp-accent-gold/20 to-pp-accent-gold/5 rounded-lg p-3 border-2 border-pp-accent-gold/50">
           <div class="text-center">
             <div class="text-lg font-black text-pp-text-primary">
-              {{ currentStructure?.isBreak ? 'BREAK' : formatBlinds(currentStructure) || '0/0' }}
+              {{ currentStructure?.isBreak ? t('labels.break') : formatBlinds(currentStructure) || '0/0' }}
             </div>
             <div v-if="currentStructure?.ante && !currentStructure?.isBreak" class="text-white/60 text-xs font-medium mt-1">
-              Ante: {{ currentStructure.ante }}
+              {{ t('labels.ante') }}: {{ currentStructure.ante }}
             </div>
           </div>
         </div>
@@ -51,15 +51,15 @@
       <!-- Next Blinds -->
       <div class="relative">
         <div class="absolute -top-2 left-4 bg-pp-bg-secondary px-2 z-10">
-          <span class="text-white/60 text-xs font-bold uppercase tracking-wider">Next</span>
+          <span class="text-white/60 text-xs font-bold uppercase tracking-wider">{{ t('labels.next') }}</span>
         </div>
         <div class="bg-pp-bg-primary/30 rounded-lg p-3 border-2 border-pp-border/50">
           <div class="text-center">
             <div class="text-lg font-black text-white/70">
-              {{ nextStructure?.isBreak ? 'BREAK' : formatBlinds(nextStructure) || '0/0' }}
+              {{ nextStructure?.isBreak ? t('labels.break') : formatBlinds(nextStructure) || '0/0' }}
             </div>
             <div v-if="nextStructure?.ante && !nextStructure?.isBreak" class="text-white/40 text-xs font-medium mt-1">
-              Ante: {{ nextStructure.ante }}
+              {{ t('labels.ante') }}: {{ nextStructure.ante }}
             </div>
           </div>
         </div>
@@ -91,7 +91,7 @@
           class="pp-action-button pp-action-button--secondary flex-col py-2 text-xs"
         >
           <IonIcon :icon="playSkipBackOutline" class="w-4 h-4" />
-          <span class="text-xs mt-0.5">Previous</span>
+          <span class="text-xs mt-0.5">{{ t('buttons.previous') }}</span>
         </button>
         
         <button 
@@ -99,7 +99,7 @@
           class="pp-action-button pp-action-button--secondary flex-col py-2 text-xs"
         >
           <IonIcon :icon="refreshOutline" class="w-4 h-4" />
-          <span class="text-xs mt-0.5">Reset</span>
+          <span class="text-xs mt-0.5">{{ t('buttons.reset') }}</span>
         </button>
         
         <button 
@@ -107,7 +107,7 @@
           class="pp-action-button pp-action-button--secondary flex-col py-2 text-xs"
         >
           <IonIcon :icon="playSkipForwardOutline" class="w-4 h-4" />
-          <span class="text-xs mt-0.5">Next</span>
+          <span class="text-xs mt-0.5">{{ t('buttons.next') }}</span>
         </button>
       </div>
     </div>
@@ -116,7 +116,7 @@
     <div v-if="!clock" class="mt-4 bg-pp-bg-primary/40 border border-pp-border/50 rounded-xl p-3">
       <div class="flex items-center justify-center gap-2">
         <div class="w-2 h-2 bg-white/30 rounded-full"></div>
-        <span class="text-white/50 text-sm font-medium">Clock Disconnected</span>
+        <span class="text-white/50 text-sm font-medium">{{ t('messages.clockDisconnected') }}</span>
       </div>
     </div>
   </div>
@@ -126,7 +126,9 @@
 import { IonIcon } from '@ionic/vue'
 import { timeOutline, playOutline, pauseOutline, playSkipForwardOutline, playSkipBackOutline, refreshOutline } from 'ionicons/icons'
 import {formatBlinds, formatDuration} from "~/utils";
+import { useI18n } from '~/composables/useI18n'
 
+const { t } = useI18n()
 const route = useRoute()
 const tournamentStore = useTournamentStore();
 const clock = computed(() => tournamentStore.clock);
@@ -331,15 +333,15 @@ const getClockButtonIcon = () => {
 }
 
 const getClockButtonText = () => {
-    if (!clock.value) return 'Start'
-    
+    if (!clock.value) return t('buttons.start')
+
     switch (clock.value.status) {
         case 'RUNNING':
-            return 'Pause'
+            return t('buttons.pause')
         case 'PAUSED':
-            return 'Resume'
+            return t('buttons.resume')
         default:
-            return 'Start'
+            return t('buttons.start')
     }
 }
 

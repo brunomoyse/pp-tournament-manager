@@ -3,10 +3,10 @@
         <!-- Custom Header -->
         <div class="bg-pp-bg-primary border-b border-pp-border px-8 py-6">
             <!-- Top row with title and status -->
-            <div class="flex justify-between items-start mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
                 <div class="flex items-center gap-4 cursor-pointer" @click="goHome">
                     <img src="/assets/icon-no-bg.png" alt="Pocket Pair Logo" class="w-12 h-12" />
-                    <h1 class="text-4xl font-bold text-pp-text-primary hover:text-pp-accent-gold transition-colors">Pocket Pair - Tournament Manager</h1>
+                    <h1 class="text-4xl font-bold text-pp-text-primary hover:text-pp-accent-gold transition-colors">{{ t('app.title') }}</h1>
                 </div>
                 <div class="text-right">
                     <!-- Club name and tournament name -->
@@ -33,13 +33,13 @@
             </div>
             
             <!-- Full width tab navigation -->
-            <div class="grid grid-cols-5 gap-2 bg-pp-bg-secondary/50 p-2 rounded-2xl border border-pp-border">
+            <div class="flex overflow-x-auto gap-2 bg-pp-bg-secondary/50 p-2 rounded-2xl border border-pp-border">
                 <button
                     v-for="tab in tabs"
                     :key="tab.value"
                     @click="activeTab = tab.value"
                     :class="[
-                        'px-4 py-3 rounded-xl font-medium transition-all whitespace-nowrap',
+                        'flex-1 min-w-0 px-4 py-3 rounded-xl font-medium transition-all whitespace-nowrap',
                         activeTab === tab.value
                             ? 'bg-pp-bg-secondary text-pp-accent-gold border border-pp-accent-gold/40 shadow-sm'
                             : 'text-white hover:bg-pp-bg-secondary/50'
@@ -55,19 +55,43 @@
             <div class="px-8 pt-4 pb-24">
                 <!-- Overview Tab -->
                 <div v-if="activeTab === 'overview'" class="">
-                    <!-- Three Column Grid -->
-                    <div class="grid grid-cols-3 gap-8 mb-12">
-                        <TournamentStatusCard />
-                        <TournamentPlayersCard />
-                        <TournamentPrizePool />
+                    <!-- Warning: No tables linked -->
+                    <div v-if="showNoTablesWarning" class="mb-6 flex items-center gap-3 p-4 bg-orange-500/10 border border-orange-500/30 rounded-xl">
+                        <ion-icon :icon="warningOutline" class="w-6 h-6 text-orange-400 flex-shrink-0" />
+                        <div class="flex-1">
+                            <p class="text-orange-300 font-medium text-sm">{{ t('warnings.noTablesLinked') }}</p>
+                            <p class="text-orange-400/70 text-xs mt-0.5">{{ t('warnings.noTablesLinkedDesc') }}</p>
+                        </div>
+                        <button
+                            @click="activeTab = 'seating'"
+                            class="pp-action-button pp-action-button--warning text-xs px-3 py-1.5 flex-shrink-0"
+                        >
+                            {{ t('warnings.goToSeating') }}
+                        </button>
                     </div>
+
+                    <!-- Grid Layout -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12">
+                        <TournamentStatusCard
+                          @enter-results="showEnterResultsModal = true"
+                          @status-changed="handleStatusChanged"
+                        />
+                        <TournamentPlayersCard />
+                        <TournamentPrizePool ref="prizePoolCard" />
+                    </div>
+
+                    <!-- Results Display (FINISHED) -->
+                    <TournamentResultsDisplay
+                      v-if="tournament?.liveStatus === 'FINISHED'"
+                      class="mb-8"
+                    />
 
                     <!-- Recent Activity -->
                     <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-                        <h3 class="text-xl font-semibold text-pp-text-primary mb-8">Recent Activity</h3>
+                        <h3 class="text-xl font-semibold text-pp-text-primary mb-8">{{ t('headings.recentActivity') }}</h3>
                         <div class="space-y-6">
                             <div class="text-center py-8 text-white/60">
-                                No recent activity
+                                {{ t('messages.noRecentActivity') }}
                             </div>
                         </div>
                     </div>
@@ -75,7 +99,7 @@
 
                 <!-- Clock Tab -->
                 <div v-if="activeTab === 'clock'" class="">
-                    <div class="grid grid-cols-2 gap-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <TournamentClockCard />
                         <TournamentStructureCard
                             :current-level-index="(clock?.currentLevel || 1) - 1"
@@ -89,7 +113,8 @@
                       @player-checked-in="handlePlayerCheckedIn"
                       @seat-player="handleSeatPlayer"
                       @registerPlayer="showRegisterPlayerModal = true"
-                      @qrCheckin="showQRCheckinModal = true"
+                      @showQRCode="handleShowQRCode"
+                      @entry-added="handleEntryAdded"
                     />
                 </div>
 
@@ -102,12 +127,22 @@
                   @registered="handlePlayerRegistered"
                 />
 
-                <!-- QR Check-in Modal -->
+                <!-- QR Code Generation Modal -->
                 <QRCheckinModal
                   :isOpen="showQRCheckinModal"
+                  :registrationId="selectedPlayerForQR?.registrationId || ''"
+                  :playerId="selectedPlayerForQR?.id || ''"
+                  :playerName="selectedPlayerForQR?.name || ''"
                   :tournamentId="selectedTournamentId"
-                  @close="showQRCheckinModal = false"
-                  @checkedIn="handleQRCheckedIn"
+                  @close="handleCloseQRModal"
+                />
+
+                <!-- Enter Results Modal -->
+                <EnterResultsModal
+                  :is-open="showEnterResultsModal"
+                  :tournament-id="selectedTournamentId"
+                  @close="showEnterResultsModal = false"
+                  @results-entered="handleResultsEntered"
                 />
 
                 <!-- Seating Tab -->
@@ -159,7 +194,7 @@
                                             'px-3 py-1 rounded-full text-sm font-medium border',
                                             getTournamentStatusClass(tournament.liveStatus || 'UNKNOWN')
                                         ]">
-                                            {{ getTournamentStatusLabel(tournament.liveStatus || 'UNKNOWN') }}
+                                            {{ getTournamentStatusLabel(tournament.liveStatus || 'UNKNOWN', t) }}
                                         </span>
                                     </p>
                                 </div>
@@ -192,7 +227,7 @@ definePageMeta({
     middleware: 'auth'
 })
 
-import { settingsOutline, createOutline } from 'ionicons/icons'
+import { settingsOutline, createOutline, warningOutline } from 'ionicons/icons'
 import { useNetworkStatus } from '@/composables/useNetworkStatus'
 import { useTournamentStore } from '~/stores/useTournamentStore'
 import TournamentStructureCard from "~/components/tournament/clock/TournamentStructureCard.vue";
@@ -203,6 +238,8 @@ import TournamentSeatingManager from "~/components/tournament/seating/Tournament
 import TournamentFormModal from "~/components/tournament/TournamentFormModal.vue";
 import RegisterPlayerModal from "~/components/tournament/players/RegisterPlayerModal.vue";
 import QRCheckinModal from "~/components/tournament/players/QRCheckinModal.vue";
+import EnterResultsModal from "~/components/tournament/results/EnterResultsModal.vue";
+import TournamentResultsDisplay from "~/components/tournament/results/TournamentResultsDisplay.vue";
 import {useGqlSubscription} from "~/composables/useGqlSubscription";
 import type {TournamentClock} from "~/types/clock";
 import { formatPrice } from "~/utils";
@@ -223,6 +260,7 @@ const activeTab = ref('overview')
 
 // Component refs
 const seatingManager = ref()
+const prizePoolCard = ref()
 
 // Use store getters for reactive data
 const tournament = computed(() => tournamentStore.tournament)
@@ -232,9 +270,28 @@ const club = computed(() => clubStore.club)
 // Edit modal state
 const showEditModal = ref(false)
 
+// Results modal state
+const showEnterResultsModal = ref(false)
+
 // Player modals state
 const showRegisterPlayerModal = ref(false)
 const showQRCheckinModal = ref(false)
+const selectedPlayerForQR = ref<any>(null)
+
+// Fetch seating data for warning banner
+const { data: overviewSeatingData } = await useLazyAsyncData(
+  `overview-seating-${selectedTournamentId}`,
+  () => GqlGetTournamentSeatingChart({ tournamentId: selectedTournamentId })
+)
+
+// Show warning when tournament is active but no tables linked
+const showNoTablesWarning = computed(() => {
+  const activeStatuses = ['IN_PROGRESS', 'BREAK', 'FINAL_TABLE']
+  const status = tournament.value?.liveStatus
+  if (!status || !activeStatuses.includes(status)) return false
+  const tables = overviewSeatingData.value?.tournamentSeatingChart?.tables || []
+  return tables.length === 0
+})
 
 // Fetch tournament players for filtering in RegisterPlayerModal
 const { data: playersData, refresh: refreshPlayers } = await useLazyAsyncData(
@@ -244,7 +301,7 @@ const { data: playersData, refresh: refreshPlayers } = await useLazyAsyncData(
 
 // Get registered player IDs to filter them out in search
 const registeredPlayerIds = computed(() => {
-  return (playersData.value?.tournamentPlayers || []).map((tp: any) => tp.user.id)
+  return (playersData.value?.tournamentPlayers?.items || []).map((tp: any) => tp.user.id)
 })
 
 // Check if tournament can be edited (not FINISHED)
@@ -324,6 +381,39 @@ const handlePlayerRegistered = async (data: { playerId: string }) => {
     console.log('Player registered:', data)
     // Refresh players list
     await refreshPlayers()
+}
+
+// Handle showing QR code for a player
+const handleShowQRCode = (player: any) => {
+    selectedPlayerForQR.value = player
+    showQRCheckinModal.value = true
+}
+
+// Handle closing QR modal
+const handleCloseQRModal = () => {
+    showQRCheckinModal.value = false
+    selectedPlayerForQR.value = null
+}
+
+// Handle entry added (refresh stats in prize pool card)
+const handleEntryAdded = async () => {
+    if (prizePoolCard.value?.refreshStats) {
+        await prizePoolCard.value.refreshStats()
+    }
+}
+
+// Handle status changed
+const handleStatusChanged = async (status: string) => {
+    // Refresh tournament data
+    const response = await GqlGetTournament({ id: selectedTournamentId })
+    if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
+}
+
+// Handle results entered
+const handleResultsEntered = async () => {
+    showEnterResultsModal.value = false
+    const response = await GqlGetTournament({ id: selectedTournamentId })
+    if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
 }
 
 // Handle QR check-in
@@ -432,6 +522,100 @@ watch(clockUpdates, (data: {tournamentClockUpdates: TournamentClock}) => {
     if (data?.tournamentClockUpdates) {
         console.log('[TournamentPage] Updating store with clock:', data.tournamentClockUpdates)
         tournamentStore.setSelectedTournamentClock(data.tournamentClockUpdates)
+    }
+})
+
+// --- Registration subscription ---
+const registrationSubQuery = `
+    subscription TournamentRegistrations($tournamentId: ID!) {
+      tournamentRegistrations(tournamentId: $tournamentId) {
+        tournamentId
+        player {
+          user { id firstName lastName username email }
+          registration { id registrationTime status notes }
+        }
+        eventType
+      }
+    }
+`
+
+const { data: registrationUpdates } = useGqlSubscription({
+    query: registrationSubQuery,
+    variables: { tournamentId: selectedTournamentId },
+    immediate: true
+})
+
+watch(registrationUpdates, async (data: any) => {
+    if (data?.tournamentRegistrations) {
+        // Refresh players list and entry stats
+        await refreshPlayers()
+        if (prizePoolCard.value?.refreshStats) {
+            await prizePoolCard.value.refreshStats()
+        }
+        // Refresh tournament data in store
+        const response = await GqlGetTournament({ id: selectedTournamentId })
+        if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
+    }
+})
+
+// --- Seating changes subscription ---
+const seatingSubQuery = `
+    subscription SeatingChanges($clubId: ID!) {
+      clubSeatingChanges(clubId: $clubId) {
+        eventType
+        tournamentId
+        clubId
+        affectedPlayer { id firstName lastName username }
+        message
+        timestamp
+      }
+    }
+`
+
+const clubId = computed(() => clubStore.club?.id)
+
+const { data: seatingUpdates } = useGqlSubscription({
+    query: seatingSubQuery,
+    variables: { clubId: clubId.value || '' },
+    immediate: !!clubId.value
+})
+
+watch(seatingUpdates, async (data: any) => {
+    if (data?.clubSeatingChanges) {
+        const event = data.clubSeatingChanges
+        // Refresh seating data
+        if (seatingManager.value?.refreshSeatingData) {
+            await seatingManager.value.refreshSeatingData()
+        }
+        // On status changes, refresh tournament
+        if (event.eventType === 'TOURNAMENT_STATUS_CHANGED') {
+            const response = await GqlGetTournament({ id: selectedTournamentId })
+            if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
+        }
+    }
+})
+
+// --- User notifications subscription ---
+const notificationSubQuery = `
+    subscription UserNotifications {
+      userNotifications {
+        id userId notificationType title message tournamentId createdAt
+      }
+    }
+`
+
+const toast = useToast()
+
+const { data: notificationUpdates } = useGqlSubscription({
+    query: notificationSubQuery,
+    variables: {},
+    immediate: true
+})
+
+watch(notificationUpdates, (data: any) => {
+    if (data?.userNotifications) {
+        const notif = data.userNotifications
+        toast.info(`${notif.title}: ${notif.message}`)
     }
 })
 

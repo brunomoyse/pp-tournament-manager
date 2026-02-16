@@ -5,7 +5,7 @@
         <div class="w-8 h-8 bg-pp-accent-gold/20 rounded-lg flex items-center justify-center">
           <IonIcon :icon="layersOutline" class="w-4 h-4 text-pp-accent-gold" />
         </div>
-        <h3 class="text-lg font-bold text-pp-text-primary">Blind Structure</h3>
+        <h3 class="text-lg font-bold text-pp-text-primary">{{ t('headings.blindStructure') }}</h3>
       </div>
     </div>
     
@@ -29,23 +29,23 @@
           </div>
           <div>
             <div class="text-lg font-semibold text-pp-text-primary">
-              {{ level.isBreak ? 'BREAK' : `${level.smallBlind}/${level.bigBlind}` }}
+              {{ level.isBreak ? t('labels.break') : `${level.smallBlind}/${level.bigBlind}` }}
             </div>
             <div class="text-sm text-white/60">
-              {{ level.isBreak ? `${level.breakDurationMinutes || level.durationMinutes} minutes` : `${level.durationMinutes} minutes` }}
+              {{ level.isBreak ? `${level.breakDurationMinutes || level.durationMinutes} ${t('labels.minutes')}` : `${level.durationMinutes} ${t('labels.minutes')}` }}
             </div>
           </div>
         </div>
         
         <div v-if="level.ante" class="text-right">
-          <div class="text-sm text-white/60">Ante</div>
+          <div class="text-sm text-white/60">{{ t('labels.ante') }}</div>
           <div class="text-lg font-medium text-pp-text-primary">{{ level.ante }}</div>
         </div>
       </div>
     </div>
 
     <div v-if="tournamentLevels && tournamentLevels.length === 0" class="text-center py-8 text-white/60">
-      No blind structure available
+      {{ t('messages.noBlindStructure') }}
     </div>
   </div>
 </template>
@@ -54,6 +54,9 @@
 import { IonIcon } from '@ionic/vue'
 import { layersOutline } from 'ionicons/icons'
 import { useTournamentStore } from '~/stores/useTournamentStore'
+import { useI18n } from '~/composables/useI18n'
+
+const { t } = useI18n()
 import type { ComponentPublicInstance } from 'vue'
 
 const tournamentStore = useTournamentStore()

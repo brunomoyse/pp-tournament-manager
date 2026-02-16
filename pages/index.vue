@@ -57,7 +57,28 @@
               <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('headings.players') }}</h3>
               <IonIcon :icon="peopleOutline" class="w-6 h-6 text-pp-accent-gold" />
             </div>
-            <div class="space-y-6">
+            <div v-if="isLoading" class="space-y-6">
+              <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                  <IonSkeletonText :animated="true" style="width: 60%; height: 20px" />
+                  <IonSkeletonText :animated="true" style="width: 30px; height: 20px" />
+                </div>
+                <div class="flex justify-between items-center">
+                  <IonSkeletonText :animated="true" style="width: 60%; height: 20px" />
+                  <IonSkeletonText :animated="true" style="width: 30px; height: 20px" />
+                </div>
+                <div class="flex justify-between items-center">
+                  <IonSkeletonText :animated="true" style="width: 60%; height: 20px" />
+                  <IonSkeletonText :animated="true" style="width: 50px; height: 20px" />
+                </div>
+                <div class="flex justify-between items-center">
+                  <IonSkeletonText :animated="true" style="width: 60%; height: 20px" />
+                  <IonSkeletonText :animated="true" style="width: 30px; height: 20px" />
+                </div>
+              </div>
+              <IonSkeletonText :animated="true" style="width: 100%; height: 44px; border-radius: 8px" />
+            </div>
+            <div v-else class="space-y-6">
               <div class="space-y-4">
                 <div class="flex justify-between items-center">
                   <span class="text-white/70">{{ t('reports.players') }}</span>
@@ -76,11 +97,11 @@
                   <span class="text-pp-text-primary font-semibold">{{ playerStats.regularPlayers }}</span>
                 </div>
               </div>
-              <button 
+              <button
                 @click="managePlayers"
                 class="w-full pp-action-button pp-action-button--secondary justify-center"
               >
-                Manage Players
+                {{ t('buttons.managePlayers') }}
               </button>
             </div>
           </div>
@@ -132,7 +153,21 @@
             </div>
           </div>
           
-          <div v-if="recentTournaments.length > 0" class="space-y-2">
+          <!-- Loading Skeletons -->
+          <div v-if="isLoading" class="space-y-2">
+            <div v-for="i in 3" :key="i" class="flex items-center justify-between p-4 bg-pp-bg-primary/50 rounded-lg border border-pp-border">
+              <div class="flex items-center gap-4 flex-1">
+                <IonSkeletonText :animated="true" style="width: 48px; height: 48px; border-radius: 8px" />
+                <div class="flex-1">
+                  <IonSkeletonText :animated="true" style="width: 60%; height: 20px; margin-bottom: 8px" />
+                  <IonSkeletonText :animated="true" style="width: 40%; height: 16px" />
+                </div>
+              </div>
+              <IonSkeletonText :animated="true" style="width: 80px; height: 28px; border-radius: 6px" />
+            </div>
+          </div>
+
+          <div v-else-if="recentTournaments.length > 0" class="space-y-2">
             <div 
               v-for="tournament in recentTournaments" 
               :key="tournament.id"
@@ -155,10 +190,15 @@
               <div class="flex items-center gap-3">
                 <span :class="[
                   'px-3 py-1 rounded-lg text-xs font-medium border',
-                  getTournamentStatusClass(tournament.status)
+                  getTournamentSmartStatus(tournament).badge
                 ]">
-                  {{ getTournamentStatusLabel(tournament.status) }}
+                  {{ getTournamentSmartStatus(tournament).label }}
                 </span>
+                <IonIcon
+                  v-if="getTournamentSmartStatus(tournament).needsAttention"
+                  :icon="warningOutline"
+                  class="w-5 h-5 text-orange-400 animate-pulse"
+                />
                 <IonIcon :icon="chevronForwardOutline" class="w-5 h-5 text-white/40 group-hover:text-pp-accent-gold transition-colors" />
               </div>
             </div>
@@ -207,6 +247,7 @@ import {
   IonContent,
   IonButton,
   IonIcon,
+  IonSkeletonText,
   alertController
 } from '@ionic/vue'
 import {
@@ -216,7 +257,8 @@ import {
   logOutOutline,
   chevronForwardOutline,
   flashOutline,
-  statsChartOutline
+  statsChartOutline,
+  warningOutline
 } from 'ionicons/icons'
 import { useAuthStore } from '~/stores/useAuthStore'
 import {formatPrice} from "~/utils";
@@ -236,18 +278,21 @@ const tournaments = ref<GetTournamentsQuery['tournaments']>([])
 const allTimeLeaderboard = ref<GetLeaderboardQuery['leaderboard'] | null>(null)
 const weekLeaderboard = ref<GetLeaderboardQuery['leaderboard'] | null>(null)
 
+// Loading state
+const isLoading = ref(true)
+
 // Modal state
 const showTournamentModal = ref(false)
 
 // Player statistics computed from leaderboard data
 const playerStats = computed(() => {
-  const entries = allTimeLeaderboard.value?.entries || []
+  const entries = allTimeLeaderboard.value?.items || []
 
   // Unique players (all time)
-  const uniquePlayers = allTimeLeaderboard.value?.totalPlayers || 0
+  const uniquePlayers = allTimeLeaderboard.value?.totalCount || 0
 
   // Active this week
-  const thisWeek = weekLeaderboard.value?.totalPlayers || 0
+  const thisWeek = weekLeaderboard.value?.totalCount || 0
 
   // Average buy-in
   const totalBuyIns = entries.reduce((sum, e) => sum + e.totalBuyIns, 0)
@@ -261,15 +306,49 @@ const playerStats = computed(() => {
 })
 
 // Tournament statistics
-const activeTournaments = computed(() => 
+const activeTournaments = computed(() =>
   tournaments.value.filter(t => t.status === 'IN_PROGRESS')
 )
 
-const recentTournaments = computed(() => 
+const recentTournaments = computed(() =>
   [...tournaments.value]
     .sort((a, b) => new Date(b.startTime || '').getTime() - new Date(a.startTime || '').getTime())
     .slice(0, 5)
 )
+
+// Smart status detection - identifies tournaments that need attention
+const getTournamentSmartStatus = (tournament: any) => {
+  const now = new Date()
+  const startTime = tournament.startTime ? new Date(tournament.startTime) : null
+  const endTime = tournament.endTime ? new Date(tournament.endTime) : null
+
+  // Check if tournament should have already started but is still marked as UPCOMING
+  if (tournament.status === 'UPCOMING' && startTime && startTime < now) {
+    return {
+      needsAttention: true,
+      suggestedStatus: 'LATE_START',
+      badge: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+      label: t('status.lateStart') || 'Démarrage en retard'
+    }
+  }
+
+  // Check if tournament should have finished but is still IN_PROGRESS or UPCOMING
+  if (endTime && endTime < now && tournament.status !== 'COMPLETED') {
+    return {
+      needsAttention: true,
+      suggestedStatus: 'SHOULD_BE_COMPLETED',
+      badge: 'bg-red-500/20 text-red-400 border-red-500/30',
+      label: t('status.shouldBeCompleted') || 'Devrait être terminé'
+    }
+  }
+
+  // Normal status
+  return {
+    needsAttention: false,
+    badge: getTournamentStatusClass(tournament.status),
+    label: getTournamentStatusLabel(tournament.status, t)
+  }
+}
 
 // Actions
 const goToTournament = (id: string) => {
@@ -284,12 +363,34 @@ const closeTournamentModal = () => {
   showTournamentModal.value = false
 }
 
-const onTournamentSaved = async () => {
+const onTournamentSaved = async (newTournament?: any) => {
   closeTournamentModal()
-  // Refresh tournaments list
-  if (club) {
+
+  if (!club) return
+
+  // OPTION 3: Optimistic UI Update
+  // If we have tournament data from the modal, add it immediately
+  if (newTournament) {
+    // Add optimistic tournament to the list immediately (UX feels instant!)
+    const optimisticTournament = {
+      ...newTournament,
+      id: newTournament.id || `temp-${Date.now()}`, // Temporary ID if not provided
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      _optimistic: true // Flag to identify optimistic updates
+    }
+
+    tournaments.value = [optimisticTournament, ...(tournaments.value || [])]
+  }
+
+  // Fetch fresh data from server in the background
+  try {
     const res = await GqlGetTournaments({ clubId: club.id })
-    tournaments.value = res.tournaments || []
+    tournaments.value = res.tournaments?.items || []
+  } catch (error) {
+    console.error('Failed to refresh tournaments:', error)
+    // If refresh fails but we have optimistic data, keep it
+    // The user will see their tournament even if the refresh failed
   }
 }
 
@@ -318,19 +419,35 @@ onMounted(async () => {
             buttons: [t('common.ok')]
         })
         await alert.present()
+        isLoading.value = false
         return
     }
 
-    // Fetch all data in parallel
-    const [tournamentsRes, allTimeRes, weekRes] = await Promise.all([
-        GqlGetTournaments({ clubId: club.id }),
-        GqlGetLeaderboard({ clubId: club.id, period: 'ALL_TIME' as LeaderboardPeriod, limit: 500 }),
-        GqlGetLeaderboard({ clubId: club.id, period: 'LAST_7_DAYS' as LeaderboardPeriod })
-    ])
+    try {
+        isLoading.value = true
 
-    tournaments.value = tournamentsRes.tournaments || []
-    allTimeLeaderboard.value = allTimeRes.leaderboard
-    weekLeaderboard.value = weekRes.leaderboard
+        // OPTION 2: Progressive Loading
+        // Load critical data (tournaments) first - this is what users want to see immediately
+        const tournamentsRes = await GqlGetTournaments({ clubId: club.id })
+        tournaments.value = tournamentsRes.tournaments?.items || []
+
+        // Show tournaments immediately, stop showing full loading state
+        isLoading.value = false
+
+        // Then load leaderboard statistics in the background (non-blocking)
+        Promise.all([
+            GqlGetLeaderboard({ clubId: club.id, period: 'ALL_TIME' as LeaderboardPeriod, limit: 500 }),
+            GqlGetLeaderboard({ clubId: club.id, period: 'LAST_7_DAYS' as LeaderboardPeriod })
+        ]).then(([allTimeRes, weekRes]) => {
+            allTimeLeaderboard.value = allTimeRes.leaderboard
+            weekLeaderboard.value = weekRes.leaderboard
+        }).catch(err => {
+            console.error('Failed to load leaderboard data:', err)
+        })
+    } catch (error) {
+        console.error('Failed to load tournaments:', error)
+        isLoading.value = false
+    }
 })
 
 </script>

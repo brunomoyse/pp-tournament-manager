@@ -165,6 +165,7 @@ import type { User } from '~/types/user'
 const router = useRouter()
 const clubStore = useClubStore()
 const { t } = useI18n()
+const toast = useToast()
 
 const club = computed(() => clubStore.club)
 
@@ -221,7 +222,7 @@ const fetchPlayers = async () => {
       search: searchQuery.value || undefined,
       isActive: statusFilter.value === 'all' ? undefined : statusFilter.value === 'active'
     })
-    players.value = (result?.users || []) as User[]
+    players.value = (result?.users?.items || []) as User[]
   } catch (error) {
     console.error('Failed to fetch players:', error)
   } finally {
@@ -270,7 +271,7 @@ const handleDeleteConfirmed = async () => {
     await fetchPlayers()
   } catch (error) {
     console.error('Failed to deactivate player:', error)
-    alert(t('players.deactivateFailed'))
+    toast.error(t('players.deactivateFailed'))
   }
 }
 
@@ -280,7 +281,7 @@ const reactivatePlayer = async (id: string) => {
     await fetchPlayers()
   } catch (error) {
     console.error('Failed to reactivate player:', error)
-    alert(t('players.reactivateFailed'))
+    toast.error(t('players.reactivateFailed'))
   }
 }
 

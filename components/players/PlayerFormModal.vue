@@ -133,6 +133,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const toast = useToast()
 const clubStore = useClubStore()
 
 // Form state
@@ -219,7 +220,7 @@ const handleSubmit = async () => {
     emit('saved')
   } catch (error) {
     console.error('Failed to save player:', error)
-    alert(t('players.saveFailed'))
+    toast.error(t('players.saveFailed'))
   } finally {
     saving.value = false
   }

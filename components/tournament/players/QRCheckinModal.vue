@@ -7,51 +7,71 @@
     <div class="relative bg-pp-bg-secondary rounded-2xl shadow-xl border border-pp-border w-full max-w-md">
       <!-- Header -->
       <div class="flex items-center justify-between p-4 border-b border-pp-border">
-        <h2 class="text-lg font-bold text-pp-text-primary">QR Check-in</h2>
+        <h2 class="text-lg font-bold text-pp-text-primary">{{ t('qr.generate.title') }}</h2>
         <button @click="close" class="text-white/60 hover:text-white transition-colors">
           <IonIcon :icon="closeOutline" class="w-6 h-6" />
         </button>
       </div>
 
-      <!-- Scanner Container -->
-      <div class="p-4">
+      <!-- Content -->
+      <div class="p-6">
+        <!-- Player Info -->
+        <div v-if="playerName" class="mb-4 text-center">
+          <p class="text-white/60 text-sm mb-1">{{ t('qr.generate.playerName') }}</p>
+          <p class="text-pp-text-primary font-semibold text-lg">{{ playerName }}</p>
+        </div>
+
         <!-- Instructions -->
         <p class="text-white/60 text-sm text-center mb-4">
-          Point camera at player's QR code to check them in
+          {{ t('qr.generate.instructions') }}
         </p>
 
-        <!-- QR Reader -->
-        <div id="qr-reader" class="w-full rounded-lg overflow-hidden bg-black"></div>
-
-        <!-- Status Messages -->
-        <div v-if="status" class="mt-4">
-          <!-- Scanning -->
-          <div v-if="status === 'scanning'" class="flex items-center justify-center gap-2 text-pp-accent-gold">
-            <IonIcon :icon="scanOutline" class="w-5 h-5 animate-pulse" />
-            <span>Scanning...</span>
+        <!-- QR Code Display -->
+        <div v-if="qrCodeDataUrl" class="flex flex-col items-center gap-4">
+          <!-- QR Code Image -->
+          <div class="bg-white p-4 rounded-lg shadow-lg">
+            <img
+              :src="qrCodeDataUrl"
+              :alt="t('qr.generate.qrCodeAlt')"
+              class="w-64 h-64"
+            />
           </div>
 
-          <!-- Processing -->
-          <div v-else-if="status === 'processing'" class="flex items-center justify-center gap-2 text-pp-accent-gold">
-            <IonIcon :icon="refreshOutline" class="w-5 h-5 animate-spin" />
-            <span>Checking in player...</span>
-          </div>
-
-          <!-- Success -->
-          <div v-else-if="status === 'success'" class="flex items-center justify-center gap-2 text-green-400">
-            <IonIcon :icon="checkmarkCircleOutline" class="w-5 h-5" />
-            <span>{{ successMessage }}</span>
-          </div>
-
-          <!-- Error -->
-          <div v-else-if="status === 'error'" class="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-            <div class="flex items-center gap-2 text-red-400">
-              <IonIcon :icon="alertCircleOutline" class="w-5 h-5" />
-              <span class="text-sm">{{ errorMessage }}</span>
+          <!-- Manual Code (Fallback) -->
+          <div class="w-full bg-pp-bg-primary border border-pp-border rounded-lg p-4">
+            <p class="text-white/60 text-xs text-center mb-2">{{ t('qr.generate.manualCode') }}</p>
+            <div class="flex items-center justify-between gap-2">
+              <code class="text-pp-accent-gold text-sm font-mono flex-1 text-center">
+                {{ manualCode }}
+              </code>
+              <button
+                @click="copyToClipboard"
+                class="p-2 hover:bg-white/10 rounded transition-colors"
+                :title="t('qr.generate.copy')"
+              >
+                <IonIcon
+                  :icon="copied ? checkmarkOutline : copyOutline"
+                  :class="[
+                    'w-5 h-5 transition-colors',
+                    copied ? 'text-green-400' : 'text-pp-accent-gold'
+                  ]"
+                />
+              </button>
             </div>
-            <button @click="resumeScanning" class="mt-2 text-pp-accent-gold text-sm hover:underline">
-              Try again
-            </button>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div v-else class="flex flex-col items-center gap-4 py-8">
+          <IonIcon :icon="qrCodeOutline" class="w-16 h-16 text-pp-accent-gold animate-pulse" />
+          <p class="text-white/60">{{ t('qr.generate.generating') }}</p>
+        </div>
+
+        <!-- Error State -->
+        <div v-if="errorMessage" class="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+          <div class="flex items-center gap-2 text-red-400">
+            <IonIcon :icon="alertCircleOutline" class="w-5 h-5" />
+            <span class="text-sm">{{ errorMessage }}</span>
           </div>
         </div>
       </div>
@@ -59,7 +79,7 @@
       <!-- Footer -->
       <div class="p-4 border-t border-pp-border">
         <button @click="close" class="w-full pp-action-button pp-action-button--secondary">
-          Cancel
+          {{ t('common.close') }}
         </button>
       </div>
     </div>
@@ -68,164 +88,99 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { closeOutline, scanOutline, refreshOutline, checkmarkCircleOutline, alertCircleOutline } from 'ionicons/icons'
-import { Html5Qrcode, Html5QrcodeScannerState } from 'html5-qrcode'
-import { AssignmentStrategy } from '@/types/seating'
+import {
+  closeOutline,
+  qrCodeOutline,
+  copyOutline,
+  checkmarkOutline,
+  alertCircleOutline
+} from 'ionicons/icons'
+import QRCode from 'qrcode'
 
 const props = defineProps<{
   isOpen: boolean
+  registrationId: string
+  playerId: string
+  playerName?: string
   tournamentId: string
 }>()
 
 const emit = defineEmits<{
   'close': []
-  'checkedIn': [data: { registrationId: string; result: any }]
 }>()
 
+const { t } = useI18n()
+
 // State
-const status = ref<'scanning' | 'processing' | 'success' | 'error' | null>(null)
+const qrCodeDataUrl = ref('')
+const manualCode = ref('')
 const errorMessage = ref('')
-const successMessage = ref('')
-let scanner: Html5Qrcode | null = null
+const copied = ref(false)
 
-// Start scanner when modal opens
-watch(() => props.isOpen, async (isOpen) => {
-  if (isOpen) {
-    await nextTick()
-    startScanner()
+// Generate QR code when modal opens or props change
+watch([() => props.isOpen, () => props.registrationId], async ([isOpen, registrationId]) => {
+  if (isOpen && registrationId) {
+    await generateCheckInCode()
   } else {
-    stopScanner()
+    // Reset state when modal closes
+    qrCodeDataUrl.value = ''
+    manualCode.value = ''
+    errorMessage.value = ''
+    copied.value = false
   }
-})
+}, { immediate: true })
 
-const startScanner = async () => {
+const generateCheckInCode = async () => {
   try {
-    status.value = 'scanning'
     errorMessage.value = ''
 
-    // Create scanner instance
-    scanner = new Html5Qrcode('qr-reader')
+    // Generate the check-in code
+    // Format: CHECKIN:registrationId
+    const code = `CHECKIN:${props.registrationId}`
+    manualCode.value = code
 
-    // Start scanning
-    await scanner.start(
-      { facingMode: 'environment' },
-      {
-        fps: 10,
-        qrbox: { width: 250, height: 250 }
-      },
-      onScanSuccess,
-      onScanFailure
-    )
-  } catch (err: any) {
-    console.error('Failed to start scanner:', err)
-    status.value = 'error'
-    errorMessage.value = err.message || 'Failed to access camera. Please ensure camera permissions are granted.'
-  }
-}
-
-const stopScanner = async () => {
-  if (scanner) {
-    try {
-      const state = scanner.getState()
-      if (state === Html5QrcodeScannerState.SCANNING || state === Html5QrcodeScannerState.PAUSED) {
-        await scanner.stop()
-      }
-    } catch (err) {
-      console.warn('Error stopping scanner:', err)
-    }
-    scanner = null
-  }
-  status.value = null
-}
-
-const onScanSuccess = async (decodedText: string) => {
-  // Pause scanning while processing
-  if (scanner) {
-    try {
-      await scanner.pause()
-    } catch (e) {
-      // Ignore pause errors
-    }
-  }
-
-  status.value = 'processing'
-
-  try {
-    // The decodedText is the registration ID
-    const registrationId = decodedText.trim()
-
-    // Call check-in mutation with registration ID
-    const result = await GqlCheckInPlayer({
-      input: {
-        tournamentId: props.tournamentId,
-        registrationId: registrationId,
-        autoAssign: true,
-        assignmentStrategy: AssignmentStrategy.BALANCED
+    // Generate QR code as data URL
+    qrCodeDataUrl.value = await QRCode.toDataURL(code, {
+      width: 256,
+      margin: 2,
+      color: {
+        dark: '#18181a',  // Dark color for QR code
+        light: '#ffffff'  // White background
       }
     })
-
-    if (result?.checkInPlayer) {
-      status.value = 'success'
-      successMessage.value = result.checkInPlayer.message || 'Player checked in successfully!'
-
-      emit('checkedIn', { registrationId, result: result.checkInPlayer })
-
-      // Auto-close after brief delay
-      setTimeout(() => {
-        close()
-      }, 1500)
-    }
   } catch (err: any) {
-    console.error('Check-in failed:', err)
-    status.value = 'error'
-    errorMessage.value = err.message || 'Failed to check in player. Invalid QR code or player not registered.'
+    console.error('Failed to generate QR code:', err)
+    errorMessage.value = t('qr.generate.error')
   }
 }
 
-const onScanFailure = (_error: string) => {
-  // QR code not detected - this is normal, just keep scanning
-}
+const copyToClipboard = async () => {
+  try {
+    await navigator.clipboard.writeText(manualCode.value)
+    copied.value = true
 
-const resumeScanning = async () => {
-  if (scanner) {
-    try {
-      await scanner.resume()
-      status.value = 'scanning'
-      errorMessage.value = ''
-    } catch (e) {
-      // If resume fails, restart the scanner
-      await stopScanner()
-      await nextTick()
-      await startScanner()
-    }
+    // Reset copied state after 2 seconds
+    setTimeout(() => {
+      copied.value = false
+    }, 2000)
+  } catch (err) {
+    console.error('Failed to copy to clipboard:', err)
   }
 }
 
 const close = () => {
-  stopScanner()
   emit('close')
 }
-
-// Cleanup on unmount
-onUnmounted(() => {
-  stopScanner()
-})
 </script>
 
 <style scoped>
-#qr-reader {
-  min-height: 300px;
+/* QR Code container */
+.bg-white {
+  background-color: white;
 }
 
-/* Override html5-qrcode default styles */
-:deep(#qr-reader__scan_region) {
-  background: #000;
-}
-
-:deep(#qr-reader__dashboard_section_csr button) {
-  background: #fee78a !important;
-  color: #18181a !important;
-  border-radius: 8px !important;
-  padding: 8px 16px !important;
+/* Manual code */
+code {
+  word-break: break-all;
 }
 </style>
