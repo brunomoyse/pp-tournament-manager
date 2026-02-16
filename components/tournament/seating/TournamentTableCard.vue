@@ -48,7 +48,7 @@
         <!-- Seat circle -->
         <div
           :class="[
-            'w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold transition-all cursor-pointer shadow-md',
+            'w-12 h-12 rounded-full border-2 flex items-center justify-center text-sm font-bold transition-all cursor-pointer shadow-md',
             getSeatPlayer(seatNumber)
               ? 'bg-pp-accent-gold text-pp-bg-primary border-pp-accent-gold shadow-pp-accent-gold/30'
               : 'bg-[#2a2a32] border-[#5a5a62] text-white/70 hover:border-pp-accent-gold/50'
@@ -75,22 +75,18 @@
     <div class="mt-4">
       <h4 class="text-sm font-semibold text-white mb-3">{{ t('labels.seatedPlayers') }}</h4>
       <div v-if="seatedPlayers.length > 0" class="space-y-2">
-        <div
+        <button
           v-for="seatData in seatedPlayers"
           :key="seatData.assignment.seatNumber"
-          class="flex items-center justify-between text-sm"
+          class="flex items-center justify-between text-sm w-full px-3 py-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer text-left"
+          @click="openPlayerModal(seatData.assignment.seatNumber)"
         >
           <div class="flex items-center gap-2">
             <span class="text-pp-accent-gold font-medium">{{ t('labels.seat') }} {{ seatData.assignment.seatNumber }}:</span>
             <span class="text-white">{{ getPlayerFullName(seatData.player) }}</span>
           </div>
-          <button
-            @click="removeSeatPlayer(seatData.assignment.seatNumber)"
-            class="p-1 text-white/60 hover:text-red-400 rounded"
-          >
-            <IonIcon :icon="removeCircleOutline" class="w-4 h-4" />
-          </button>
-        </div>
+          <IonIcon :icon="chevronForwardOutline" class="w-4 h-4 text-white/40" />
+        </button>
       </div>
       <div v-else class="text-white/60 text-sm">
         {{ t('messages.noPlayersSeated') }}
@@ -103,7 +99,6 @@
       :player="selectedPlayer"
       :table-number="table.tableNumber"
       :seat-number="selectedSeatNumber"
-      :stack-size="selectedPlayerStackSize"
       :current-status="selectedPlayerStatus"
       @close="closePlayerModal"
       @status-changed="handleStatusChanged"
@@ -114,7 +109,7 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { removeCircleOutline } from 'ionicons/icons'
+import { chevronForwardOutline } from 'ionicons/icons'
 import PlayerActionModal from './PlayerActionModal.vue'
 import { useI18n } from '~/composables/useI18n'
 
@@ -146,8 +141,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   seatPlayer: [data: { tableId: string, seatNumber: number, playerId: string }]
-  removePlayer: [data: { tableId: string, seatNumber: number }]
-  statusChanged: [data: { playerId: string, status: string, stackSize?: number }]
+  statusChanged: [data: { playerId: string, status: string }]
   movePlayer: [data: { playerId: string, fromTable: number, fromSeat: number }]
   selectPlayerForSeat: [data: { tableId: string, seatNumber: number }]
 }>()
@@ -156,7 +150,6 @@ const emit = defineEmits<{
 const showPlayerModal = ref(false)
 const selectedPlayer = ref<any>(null)
 const selectedSeatNumber = ref(0)
-const selectedPlayerStackSize = ref<number | undefined>(undefined)
 const selectedPlayerStatus = ref('SEATED')
 
 // Computed properties
@@ -227,34 +220,35 @@ const getPlayerFullName = (player: any) => {
 }
 
 // Event handlers
-const handleSeatClick = (seatNumber: number) => {
+const openPlayerModal = (seatNumber: number) => {
   const seatData = props.seats?.find(s => s.assignment.seatNumber === seatNumber)
   const player = seatData?.player
+  if (!player) return
+
+  selectedPlayer.value = player
+  selectedSeatNumber.value = seatNumber
+  selectedPlayerStatus.value = 'SEATED'
+  showPlayerModal.value = true
+}
+
+const handleSeatClick = (seatNumber: number) => {
+  const player = getSeatPlayer(seatNumber)
 
   if (player) {
-    selectedPlayer.value = player
-    selectedSeatNumber.value = seatNumber
-    selectedPlayerStackSize.value = seatData?.assignment?.stackSize
-    selectedPlayerStatus.value = 'SEATED'
-    showPlayerModal.value = true
+    openPlayerModal(seatNumber)
   } else {
     emit('selectPlayerForSeat', { tableId: props.table.id, seatNumber })
   }
-}
-
-const removeSeatPlayer = (seatNumber: number) => {
-  emit('removePlayer', { tableId: props.table.id, seatNumber })
 }
 
 const closePlayerModal = () => {
   showPlayerModal.value = false
   selectedPlayer.value = null
   selectedSeatNumber.value = 0
-  selectedPlayerStackSize.value = undefined
   selectedPlayerStatus.value = 'SEATED'
 }
 
-const handleStatusChanged = (data: { playerId: string, status: string, stackSize?: number }) => {
+const handleStatusChanged = (data: { playerId: string, status: string }) => {
   emit('statusChanged', data)
   closePlayerModal()
 }

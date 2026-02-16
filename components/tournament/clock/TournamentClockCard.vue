@@ -86,27 +86,29 @@
 
       <!-- Secondary Controls -->
       <div class="grid grid-cols-3 gap-2">
-        <button 
+        <button
           @click="revertLevel"
+          :disabled="isReverting"
           class="pp-action-button pp-action-button--secondary flex-col py-2 text-xs"
         >
-          <IonIcon :icon="playSkipBackOutline" class="w-4 h-4" />
+          <IonIcon :icon="isReverting ? refreshOutline : playSkipBackOutline" :class="['w-4 h-4', isReverting && 'animate-spin']" />
           <span class="text-xs mt-0.5">{{ t('buttons.previous') }}</span>
         </button>
-        
-        <button 
+
+        <button
           @click="startClock"
           class="pp-action-button pp-action-button--secondary flex-col py-2 text-xs"
         >
           <IonIcon :icon="refreshOutline" class="w-4 h-4" />
           <span class="text-xs mt-0.5">{{ t('buttons.reset') }}</span>
         </button>
-        
-        <button 
+
+        <button
           @click="advanceLevel"
+          :disabled="isAdvancing"
           class="pp-action-button pp-action-button--secondary flex-col py-2 text-xs"
         >
-          <IonIcon :icon="playSkipForwardOutline" class="w-4 h-4" />
+          <IonIcon :icon="isAdvancing ? refreshOutline : playSkipForwardOutline" :class="['w-4 h-4', isAdvancing && 'animate-spin']" />
           <span class="text-xs mt-0.5">{{ t('buttons.next') }}</span>
         </button>
       </div>
@@ -119,6 +121,24 @@
         <span class="text-white/50 text-sm font-medium">{{ t('messages.clockDisconnected') }}</span>
       </div>
     </div>
+
+    <!-- Start Tournament Confirmation Dialog -->
+    <div v-if="showStartConfirm" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="showStartConfirm = false"></div>
+      <div class="relative bg-pp-bg-secondary rounded-2xl w-full max-w-sm border border-pp-border shadow-2xl p-6" style="background-color: #24242a !important;">
+        <h3 class="text-lg font-bold text-pp-text-primary mb-3">{{ t('clock.startConfirmTitle') }}</h3>
+        <p class="text-white/70 mb-6">{{ t('clock.startConfirmMessage') }}</p>
+        <div class="flex items-center justify-end gap-3">
+          <button @click="showStartConfirm = false" class="pp-action-button pp-action-button--secondary">
+            {{ t('buttons.cancel') }}
+          </button>
+          <button @click="confirmStartTournament" :disabled="isStarting" class="pp-action-button pp-action-button--primary">
+            <IonIcon v-if="isStarting" :icon="refreshOutline" class="w-4 h-4 animate-spin" />
+            {{ t('clock.startConfirm') }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -129,6 +149,7 @@ import {formatBlinds, formatDuration} from "~/utils";
 import { useI18n } from '~/composables/useI18n'
 
 const { t } = useI18n()
+const toast = useToast()
 const route = useRoute()
 const tournamentStore = useTournamentStore();
 const clock = computed(() => tournamentStore.clock);
@@ -270,7 +291,11 @@ const timeRemaining = computed(() => {
 // Clock subscription is now handled globally in the main tournament page
 const selectedTournamentId = route.params.id as string
 
-// Clock control functions - update store directly from mutation response
+// Loading state for secondary controls
+const isAdvancing = ref(false)
+const isReverting = ref(false)
+
+// Clock control functions with optimistic UI updates
 const startClock = async () => {
   const response = await GqlStartTournamentClock({ tournamentId: selectedTournamentId })
   if (response?.startTournamentClock) {
@@ -279,43 +304,150 @@ const startClock = async () => {
 }
 
 const pauseClock = async () => {
-  const response = await GqlPauseTournamentClock({ tournamentId: selectedTournamentId })
-  if (response?.pauseTournamentClock) {
-    tournamentStore.setSelectedTournamentClock(response.pauseTournamentClock)
+  const prev = clock.value ? { ...clock.value } : null
+  if (clock.value) {
+    // Optimistic: immediately show paused state
+    const remaining = localTimeRemaining.value ?? calculateRemainingTime()
+    tournamentStore.setSelectedTournamentClock({
+      ...clock.value,
+      status: 'PAUSED',
+      timeRemainingSeconds: remaining,
+    })
+  }
+  try {
+    const response = await GqlPauseTournamentClock({ tournamentId: selectedTournamentId })
+    if (response?.pauseTournamentClock) {
+      tournamentStore.setSelectedTournamentClock(response.pauseTournamentClock)
+    }
+  } catch (error) {
+    // Revert on failure
+    if (prev) tournamentStore.setSelectedTournamentClock(prev)
+    console.error('Failed to pause clock:', error)
   }
 }
 
 const resumeClock = async () => {
-  const response = await GqlResumeTournamentClock({ tournamentId: selectedTournamentId })
-  if (response?.resumeTournamentClock) {
-    tournamentStore.setSelectedTournamentClock(response.resumeTournamentClock)
+  const prev = clock.value ? { ...clock.value } : null
+  if (clock.value) {
+    // Optimistic: immediately show running state
+    const remaining = clock.value.timeRemainingSeconds ?? localTimeRemaining.value ?? 0
+    const newEndTime = new Date(Date.now() + remaining * 1000).toISOString()
+    tournamentStore.setSelectedTournamentClock({
+      ...clock.value,
+      status: 'RUNNING',
+      levelEndTime: newEndTime,
+      timeRemainingSeconds: null,
+    })
+  }
+  try {
+    const response = await GqlResumeTournamentClock({ tournamentId: selectedTournamentId })
+    if (response?.resumeTournamentClock) {
+      tournamentStore.setSelectedTournamentClock(response.resumeTournamentClock)
+    }
+  } catch (error) {
+    // Revert on failure
+    if (prev) tournamentStore.setSelectedTournamentClock(prev)
+    console.error('Failed to resume clock:', error)
   }
 }
 
 const advanceLevel = async () => {
-  const response = await GqlAdvanceTournamentLevel({ tournamentId: selectedTournamentId })
-  if (response?.advanceTournamentLevel) {
-    tournamentStore.setSelectedTournamentClock(response.advanceTournamentLevel)
+  isAdvancing.value = true
+  try {
+    const response = await GqlAdvanceTournamentLevel({ tournamentId: selectedTournamentId })
+    if (response?.advanceTournamentLevel) {
+      tournamentStore.setSelectedTournamentClock(response.advanceTournamentLevel)
+    }
+  } catch (error) {
+    console.error('Failed to advance level:', error)
+  } finally {
+    isAdvancing.value = false
   }
 }
 
 const revertLevel = async () => {
-  const response = await GqlRevertTournamentLevel({ tournamentId: selectedTournamentId })
-  if (response?.revertTournamentLevel) {
-    tournamentStore.setSelectedTournamentClock(response.revertTournamentLevel)
+  isReverting.value = true
+  try {
+    const response = await GqlRevertTournamentLevel({ tournamentId: selectedTournamentId })
+    if (response?.revertTournamentLevel) {
+      tournamentStore.setSelectedTournamentClock(response.revertTournamentLevel)
+    }
+  } catch (error) {
+    console.error('Failed to revert level:', error)
+  } finally {
+    isReverting.value = false
+  }
+}
+
+// Confirmation modal state
+const showStartConfirm = ref(false)
+const isStarting = ref(false)
+const tournament = computed(() => tournamentStore.tournament)
+
+// Check if tournament needs to be started first (not yet in a live state)
+const tournamentNeedsStart = computed(() => {
+  const status = tournament.value?.liveStatus
+  return status === 'NOT_STARTED' || status === 'REGISTRATION_OPEN'
+})
+
+// Confirm start: transition tournament to LATE_REGISTRATION then start clock
+const confirmStartTournament = async () => {
+  if (!tournament.value) return
+  isStarting.value = true
+  try {
+    // Transition tournament to LATE_REGISTRATION
+    await GqlUpdateTournamentStatus({
+      input: {
+        tournamentId: tournament.value.id,
+        liveStatus: 'LATE_REGISTRATION'
+      }
+    })
+    // Refresh tournament data
+    const response = await GqlGetTournament({ id: tournament.value.id })
+    if (response.tournament) {
+      tournamentStore.setSelectedTournament(response.tournament)
+    }
+    // Start the clock
+    await startClock()
+    showStartConfirm.value = false
+  } catch (error) {
+    console.error('Failed to start tournament:', error)
+  } finally {
+    isStarting.value = false
+  }
+}
+
+// Check if tournament has tables assigned
+const checkTablesAssigned = async (): Promise<boolean> => {
+  try {
+    const response = await GqlGetTournamentSeatingChart({ tournamentId: selectedTournamentId })
+    const tables = response?.tournamentSeatingChart?.tables || []
+    return tables.length > 0
+  } catch {
+    return false
   }
 }
 
 // Helper functions for template
 const handleClockToggle = async () => {
     if (!clock.value) return
-    
+
     if (clock.value.status === 'RUNNING') {
         await pauseClock()
     } else if (clock.value.status === 'PAUSED') {
         await resumeClock()
     } else {
-        await startClock()
+        // If tournament hasn't started yet, check tables and show confirmation
+        if (tournamentNeedsStart.value) {
+            const hasTables = await checkTablesAssigned()
+            if (!hasTables) {
+                toast.error(t('toast.noTablesAssigned'))
+                return
+            }
+            showStartConfirm.value = true
+        } else {
+            await startClock()
+        }
     }
 }
 

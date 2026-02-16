@@ -42,7 +42,6 @@
         :seats="tableData.seats"
         data-table-card
         @seat-player="handleSeatPlayer"
-        @remove-player="handleRemovePlayer"
         @status-changed="handlePlayerStatusChanged"
         @move-player="handlePlayerMove"
         @select-player-for-seat="handleSelectPlayerForSeat"
@@ -344,56 +343,17 @@ const handleSeatPlayer = async (data: { tableId: string, seatNumber: number, pla
   }
 }
 
-const handleRemovePlayer = async (data: { tableId: string, seatNumber: number }) => {
-  // Find the player at this seat
-  const table = seatingData.value?.tournamentSeatingChart?.tables?.find(
-    t => t.table.id === data.tableId
-  )
-  const seatData = table?.seats?.find(s => s.assignment.seatNumber === data.seatNumber)
-
-  if (!seatData?.player?.id) {
-    console.error('Could not find player at seat')
-    return
-  }
-
-  if (!confirm('Are you sure you want to eliminate this player from the tournament?')) {
-    return
-  }
-
-  try {
-    await GqlEliminatePlayer({
-      tournamentId: selectedTournamentId,
-      userId: seatData.player.id
-    })
-    await refreshSeatingData()
-  } catch (error) {
-    console.error('Failed to eliminate player:', error)
-    toast.error(t('toast.eliminatePlayerFailed'))
-  }
-}
-
 const handleTablesAssigned = async () => {
   // Refresh seating data after tables are assigned
   await refreshSeatingData()
 }
 
-const handlePlayerStatusChanged = async (data: { playerId: string, status: string, stackSize?: number }) => {
+const handlePlayerStatusChanged = async (data: { playerId: string, status: string }) => {
   try {
-    // Handle elimination
     if (data.status === 'ELIMINATED') {
       await GqlEliminatePlayer({
         tournamentId: selectedTournamentId,
         userId: data.playerId
-      })
-    }
-    // Handle stack size update
-    else if (data.stackSize !== undefined) {
-      await GqlUpdateStackSize({
-        input: {
-          tournamentId: selectedTournamentId,
-          userId: data.playerId,
-          newStackSize: data.stackSize
-        }
       })
     }
 

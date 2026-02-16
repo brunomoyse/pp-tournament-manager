@@ -12,10 +12,12 @@ query GetTournamentSeatingChart($tournamentId: UUID!) {
       }
       seats {
         assignment {
+          userId
           seatNumber
           stackSize
         }
         player {
+          id
           firstName
           lastName
         }

@@ -53,8 +53,8 @@
         <ion-content class="bg-pp-bg-primary">
             <!-- Tab Content -->
             <div class="px-8 pt-4 pb-24">
-                <!-- Overview Tab -->
-                <div v-if="activeTab === 'overview'" class="">
+                <!-- Overview Tab (v-show keeps components mounted so refs stay available from other tabs) -->
+                <div v-show="activeTab === 'overview'" class="">
                     <!-- Warning: No tables linked -->
                     <div v-if="showNoTablesWarning" class="mb-6 flex items-center gap-3 p-4 bg-orange-500/10 border border-orange-500/30 rounded-xl">
                         <ion-icon :icon="warningOutline" class="w-6 h-6 text-orange-400 flex-shrink-0" />
@@ -70,6 +70,21 @@
                         </button>
                     </div>
 
+                    <!-- Warning: Unseated checked-in players -->
+                    <div v-if="showUnseatedWarning" class="mb-6 flex items-center gap-3 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl">
+                        <ion-icon :icon="warningOutline" class="w-6 h-6 text-amber-400 flex-shrink-0" />
+                        <div class="flex-1">
+                            <p class="text-amber-300 font-medium text-sm">{{ t('warnings.unseatedPlayers', { count: unseatedCheckedInCount }) }}</p>
+                            <p class="text-amber-400/70 text-xs mt-0.5">{{ t('warnings.unseatedPlayersDesc') }}</p>
+                        </div>
+                        <button
+                            @click="activeTab = 'players'"
+                            class="pp-action-button pp-action-button--warning text-xs px-3 py-1.5 flex-shrink-0"
+                        >
+                            {{ t('warnings.goToPlayers') }}
+                        </button>
+                    </div>
+
                     <!-- Grid Layout -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12">
                         <TournamentStatusCard
@@ -78,6 +93,17 @@
                         />
                         <TournamentPlayersCard />
                         <TournamentPrizePool ref="prizePoolCard" />
+                    </div>
+
+                    <!-- Check-in QR Code Button -->
+                    <div class="mb-6 flex justify-center">
+                        <button
+                            @click="showTournamentQRModal = true"
+                            class="pp-action-button pp-action-button--secondary flex items-center gap-2"
+                        >
+                            <ion-icon :icon="qrCodeOutline" class="w-5 h-5" />
+                            {{ t('qr.tournament.button') }}
+                        </button>
                     </div>
 
                     <!-- Results Display (FINISHED) -->
@@ -110,10 +136,9 @@
                 <!-- Players Tab -->
                 <div v-if="activeTab === 'players'" class="">
                     <TournamentPlayersTable
+                      ref="playersTable"
                       @player-checked-in="handlePlayerCheckedIn"
-                      @seat-player="handleSeatPlayer"
                       @registerPlayer="showRegisterPlayerModal = true"
-                      @showQRCode="handleShowQRCode"
                       @entry-added="handleEntryAdded"
                     />
                 </div>
@@ -127,14 +152,13 @@
                   @registered="handlePlayerRegistered"
                 />
 
-                <!-- QR Code Generation Modal -->
-                <QRCheckinModal
-                  :isOpen="showQRCheckinModal"
-                  :registrationId="selectedPlayerForQR?.registrationId || ''"
-                  :playerId="selectedPlayerForQR?.id || ''"
-                  :playerName="selectedPlayerForQR?.name || ''"
+                <!-- Tournament QR Code Modal -->
+                <TournamentQRModal
+                  :isOpen="showTournamentQRModal"
                   :tournamentId="selectedTournamentId"
-                  @close="handleCloseQRModal"
+                  :tournamentName="tournament?.title || ''"
+                  :tournamentDate="tournament?.startTime || ''"
+                  @close="showTournamentQRModal = false"
                 />
 
                 <!-- Enter Results Modal -->
@@ -227,7 +251,7 @@ definePageMeta({
     middleware: 'auth'
 })
 
-import { settingsOutline, createOutline, warningOutline } from 'ionicons/icons'
+import { settingsOutline, createOutline, warningOutline, qrCodeOutline } from 'ionicons/icons'
 import { useNetworkStatus } from '@/composables/useNetworkStatus'
 import { useTournamentStore } from '~/stores/useTournamentStore'
 import TournamentStructureCard from "~/components/tournament/clock/TournamentStructureCard.vue";
@@ -237,7 +261,7 @@ import TournamentPrizePool from "~/components/tournament/overview/TournamentPriz
 import TournamentSeatingManager from "~/components/tournament/seating/TournamentSeatingManager.vue";
 import TournamentFormModal from "~/components/tournament/TournamentFormModal.vue";
 import RegisterPlayerModal from "~/components/tournament/players/RegisterPlayerModal.vue";
-import QRCheckinModal from "~/components/tournament/players/QRCheckinModal.vue";
+import TournamentQRModal from "~/components/tournament/TournamentQRModal.vue";
 import EnterResultsModal from "~/components/tournament/results/EnterResultsModal.vue";
 import TournamentResultsDisplay from "~/components/tournament/results/TournamentResultsDisplay.vue";
 import {useGqlSubscription} from "~/composables/useGqlSubscription";
@@ -261,6 +285,7 @@ const activeTab = ref('overview')
 // Component refs
 const seatingManager = ref()
 const prizePoolCard = ref()
+const playersTable = ref()
 
 // Use store getters for reactive data
 const tournament = computed(() => tournamentStore.tournament)
@@ -275,8 +300,7 @@ const showEnterResultsModal = ref(false)
 
 // Player modals state
 const showRegisterPlayerModal = ref(false)
-const showQRCheckinModal = ref(false)
-const selectedPlayerForQR = ref<any>(null)
+const showTournamentQRModal = ref(false)
 
 // Fetch seating data for warning banner
 const { data: overviewSeatingData } = await useLazyAsyncData(
@@ -291,6 +315,17 @@ const showNoTablesWarning = computed(() => {
   if (!status || !activeStatuses.includes(status)) return false
   const tables = overviewSeatingData.value?.tournamentSeatingChart?.tables || []
   return tables.length === 0
+})
+
+// Show warning when checked-in players are not seated during late reg or later
+const unseatedCheckedInCount = computed(() => {
+  return tournamentStore.registrations?.filter(r => r.status === 'CHECKED_IN').length || 0
+})
+const showUnseatedWarning = computed(() => {
+  const lateOrLaterStatuses = ['LATE_REGISTRATION', 'IN_PROGRESS', 'BREAK', 'FINAL_TABLE']
+  const status = tournament.value?.liveStatus
+  if (!status || !lateOrLaterStatuses.includes(status)) return false
+  return unseatedCheckedInCount.value > 0
 })
 
 // Fetch tournament players for filtering in RegisterPlayerModal
@@ -352,47 +387,27 @@ onBeforeUnmount(() => {
 
 // Handle player check-in events
 const handlePlayerCheckedIn = async (data: { playerId: string, result: any }) => {
-    console.log('Player checked in:', data)
-    
+    // Refresh tournament data in store (updates registration counts in overview card)
+    const response = await GqlGetTournament({ id: selectedTournamentId })
+    if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
+
     // If seatingManager component is available, refresh its data
     if (seatingManager.value && seatingManager.value.refreshSeatingData) {
         await seatingManager.value.refreshSeatingData()
     }
 }
 
-// Handle seat player button click
-const handleSeatPlayer = async (data: { playerId: string, playerName: string }) => {
-    console.log('Seating player:', data)
-
-    // Switch to seating tab
-    activeTab.value = 'seating'
-
-    // Wait for the tab to render, then scroll to find the player
-    await nextTick()
-
-    // Wait a bit more for the seating manager to load data
-    setTimeout(() => {
-        scrollToPlayer(data.playerId, data.playerName)
-    }, 500)
-}
-
 // Handle player registered via modal
 const handlePlayerRegistered = async (data: { playerId: string }) => {
-    console.log('Player registered:', data)
-    // Refresh players list
+    // Refresh the parent's player ID list (for filtering in RegisterPlayerModal)
     await refreshPlayers()
-}
-
-// Handle showing QR code for a player
-const handleShowQRCode = (player: any) => {
-    selectedPlayerForQR.value = player
-    showQRCheckinModal.value = true
-}
-
-// Handle closing QR modal
-const handleCloseQRModal = () => {
-    showQRCheckinModal.value = false
-    selectedPlayerForQR.value = null
+    // Refresh the players table component's own data
+    if (playersTable.value?.refreshPlayers) {
+        await playersTable.value.refreshPlayers()
+    }
+    // Refresh tournament data in store (updates overview cards)
+    const response = await GqlGetTournament({ id: selectedTournamentId })
+    if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
 }
 
 // Handle entry added (refresh stats in prize pool card)
@@ -414,60 +429,6 @@ const handleResultsEntered = async () => {
     showEnterResultsModal.value = false
     const response = await GqlGetTournament({ id: selectedTournamentId })
     if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
-}
-
-// Handle QR check-in
-const handleQRCheckedIn = async (data: { registrationId: string; result: any }) => {
-    console.log('Player checked in via QR:', data)
-    // Refresh players list
-    await refreshPlayers()
-    // If seatingManager component is available, refresh its data
-    if (seatingManager.value && seatingManager.value.refreshSeatingData) {
-        await seatingManager.value.refreshSeatingData()
-    }
-}
-
-// Scroll to find a specific player in the seating area
-const scrollToPlayer = (playerId: string, playerName: string) => {
-    // Look for the player by name in table cards first
-    const tableCards = document.querySelectorAll('[data-table-card]')
-    let foundPlayerElement = null
-    
-    // Search for player name in seated players lists
-    tableCards.forEach(tableCard => {
-        const playerNameElements = tableCard.querySelectorAll('*')
-        playerNameElements.forEach(element => {
-            if (element.textContent && element.textContent.includes(playerName)) {
-                // Found the player name, use the parent table card
-                foundPlayerElement = tableCard
-            }
-        })
-    })
-    
-    if (foundPlayerElement) {
-        foundPlayerElement.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-        })
-        
-        // Add a temporary highlight effect
-        foundPlayerElement.classList.add('ring-4', 'ring-pp-accent-gold', 'ring-opacity-75')
-        setTimeout(() => {
-            foundPlayerElement?.classList.remove('ring-4', 'ring-pp-accent-gold', 'ring-opacity-75')
-        }, 3000)
-        
-        console.log(`Found and scrolled to ${playerName} in a table`)
-    } else {
-        // If not found in tables, player might be unassigned - scroll to top
-        const seatingContainer = document.querySelector('[data-seating-container]')
-        if (seatingContainer) {
-            seatingContainer.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'start' 
-            })
-            console.log(`Player ${playerName} might be unassigned - scrolled to seating area`)
-        }
-    }
 }
 
 // Clock subscription setup
@@ -582,16 +543,14 @@ const { data: seatingUpdates } = useGqlSubscription({
 
 watch(seatingUpdates, async (data: any) => {
     if (data?.clubSeatingChanges) {
-        const event = data.clubSeatingChanges
         // Refresh seating data
         if (seatingManager.value?.refreshSeatingData) {
             await seatingManager.value.refreshSeatingData()
         }
-        // On status changes, refresh tournament
-        if (event.eventType === 'TOURNAMENT_STATUS_CHANGED') {
-            const response = await GqlGetTournament({ id: selectedTournamentId })
-            if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
-        }
+        // Always refresh tournament data so registration statuses stay in sync
+        // (seating events change statuses: CHECKED_IN→SEATED, SEATED→BUSTED, etc.)
+        const response = await GqlGetTournament({ id: selectedTournamentId })
+        if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
     }
 })
 
