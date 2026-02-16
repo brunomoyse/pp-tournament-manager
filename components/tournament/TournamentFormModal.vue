@@ -109,6 +109,21 @@
               :placeholder="t('tournament.earlyBirdBonusPlaceholder')"
             />
           </div>
+
+          <!-- Late Registration Level -->
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-2">
+              {{ t('tournament.lateRegistrationLevel') }}
+            </label>
+            <input
+              v-model.number="form.lateRegistrationLevel"
+              type="number"
+              min="1"
+              class="w-full px-3 py-2 bg-pp-bg-primary border border-pp-border rounded-lg text-white focus:ring-2 focus:ring-pp-accent-gold focus:border-pp-accent-gold"
+              :placeholder="t('tournament.lateRegistrationLevelPlaceholder')"
+            />
+            <p class="mt-1 text-xs text-white/50">{{ t('tournament.lateRegistrationLevelHelp') }}</p>
+          </div>
         </div>
 
         <!-- Blind Structure Template Section -->
@@ -226,6 +241,7 @@ const form = ref<TournamentFormData>({
   buyInCents: 0,
   seatCap: null,
   earlyBirdBonusChips: null,
+  lateRegistrationLevel: null,
   templateId: ''
 })
 
@@ -268,6 +284,7 @@ watch(() => props.isOpen, (isOpen) => {
       buyInCents: props.tournament.buyInCents,
       seatCap: props.tournament.seatCap || null,
       earlyBirdBonusChips: null,
+      lateRegistrationLevel: props.tournament.lateRegistrationLevel ?? null,
       templateId: templates.value.length > 0 ? templates.value[0].id : ''
     }
   } else if (isOpen && props.mode === 'create') {
@@ -279,6 +296,7 @@ watch(() => props.isOpen, (isOpen) => {
       buyInCents: 0,
       seatCap: null,
       earlyBirdBonusChips: null,
+      lateRegistrationLevel: null,
       templateId: templates.value.length > 0 ? templates.value[0].id : ''
     }
   }
@@ -301,6 +319,7 @@ const handleSubmit = async () => {
           buyInCents: form.value.buyInCents,
           seatCap: form.value.seatCap || undefined,
           earlyBirdBonusChips: form.value.earlyBirdBonusChips || undefined,
+          lateRegistrationLevel: form.value.lateRegistrationLevel || undefined,
           templateId: form.value.templateId
         }
       })
@@ -315,6 +334,7 @@ const handleSubmit = async () => {
           buyInCents: form.value.buyInCents,
           seatCap: form.value.seatCap || undefined,
           earlyBirdBonusChips: form.value.earlyBirdBonusChips || undefined,
+          lateRegistrationLevel: form.value.lateRegistrationLevel || undefined,
           templateId: form.value.templateId
         }
       })

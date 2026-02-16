@@ -8,6 +8,7 @@ export interface Tournament {
     createdAt?: string;
     description?: string | null;
     endTime?: string | null;
+    lateRegistrationLevel?: number | null;
     liveStatus: TournamentLiveStatus;
     seatCap?: number | null;
     startTime: string;
@@ -274,6 +275,7 @@ export interface CreateTournamentInput {
     buyInCents: number;
     seatCap?: number;
     earlyBirdBonusChips?: number;
+    lateRegistrationLevel?: number;
     templateId?: string;
     structure?: TournamentStructureInput[];
 }
@@ -287,6 +289,7 @@ export interface UpdateTournamentInput {
     buyInCents?: number;
     seatCap?: number;
     earlyBirdBonusChips?: number;
+    lateRegistrationLevel?: number;
     templateId?: string;
     structure?: TournamentStructureInput[];
 }
@@ -300,5 +303,6 @@ export interface TournamentFormData {
     buyInCents: number;
     seatCap: number | null;
     earlyBirdBonusChips: number | null;
+    lateRegistrationLevel: number | null;
     templateId: string;
 }
