@@ -54,29 +54,17 @@
             />
           </div>
 
-          <!-- Start Time / End Time row -->
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-white/70 mb-2">
-                {{ t('tournament.startTime') }} <span class="text-red-400">*</span>
-              </label>
-              <input
-                v-model="form.startTime"
-                type="datetime-local"
-                required
-                class="w-full px-3 py-2 bg-pp-bg-primary border border-pp-border rounded-lg text-white focus:ring-2 focus:ring-pp-accent-gold focus:border-pp-accent-gold"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-white/70 mb-2">
-                {{ t('tournament.endTime') }}
-              </label>
-              <input
-                v-model="form.endTime"
-                type="datetime-local"
-                class="w-full px-3 py-2 bg-pp-bg-primary border border-pp-border rounded-lg text-white focus:ring-2 focus:ring-pp-accent-gold focus:border-pp-accent-gold"
-              />
-            </div>
+          <!-- Start Time -->
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-2">
+              {{ t('tournament.startTime') }} <span class="text-red-400">*</span>
+            </label>
+            <input
+              v-model="form.startTime"
+              type="datetime-local"
+              required
+              class="w-full px-3 py-2 bg-pp-bg-primary border border-pp-border rounded-lg text-white focus:ring-2 focus:ring-pp-accent-gold focus:border-pp-accent-gold"
+            />
           </div>
 
           <!-- Buy-in / Seat Cap row -->
@@ -204,6 +192,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const toast = useToast()
 const clubStore = useClubStore()
 
 // Fetch blind structure templates
@@ -333,7 +322,7 @@ const handleSubmit = async () => {
     emit('saved')
   } catch (error) {
     console.error('Failed to save tournament:', error)
-    alert(t('tournament.saveFailed'))
+    toast.error(t('tournament.saveFailed'))
   } finally {
     saving.value = false
   }

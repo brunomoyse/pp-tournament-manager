@@ -15,10 +15,10 @@
             </ion-title>
 
             <ion-buttons slot="end">
-                <ion-note class="mr-3">Last update: {{ new Date(lastUpdate).toLocaleTimeString() }}</ion-note>
+                <ion-note class="mr-3">{{ t('labels.lastUpdate') }} {{ new Date(lastUpdate).toLocaleTimeString() }}</ion-note>
                 <ion-select 
                     v-model="selectedId"
-                    placeholder="Select Tournament"
+                    :placeholder="t('placeholders.selectTournament')"
                     interface="popover"
                     class="min-w-[200px]"
                 >
@@ -33,6 +33,9 @@
 
 <script setup lang="ts">
 import type { Tournament } from '~/types/tournament'
+import { useI18n } from '~/composables/useI18n'
+
+const { t } = useI18n()
 
 const props = defineProps<{ tournaments: Tournament[]; lastUpdate: number; connectionStatus: 'connected' | 'disconnected' | 'reconnecting'; modelValue: string }>()
 const emit = defineEmits<{ (e: 'update:modelValue', v: string): void }>()

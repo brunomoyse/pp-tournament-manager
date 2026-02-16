@@ -18,16 +18,16 @@
     <IonContent class="bg-pp-bg-primary">
       <div class="px-8 py-6">
         <!-- Period Selector Tabs -->
-        <div class="flex gap-2 mb-8">
+        <div class="flex overflow-x-auto gap-2 bg-pp-bg-secondary/50 p-2 rounded-2xl border border-pp-border mb-8">
           <button
             v-for="period in periods"
             :key="period.value"
             @click="selectedPeriod = period.value"
             :class="[
-              'px-4 py-2 rounded-lg font-medium transition-all',
+              'flex-1 min-w-0 px-4 py-3 rounded-xl font-medium transition-all whitespace-nowrap',
               selectedPeriod === period.value
-                ? 'bg-pp-accent-gold text-black'
-                : 'bg-pp-bg-secondary border border-pp-border text-white hover:bg-pp-border/50'
+                ? 'bg-pp-bg-secondary text-pp-accent-gold border border-pp-accent-gold/40 shadow-sm'
+                : 'text-white hover:bg-pp-bg-secondary/50'
             ]"
           >
             {{ t(period.label) }}
@@ -311,7 +311,7 @@ const fetchLeaderboard = async () => {
       clubId: club.id,
       limit: 50
     })
-    leaderboard.value = result?.entries || []
+    leaderboard.value = result?.items || []
   } catch (error) {
     console.error('Failed to fetch leaderboard:', error)
     leaderboard.value = []

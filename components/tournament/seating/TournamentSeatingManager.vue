@@ -3,7 +3,7 @@
     <!-- Table Management Header -->
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <h2 class="text-xl font-bold text-pp-text-primary">Table Management</h2>
+        <h2 class="text-xl font-bold text-pp-text-primary">{{ t('headings.tableManagement') }}</h2>
       </div>
       
       <!-- Action Buttons -->
@@ -13,7 +13,7 @@
           class="pp-action-button pp-action-button--primary"
         >
           <IonIcon :icon="linkOutline" class="w-4 h-4" />
-          Link Table(s)
+          {{ t('buttons.linkTables') }}
         </button>
         <button
           @click="balanceTables"
@@ -21,14 +21,14 @@
           class="pp-action-button pp-action-button--secondary"
         >
           <IonIcon :icon="scaleOutline" :class="['w-4 h-4', isBalancing && 'animate-spin']" />
-          {{ isBalancing ? 'Balancing...' : 'Balance Tables' }}
+          {{ isBalancing ? t('status.balancing') : t('buttons.balanceTables') }}
         </button>
         <button
           @click="openBreakTableModal"
           class="pp-action-button pp-action-button--danger"
         >
           <IonIcon :icon="unlinkOutline" class="w-4 h-4" />
-          Break Table
+          {{ t('buttons.breakTable') }}
         </button>
       </div>
     </div>
@@ -51,7 +51,7 @@
 
     <!-- Loading State -->
     <div v-if="!seatingData" class="flex justify-center py-12">
-      <div class="text-white/60">Loading seating chart...</div>
+      <div class="text-white/60">{{ t('messages.loadingSeatingChart') }}</div>
     </div>
 
     <!-- No Tables State -->
@@ -59,13 +59,13 @@
       <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/10">
         <IonIcon :icon="gridOutline" class="w-8 h-8 text-white/40" />
       </div>
-      <div class="text-white/60 mb-6">No tables linked to this tournament</div>
+      <div class="text-white/60 mb-6">{{ t('messages.noTablesLinked') }}</div>
       <button
         @click="showAssignTableModal = true"
         class="pp-action-button pp-action-button--primary mx-auto"
       >
         <IonIcon :icon="linkOutline" class="w-4 h-4" />
-        Link Table(s)
+        {{ t('buttons.linkTables') }}
       </button>
     </div>
 
@@ -83,12 +83,12 @@
     <div v-if="showMoveModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="closeMoveModal"></div>
       <div class="relative bg-pp-bg-secondary rounded-2xl w-full max-w-md border border-pp-border shadow-2xl p-6" style="background-color: #24242a !important;">
-        <h2 class="text-xl font-bold text-pp-text-primary mb-4">Move Player</h2>
-        <p class="text-white/70 mb-4">Select destination table and seat:</p>
+        <h2 class="text-xl font-bold text-pp-text-primary mb-4">{{ t('seating.movePlayer') }}</h2>
+        <p class="text-white/70 mb-4">{{ t('seating.selectDestination') }}</p>
 
         <div class="space-y-4 max-h-96 overflow-y-auto">
           <div v-for="tableData in availableTables" :key="tableData.table.id" class="border border-pp-border rounded-lg p-3">
-            <h3 class="font-semibold text-white mb-2">Table {{ tableData.table.tableNumber }}</h3>
+            <h3 class="font-semibold text-white mb-2">{{ t('labels.table') }} {{ tableData.table.tableNumber }}</h3>
             <div class="flex flex-wrap gap-2">
               <button
                 v-for="seatNum in tableData.table.maxSeats"
@@ -110,7 +110,7 @@
 
         <div class="mt-4 flex justify-end">
           <button @click="closeMoveModal" class="pp-action-button pp-action-button--secondary">
-            Cancel
+            {{ t('buttons.cancel') }}
           </button>
         </div>
       </div>
@@ -120,8 +120,8 @@
     <div v-if="showPlayerSelectionModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="closePlayerSelectionModal"></div>
       <div class="relative bg-pp-bg-secondary rounded-2xl w-full max-w-md border border-pp-border shadow-2xl p-6" style="background-color: #24242a !important;">
-        <h2 class="text-xl font-bold text-pp-text-primary mb-2">Select Player</h2>
-        <p class="text-white/70 mb-4">Choose a player to seat at position {{ targetSeat?.seatNumber }}</p>
+        <h2 class="text-xl font-bold text-pp-text-primary mb-2">{{ t('seating.selectPlayer') }}</h2>
+        <p class="text-white/70 mb-4">{{ t('seating.choosePlayerForSeat', { seat: targetSeat?.seatNumber }) }}</p>
 
         <div v-if="unassignedPlayers.length > 0" class="space-y-2 max-h-96 overflow-y-auto">
           <button
@@ -141,14 +141,14 @@
         </div>
 
         <div v-else class="text-center py-8 text-white/60">
-          No unassigned players available.
+          {{ t('seating.noUnassignedPlayers') }}
           <br>
-          <span class="text-sm">Players must be checked in before they can be seated.</span>
+          <span class="text-sm">{{ t('seating.mustBeCheckedIn') }}</span>
         </div>
 
         <div class="mt-4 flex justify-end">
           <button @click="closePlayerSelectionModal" class="pp-action-button pp-action-button--secondary">
-            Cancel
+            {{ t('buttons.cancel') }}
           </button>
         </div>
       </div>
@@ -158,8 +158,8 @@
     <div v-if="showBreakTableModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="closeBreakTableModal"></div>
       <div class="relative bg-pp-bg-secondary rounded-2xl w-full max-w-md border border-pp-border shadow-2xl p-6" style="background-color: #24242a !important;">
-        <h2 class="text-xl font-bold text-pp-text-primary mb-2">Break Table</h2>
-        <p class="text-white/70 mb-4">Select an empty table to remove from the tournament:</p>
+        <h2 class="text-xl font-bold text-pp-text-primary mb-2">{{ t('buttons.breakTable') }}</h2>
+        <p class="text-white/70 mb-4">{{ t('seating.selectTableToRemove') }}</p>
 
         <div v-if="tablesWithStatus.length > 0" class="space-y-2 max-h-96 overflow-y-auto">
           <div
@@ -182,9 +182,9 @@
                 {{ tableData.table.tableNumber }}
               </div>
               <div>
-                <div class="font-semibold text-white">Table {{ tableData.table.tableNumber }}</div>
+                <div class="font-semibold text-white">{{ t('labels.table') }} {{ tableData.table.tableNumber }}</div>
                 <div class="text-sm text-white/60">
-                  {{ tableData.isEmpty ? 'Empty - can be removed' : `${tableData.seats?.length || 0} players seated` }}
+                  {{ tableData.isEmpty ? t('seating.emptyCanBeRemoved') : t('seating.playersSeated', { count: tableData.seats?.length || 0 }) }}
                 </div>
               </div>
             </div>
@@ -194,27 +194,27 @@
               :disabled="isBreakingTable"
               class="px-3 py-1.5 bg-red-500/20 text-red-400 border border-red-500/30 rounded-lg text-sm font-medium hover:bg-red-500/30 transition-colors disabled:opacity-50"
             >
-              {{ isBreakingTable ? 'Removing...' : 'Remove' }}
+              {{ isBreakingTable ? t('status.removing') : t('buttons.remove') }}
             </button>
             <span v-else class="px-3 py-1.5 text-orange-400 text-sm">
-              Has players
+              {{ t('seating.hasPlayers') }}
             </span>
           </div>
         </div>
 
         <div v-else class="text-center py-8 text-white/60">
-          No tables linked to this tournament.
+          {{ t('messages.noTablesLinked') }}
         </div>
 
         <div v-if="tablesWithStatus.length > 0 && !hasEmptyTables" class="mt-4 p-3 bg-orange-500/10 border border-orange-500/30 rounded-lg">
           <p class="text-orange-400 text-sm">
-            All tables have players seated. Move or eliminate players before breaking a table.
+            {{ t('seating.allTablesHavePlayers') }}
           </p>
         </div>
 
         <div class="mt-4 flex justify-end">
           <button @click="closeBreakTableModal" class="pp-action-button pp-action-button--secondary">
-            Close
+            {{ t('common.close') }}
           </button>
         </div>
       </div>
@@ -228,6 +228,10 @@ import { scaleOutline, linkOutline, unlinkOutline, gridOutline } from 'ionicons/
 import TournamentTableCard from './TournamentTableCard.vue'
 import AssignTableModal from './AssignTableModal.vue'
 import { useTournamentStore } from '~/stores/useTournamentStore'
+import { useI18n } from '~/composables/useI18n'
+
+const { t } = useI18n()
+const toast = useToast()
 
 const route = useRoute()
 const tournamentStore = useTournamentStore()
@@ -272,7 +276,7 @@ const balanceTables = async () => {
     await refreshSeatingData()
   } catch (error) {
     console.error('Failed to balance tables:', error)
-    alert('Failed to balance tables. Please try again.')
+    toast.error(t('toast.balanceTablesFailed'))
   } finally {
     isBalancing.value = false
   }
@@ -317,7 +321,7 @@ const breakTable = async (tableId: string) => {
     closeBreakTableModal()
   } catch (error: any) {
     console.error('Failed to break table:', error)
-    alert(error?.message || 'Failed to break table. Please try again.')
+    toast.error(t('toast.breakTableFailed'))
   } finally {
     isBreakingTable.value = false
   }
@@ -336,7 +340,7 @@ const handleSeatPlayer = async (data: { tableId: string, seatNumber: number, pla
     await refreshSeatingData()
   } catch (error) {
     console.error('Failed to seat player:', error)
-    alert('Failed to assign player to seat. Please try again.')
+    toast.error(t('toast.seatPlayerFailed'))
   }
 }
 
@@ -364,7 +368,7 @@ const handleRemovePlayer = async (data: { tableId: string, seatNumber: number })
     await refreshSeatingData()
   } catch (error) {
     console.error('Failed to eliminate player:', error)
-    alert('Failed to eliminate player. Please try again.')
+    toast.error(t('toast.eliminatePlayerFailed'))
   }
 }
 
@@ -396,7 +400,7 @@ const handlePlayerStatusChanged = async (data: { playerId: string, status: strin
     await refreshSeatingData()
   } catch (error) {
     console.error('Failed to update player:', error)
-    alert('Failed to update player. Please try again.')
+    toast.error(t('toast.updatePlayerFailed'))
   }
 }
 
@@ -422,7 +426,7 @@ const executePlayerMove = async (targetTableId: string, targetSeatNumber: number
     closeMoveModal()
   } catch (error) {
     console.error('Failed to move player:', error)
-    alert('Failed to move player. The seat may be occupied.')
+    toast.error(t('toast.movePlayerFailed'))
   }
 }
 
@@ -453,7 +457,7 @@ const selectPlayerForSeat = async (playerId: string) => {
     closePlayerSelectionModal()
   } catch (error) {
     console.error('Failed to assign player:', error)
-    alert('Failed to assign player to seat. Please try again.')
+    toast.error(t('toast.seatPlayerFailed'))
   }
 }
 
@@ -469,4 +473,6 @@ const getPlayerDisplayName = (player: any) => {
   if (firstName && lastName) return `${firstName} ${lastName}`
   return firstName || lastName || player.username || 'Unknown'
 }
+
+defineExpose({ refreshSeatingData })
 </script>

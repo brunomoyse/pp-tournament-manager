@@ -75,7 +75,7 @@
                 'px-3 py-1 rounded-lg text-xs font-medium border',
                 getTournamentStatusClass(tournament.status)
               ]">
-                {{ getTournamentStatusLabel(tournament.status) }}
+                {{ getTournamentStatusLabel(tournament.status, t) }}
               </span>
               <IonIcon :icon="chevronForwardOutline" class="w-5 h-5 text-white/40 group-hover:text-pp-accent-gold transition-colors" />
             </div>
@@ -185,7 +185,7 @@ const fetchTournaments = async () => {
     const { tournaments: result } = await GqlGetTournaments({
       clubId: club.id
     })
-    tournaments.value = result || []
+    tournaments.value = result?.items || []
   } catch (error) {
     console.error('Failed to fetch tournaments:', error)
     tournaments.value = []

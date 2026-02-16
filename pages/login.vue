@@ -207,11 +207,11 @@ const handleLogin = async () => {
       await router.replace(redirectTo)
     } else {
       // Login failed - show error
-      emailError.value = 'Invalid email or password'
+      emailError.value = t('auth.invalidCredentials')
     }
   } catch (error) {
     // Show user-friendly error message
-    emailError.value = 'Login failed. Please check your credentials and try again.'
+    emailError.value = t('auth.loginFailedGeneric')
   }
 }
 

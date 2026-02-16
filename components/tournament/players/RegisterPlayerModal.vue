@@ -7,7 +7,7 @@
     <div class="relative bg-pp-bg-secondary rounded-2xl shadow-xl border border-pp-border w-full max-w-lg max-h-[80vh] flex flex-col">
       <!-- Header -->
       <div class="flex items-center justify-between p-4 border-b border-pp-border">
-        <h2 class="text-lg font-bold text-pp-text-primary">Register Player</h2>
+        <h2 class="text-lg font-bold text-pp-text-primary">{{ t('buttons.registerPlayer') }}</h2>
         <button @click="close" class="text-white/60 hover:text-white transition-colors">
           <IonIcon :icon="closeOutline" class="w-6 h-6" />
         </button>
@@ -25,7 +25,7 @@
           ]"
         >
           <IonIcon :icon="searchOutline" class="w-4 h-4 mr-2" />
-          Search Existing
+          {{ t('registerModal.searchExisting') }}
         </button>
         <button
           @click="activeTab = 'create'"
@@ -37,7 +37,7 @@
           ]"
         >
           <IonIcon :icon="personAddOutline" class="w-4 h-4 mr-2" />
-          Create New
+          {{ t('registerModal.createNew') }}
         </button>
       </div>
 
@@ -51,7 +51,7 @@
             <input
               v-model="searchQuery"
               type="text"
-              placeholder="Search by name or email..."
+              :placeholder="t('registerModal.searchPlaceholder')"
               class="w-full pl-10 pr-4 py-3 bg-pp-bg-primary border border-pp-border rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-pp-accent-gold focus:border-pp-accent-gold"
               @input="debouncedSearch"
             />
@@ -60,12 +60,12 @@
           <!-- Loading State -->
           <div v-if="searching" class="flex items-center justify-center py-8">
             <IonIcon :icon="refreshOutline" class="w-6 h-6 text-pp-accent-gold animate-spin" />
-            <span class="ml-2 text-white/60">Searching...</span>
+            <span class="ml-2 text-white/60">{{ t('registerModal.searching') }}</span>
           </div>
 
           <!-- Search Results -->
           <div v-else-if="searchResults.length > 0" class="space-y-2">
-            <p class="text-xs text-white/40 mb-2">{{ searchResults.length }} player(s) found</p>
+            <p class="text-xs text-white/40 mb-2">{{ t('registerModal.playersFound', { count: searchResults.length }) }}</p>
             <div
               v-for="player in searchResults"
               :key="player.id"
@@ -89,7 +89,7 @@
                   :icon="registering === player.id ? refreshOutline : personAddOutline"
                   :class="['w-4 h-4', registering === player.id && 'animate-spin']"
                 />
-                {{ registering === player.id ? 'Registering...' : 'Register' }}
+                {{ registering === player.id ? t('registerModal.registering') : t('buttons.register') }}
               </button>
             </div>
           </div>
@@ -97,19 +97,19 @@
           <!-- Empty State -->
           <div v-else-if="searchQuery && !searching" class="text-center py-8">
             <IonIcon :icon="searchOutline" class="w-12 h-12 text-white/20 mx-auto mb-2" />
-            <p class="text-white/50">No players found matching "{{ searchQuery }}"</p>
+            <p class="text-white/50">{{ t('registerModal.noPlayersMatching', { query: searchQuery }) }}</p>
             <button
               @click="activeTab = 'create'"
               class="mt-3 text-pp-accent-gold text-sm hover:underline"
             >
-              Create a new player instead
+              {{ t('registerModal.createInstead') }}
             </button>
           </div>
 
           <!-- Initial State -->
           <div v-else class="text-center py-8">
             <IonIcon :icon="personOutline" class="w-12 h-12 text-white/20 mx-auto mb-2" />
-            <p class="text-white/50">Search for existing players to register</p>
+            <p class="text-white/50">{{ t('registerModal.searchPrompt') }}</p>
           </div>
         </div>
 
@@ -118,7 +118,7 @@
           <form @submit.prevent="createAndRegister" class="space-y-4">
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-white/70 mb-1">First Name *</label>
+                <label class="block text-sm font-medium text-white/70 mb-1">{{ t('players.firstName') }} *</label>
                 <input
                   v-model="newPlayer.firstName"
                   type="text"
@@ -128,7 +128,7 @@
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-white/70 mb-1">Last Name *</label>
+                <label class="block text-sm font-medium text-white/70 mb-1">{{ t('players.lastName') }} *</label>
                 <input
                   v-model="newPlayer.lastName"
                   type="text"
@@ -140,7 +140,7 @@
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-white/70 mb-1">Email *</label>
+              <label class="block text-sm font-medium text-white/70 mb-1">{{ t('auth.email') }} *</label>
               <input
                 v-model="newPlayer.email"
                 type="email"
@@ -151,7 +151,7 @@
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-white/70 mb-1">Phone (optional)</label>
+              <label class="block text-sm font-medium text-white/70 mb-1">{{ t('registerModal.phoneOptional') }}</label>
               <input
                 v-model="newPlayer.phone"
                 type="tel"
@@ -174,7 +174,7 @@
                 :icon="creating ? refreshOutline : personAddOutline"
                 :class="['w-5 h-5', creating && 'animate-spin']"
               />
-              {{ creating ? 'Creating & Registering...' : 'Create & Register Player' }}
+              {{ creating ? t('registerModal.creatingAndRegistering') : t('registerModal.createAndRegister') }}
             </button>
           </form>
         </div>
@@ -186,6 +186,9 @@
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
 import { closeOutline, searchOutline, personAddOutline, personOutline, refreshOutline } from 'ionicons/icons'
+import { useI18n } from '~/composables/useI18n'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   isOpen: boolean
@@ -241,7 +244,7 @@ const performSearch = async () => {
     })
 
     // Filter out already registered players
-    searchResults.value = (result?.users || []).filter(
+    searchResults.value = (result?.users?.items || []).filter(
       (user: any) => !props.registeredPlayerIds.includes(user.id)
     )
   } catch (e: any) {
