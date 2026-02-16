@@ -81,6 +81,7 @@ mutation CreateTournament($input: CreateTournamentInput!) {
     status
     liveStatus
     earlyBirdBonusChips
+    lateRegistrationLevel
     createdAt
     updatedAt
     structure {
@@ -130,6 +131,7 @@ mutation UpdateTournament($input: UpdateTournamentInput!) {
     status
     liveStatus
     earlyBirdBonusChips
+    lateRegistrationLevel
     createdAt
     updatedAt
     structure {
