@@ -1,23 +1,7 @@
-// Tournament status mapping for user-friendly display
-export const tournamentStatusMap: Record<string, string> = {
-  'NOT_STARTED': 'Not Started',
-  'IN_PROGRESS': 'In Progress',
-  'COMPLETED': 'Completed',
-  'FINISHED': 'Finished',
-  'SCHEDULED': 'Scheduled',
-  'UPCOMING': 'Upcoming',
-  'CANCELLED': 'Cancelled',
-  'DRAFT': 'Draft',
-  'REGISTRATION_OPEN': 'Registration Open',
-  'REGISTRATION_CLOSED': 'Registration Closed',
-  'LATE_REGISTRATION': 'Late Registration',
-  'BREAK': 'On Break',
-  'FINAL_TABLE': 'Final Table',
-  'PAUSED': 'Paused'
-}
-
-export const getTournamentStatusLabel = (status: string): string => {
-  return tournamentStatusMap[status] || status
+// Tournament status label via i18n
+export const getTournamentStatusLabel = (status: string, t: (key: string) => string): string => {
+  const key = `tournamentStatuses.${status}`
+  return t(key) || status
 }
 
 // Tournament status colors for consistent styling

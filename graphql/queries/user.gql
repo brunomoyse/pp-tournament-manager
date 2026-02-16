@@ -1,12 +1,18 @@
-query GetUsers($search: String, $isActive: Boolean, $limit: Int, $offset: Int) {
-  users(search: $search, isActive: $isActive, limit: $limit, offset: $offset) {
-    id
-    email
-    username
-    firstName
-    lastName
-    role
-    isActive
+query GetUsers($search: String, $isActive: Boolean, $pagination: PaginationInput) {
+  users(search: $search, isActive: $isActive, pagination: $pagination) {
+    items {
+      id
+      email
+      username
+      firstName
+      lastName
+      role
+      isActive
+    }
+    totalCount
+    pageSize
+    offset
+    hasNextPage
   }
 }
 query GetMe {

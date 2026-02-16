@@ -1,17 +1,23 @@
-query GetTournaments($clubId: UUID, $from: DateTime, $to: DateTime, $status: TournamentStatus, $limit: Int, $offset: Int) {
-  tournaments(clubId: $clubId, from: $from, to: $to, status: $status, limit: $limit, offset: $offset) {
-    id
-    title
-    description
-    clubId
-    startTime
-    endTime
-    buyInCents
-    seatCap
-    status
-    liveStatus
-    createdAt
-    updatedAt
+query GetTournaments($clubId: UUID, $from: DateTime, $to: DateTime, $status: TournamentStatus, $pagination: PaginationInput) {
+  tournaments(clubId: $clubId, from: $from, to: $to, status: $status, pagination: $pagination) {
+    items {
+      id
+      title
+      description
+      clubId
+      startTime
+      endTime
+      buyInCents
+      seatCap
+      status
+      liveStatus
+      createdAt
+      updatedAt
+    }
+    totalCount
+    pageSize
+    offset
+    hasNextPage
   }
 }
 
@@ -104,22 +110,29 @@ mutation RegisterTournament($input: RegisterForTournamentInput!) {
   }
 }
 
-query GetTournamentPlayers($tournamentId: UUID!) {
-  tournamentPlayers(tournamentId: $tournamentId) {
-    registration {
-      id
-      registrationTime
-      status
-      notes
+query GetTournamentPlayers($tournamentId: UUID!, $pagination: PaginationInput) {
+  tournamentPlayers(tournamentId: $tournamentId, pagination: $pagination) {
+    items {
+      registration {
+        id
+        registrationTime
+        status
+        notes
+        waitlistPosition
+      }
+      user {
+        id
+        firstName
+        lastName
+        username
+        email
+        role
+      }
     }
-    user {
-      id
-      firstName
-      lastName
-      username
-      email
-      role
-    }
+    totalCount
+    pageSize
+    offset
+    hasNextPage
   }
 }
 
@@ -168,9 +181,9 @@ query GetTournamentEntryStats($tournamentId: ID!) {
   }
 }
 
-query GetLeaderboard($period: LeaderboardPeriod, $limit: Int, $clubId: UUID) {
-  leaderboard(period: $period, limit: $limit, clubId: $clubId) {
-    entries {
+query GetLeaderboard($period: LeaderboardPeriod, $pagination: PaginationInput, $clubId: UUID) {
+  leaderboard(period: $period, pagination: $pagination, clubId: $clubId) {
+    items {
       user {
         id
         firstName
@@ -191,8 +204,10 @@ query GetLeaderboard($period: LeaderboardPeriod, $limit: Int, $clubId: UUID) {
       finalTables
       points
     }
-    totalPlayers
-    period
+    totalCount
+    pageSize
+    offset
+    hasNextPage
   }
 }
 
@@ -259,6 +274,36 @@ query GetBlindStructureTemplates {
       durationMinutes
       isBreak
       breakDurationMinutes
+    }
+    createdAt
+  }
+}
+
+query GetPayoutTemplates {
+  payoutTemplates {
+    id
+    name
+    description
+    minPlayers
+    maxPlayers
+    payoutStructure {
+      position
+      percentage
+    }
+    createdAt
+  }
+}
+
+query GetSuitablePayoutTemplates($playerCount: Int!) {
+  suitablePayoutTemplates(playerCount: $playerCount) {
+    id
+    name
+    description
+    minPlayers
+    maxPlayers
+    payoutStructure {
+      position
+      percentage
     }
     createdAt
   }

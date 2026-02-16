@@ -97,6 +97,26 @@ mutation CreateTournament($input: CreateTournamentInput!) {
   }
 }
 
+mutation CancelRegistration($input: CancelRegistrationInput!) {
+  cancelRegistration(input: $input) {
+    registration {
+      id
+      status
+    }
+    promotedPlayer {
+      registration {
+        id
+        status
+      }
+      user {
+        id
+        firstName
+        lastName
+      }
+    }
+  }
+}
+
 mutation UpdateTournament($input: UpdateTournamentInput!) {
   updateTournament(input: $input) {
     id
