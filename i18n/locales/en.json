@@ -78,6 +78,10 @@
     "newThisWeek": "New this week",
     "lastUpdate": "Last update",
     "registered": "Registered",
+    "confirmed": "Confirmed",
+    "checkedIn": "Checked In",
+    "seated": "Seated",
+    "busted": "Busted",
     "remaining": "Remaining",
     "active": "Active",
     "eliminated": "Eliminated",
@@ -101,7 +105,12 @@
     "seat": "Seat",
     "activeTables": "Active Tables",
     "minutes": "minutes",
-    "noLocation": "No location"
+    "noLocation": "No location",
+    "name": "Name",
+    "tableSeat": "Table / Seat",
+    "actions": "Actions",
+    "lateRegThroughLevel": "Late reg. through level {level}",
+    "lateRegCutoff": "Late Reg"
   },
   "buttons": {
     "viewTournament": "View Tournament",
@@ -237,6 +246,9 @@
     "unlimited": "Unlimited",
     "earlyBirdBonus": "Early Bird Bonus (chips)",
     "earlyBirdBonusPlaceholder": "Bonus chips for early registration",
+    "lateRegistrationLevel": "Late Reg. Level",
+    "lateRegistrationLevelPlaceholder": "e.g. 6",
+    "lateRegistrationLevelHelp": "Registration stays open through the end of this level. Leave empty for manual control.",
     "blindStructure": "Blind Structure",
     "selectTemplate": "Structure Template",
     "selectTemplatePlaceholder": "Select a blind structure template",
@@ -336,6 +348,17 @@
       "copy": "Copy to clipboard",
       "generating": "Generating QR code...",
       "error": "Failed to generate QR code. Please try again."
+    },
+    "tournament": {
+      "title": "Tournament Check-in QR Code",
+      "instructions": "Players can scan this QR code with the PocketPair app to check in to this tournament",
+      "qrCodeAlt": "Tournament Check-in QR Code",
+      "manualCode": "Manual Code (Fallback)",
+      "copy": "Copy to clipboard",
+      "generating": "Generating QR code...",
+      "error": "Failed to generate QR code. Please try again.",
+      "print": "Print",
+      "button": "Check-in QR Code"
     }
   },
   "tournamentStatuses": {
@@ -443,7 +466,13 @@
     "checkInSuccessEntryFailed": "Player checked in, but entry recording failed.",
     "cancelSuccess": "Registration cancelled.",
     "cancelFailed": "Failed to cancel registration.",
-    "promoteSuccess": "Player promoted from waitlist."
+    "promoteSuccess": "Player promoted from waitlist.",
+    "noTablesAssigned": "Cannot start the tournament: no tables are assigned. Please assign tables first.",
+    "checkInNoSeat": "Player checked in but no seat available. Please assign a seat manually.",
+    "checkInAllSomeUnseated": "{seated} of {count} players seated. {unseated} checked in without a seat.",
+    "seatPlayerSuccess": "{name} assigned to Table {table}, Seat {seat}.",
+    "noTablesForSeating": "No tables linked to the tournament. Link tables first.",
+    "noSeatsAvailable": "All seats are full. No available seat found."
   },
   "statusWorkflow": {
     "title": "Tournament Status",
@@ -455,7 +484,7 @@
       "openRegistration": "Open Registration",
       "startLateRegistration": "Late Registration",
       "startTournament": "Start Tournament",
-      "closeLateRegAndStart": "Close Reg & Start",
+      "closeLateRegAndStart": "Close Late Registration",
       "callBreak": "Call Break",
       "announceFinalTable": "Final Table",
       "resumePlay": "Resume Play",
@@ -489,6 +518,10 @@
   },
   "prizePool": {
     "entriesAndPlayers": "{entries} entries from {players} players",
+    "buyIn": "Buy-in",
+    "entries": "Entries",
+    "firstPrize": "1st Prize",
+    "payoutBreakdown": "Payout Breakdown",
     "payingPositions": "Paying Positions",
     "percentage": "Percentage"
   },
@@ -533,9 +566,17 @@
     "submitErrorTitle": "Submission Error",
     "retry": "Retry"
   },
+  "clock": {
+    "startConfirmTitle": "Start Tournament",
+    "startConfirmMessage": "The tournament has not started yet. Starting the clock will open late registration and begin the tournament. Continue?",
+    "startConfirm": "Start"
+  },
   "warnings": {
     "noTablesLinked": "No tables linked to this tournament",
     "noTablesLinkedDesc": "Players are in progress but no tables are set up. Link tables to manage seating.",
-    "goToSeating": "Go to Seating"
+    "goToSeating": "Go to Seating",
+    "unseatedPlayers": "{count} checked-in player(s) not seated",
+    "unseatedPlayersDesc": "These players are checked in but have no seat assigned. Seat them from the Players tab.",
+    "goToPlayers": "Go to Players"
   }
 }
