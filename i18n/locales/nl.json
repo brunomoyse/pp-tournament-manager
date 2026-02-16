@@ -78,6 +78,10 @@
     "newThisWeek": "Nieuw deze week",
     "lastUpdate": "Laatste update",
     "registered": "Ingeschreven",
+    "confirmed": "Bevestigd",
+    "checkedIn": "Ingecheckt",
+    "seated": "Gezeten",
+    "busted": "Uitgeschakeld",
     "remaining": "Resterend",
     "active": "Actief",
     "eliminated": "Uitgeschakeld",
@@ -101,7 +105,12 @@
     "seat": "Stoel",
     "activeTables": "Actieve Tafels",
     "minutes": "minuten",
-    "noLocation": "Geen locatie"
+    "noLocation": "Geen locatie",
+    "name": "Naam",
+    "tableSeat": "Tafel / Stoel",
+    "actions": "Acties",
+    "lateRegThroughLevel": "Late inschrijving t/m niveau {level}",
+    "lateRegCutoff": "Late Reg"
   },
   "buttons": {
     "viewTournament": "Bekijk Toernooi",
@@ -237,6 +246,9 @@
     "unlimited": "Onbeperkt",
     "earlyBirdBonus": "Early Bird Bonus (fiches)",
     "earlyBirdBonusPlaceholder": "Bonusfiches voor vroege registratie",
+    "lateRegistrationLevel": "Late reg. niveau",
+    "lateRegistrationLevelPlaceholder": "bijv. 6",
+    "lateRegistrationLevelHelp": "Inschrijving blijft open tot het einde van dit niveau. Laat leeg voor handmatige controle.",
     "blindStructure": "Blindstructuur",
     "selectTemplate": "Structuur Sjabloon",
     "selectTemplatePlaceholder": "Selecteer een blindstructuur sjabloon",
@@ -336,6 +348,17 @@
       "copy": "Kopieer naar klembord",
       "generating": "QR-code genereren...",
       "error": "Genereren van QR-code mislukt. Probeer het opnieuw."
+    },
+    "tournament": {
+      "title": "Toernooi Check-in QR Code",
+      "instructions": "Spelers kunnen deze QR-code scannen met de PocketPair app om in te checken voor dit toernooi",
+      "qrCodeAlt": "Toernooi Check-in QR Code",
+      "manualCode": "Handmatige code (Terugval)",
+      "copy": "Kopieer naar klembord",
+      "generating": "QR-code genereren...",
+      "error": "Genereren van QR-code mislukt. Probeer het opnieuw.",
+      "print": "Afdrukken",
+      "button": "Check-in QR Code"
     }
   },
   "tournamentStatuses": {
@@ -443,7 +466,13 @@
     "checkInSuccessEntryFailed": "Speler ingecheckt, maar inschrijving registreren mislukt.",
     "cancelSuccess": "Registratie geannuleerd.",
     "cancelFailed": "Registratie annuleren mislukt.",
-    "promoteSuccess": "Speler gepromoveerd van wachtlijst."
+    "promoteSuccess": "Speler gepromoveerd van wachtlijst.",
+    "noTablesAssigned": "Kan het toernooi niet starten: er zijn geen tafels toegewezen. Wijs eerst tafels toe.",
+    "checkInNoSeat": "Speler ingecheckt maar geen stoel beschikbaar. Wijs handmatig een stoel toe.",
+    "checkInAllSomeUnseated": "{seated} van {count} spelers geplaatst. {unseated} ingecheckt zonder stoel.",
+    "seatPlayerSuccess": "{name} toegewezen aan Tafel {table}, Stoel {seat}.",
+    "noTablesForSeating": "Geen tafels gekoppeld aan het toernooi. Koppel eerst tafels.",
+    "noSeatsAvailable": "Alle stoelen zijn bezet. Geen beschikbare stoel gevonden."
   },
   "statusWorkflow": {
     "title": "Toernooi Status",
@@ -455,7 +484,7 @@
       "openRegistration": "Inschrijving openen",
       "startLateRegistration": "Late inschrijving",
       "startTournament": "Toernooi starten",
-      "closeLateRegAndStart": "Inschr. sluiten & starten",
+      "closeLateRegAndStart": "Late registratie sluiten",
       "callBreak": "Pauze",
       "announceFinalTable": "Finale tafel",
       "resumePlay": "Spel hervatten",
@@ -489,6 +518,10 @@
   },
   "prizePool": {
     "entriesAndPlayers": "{entries} inschrijvingen van {players} spelers",
+    "buyIn": "Buy-in",
+    "entries": "Inschrijvingen",
+    "firstPrize": "1e Prijs",
+    "payoutBreakdown": "Uitbetalingsoverzicht",
     "payingPositions": "Betaalde posities",
     "percentage": "Percentage"
   },
@@ -533,9 +566,17 @@
     "submitErrorTitle": "Verzendfout",
     "retry": "Opnieuw proberen"
   },
+  "clock": {
+    "startConfirmTitle": "Toernooi starten",
+    "startConfirmMessage": "Het toernooi is nog niet begonnen. De klok starten opent late inschrijving en start het toernooi. Doorgaan?",
+    "startConfirm": "Starten"
+  },
   "warnings": {
     "noTablesLinked": "Geen tafels gekoppeld aan het toernooi",
     "noTablesLinkedDesc": "Het toernooi is bezig maar er zijn geen tafels ingesteld. Koppel tafels om plaatsing te beheren.",
-    "goToSeating": "Ga naar plaatsing"
+    "goToSeating": "Ga naar plaatsing",
+    "unseatedPlayers": "{count} ingecheckte speler(s) niet geplaatst",
+    "unseatedPlayersDesc": "Deze spelers zijn ingecheckt maar hebben geen stoel toegewezen. Plaats ze via het Spelers tabblad.",
+    "goToPlayers": "Ga naar spelers"
   }
 }

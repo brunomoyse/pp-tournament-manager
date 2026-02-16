@@ -78,6 +78,10 @@
     "newThisWeek": "Nouveaux cette semaine",
     "lastUpdate": "Dernière mise à jour",
     "registered": "Inscrit",
+    "confirmed": "Confirmés",
+    "checkedIn": "Présents",
+    "seated": "Assis",
+    "busted": "Éliminés",
     "remaining": "Restants",
     "active": "Actif",
     "eliminated": "Éliminé",
@@ -101,7 +105,12 @@
     "seat": "Siège",
     "activeTables": "Tables Actives",
     "minutes": "minutes",
-    "noLocation": "Aucun lieu"
+    "noLocation": "Aucun lieu",
+    "name": "Nom",
+    "tableSeat": "Table / Siège",
+    "actions": "Actions",
+    "lateRegThroughLevel": "Inscr. tardive jusqu'au niveau {level}",
+    "lateRegCutoff": "Inscr. tardive"
   },
   "buttons": {
     "viewTournament": "Voir le Tournoi",
@@ -237,6 +246,9 @@
     "unlimited": "Illimité",
     "earlyBirdBonus": "Bonus d'inscription anticipée (jetons)",
     "earlyBirdBonusPlaceholder": "Jetons bonus pour inscription anticipée",
+    "lateRegistrationLevel": "Niveau inscr. tardive",
+    "lateRegistrationLevelPlaceholder": "ex. 6",
+    "lateRegistrationLevelHelp": "L'inscription reste ouverte jusqu'à la fin de ce niveau. Laissez vide pour contrôle manuel.",
     "blindStructure": "Structure des Blindes",
     "selectTemplate": "Modèle de Structure",
     "selectTemplatePlaceholder": "Sélectionnez un modèle de structure de blindes",
@@ -336,6 +348,17 @@
       "copy": "Copier dans le presse-papiers",
       "generating": "Génération du code QR...",
       "error": "Échec de la génération du code QR. Veuillez réessayer."
+    },
+    "tournament": {
+      "title": "QR Code de présence au tournoi",
+      "instructions": "Les joueurs peuvent scanner ce QR code avec l'application PocketPair pour confirmer leur présence au tournoi",
+      "qrCodeAlt": "QR Code de présence au tournoi",
+      "manualCode": "Code manuel (Solution de secours)",
+      "copy": "Copier dans le presse-papiers",
+      "generating": "Génération du code QR...",
+      "error": "Échec de la génération du code QR. Veuillez réessayer.",
+      "print": "Imprimer",
+      "button": "QR Code de présence"
     }
   },
   "tournamentStatuses": {
@@ -443,7 +466,13 @@
     "checkInSuccessEntryFailed": "Joueur validé, mais l'enregistrement de l'entrée a échoué.",
     "cancelSuccess": "Inscription annulée.",
     "cancelFailed": "Échec de l'annulation de l'inscription.",
-    "promoteSuccess": "Joueur promu depuis la file d'attente."
+    "promoteSuccess": "Joueur promu depuis la file d'attente.",
+    "noTablesAssigned": "Impossible de démarrer le tournoi : aucune table n'est assignée. Veuillez d'abord assigner des tables.",
+    "checkInNoSeat": "Joueur validé mais aucun siège disponible. Veuillez assigner un siège manuellement.",
+    "checkInAllSomeUnseated": "{seated} sur {count} joueurs placés. {unseated} validé(s) sans siège.",
+    "seatPlayerSuccess": "{name} assigné à la Table {table}, Siège {seat}.",
+    "noTablesForSeating": "Aucune table liée au tournoi. Liez des tables d'abord.",
+    "noSeatsAvailable": "Toutes les places sont occupées. Aucun siège disponible."
   },
   "statusWorkflow": {
     "title": "Statut du Tournoi",
@@ -455,7 +484,7 @@
       "openRegistration": "Ouvrir les inscriptions",
       "startLateRegistration": "Inscription tardive",
       "startTournament": "Démarrer le tournoi",
-      "closeLateRegAndStart": "Fermer inscr. & démarrer",
+      "closeLateRegAndStart": "Fermer les inscriptions tardives",
       "callBreak": "Pause",
       "announceFinalTable": "Table finale",
       "resumePlay": "Reprendre le jeu",
@@ -489,6 +518,10 @@
   },
   "prizePool": {
     "entriesAndPlayers": "{entries} entrées de {players} joueurs",
+    "buyIn": "Buy-in",
+    "entries": "Entrées",
+    "firstPrize": "1er Prix",
+    "payoutBreakdown": "Répartition des gains",
     "payingPositions": "Places payées",
     "percentage": "Pourcentage"
   },
@@ -533,9 +566,17 @@
     "submitErrorTitle": "Erreur de soumission",
     "retry": "Réessayer"
   },
+  "clock": {
+    "startConfirmTitle": "Démarrer le tournoi",
+    "startConfirmMessage": "Le tournoi n'a pas encore commencé. Démarrer la clock ouvrira les inscriptions tardives et lancera le tournoi. Continuer ?",
+    "startConfirm": "Démarrer"
+  },
   "warnings": {
     "noTablesLinked": "Aucune table liée au tournoi",
     "noTablesLinkedDesc": "Le tournoi est en cours mais aucune table n'est configurée. Liez des tables pour gérer les places.",
-    "goToSeating": "Aller aux tables"
+    "goToSeating": "Aller aux tables",
+    "unseatedPlayers": "{count} joueur(s) présent(s) non assis",
+    "unseatedPlayersDesc": "Ces joueurs sont présents mais n'ont pas de siège assigné. Placez-les depuis l'onglet Joueurs.",
+    "goToPlayers": "Aller aux joueurs"
   }
 }
