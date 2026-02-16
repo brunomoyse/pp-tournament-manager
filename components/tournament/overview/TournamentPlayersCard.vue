@@ -4,47 +4,66 @@
       <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('headings.players') }}</h3>
       <IonIcon :icon="peopleOutline" class="w-6 h-6 text-white" />
     </div>
-    <div class="space-y-6">
-      <div class="grid grid-cols-2 gap-6">
-        <div class="text-center">
-          <div class="text-3xl font-bold text-pp-text-primary mb-1">
-            {{ confirmedCount }}<span v-if="seatCap" class="text-lg text-white/40">/{{ seatCap }}</span>
-          </div>
-          <div class="text-white/60 text-sm">{{ t('labels.registered') }}</div>
+
+    <!-- Hero number -->
+    <div class="mb-1">
+      <span class="text-4xl font-bold text-pp-text-primary">{{ confirmedCount }}</span>
+      <span v-if="seatCap" class="text-lg text-white/40"> / {{ seatCap }}</span>
+    </div>
+    <div class="text-sm text-white/50 mb-6">{{ t('labels.confirmed') }}</div>
+
+    <!-- Status funnel -->
+    <div class="space-y-3 mb-6">
+      <div class="flex items-center justify-between text-sm">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-white/50"></span>
+          <span class="text-white/70">{{ t('labels.registered') }}</span>
         </div>
-        <div class="text-center">
-          <div class="text-3xl font-bold text-pp-text-primary mb-1">{{ remainingPlayers }}</div>
-          <div class="text-white/60 text-sm">{{ t('labels.remaining') }}</div>
+        <span class="font-medium text-white">{{ registeredCount }}</span>
+      </div>
+      <div class="flex items-center justify-between text-sm">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+          <span class="text-white/70">{{ t('labels.checkedIn') }}</span>
         </div>
+        <span class="font-medium text-white">{{ checkedInCount }}</span>
+      </div>
+      <div class="flex items-center justify-between text-sm">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-green-400"></span>
+          <span class="text-white/70">{{ t('labels.seated') }}</span>
+        </div>
+        <span class="font-medium text-white">{{ seatedCount }}</span>
+      </div>
+      <div class="flex items-center justify-between text-sm">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-red-400"></span>
+          <span class="text-white/70">{{ t('labels.busted') }}</span>
+        </div>
+        <span class="font-medium text-white">{{ bustedCount }}</span>
       </div>
 
-      <div v-if="waitlistedCount > 0" class="flex justify-between items-center text-sm">
-        <span class="text-amber-400">{{ t('filters.waitlisted') }}</span>
-        <span class="text-amber-400 font-medium">{{ waitlistedCount }}</span>
-      </div>
-      
-      <div class="space-y-3">
-        <div class="flex justify-between items-center text-sm">
-          <span class="text-white/60">{{ t('labels.active') }}</span>
-          <span class="text-pp-text-primary font-medium">{{ remainingPlayers }}</span>
+      <!-- Waitlisted (conditional) -->
+      <div v-if="waitlistedCount > 0" class="flex items-center justify-between text-sm">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+          <span class="text-amber-400">{{ t('filters.waitlisted') }}</span>
         </div>
-        <div class="flex justify-between items-center text-sm">
-          <span class="text-white/60">{{ t('labels.eliminated') }}</span>
-          <span class="text-pp-text-primary font-medium">{{ totalRegistered - remainingPlayers }}</span>
-        </div>
+        <span class="font-medium text-amber-400">{{ waitlistedCount }}</span>
       </div>
+    </div>
 
-      <div class="space-y-2">
-        <div class="flex justify-between items-center text-xs">
-          <span class="text-white/60">{{ t('labels.progress') }}</span>
-          <span class="text-white/60">{{ Math.round((totalRegistered - remainingPlayers) / totalRegistered * 100) || 0 }}%</span>
-        </div>
-        <div class="w-full bg-pp-bg-primary rounded-full h-2">
-          <div 
-            class="bg-pp-accent-gold h-2 rounded-full transition-all duration-300"
-            :style="{ width: `${Math.round((totalRegistered - remainingPlayers) / totalRegistered * 100) || 0}%` }"
-          ></div>
-        </div>
+    <!-- Elimination progress bar -->
+    <div class="space-y-2">
+      <div class="flex justify-between items-center text-xs">
+        <span class="text-white/60">{{ t('labels.progress') }}</span>
+        <span class="text-white/60">{{ eliminationPercent }}%</span>
+      </div>
+      <div class="w-full bg-pp-bg-primary rounded-full h-2">
+        <div
+          class="bg-pp-accent-gold h-2 rounded-full transition-all duration-300"
+          :style="{ width: `${eliminationPercent}%` }"
+        ></div>
       </div>
     </div>
   </div>
@@ -62,8 +81,14 @@ const tournamentStore = useTournamentStore()
 
 // Store data
 const seatCap = computed(() => tournamentStore.tournament?.seatCap || null)
-const confirmedCount = computed(() => tournamentStore.registrations?.filter(r => ['REGISTERED', 'CHECKED_IN', 'SEATED', 'BUSTED'].includes(r.status)).length || 0)
+const registeredCount = computed(() => tournamentStore.registrations?.filter(r => r.status === 'REGISTERED').length || 0)
+const checkedInCount = computed(() => tournamentStore.registrations?.filter(r => r.status === 'CHECKED_IN').length || 0)
+const seatedCount = computed(() => tournamentStore.registrations?.filter(r => r.status === 'SEATED').length || 0)
+const bustedCount = computed(() => tournamentStore.registrations?.filter(r => r.status === 'BUSTED').length || 0)
+const confirmedCount = computed(() => registeredCount.value + checkedInCount.value + seatedCount.value + bustedCount.value)
 const waitlistedCount = computed(() => tournamentStore.registrations?.filter(r => r.status === 'WAITLISTED').length || 0)
-const totalRegistered = computed(() => confirmedCount.value)
-const remainingPlayers = computed(() => tournamentStore.registrations?.filter(r => ['REGISTERED', 'CHECKED_IN', 'SEATED'].includes(r.status)).length || 0)
+const eliminationPercent = computed(() => {
+  if (confirmedCount.value === 0) return 0
+  return Math.round(bustedCount.value / confirmedCount.value * 100)
+})
 </script>

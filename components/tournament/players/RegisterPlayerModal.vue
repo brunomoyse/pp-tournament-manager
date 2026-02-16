@@ -14,29 +14,29 @@
       </div>
 
       <!-- Tabs -->
-      <div class="flex border-b border-pp-border">
+      <div class="flex gap-2 p-2 bg-pp-bg-primary/50 rounded-2xl border border-pp-border mx-4 mt-3">
         <button
           @click="activeTab = 'search'"
           :class="[
-            'flex-1 py-3 px-4 text-sm font-medium transition-colors',
+            'flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap',
             activeTab === 'search'
-              ? 'text-pp-accent-gold border-b-2 border-pp-accent-gold'
-              : 'text-white/60 hover:text-white'
+              ? 'bg-pp-bg-secondary text-pp-accent-gold border border-pp-accent-gold/40 shadow-sm'
+              : 'text-white hover:bg-pp-bg-secondary/50'
           ]"
         >
-          <IonIcon :icon="searchOutline" class="w-4 h-4 mr-2" />
+          <IonIcon :icon="searchOutline" class="w-4 h-4" />
           {{ t('registerModal.searchExisting') }}
         </button>
         <button
           @click="activeTab = 'create'"
           :class="[
-            'flex-1 py-3 px-4 text-sm font-medium transition-colors',
+            'flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap',
             activeTab === 'create'
-              ? 'text-pp-accent-gold border-b-2 border-pp-accent-gold'
-              : 'text-white/60 hover:text-white'
+              ? 'bg-pp-bg-secondary text-pp-accent-gold border border-pp-accent-gold/40 shadow-sm'
+              : 'text-white hover:bg-pp-bg-secondary/50'
           ]"
         >
-          <IonIcon :icon="personAddOutline" class="w-4 h-4 mr-2" />
+          <IonIcon :icon="personAddOutline" class="w-4 h-4" />
           {{ t('registerModal.createNew') }}
         </button>
       </div>

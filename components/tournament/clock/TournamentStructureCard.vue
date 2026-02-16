@@ -37,9 +37,17 @@
           </div>
         </div>
         
-        <div v-if="level.ante" class="text-right">
-          <div class="text-sm text-white/60">{{ t('labels.ante') }}</div>
-          <div class="text-lg font-medium text-pp-text-primary">{{ level.ante }}</div>
+        <div class="flex items-center gap-3">
+          <span
+            v-if="lateRegLevel && (index + 1) === lateRegLevel"
+            class="px-2 py-0.5 bg-orange-500/20 text-orange-400 border border-orange-500/30 rounded-full text-[10px] font-semibold whitespace-nowrap"
+          >
+            {{ t('labels.lateRegCutoff') }}
+          </span>
+          <div v-if="level.ante" class="text-right">
+            <div class="text-sm text-white/60">{{ t('labels.ante') }}</div>
+            <div class="text-lg font-medium text-pp-text-primary">{{ level.ante }}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -61,6 +69,7 @@ import type { ComponentPublicInstance } from 'vue'
 
 const tournamentStore = useTournamentStore()
 const tournamentLevels = computed(() => tournamentStore.structure)
+const lateRegLevel = computed(() => tournamentStore.tournament?.lateRegistrationLevel ?? null)
 
 const scrollContainer = ref<HTMLElement>()
 const currentLevelElement = ref<HTMLElement>()
