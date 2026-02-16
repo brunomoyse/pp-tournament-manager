@@ -1,6 +1,6 @@
 import { test as setup, expect } from '@playwright/test';
 
-const authFile = '.auth/manager.json';
+const authFile = 'e2e/.auth/manager.json';
 
 setup('authenticate as manager', async ({ page }) => {
   // Navigate to login page

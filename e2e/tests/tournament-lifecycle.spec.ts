@@ -32,7 +32,7 @@ test.describe.serial('Tournament Lifecycle', () => {
 
   test.beforeAll(async ({ browser }) => {
     const context = await browser.newContext({
-      storageState: '.auth/manager.json',
+      storageState: 'e2e/.auth/manager.json',
     });
     page = await context.newPage();
     tournamentName = `E2E Test Tournament - ${Date.now()}`;
