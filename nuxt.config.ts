@@ -24,6 +24,10 @@ export default defineNuxtConfig({
         headers: {
           'Content-Type': 'application/json',
         },
+        corsOptions: {
+          mode: 'cors',
+          credentials: 'include',
+        },
         tokenStorage: {
           mode: 'cookie',
           cookieOptions: {
@@ -35,7 +39,7 @@ export default defineNuxtConfig({
         }
       },
     },
-    codegen: true, // Disable for now until we set up proper types
+    codegen: true,
   },
   runtimeConfig: {
     public: {
