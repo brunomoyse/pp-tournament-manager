@@ -10,7 +10,10 @@
     "postinstall": "nuxt prepare",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "test:e2e": "playwright test --config e2e/playwright.config.ts",
+    "test:e2e:headed": "playwright test --config e2e/playwright.config.ts --headed",
+    "test:e2e:ui": "playwright test --config e2e/playwright.config.ts --ui"
   },
   "dependencies": {
     "@capacitor/android": "^8.0.2",
@@ -39,6 +42,7 @@
     "@vitest/coverage-v8": "^4.0.18",
     "@vue/test-utils": "^2.4.6",
     "happy-dom": "^20.6.1",
+    "@playwright/test": "^1.50.0",
     "vitest": "^4.0.18"
   }
 }
