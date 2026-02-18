@@ -16,10 +16,10 @@
     "test:e2e:ui": "playwright test --config e2e/playwright.config.ts --ui"
   },
   "dependencies": {
-    "@capacitor/android": "^8.0.2",
+    "@capacitor/android": "^8.1.0",
     "@capacitor/core": "^8.0.2",
-    "@capacitor/ios": "^8.0.2",
-    "@capacitor/network": "^8.0.0",
+    "@capacitor/ios": "^8.1.0",
+    "@capacitor/network": "^8.0.1",
     "@nuxtjs/ionic": "^1.0.2",
     "@pinia/nuxt": "^0.11.3",
     "@tailwindcss/vite": "^4.1.18",
