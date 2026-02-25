@@ -30,9 +30,9 @@
     "pinia-plugin-persistedstate": "^4.7.1",
     "qrcode": "^1.5.4",
     "tailwindcss": "^4.1.18",
-    "vue": "^3.5.28",
+    "vue": "^3.5.29",
     "vue-i18n": "^11.2.8",
-    "vue-router": "^5.0.2"
+    "vue-router": "^5.0.3"
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
