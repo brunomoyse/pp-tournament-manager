@@ -1,0 +1,22 @@
+query GetTournamentActivityLog($tournamentId: UUID!, $category: ActivityEventCategory, $limit: Int, $offset: Int) {
+  tournamentActivityLog(
+    tournamentId: $tournamentId
+    category: $category
+    pagination: { limit: $limit, offset: $offset }
+  ) {
+    items {
+      id
+      tournamentId
+      eventCategory
+      eventAction
+      actorId
+      subjectId
+      eventTime
+      metadata
+    }
+    totalCount
+    pageSize
+    offset
+    hasNextPage
+  }
+}

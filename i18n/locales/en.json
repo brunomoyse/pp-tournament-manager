@@ -590,5 +590,48 @@
     "unseatedPlayers": "{count} checked-in player(s) not seated",
     "unseatedPlayersDesc": "These players are checked in but have no seat assigned. Seat them from the Players tab.",
     "goToPlayers": "Go to Players"
+  },
+  "activity": {
+    "clock": {
+      "start": "Clock started",
+      "pause": "Clock paused",
+      "resume": "Clock resumed",
+      "level_advance": "Level advanced to {level_number}",
+      "manual_advance": "Level manually advanced to {level_number}",
+      "manual_revert": "Level reverted to {level_number}",
+      "final_level_complete": "Final level completed"
+    },
+    "registration": {
+      "registered": "Player registered",
+      "waitlisted": "Player added to waitlist",
+      "cancelled": "Registration cancelled",
+      "promoted": "Player promoted from waitlist",
+      "self_check_in": "Player self checked in",
+      "check_in": "Player checked in"
+    },
+    "seating": {
+      "table_assigned": "Table {table_number} assigned",
+      "table_unassigned": "Table {table_number} removed",
+      "player_seated": "Player seated at seat {seat_number}",
+      "player_moved": "Player moved to seat {seat_number}",
+      "stack_updated": "Stack updated to {stack_size}",
+      "tables_balanced": "Tables balanced ({players_moved} players moved)",
+      "player_eliminated": "Player eliminated"
+    },
+    "entry": {
+      "added": "Entry added ({entry_type}, {amount_cents}c)",
+      "deleted": "Entry deleted ({entry_type}, {amount_cents}c)"
+    },
+    "result": {
+      "results_entered": "Results entered for {player_count} players"
+    },
+    "tournament": {
+      "status_changed": "Status changed from {from_status} to {to_status}"
+    },
+    "time": {
+      "justNow": "Just now",
+      "minutesAgo": "{count}m ago",
+      "hoursAgo": "{count}h ago"
+    }
   }
 }
