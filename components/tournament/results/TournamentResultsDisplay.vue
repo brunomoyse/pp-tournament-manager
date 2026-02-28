@@ -1,48 +1,48 @@
 <template>
-  <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-    <div class="flex items-center justify-between mb-8">
-      <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('results.viewResults') }}</h3>
-      <IonIcon :icon="trophyOutline" class="w-6 h-6 text-pp-accent-gold" />
+  <div class="results-card">
+    <div class="results-card__header">
+      <h3 class="results-card__title">{{ t('results.viewResults') }}</h3>
+      <IonIcon :icon="trophyOutline" class="results-card__icon" />
     </div>
 
     <!-- Loading -->
-    <div v-if="!playersData" class="text-center py-8 text-white/60">
+    <div v-if="!playersData" class="results-card__loading">
       {{ t('status.loading') }}
     </div>
 
     <!-- Results Table -->
-    <div v-else-if="finishedPlayers.length > 0" class="space-y-2">
+    <div v-else-if="finishedPlayers.length > 0" class="results-card__list">
       <div
         v-for="player in finishedPlayers"
         :key="player.id"
         :class="[
-          'flex items-center justify-between p-3 rounded-lg border',
+          'results-card__row',
           player.position <= 3
-            ? 'bg-pp-accent-gold/10 border-pp-accent-gold/20'
-            : 'bg-pp-bg-primary/30 border-pp-border/30'
+            ? 'results-card__row--podium'
+            : 'results-card__row--regular'
         ]"
       >
-        <div class="flex items-center gap-3">
+        <div class="results-card__row-left">
           <!-- Position Badge -->
           <div :class="[
-            'w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm',
-            player.position === 1 ? 'bg-pp-accent-gold/30 text-pp-accent-gold' :
-            player.position === 2 ? 'bg-gray-300/20 text-gray-300' :
-            player.position === 3 ? 'bg-orange-400/20 text-orange-400' :
-            'bg-white/5 text-white/60'
+            'results-card__position',
+            player.position === 1 ? 'results-card__position--first' :
+            player.position === 2 ? 'results-card__position--second' :
+            player.position === 3 ? 'results-card__position--third' :
+            'results-card__position--default'
           ]">
             {{ player.position }}
           </div>
           <div>
-            <span class="text-white font-medium text-sm">{{ player.name }}</span>
+            <span class="results-card__player-name">{{ player.name }}</span>
           </div>
         </div>
 
-        <div class="flex items-center gap-4">
-          <span v-if="player.prizeCents > 0" class="font-semibold text-pp-text-primary text-sm">
+        <div class="results-card__row-right">
+          <span v-if="player.prizeCents > 0" class="results-card__prize">
             {{ formatPrice(player.prizeCents, locale) }}
           </span>
-          <span v-if="player.points > 0" class="text-xs text-white/50">
+          <span v-if="player.points > 0" class="results-card__points">
             {{ player.points }} {{ t('results.points') }}
           </span>
         </div>
@@ -50,7 +50,7 @@
     </div>
 
     <!-- No Results -->
-    <div v-else class="text-center py-8 text-white/60">
+    <div v-else class="results-card__empty">
       {{ t('results.noRemainingPlayers') }}
     </div>
   </div>
@@ -128,3 +128,131 @@ const finishedPlayers = computed<FinishedPlayer[]>(() => {
   })
 })
 </script>
+
+<style scoped>
+.results-card {
+  background-color: var(--pp-bg-secondary);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: var(--pp-shadow-sm);
+  border: 1px solid var(--pp-border);
+}
+
+.results-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.results-card__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--pp-text-primary);
+}
+
+.results-card__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--pp-accent-gold);
+}
+
+/* Loading */
+.results-card__loading {
+  text-align: center;
+  padding: 2rem 0;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Results List */
+.results-card__list > * + * {
+  margin-top: 0.5rem;
+}
+
+.results-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid;
+}
+
+.results-card__row--podium {
+  background-color: rgba(254, 231, 138, 0.1);
+  border-color: rgba(254, 231, 138, 0.2);
+}
+
+.results-card__row--regular {
+  background-color: rgba(24, 24, 26, 0.3);
+  border-color: rgba(84, 84, 95, 0.3);
+}
+
+.results-card__row-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Position Badge */
+.results-card__position {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.results-card__position--first {
+  background-color: rgba(254, 231, 138, 0.3);
+  color: var(--pp-accent-gold);
+}
+
+.results-card__position--second {
+  background-color: rgba(209, 213, 219, 0.2);
+  color: #d1d5db;
+}
+
+.results-card__position--third {
+  background-color: rgba(251, 146, 60, 0.2);
+  color: var(--pp-orange-400);
+}
+
+.results-card__position--default {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.results-card__player-name {
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.results-card__row-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.results-card__prize {
+  font-weight: 600;
+  color: var(--pp-accent-gold);
+  font-size: 0.875rem;
+}
+
+.results-card__points {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* No Results */
+.results-card__empty {
+  text-align: center;
+  padding: 2rem 0;
+  color: rgba(255, 255, 255, 0.6);
+}
+</style>

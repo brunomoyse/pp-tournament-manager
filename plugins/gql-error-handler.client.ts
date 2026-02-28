@@ -4,7 +4,7 @@ export default defineNuxtPlugin(() => {
   const router = useRouter()
 
   // Set up global GraphQL error handler
-  useGqlError((err) => {
+  useGqlError((err: any) => {
     // Check if this is an authentication error
     const isAuthError = err?.gqlErrors?.some((gqlError: any) => {
       const message = gqlError?.message?.toLowerCase() || ''

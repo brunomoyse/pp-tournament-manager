@@ -54,7 +54,7 @@ export interface UserTournamentResult {
 
 export interface TournamentStructure {
     id: string;
-    tournamentId: string;
+    tournamentId?: string;
     levelNumber: number;
     smallBlind: number;
     bigBlind: number;

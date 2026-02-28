@@ -1,54 +1,54 @@
 <template>
-  <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-    <div class="flex items-center justify-between mb-8">
-      <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('headings.prizePool') }}</h3>
-      <IonIcon :icon="trophyOutline" class="w-6 h-6 text-white" />
+  <div class="prize-card">
+    <div class="prize-header">
+      <h3 class="prize-title">{{ t('headings.prizePool') }}</h3>
+      <IonIcon :icon="trophyOutline" class="prize-header-icon" />
     </div>
 
     <!-- Hero prize pool -->
-    <div class="text-4xl font-bold text-pp-text-primary mb-1">{{ prizePool || t('status.loading') }}</div>
+    <div class="prize-hero">{{ prizePool || t('status.loading') }}</div>
 
     <!-- Entry context subtitle -->
-    <div v-if="entryStats" class="text-sm text-white/50 mb-6">
+    <div v-if="entryStats" class="prize-subtitle">
       {{ t('prizePool.entriesAndPlayers', { entries: entryStats.totalEntries, players: entryStats.uniquePlayers }) }}
     </div>
 
     <!-- 2x2 metrics grid -->
-    <div class="grid grid-cols-2 gap-4">
-      <div class="bg-pp-bg-primary/50 rounded-lg p-3">
-        <div class="text-xs text-white/50 mb-1">{{ t('prizePool.buyIn') }}</div>
-        <div class="text-base font-bold text-white">{{ buyInDisplay }}</div>
+    <div class="prize-grid">
+      <div class="prize-grid-item">
+        <div class="prize-grid-label">{{ t('prizePool.buyIn') }}</div>
+        <div class="prize-grid-value">{{ buyInDisplay }}</div>
       </div>
-      <div class="bg-pp-bg-primary/50 rounded-lg p-3">
-        <div class="text-xs text-white/50 mb-1">{{ t('prizePool.entries') }}</div>
-        <div class="text-base font-bold text-white">{{ entryStats?.totalEntries || 0 }}</div>
+      <div class="prize-grid-item">
+        <div class="prize-grid-label">{{ t('prizePool.entries') }}</div>
+        <div class="prize-grid-value">{{ entryStats?.totalEntries || 0 }}</div>
       </div>
       <template v-if="showFullPayout">
-        <div class="bg-pp-bg-primary/50 rounded-lg p-3">
-          <div class="text-xs text-white/50 mb-1">{{ t('prizePool.firstPrize') }}</div>
-          <div class="text-base font-bold text-white">{{ firstPrizeDisplay }}</div>
+        <div class="prize-grid-item">
+          <div class="prize-grid-label">{{ t('prizePool.firstPrize') }}</div>
+          <div class="prize-grid-value">{{ firstPrizeDisplay }}</div>
         </div>
-        <div class="bg-pp-bg-primary/50 rounded-lg p-3">
-          <div class="text-xs text-white/50 mb-1">{{ t('prizePool.payingPositions') }}</div>
-          <div class="text-base font-bold text-white">{{ payoutPositions.length }}</div>
+        <div class="prize-grid-item">
+          <div class="prize-grid-label">{{ t('prizePool.payingPositions') }}</div>
+          <div class="prize-grid-value">{{ payoutPositions.length }}</div>
         </div>
       </template>
     </div>
 
     <!-- Full payout breakdown (after late registration) -->
     <template v-if="showFullPayout && payoutPositions.length">
-      <div class="mt-6 pt-5 border-t border-pp-border/30">
-        <h4 class="text-sm font-medium text-white/60 mb-3">{{ t('prizePool.payoutBreakdown') }}</h4>
-        <div class="space-y-2">
+      <div class="prize-breakdown">
+        <h4 class="prize-breakdown-title">{{ t('prizePool.payoutBreakdown') }}</h4>
+        <div class="prize-breakdown-list">
           <div
             v-for="position in payoutPositions"
             :key="position.position"
-            class="flex items-center justify-between text-sm"
+            class="prize-breakdown-row"
           >
-            <span class="text-white">{{ getPositionLabel(position.position) }}</span>
-            <div class="flex items-center gap-3">
-              <span class="text-white/40 text-xs">{{ position.percentage.toFixed(1) }}%</span>
-              <span class="font-semibold text-pp-text-primary min-w-[80px] text-right">{{ formatPrice(position.amountCents, locale) }}</span>
+            <span class="prize-breakdown-position">{{ getPositionLabel(position.position) }}</span>
+            <div class="prize-breakdown-values">
+              <span class="prize-breakdown-percent">{{ position.percentage.toFixed(1) }}%</span>
+              <span class="prize-breakdown-amount">{{ formatPrice(position.amountCents, locale) }}</span>
             </div>
           </div>
         </div>
@@ -110,3 +110,115 @@ const getPositionLabel = (position: number) => {
 
 defineExpose({ refreshStats })
 </script>
+
+<style scoped>
+.prize-card {
+  background-color: var(--pp-bg-secondary);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: var(--pp-shadow-sm);
+  border: 1px solid var(--pp-border);
+}
+
+.prize-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.prize-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--pp-text-primary);
+}
+
+.prize-header-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #ffffff;
+}
+
+.prize-hero {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--pp-accent-gold);
+  margin-bottom: 0.25rem;
+}
+
+.prize-subtitle {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 1.5rem;
+}
+
+.prize-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.prize-grid-item {
+  background-color: rgba(24, 24, 26, 0.5);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+.prize-grid-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.25rem;
+}
+
+.prize-grid-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.prize-breakdown {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(84, 84, 95, 0.3);
+}
+
+.prize-breakdown-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.75rem;
+}
+
+.prize-breakdown-list > * + * {
+  margin-top: 0.5rem;
+}
+
+.prize-breakdown-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+}
+
+.prize-breakdown-position {
+  color: #ffffff;
+}
+
+.prize-breakdown-values {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.prize-breakdown-percent {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.75rem;
+}
+
+.prize-breakdown-amount {
+  font-weight: 600;
+  color: var(--pp-accent-gold);
+  min-width: 80px;
+  text-align: right;
+}
+</style>

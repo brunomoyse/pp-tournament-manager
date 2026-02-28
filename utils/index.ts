@@ -7,7 +7,7 @@ export const formatDuration = (seconds: number|null|undefined): string => {
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
 }
 
-export const formatBlinds = (structure: TournamentStructure | undefined): string => {
+export const formatBlinds = (structure: TournamentStructure | null | undefined): string => {
     if (!structure) return '0/0'
     return `${structure.smallBlind}/${structure.bigBlind}`
 }

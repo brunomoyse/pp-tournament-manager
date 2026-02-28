@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useAuthStore } from '~/stores/useAuthStore'
 import { useClubStore } from '~/stores/useClubStore'
+import { Role } from '#gql/default'
 
 describe('useAuthStore', () => {
   beforeEach(() => {
@@ -71,6 +72,7 @@ describe('useAuthStore', () => {
         email: 'test@example.com',
         firstName: 'Test',
         lastName: 'User',
+        role: Role.PLAYER,
       }
 
       vi.mocked(GqlLoginUser).mockResolvedValue({
@@ -98,6 +100,7 @@ describe('useAuthStore', () => {
         id: '1',
         email: 'test@example.com',
         firstName: 'Test',
+        role: Role.MANAGER,
         managedClub: {
           id: 'club-1',
           name: 'Test Club',
@@ -143,18 +146,19 @@ describe('useAuthStore', () => {
     it('should set loading state during login', async () => {
       const store = useAuthStore()
 
-      vi.mocked(GqlLoginUser).mockImplementation(() => {
+      vi.mocked(GqlLoginUser).mockImplementation(async () => {
         expect(store.isLoading).toBe(true)
-        return Promise.resolve({
+        return {
           loginUser: {
             token: 'test-token',
             user: {
               id: '1',
               email: 'test@example.com',
               firstName: 'Test',
+              role: Role.PLAYER,
             },
           },
-        })
+        }
       })
 
       await store.login({
@@ -250,6 +254,8 @@ describe('useAuthStore', () => {
         email: 'test@example.com',
         firstName: 'Test',
         lastName: 'User',
+        isActive: true,
+        role: Role.PLAYER,
       }
 
       store.authToken = 'test-token'

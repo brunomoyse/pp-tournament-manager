@@ -1,40 +1,38 @@
 <template>
-  <div class="bg-pp-bg-secondary rounded-2xl p-6 shadow-sm border border-pp-border" style="background-color: #24242a !important;" data-table-card>
+  <div class="table-card" data-table-card>
     <!-- Table Header -->
-    <div class="flex items-center justify-between mb-4">
-      <div class="flex items-center gap-3">
-        <h3 class="text-lg font-bold text-pp-text-primary">{{ t('labels.table') }} {{ table.tableNumber }}</h3>
-        <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">
+    <div class="table-card__header">
+      <div class="table-card__header-left">
+        <h3 class="table-card__title">{{ t('labels.table') }} {{ table.tableNumber }}</h3>
+        <span class="table-card__active-badge">
           {{ t('labels.active').toLowerCase() }}
         </span>
       </div>
-      <div class="text-sm text-white/60">
+      <div class="table-card__seat-count">
         {{ occupiedSeats }}/{{ table.maxSeats }} {{ t('labels.seatsOccupied') }}
       </div>
     </div>
 
     <!-- Table Visualization -->
-    <div class="relative w-full mx-auto" :style="{ aspectRatio: tableAspectRatio }">
+    <div class="table-card__visualization" :style="{ aspectRatio: tableAspectRatio }">
       <!-- Table rail (dark padded edge) -->
-      <div class="absolute inset-[8%] rounded-[50%] bg-gradient-to-b from-[#4a4a52] to-[#38383f] shadow-xl border border-[#5a5a62]/30">
-        <!-- Table felt (green playing surface) -->
-        <div class="absolute inset-[8px] rounded-[50%] bg-gradient-to-br from-[#2d8a40] to-[#1f6830] shadow-inner">
+      <div class="table-card__rail">
+        <!-- Table felt (green playing surface) with texture -->
+        <div class="table-card__felt felt-texture">
           <!-- Inner felt line -->
-          <div class="absolute inset-4 rounded-[50%] border border-white/[0.06]"></div>
+          <div class="table-card__felt-inner"></div>
           <!-- Center label -->
-          <div class="absolute inset-0 flex items-center justify-center">
-            <div class="text-center">
-              <div class="text-2xl font-bold text-white/15">T{{ table.tableNumber }}</div>
-              <div class="text-xs text-white/10">{{ occupiedSeats }}/{{ table.maxSeats }}</div>
-            </div>
+          <div class="table-card__center-label">
+            <div class="table-card__center-number">T{{ table.tableNumber }}</div>
+            <div class="table-card__center-seats">{{ occupiedSeats }}/{{ table.maxSeats }}</div>
           </div>
         </div>
       </div>
 
       <!-- Dealer tray (top center, embedded in the rail) -->
-      <div class="absolute left-1/2 -translate-x-1/2 z-20" style="top: 5%;">
-        <div class="w-14 h-6 rounded-b-lg bg-[#2a2a32] border border-[#5a5a62]/40 border-t-0 shadow-md flex items-center justify-center">
-          <div class="w-8 h-[2px] rounded-full bg-white/10"></div>
+      <div class="table-card__dealer-tray-wrapper">
+        <div class="table-card__dealer-tray">
+          <div class="table-card__dealer-tray-line"></div>
         </div>
       </div>
 
@@ -43,15 +41,15 @@
         v-for="seatNumber in table.maxSeats"
         :key="seatNumber"
         :style="getSeatStyle(seatNumber)"
-        class="absolute z-10"
+        class="table-card__seat-wrapper"
       >
         <!-- Seat circle -->
         <div
           :class="[
-            'w-12 h-12 rounded-full border-2 flex items-center justify-center text-sm font-bold transition-all cursor-pointer shadow-md',
+            'table-card__seat',
             getSeatPlayer(seatNumber)
-              ? 'bg-pp-accent-gold text-pp-bg-primary border-pp-accent-gold shadow-pp-accent-gold/30'
-              : 'bg-[#2a2a32] border-[#5a5a62] text-white/70 hover:border-pp-accent-gold/50'
+              ? 'table-card__seat--occupied'
+              : 'table-card__seat--empty'
           ]"
           @click="handleSeatClick(seatNumber)"
         >
@@ -62,8 +60,8 @@
         <div
           v-if="getSeatPlayer(seatNumber)"
           :class="[
-            'absolute text-[10px] font-semibold text-pp-text-primary whitespace-nowrap',
-            isTopHalf(seatNumber) ? 'bottom-full mb-1 left-1/2 -translate-x-1/2' : 'top-full mt-1 left-1/2 -translate-x-1/2'
+            'table-card__player-label',
+            isTopHalf(seatNumber) ? 'table-card__player-label--top' : 'table-card__player-label--bottom'
           ]"
         >
           {{ getPlayerDisplayName(getSeatPlayer(seatNumber)) }}
@@ -72,23 +70,23 @@
     </div>
 
     <!-- Seated Players List -->
-    <div class="mt-4">
-      <h4 class="text-sm font-semibold text-white mb-3">{{ t('labels.seatedPlayers') }}</h4>
-      <div v-if="seatedPlayers.length > 0" class="space-y-2">
+    <div class="table-card__players-list">
+      <h4 class="table-card__players-title">{{ t('labels.seatedPlayers') }}</h4>
+      <div v-if="seatedPlayers.length > 0" class="table-card__players-items">
         <button
           v-for="seatData in seatedPlayers"
           :key="seatData.assignment.seatNumber"
-          class="flex items-center justify-between text-sm w-full px-3 py-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer text-left"
+          class="table-card__player-row"
           @click="openPlayerModal(seatData.assignment.seatNumber)"
         >
-          <div class="flex items-center gap-2">
-            <span class="text-pp-accent-gold font-medium">{{ t('labels.seat') }} {{ seatData.assignment.seatNumber }}:</span>
-            <span class="text-white">{{ getPlayerFullName(seatData.player) }}</span>
+          <div class="table-card__player-info">
+            <span class="table-card__player-seat">{{ t('labels.seat') }} {{ seatData.assignment.seatNumber }}:</span>
+            <span class="table-card__player-name">{{ getPlayerFullName(seatData.player) }}</span>
           </div>
-          <IonIcon :icon="chevronForwardOutline" class="w-4 h-4 text-white/40" />
+          <IonIcon :icon="chevronForwardOutline" class="table-card__player-chevron" />
         </button>
       </div>
-      <div v-else class="text-white/60 text-sm">
+      <div v-else class="table-card__no-players">
         {{ t('messages.noPlayersSeated') }}
       </div>
     </div>
@@ -123,10 +121,12 @@ interface Table {
 
 interface SeatAssignment {
   assignment: {
+    userId: string
     seatNumber: number
-    stackSize?: number
+    stackSize?: number | null
   }
   player: {
+    id: string
     firstName: string
     lastName?: string | null
   }
@@ -258,3 +258,267 @@ const handleMovePlayer = (data: { playerId: string, fromTable: number, fromSeat:
   closePlayerModal()
 }
 </script>
+
+<style scoped>
+.table-card {
+  background-color: var(--pp-bg-secondary);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: var(--pp-shadow-sm);
+  border: 1px solid var(--pp-border);
+}
+
+/* Header */
+.table-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.table-card__header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.table-card__title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--pp-text-primary);
+}
+
+.table-card__active-badge {
+  padding: 0.25rem 0.5rem;
+  background-color: rgba(34, 197, 94, 0.2);
+  color: var(--pp-green-400);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.table-card__seat-count {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Table Visualization */
+.table-card__visualization {
+  position: relative;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.table-card__rail {
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  background: linear-gradient(to bottom, #4a4a52, #38383f);
+  box-shadow: var(--pp-shadow-xl);
+  border: 1px solid rgba(90, 90, 98, 0.3);
+}
+
+.table-card__felt {
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  background: linear-gradient(to bottom right, #2d8a40, #1f6830);
+  box-shadow: var(--pp-shadow-inner);
+}
+
+.table-card__felt-inner {
+  position: absolute;
+  inset: 1rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.table-card__center-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-card__center-label > div {
+  text-align: center;
+}
+
+.table-card__center-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.15);
+}
+
+.table-card__center-seats {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.1);
+}
+
+/* Dealer tray */
+.table-card__dealer-tray-wrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  top: 5%;
+}
+
+.table-card__dealer-tray {
+  width: 3.5rem;
+  height: 1.5rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+  background-color: #2a2a32;
+  border: 1px solid rgba(90, 90, 98, 0.4);
+  border-top: 0;
+  box-shadow: var(--pp-shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-card__dealer-tray-line {
+  width: 2rem;
+  height: 2px;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Seat positions */
+.table-card__seat-wrapper {
+  position: absolute;
+  z-index: 10;
+}
+
+.table-card__seat {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  border: 2px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.table-card__seat--occupied {
+  background-color: var(--pp-accent-gold);
+  color: var(--pp-bg-primary);
+  border-color: var(--pp-accent-gold);
+  box-shadow: 0 0 12px rgba(254, 231, 138, 0.4);
+  transform: scale(1.05);
+}
+
+.table-card__seat--empty {
+  background-color: #2a2a32;
+  border-color: #5a5a62;
+  color: rgba(255, 255, 255, 0.7);
+  box-shadow: var(--pp-shadow-md);
+}
+
+@media (hover: hover) {
+  .table-card__seat--empty:hover {
+    border-color: rgba(254, 231, 138, 0.5);
+    box-shadow: var(--pp-shadow-lg);
+  }
+}
+
+/* Player name labels */
+.table-card__player-label {
+  position: absolute;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--pp-text-primary);
+  white-space: nowrap;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.table-card__player-label--top {
+  bottom: 100%;
+  margin-bottom: 0.25rem;
+}
+
+.table-card__player-label--bottom {
+  top: 100%;
+  margin-top: 0.25rem;
+}
+
+/* Seated Players List */
+.table-card__players-list {
+  margin-top: 1rem;
+}
+
+.table-card__players-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.75rem;
+}
+
+.table-card__players-items > * + * {
+  margin-top: 0.5rem;
+}
+
+.table-card__player-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.15s ease;
+  cursor: pointer;
+  text-align: left;
+}
+
+@media (hover: hover) {
+  .table-card__player-row:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.table-card__player-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.table-card__player-seat {
+  color: var(--pp-accent-gold);
+  font-weight: 500;
+}
+
+.table-card__player-name {
+  color: #ffffff;
+}
+
+.table-card__player-chevron {
+  width: 1rem;
+  height: 1rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.table-card__no-players {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.875rem;
+}
+
+/* Subtle felt noise texture overlay */
+.felt-texture::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0.15;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-size: 100px 100px;
+  pointer-events: none;
+}
+</style>
