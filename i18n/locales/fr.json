@@ -51,9 +51,18 @@
   "common": {
     "cancel": "Annuler",
     "close": "Fermer",
+    "collapse": "Réduire",
     "edit": "Modifier",
     "ok": "OK",
     "user": "Utilisateur"
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "tournaments": "Tournois",
+    "players": "Joueurs",
+    "reports": "Rapports",
+    "menu": "Menu",
+    "logout": "Déconnexion"
   },
   "headings": {
     "activeTournaments": "Tournois Actifs",
@@ -110,7 +119,10 @@
     "tableSeat": "Table / Siège",
     "actions": "Actions",
     "lateRegThroughLevel": "Inscr. tardive jusqu'au niveau {level}",
-    "lateRegCutoff": "Inscr. tardive"
+    "lateRegCutoff": "Inscr. tardive",
+    "email": "Email",
+    "phone": "Téléphone",
+    "more": "de plus"
   },
   "buttons": {
     "viewTournament": "Voir le Tournoi",
@@ -362,7 +374,7 @@
     }
   },
   "tournamentStatuses": {
-    "NOT_STARTED": "Non démarré",
+    "NOT_STARTED": "Planifié",
     "IN_PROGRESS": "En cours",
     "COMPLETED": "Terminé",
     "FINISHED": "Terminé",
