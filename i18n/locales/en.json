@@ -51,9 +51,18 @@
   "common": {
     "cancel": "Cancel",
     "close": "Close",
+    "collapse": "Collapse",
     "edit": "Edit",
     "ok": "OK",
     "user": "User"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "tournaments": "Tournaments",
+    "players": "Players",
+    "reports": "Reports",
+    "menu": "Menu",
+    "logout": "Logout"
   },
   "headings": {
     "activeTournaments": "Active Tournaments",
@@ -110,7 +119,10 @@
     "tableSeat": "Table / Seat",
     "actions": "Actions",
     "lateRegThroughLevel": "Late reg. through level {level}",
-    "lateRegCutoff": "Late Reg"
+    "lateRegCutoff": "Late Reg",
+    "email": "Email",
+    "phone": "Phone",
+    "more": "more"
   },
   "buttons": {
     "viewTournament": "View Tournament",
@@ -362,7 +374,7 @@
     }
   },
   "tournamentStatuses": {
-    "NOT_STARTED": "Not Started",
+    "NOT_STARTED": "Planned",
     "IN_PROGRESS": "In Progress",
     "COMPLETED": "Completed",
     "FINISHED": "Finished",

@@ -51,9 +51,18 @@
   "common": {
     "cancel": "Annuleren",
     "close": "Sluiten",
+    "collapse": "Inklappen",
     "edit": "Bewerken",
     "ok": "OK",
     "user": "Gebruiker"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "tournaments": "Toernooien",
+    "players": "Spelers",
+    "reports": "Rapporten",
+    "menu": "Menu",
+    "logout": "Uitloggen"
   },
   "headings": {
     "activeTournaments": "Actieve Toernooien",
@@ -110,7 +119,10 @@
     "tableSeat": "Tafel / Stoel",
     "actions": "Acties",
     "lateRegThroughLevel": "Late inschrijving t/m niveau {level}",
-    "lateRegCutoff": "Late Reg"
+    "lateRegCutoff": "Late Reg",
+    "email": "Email",
+    "phone": "Telefoon",
+    "more": "meer"
   },
   "buttons": {
     "viewTournament": "Bekijk Toernooi",
@@ -362,7 +374,7 @@
     }
   },
   "tournamentStatuses": {
-    "NOT_STARTED": "Niet gestart",
+    "NOT_STARTED": "Gepland",
     "IN_PROGRESS": "Bezig",
     "COMPLETED": "Voltooid",
     "FINISHED": "Afgelopen",
