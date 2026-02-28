@@ -1,83 +1,83 @@
 <template>
-  <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div v-if="isOpen" class="pp-modal-overlay">
     <!-- Backdrop -->
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="closeModal"></div>
+    <div class="pp-modal-backdrop" @click="closeModal"></div>
 
     <!-- Modal Content -->
-    <div class="relative bg-pp-bg-secondary rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-pp-border shadow-2xl" style="background-color: #24242a !important;">
+    <div class="pp-modal-content pp-modal-content--2xl modal-flex-container">
       <!-- Header -->
-      <div class="flex items-center justify-between p-6 border-b border-pp-border/50 flex-shrink-0">
+      <div class="pp-modal-header modal-header-shrink">
         <div>
-          <h2 class="text-xl font-bold text-pp-text-primary">{{ t('results.title') }}</h2>
-          <p class="text-sm text-white/60 mt-1">{{ stepLabels[currentStep] }}</p>
+          <h3 class="modal-title">{{ t('results.title') }}</h3>
+          <p class="modal-subtitle">{{ stepLabels[currentStep] }}</p>
         </div>
         <button
           @click="closeModal"
-          class="p-2 text-white/60 hover:text-white rounded-lg hover:bg-pp-bg-primary/50 transition-colors"
+          class="pp-close-button"
         >
-          <IonIcon :icon="closeOutline" class="w-5 h-5" />
+          <IonIcon :icon="closeOutline" class="icon-md" />
         </button>
       </div>
 
       <!-- Step Indicator -->
-      <div class="flex items-center gap-2 px-6 py-3 border-b border-pp-border/30 flex-shrink-0">
+      <div class="step-indicator modal-header-shrink">
         <div
           v-for="step in 3"
           :key="step"
           :class="[
-            'flex-1 h-1.5 rounded-full transition-all',
-            step <= currentStep ? 'bg-pp-accent-gold' : 'bg-white/10'
+            'step-bar',
+            step <= currentStep ? 'step-bar--active' : 'step-bar--inactive'
           ]"
         ></div>
       </div>
 
       <!-- Scrollable Content -->
-      <div class="overflow-y-auto flex-1 p-6">
+      <div class="scrollable-content">
         <!-- Step 1: Player Ordering -->
         <div v-if="currentStep === 1">
-          <p class="text-white/70 text-sm mb-4">{{ t('results.step1Desc') }}</p>
+          <p class="step-description">{{ t('results.step1Desc') }}</p>
 
-          <div v-if="orderedPlayers.length === 0" class="text-center py-8 text-white/60">
+          <div v-if="orderedPlayers.length === 0" class="empty-message">
             {{ t('results.noRemainingPlayers') }}
           </div>
 
-          <div v-else class="space-y-2">
+          <div v-else class="player-order-list">
             <div
               v-for="(player, index) in orderedPlayers"
               :key="player.userId"
-              class="flex items-center gap-3 p-3 bg-pp-bg-primary/50 rounded-lg border border-pp-border/30"
+              class="player-order-row"
             >
               <!-- Position Number -->
-              <div class="w-8 h-8 rounded-full bg-pp-accent-gold/20 flex items-center justify-center text-pp-accent-gold font-bold text-sm flex-shrink-0">
+              <div class="position-badge">
                 {{ index + 1 }}
               </div>
 
               <!-- Player Info -->
-              <div class="flex-1 min-w-0">
-                <div class="font-medium text-white truncate">{{ player.name }}</div>
+              <div class="player-order-info">
+                <div class="player-order-name pp-truncate">{{ player.name }}</div>
               </div>
 
               <!-- Move Buttons -->
-              <div class="flex items-center gap-1 flex-shrink-0">
+              <div class="move-buttons">
                 <button
                   @click="movePlayer(index, -1)"
                   :disabled="index === 0"
                   :class="[
-                    'p-1.5 rounded-lg transition-colors',
-                    index === 0 ? 'text-white/20 cursor-not-allowed' : 'text-white/60 hover:text-white hover:bg-pp-bg-primary'
+                    'move-button',
+                    index === 0 ? 'move-button--disabled' : ''
                   ]"
                 >
-                  <IonIcon :icon="chevronUpOutline" class="w-4 h-4" />
+                  <IonIcon :icon="chevronUpOutline" class="icon-sm" />
                 </button>
                 <button
                   @click="movePlayer(index, 1)"
                   :disabled="index === orderedPlayers.length - 1"
                   :class="[
-                    'p-1.5 rounded-lg transition-colors',
-                    index === orderedPlayers.length - 1 ? 'text-white/20 cursor-not-allowed' : 'text-white/60 hover:text-white hover:bg-pp-bg-primary'
+                    'move-button',
+                    index === orderedPlayers.length - 1 ? 'move-button--disabled' : ''
                   ]"
                 >
-                  <IonIcon :icon="chevronDownOutline" class="w-4 h-4" />
+                  <IonIcon :icon="chevronDownOutline" class="icon-sm" />
                 </button>
               </div>
             </div>
@@ -86,15 +86,15 @@
 
         <!-- Step 2: Payout Preview -->
         <div v-if="currentStep === 2">
-          <p class="text-white/70 text-sm mb-4">{{ t('results.step2Desc') }}</p>
+          <p class="step-description">{{ t('results.step2Desc') }}</p>
 
           <!-- Payout Template Selector -->
-          <div class="mb-4">
-            <label class="block text-sm font-medium text-white/70 mb-2">{{ t('results.payoutTemplate') }}</label>
+          <div class="template-selector">
+            <label class="pp-label">{{ t('results.payoutTemplate') }}</label>
             <select
               v-model="selectedPayoutTemplateId"
               @change="applyPayoutTemplate"
-              class="w-full px-3 py-2 bg-pp-bg-primary border border-pp-border rounded-lg text-white text-sm focus:ring-1 focus:ring-pp-accent-gold"
+              class="pp-select"
             >
               <option value="">{{ t('results.useExistingPayout') }}</option>
               <option
@@ -102,29 +102,29 @@
                 :key="tmpl.id"
                 :value="tmpl.id"
               >
-                {{ tmpl.name }} ({{ tmpl.minPlayers }}-{{ tmpl.maxPlayers || '∞' }} {{ t('headings.players').toLowerCase() }})
+                {{ tmpl.name }} ({{ tmpl.minPlayers }}-{{ tmpl.maxPlayers || '&#x221e;' }} {{ t('headings.players').toLowerCase() }})
               </option>
             </select>
           </div>
 
           <!-- Payout Table -->
-          <div class="space-y-2 mb-6">
+          <div class="payout-list">
             <div
               v-for="(player, index) in orderedPlayers"
               :key="player.userId"
-              class="flex items-center justify-between p-3 bg-pp-bg-primary/50 rounded-lg border border-pp-border/30"
+              class="payout-row"
             >
-              <div class="flex items-center gap-3">
-                <div class="w-7 h-7 rounded-full bg-pp-accent-gold/20 flex items-center justify-center text-pp-accent-gold font-bold text-xs">
+              <div class="payout-row-left">
+                <div class="position-badge position-badge--sm">
                   {{ index + 1 }}
                 </div>
-                <span class="text-white text-sm">{{ player.name }}</span>
+                <span class="payout-player-name">{{ player.name }}</span>
               </div>
-              <div class="flex items-center gap-3">
-                <span v-if="getPayoutForPosition(index + 1)?.percentage" class="text-white/40 text-xs">
+              <div class="payout-row-right">
+                <span v-if="getPayoutForPosition(index + 1)?.percentage" class="payout-percentage">
                   {{ getPayoutForPosition(index + 1)?.percentage?.toFixed(1) }}%
                 </span>
-                <span class="font-semibold text-pp-text-primary text-sm">
+                <span class="payout-amount">
                   {{ formatPrice(getPayoutForPosition(index + 1)?.amountCents || 0, locale) }}
                 </span>
               </div>
@@ -132,31 +132,29 @@
           </div>
 
           <!-- Deal Section -->
-          <div class="border-t border-pp-border/30 pt-4">
-            <label class="flex items-center gap-3 cursor-pointer mb-4">
+          <div class="deal-section">
+            <label class="deal-toggle">
               <input
                 v-model="includeDeal"
                 type="checkbox"
-                class="w-4 h-4 rounded border-pp-border bg-pp-bg-primary text-pp-accent-gold focus:ring-pp-accent-gold"
+                class="deal-checkbox"
               />
-              <span class="text-white font-medium">{{ t('results.includeDeal') }}</span>
+              <span class="deal-toggle-label">{{ t('results.includeDeal') }}</span>
             </label>
 
-            <div v-if="includeDeal" class="space-y-4 pl-7">
+            <div v-if="includeDeal" class="deal-options">
               <!-- Deal Type -->
               <div>
-                <label class="block text-sm font-medium text-white/70 mb-2">{{ t('results.dealType') }}</label>
-                <div class="flex gap-2">
+                <label class="pp-label">{{ t('results.dealType') }}</label>
+                <div class="deal-type-options">
                   <button
                     v-for="type in dealTypes"
                     :key="type.value"
                     type="button"
                     @click="deal.dealType = type.value"
                     :class="[
-                      'px-3 py-1.5 rounded-lg text-xs font-medium border transition-all',
-                      deal.dealType === type.value
-                        ? 'bg-pp-accent-gold/20 text-pp-accent-gold border-pp-accent-gold/40'
-                        : 'bg-pp-bg-primary border-pp-border text-white/70'
+                      'deal-type-button',
+                      deal.dealType === type.value ? 'deal-type-button--active' : ''
                     ]"
                   >
                     {{ type.label }}
@@ -166,41 +164,41 @@
 
               <!-- Affected Positions -->
               <div>
-                <label class="block text-sm font-medium text-white/70 mb-2">{{ t('results.affectedPositions') }}</label>
-                <div class="flex flex-wrap gap-2">
+                <label class="pp-label">{{ t('results.affectedPositions') }}</label>
+                <div class="affected-positions">
                   <label
                     v-for="(player, index) in orderedPlayers"
                     :key="player.userId"
-                    class="flex items-center gap-2 px-3 py-1.5 bg-pp-bg-primary rounded-lg border border-pp-border cursor-pointer hover:border-pp-accent-gold/40 text-sm"
+                    class="affected-position-item"
                   >
                     <input
                       v-model="deal.affectedPositions"
                       :value="index + 1"
                       type="checkbox"
-                      class="w-3 h-3 rounded border-pp-border bg-pp-bg-primary text-pp-accent-gold focus:ring-pp-accent-gold"
+                      class="affected-position-checkbox"
                     />
-                    <span class="text-white/80">#{{ index + 1 }} {{ player.name }}</span>
+                    <span class="affected-position-label">#{{ index + 1 }} {{ player.name }}</span>
                   </label>
                 </div>
               </div>
 
               <!-- Custom Payouts (for CUSTOM deal type) -->
-              <div v-if="deal.dealType === 'CUSTOM'" class="space-y-2">
-                <label class="block text-sm font-medium text-white/70 mb-2">{{ t('results.customAmount') }}</label>
+              <div v-if="deal.dealType === 'CUSTOM'" class="custom-payouts">
+                <label class="pp-label">{{ t('results.customAmount') }}</label>
                 <div
                   v-for="pos in deal.affectedPositions"
                   :key="pos"
-                  class="flex items-center gap-3"
+                  class="custom-payout-row"
                 >
-                  <span class="text-white/60 text-sm min-w-[100px]">#{{ pos }} {{ orderedPlayers[pos - 1]?.name }}</span>
-                  <div class="relative flex-1">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-xs">&euro;</span>
+                  <span class="custom-payout-label">#{{ pos }} {{ orderedPlayers[pos - 1]?.name }}</span>
+                  <div class="custom-payout-input-wrapper">
+                    <span class="custom-payout-prefix">&euro;</span>
                     <input
                       v-model.number="customPayoutAmounts[pos]"
                       type="number"
                       step="0.01"
                       min="0"
-                      class="w-full pl-7 pr-3 py-1.5 text-sm bg-pp-bg-primary border border-pp-border rounded-lg text-white focus:ring-1 focus:ring-pp-accent-gold"
+                      class="pp-input custom-payout-input"
                     />
                   </div>
                 </div>
@@ -208,12 +206,12 @@
 
               <!-- Deal Notes -->
               <div>
-                <label class="block text-sm font-medium text-white/70 mb-2">{{ t('results.dealNotes') }}</label>
+                <label class="pp-label">{{ t('results.dealNotes') }}</label>
                 <input
                   v-model="deal.notes"
                   type="text"
                   :placeholder="t('results.dealNotesPlaceholder')"
-                  class="w-full px-3 py-2 bg-pp-bg-primary border border-pp-border rounded-lg text-white text-sm focus:ring-1 focus:ring-pp-accent-gold"
+                  class="pp-input"
                 />
               </div>
             </div>
@@ -222,27 +220,29 @@
 
         <!-- Step 3: Confirmation -->
         <div v-if="currentStep === 3">
-          <p class="text-white/70 text-sm mb-4">{{ t('results.step3Desc') }}</p>
+          <p class="step-description">{{ t('results.step3Desc') }}</p>
 
-          <div class="bg-pp-bg-primary/50 rounded-lg border border-pp-border/30 p-4 space-y-3">
-            <h4 class="font-semibold text-pp-text-primary">{{ t('results.summaryTitle') }}</h4>
+          <div class="summary-card">
+            <h4 class="summary-title">{{ t('results.summaryTitle') }}</h4>
 
-            <div
-              v-for="(player, index) in orderedPlayers"
-              :key="player.userId"
-              class="flex items-center justify-between text-sm py-1"
-            >
-              <div class="flex items-center gap-2">
-                <span class="text-pp-accent-gold font-bold">{{ index + 1 }}.</span>
-                <span class="text-white">{{ player.name }}</span>
+            <div class="summary-list">
+              <div
+                v-for="(player, index) in orderedPlayers"
+                :key="player.userId"
+                class="summary-row"
+              >
+                <div class="summary-row-left">
+                  <span class="summary-position">{{ index + 1 }}.</span>
+                  <span class="summary-name">{{ player.name }}</span>
+                </div>
+                <span class="summary-amount">
+                  {{ formatPrice(getPayoutForPosition(index + 1)?.amountCents || 0, locale) }}
+                </span>
               </div>
-              <span class="text-pp-text-primary font-medium">
-                {{ formatPrice(getPayoutForPosition(index + 1)?.amountCents || 0, locale) }}
-              </span>
             </div>
 
-            <div v-if="includeDeal" class="pt-3 border-t border-pp-border/30">
-              <div class="text-sm text-white/60">
+            <div v-if="includeDeal" class="summary-deal">
+              <div class="summary-deal-text">
                 {{ t('results.deal') }}: {{ dealTypes.find(d => d.value === deal.dealType)?.label }}
                 ({{ deal.affectedPositions.length }} {{ t('results.affectedPositions').toLowerCase() }})
               </div>
@@ -252,19 +252,19 @@
       </div>
 
       <!-- Error Banner -->
-      <div v-if="errorMessage" class="mx-6 mb-2 flex items-center gap-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-        <IonIcon :icon="alertCircleOutline" class="w-5 h-5 text-red-400 flex-shrink-0" />
-        <div class="flex-1">
-          <p class="text-red-300 font-medium text-sm">{{ t('results.submitErrorTitle') }}</p>
-          <p class="text-red-400/70 text-xs mt-0.5">{{ errorMessage }}</p>
+      <div v-if="errorMessage" class="error-banner">
+        <IonIcon :icon="alertCircleOutline" class="error-icon" />
+        <div class="error-content">
+          <p class="error-title">{{ t('results.submitErrorTitle') }}</p>
+          <p class="error-detail">{{ errorMessage }}</p>
         </div>
-        <button @click="errorMessage = ''" class="text-red-400/60 hover:text-red-300 p-1">
-          <IonIcon :icon="closeOutline" class="w-4 h-4" />
+        <button @click="errorMessage = ''" class="error-dismiss">
+          <IonIcon :icon="closeOutline" class="icon-sm" />
         </button>
       </div>
 
       <!-- Footer Navigation -->
-      <div class="flex items-center justify-between p-6 border-t border-pp-border/50 flex-shrink-0">
+      <div class="pp-modal-footer modal-footer-nav modal-header-shrink">
         <button
           v-if="currentStep > 1"
           @click="currentStep--; errorMessage = ''"
@@ -288,7 +288,7 @@
           :disabled="submitting"
           class="pp-action-button pp-action-button--primary"
         >
-          <IonIcon v-if="submitting" :icon="refreshOutline" class="w-4 h-4 animate-spin" />
+          <IonIcon v-if="submitting" :icon="refreshOutline" class="icon-sm pp-animate-spin" />
           {{ submitting ? t('results.submitting') : errorMessage ? t('results.retry') : t('results.confirmSubmit') }}
         </button>
       </div>
@@ -303,6 +303,7 @@ import { useI18n } from '~/composables/useI18n'
 import { useTournamentStore } from '~/stores/useTournamentStore'
 import { formatPrice } from '~/utils'
 import type { DealType, PayoutTemplate } from '~/types/tournament'
+import { TournamentLiveStatus } from '#gql/default'
 
 interface Props {
   isOpen: boolean
@@ -380,7 +381,7 @@ const dealTypes = computed(() => [
   { value: 'CUSTOM' as DealType, label: t('results.custom') },
 ])
 
-const stepLabels = computed(() => ({
+const stepLabels = computed<Record<number, string>>(() => ({
   1: t('results.step1'),
   2: t('results.step2'),
   3: t('results.step3')
@@ -451,8 +452,8 @@ const movePlayer = (index: number, direction: number) => {
   if (newIndex < 0 || newIndex >= orderedPlayers.value.length) return
 
   const players = [...orderedPlayers.value]
-  const [removed] = players.splice(index, 1)
-  players.splice(newIndex, 0, removed)
+  const removed = players.splice(index, 1)[0]
+  if (removed) players.splice(newIndex, 0, removed)
   orderedPlayers.value = players
 }
 
@@ -482,9 +483,9 @@ const submitResults = async () => {
 
       if (deal.value.dealType === 'CUSTOM') {
         dealInput.customPayouts = deal.value.affectedPositions
-          .filter(pos => customPayoutAmounts.value[pos])
+          .filter(pos => customPayoutAmounts.value[pos] && orderedPlayers.value[pos - 1])
           .map(pos => ({
-            userId: orderedPlayers.value[pos - 1]?.userId,
+            userId: orderedPlayers.value[pos - 1]!.userId,
             amountCents: Math.round((customPayoutAmounts.value[pos] || 0) * 100)
           }))
       }
@@ -498,7 +499,7 @@ const submitResults = async () => {
     await GqlUpdateTournamentStatus({
       input: {
         tournamentId: props.tournamentId,
-        liveStatus: 'FINISHED'
+        liveStatus: TournamentLiveStatus.FINISHED
       }
     })
 
@@ -519,3 +520,440 @@ const closeModal = () => {
   emit('close')
 }
 </script>
+
+<style scoped>
+.modal-flex-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  overflow-y: hidden;
+}
+
+.modal-header-shrink {
+  flex-shrink: 0;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--pp-text-primary);
+}
+
+.modal-subtitle {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 0.25rem;
+}
+
+/* Step Indicator */
+.step-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid rgba(84, 84, 95, 0.3);
+}
+
+.step-bar {
+  flex: 1;
+  height: 0.375rem;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+
+.step-bar--active {
+  background-color: var(--pp-accent-gold);
+}
+
+.step-bar--inactive {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Scrollable Content */
+.scrollable-content {
+  overflow-y: auto;
+  flex: 1;
+  padding: 1.5rem;
+}
+
+.step-description {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 2rem 0;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Player Order List (Step 1) */
+.player-order-list > * + * {
+  margin-top: 0.5rem;
+}
+
+.player-order-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background-color: rgba(24, 24, 26, 0.5);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(84, 84, 95, 0.3);
+}
+
+.position-badge {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background-color: rgba(254, 231, 138, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pp-accent-gold);
+  font-weight: 700;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.position-badge--sm {
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: 0.75rem;
+}
+
+.player-order-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.player-order-name {
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.move-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.move-button {
+  padding: 0.375rem;
+  border-radius: 0.5rem;
+  transition: color 0.15s ease, background-color 0.15s ease;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+}
+
+.move-button:hover:not(:disabled) {
+  color: #ffffff;
+  background-color: var(--pp-bg-primary);
+}
+
+.move-button--disabled,
+.move-button:disabled {
+  color: rgba(255, 255, 255, 0.2);
+  cursor: not-allowed;
+}
+
+/* Payout Preview (Step 2) */
+.template-selector {
+  margin-bottom: 1rem;
+}
+
+.payout-list > * + * {
+  margin-top: 0.5rem;
+}
+
+.payout-list {
+  margin-bottom: 1.5rem;
+}
+
+.payout-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background-color: rgba(24, 24, 26, 0.5);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(84, 84, 95, 0.3);
+}
+
+.payout-row-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.payout-player-name {
+  color: #ffffff;
+  font-size: 0.875rem;
+}
+
+.payout-row-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.payout-percentage {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.75rem;
+}
+
+.payout-amount {
+  font-weight: 600;
+  color: var(--pp-accent-gold);
+  font-size: 0.875rem;
+}
+
+/* Deal Section */
+.deal-section {
+  border-top: 1px solid rgba(84, 84, 95, 0.3);
+  padding-top: 1rem;
+}
+
+.deal-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.deal-checkbox {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--pp-border);
+  background-color: var(--pp-bg-primary);
+  accent-color: var(--pp-accent-gold);
+}
+
+.deal-toggle-label {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.deal-options {
+  padding-left: 1.75rem;
+}
+
+.deal-options > * + * {
+  margin-top: 1rem;
+}
+
+.deal-type-options {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.deal-type-button {
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid var(--pp-border);
+  background-color: var(--pp-bg-primary);
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.deal-type-button--active {
+  background-color: rgba(254, 231, 138, 0.2);
+  color: var(--pp-accent-gold);
+  border-color: rgba(254, 231, 138, 0.4);
+}
+
+.affected-positions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.affected-position-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  background-color: var(--pp-bg-primary);
+  border-radius: 0.5rem;
+  border: 1px solid var(--pp-border);
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.affected-position-item:hover {
+  border-color: rgba(254, 231, 138, 0.4);
+}
+
+.affected-position-checkbox {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--pp-border);
+  background-color: var(--pp-bg-primary);
+  accent-color: var(--pp-accent-gold);
+}
+
+.affected-position-label {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.custom-payouts > * + * {
+  margin-top: 0.5rem;
+}
+
+.custom-payout-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.custom-payout-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.875rem;
+  min-width: 100px;
+}
+
+.custom-payout-input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.custom-payout-prefix {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.75rem;
+}
+
+.custom-payout-input {
+  padding-left: 1.75rem;
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+  font-size: 0.875rem;
+}
+
+/* Step 3: Summary */
+.summary-card {
+  background-color: rgba(24, 24, 26, 0.5);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(84, 84, 95, 0.3);
+  padding: 1rem;
+}
+
+.summary-card > * + * {
+  margin-top: 0.75rem;
+}
+
+.summary-title {
+  font-weight: 600;
+  color: var(--pp-text-primary);
+}
+
+.summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  padding: 0.25rem 0;
+}
+
+.summary-row-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.summary-position {
+  color: var(--pp-accent-gold);
+  font-weight: 700;
+}
+
+.summary-name {
+  color: #ffffff;
+}
+
+.summary-amount {
+  color: var(--pp-accent-gold);
+  font-weight: 500;
+}
+
+.summary-deal {
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(84, 84, 95, 0.3);
+}
+
+.summary-deal-text {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Error Banner */
+.error-banner {
+  margin: 0 1.5rem 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 0.5rem;
+}
+
+.error-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--pp-red-400);
+  flex-shrink: 0;
+}
+
+.error-content {
+  flex: 1;
+}
+
+.error-title {
+  color: #fca5a5;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.error-detail {
+  color: rgba(248, 113, 113, 0.7);
+  font-size: 0.75rem;
+  margin-top: 0.125rem;
+}
+
+.error-dismiss {
+  color: rgba(248, 113, 113, 0.6);
+  padding: 0.25rem;
+  cursor: pointer;
+}
+
+.error-dismiss:hover {
+  color: #fca5a5;
+}
+
+/* Footer */
+.modal-footer-nav {
+  justify-content: space-between;
+}
+
+/* Shared icon sizes */
+.icon-md {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.icon-sm {
+  width: 1rem;
+  height: 1rem;
+}
+</style>

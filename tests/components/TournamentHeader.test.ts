@@ -1,22 +1,29 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import TournamentHeader from '~/components/TournamentHeader.vue'
+import type { Tournament } from '~/types/tournament'
 
 describe('TournamentHeader', () => {
-  const mockTournaments = [
+  const mockTournaments: Tournament[] = [
     {
       id: '1',
       title: 'Weekly Tournament',
-      status: 'NOT_STARTED',
-      startDate: '2026-02-15T18:00:00Z',
-      buyIn: 5000,
+      status: 'UPCOMING',
+      liveStatus: 'NOT_STARTED',
+      startTime: '2026-02-15T18:00:00Z',
+      buyInCents: 5000,
+      registrations: [],
+      structure: [],
     },
     {
       id: '2',
       title: 'Monthly Championship',
-      status: 'REGISTRATION_OPEN',
-      startDate: '2026-02-20T19:00:00Z',
-      buyIn: 10000,
+      status: 'IN_PROGRESS',
+      liveStatus: 'REGISTRATION_OPEN',
+      startTime: '2026-02-20T19:00:00Z',
+      buyInCents: 10000,
+      registrations: [],
+      structure: [],
     },
   ]
 
@@ -58,7 +65,7 @@ describe('TournamentHeader', () => {
       },
     })
 
-    expect(wrapper.vm.statusDot).toBe('bg-pp-accent-gold')
+    expect((wrapper.vm as any).statusDot).toBe('bg-pp-accent-gold')
   })
 
   it('should compute statusDot correctly for disconnected state', () => {
@@ -71,7 +78,7 @@ describe('TournamentHeader', () => {
       },
     })
 
-    expect(wrapper.vm.statusDot).toBe('bg-red-500')
+    expect((wrapper.vm as any).statusDot).toBe('bg-red-500')
   })
 
   it('should compute statusDot correctly for reconnecting state', () => {
@@ -84,7 +91,7 @@ describe('TournamentHeader', () => {
       },
     })
 
-    expect(wrapper.vm.statusDot).toBe('bg-pp-text-secondary animate-pulse')
+    expect((wrapper.vm as any).statusDot).toBe('bg-pp-text-secondary animate-pulse')
   })
 
   it('should have selectedId computed property in sync with modelValue', () => {
@@ -97,7 +104,7 @@ describe('TournamentHeader', () => {
       },
     })
 
-    expect(wrapper.vm.selectedId).toBe('1')
+    expect((wrapper.vm as any).selectedId).toBe('1')
   })
 
   it('should emit update:modelValue when selectedId changes', async () => {
@@ -110,7 +117,7 @@ describe('TournamentHeader', () => {
       },
     })
 
-    wrapper.vm.selectedId = '2'
+    ;(wrapper.vm as any).selectedId = '2'
     await wrapper.vm.$nextTick()
 
     expect(wrapper.emitted('update:modelValue')).toBeTruthy()

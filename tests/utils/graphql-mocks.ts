@@ -1,18 +1,17 @@
 import { vi } from 'vitest'
+import { Role, TournamentStatus, TournamentLiveStatus } from '#gql/default'
 
 export const createMockTournament = (overrides = {}) => ({
   id: '1',
   title: 'Test Tournament',
   description: 'Test Description',
-  status: 'NOT_STARTED',
-  startDate: '2026-02-15T18:00:00Z',
-  buyIn: 5000,
-  rebuyAmount: 5000,
-  addonAmount: 5000,
-  maxPlayers: 100,
-  minPlayers: 10,
-  currentPlayers: 0,
-  prizePool: 0,
+  clubId: 'club-1',
+  startTime: '2026-02-15T18:00:00Z',
+  buyInCents: 5000,
+  status: TournamentStatus.UPCOMING,
+  liveStatus: TournamentLiveStatus.NOT_STARTED,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
   ...overrides,
 })
 
@@ -22,7 +21,7 @@ export const createMockUser = (overrides = {}) => ({
   firstName: 'Test',
   lastName: 'User',
   username: 'testuser',
-  role: 'PLAYER',
+  role: Role.PLAYER,
   isActive: true,
   ...overrides,
 })
@@ -59,11 +58,21 @@ export const createMockClock = (overrides = {}) => ({
 
 export const mockGraphQLQueries = () => {
   vi.mocked(GqlGetTournaments).mockResolvedValue({
-    tournaments: [createMockTournament()],
+    tournaments: {
+      totalCount: 1,
+      pageSize: 20,
+      offset: 0,
+      hasNextPage: false,
+      items: [createMockTournament()],
+    },
   })
 
   vi.mocked(GqlGetTournament).mockResolvedValue({
-    tournament: createMockTournament(),
+    tournament: {
+      ...createMockTournament(),
+      structure: [],
+      registrations: [],
+    },
   })
 
   vi.mocked(GqlGetMe).mockResolvedValue({

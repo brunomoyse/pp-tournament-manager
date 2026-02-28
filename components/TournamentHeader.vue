@@ -3,24 +3,24 @@
         <ion-toolbar>
             <ion-title slot="start">
                 <div>
-                    <h1 class="text-2xl font-bold text-pp-text-primary">Tournament Manager</h1>
-                    <div class="flex items-center gap-2">
-                        <p class="text-sm opacity-70 text-pp-text-secondary">Liège Poker Club</p>
-                        <div class="flex items-center gap-1">
-                            <div :class="['w-2 h-2 rounded-full', statusDot]" />
-                            <span class="text-xs opacity-70 capitalize text-pp-text-secondary">{{ connectionStatus }}</span>
+                    <h1 class="header-title">Tournament Manager</h1>
+                    <div class="header-subtitle-row">
+                        <p class="header-club-name">Liège Poker Club</p>
+                        <div class="header-status">
+                            <div :class="['status-dot', 'status-dot--' + connectionStatus]" />
+                            <span class="header-status-label">{{ connectionStatus }}</span>
                         </div>
                     </div>
                 </div>
             </ion-title>
 
             <ion-buttons slot="end">
-                <ion-note class="mr-3">{{ t('labels.lastUpdate') }} {{ new Date(lastUpdate).toLocaleTimeString() }}</ion-note>
-                <ion-select 
+                <ion-note class="header-last-update">{{ t('labels.lastUpdate') }} {{ new Date(lastUpdate).toLocaleTimeString() }}</ion-note>
+                <ion-select
                     v-model="selectedId"
                     :placeholder="t('placeholders.selectTournament')"
                     interface="popover"
-                    class="min-w-[200px]"
+                    class="header-tournament-select"
                 >
                     <ion-select-option v-for="t in tournaments" :key="t.id" :value="t.id">
                         {{ t.title }}
@@ -45,15 +45,73 @@ const selectedId = computed({
   set: (value) => emit('update:modelValue', value)
 })
 
-const statusDot = computed(() => {
-    switch (props.connectionStatus) {
-        case 'connected':
-            return 'bg-pp-accent-gold'
-        case 'reconnecting':
-            return 'bg-pp-text-secondary animate-pulse'
-        default:
-            return 'bg-red-500'
-    }
-})
-
 </script>
+
+<style scoped>
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--pp-text-primary);
+}
+
+.header-subtitle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-club-name {
+  font-size: 0.875rem;
+  opacity: 0.7;
+  color: var(--pp-text-secondary);
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.status-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+}
+
+.status-dot--connected {
+  background-color: var(--pp-accent-gold);
+}
+
+.status-dot--reconnecting {
+  background-color: var(--pp-text-secondary);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.status-dot--disconnected {
+  background-color: var(--pp-red-500);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.header-status-label {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  text-transform: capitalize;
+  color: var(--pp-text-secondary);
+}
+
+.header-last-update {
+  margin-right: 0.75rem;
+}
+
+.header-tournament-select {
+  min-width: 200px;
+}
+</style>

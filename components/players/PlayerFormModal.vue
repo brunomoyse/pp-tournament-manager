@@ -1,98 +1,98 @@
 <template>
-  <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div v-if="isOpen" class="pp-modal-overlay">
     <!-- Backdrop -->
     <div
-      class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+      class="pp-modal-backdrop"
       @click="closeModal"
     ></div>
 
     <!-- Modal Content -->
-    <div class="relative bg-pp-bg-secondary rounded-2xl w-full max-w-md border border-pp-border shadow-2xl" style="background-color: #24242a !important;">
+    <div class="pp-modal-content pp-modal-content--md">
       <!-- Header -->
-      <div class="flex items-center justify-between p-6 border-b border-pp-border/50">
-        <h2 class="text-xl font-bold text-pp-text-primary">
+      <div class="pp-modal-header">
+        <h2 class="player-form-title">
           {{ mode === 'create' ? t('players.createPlayer') : t('players.editPlayer') }}
         </h2>
         <button
           @click="closeModal"
-          class="p-2 text-white/60 hover:text-white rounded-lg hover:bg-pp-bg-primary/50 transition-colors"
+          class="pp-close-button"
         >
-          <IonIcon :icon="closeOutline" class="w-5 h-5" />
+          <IonIcon :icon="closeOutline" class="player-form-close-icon" />
         </button>
       </div>
 
       <!-- Form -->
-      <form @submit.prevent="handleSubmit" class="p-6 space-y-4">
+      <form @submit.prevent="handleSubmit" class="pp-modal-body player-form">
         <!-- First Name -->
-        <div>
-          <label class="block text-sm font-medium text-white/70 mb-2">
-            {{ t('players.firstName') }} <span class="text-red-400">*</span>
+        <div class="player-form-field">
+          <label class="pp-label">
+            {{ t('players.firstName') }} <span class="player-form-required">*</span>
           </label>
           <input
             v-model="form.firstName"
             type="text"
             required
-            class="w-full px-3 py-2 bg-pp-bg-primary border border-pp-border rounded-lg text-white focus:ring-2 focus:ring-pp-accent-gold focus:border-pp-accent-gold"
+            class="pp-input"
             :placeholder="t('players.firstNamePlaceholder')"
           />
         </div>
 
         <!-- Last Name -->
-        <div>
-          <label class="block text-sm font-medium text-white/70 mb-2">
+        <div class="player-form-field">
+          <label class="pp-label">
             {{ t('players.lastName') }}
           </label>
           <input
             v-model="form.lastName"
             type="text"
-            class="w-full px-3 py-2 bg-pp-bg-primary border border-pp-border rounded-lg text-white focus:ring-2 focus:ring-pp-accent-gold focus:border-pp-accent-gold"
+            class="pp-input"
             :placeholder="t('players.lastNamePlaceholder')"
           />
         </div>
 
         <!-- Email -->
-        <div>
-          <label class="block text-sm font-medium text-white/70 mb-2">
-            {{ t('auth.email') }} <span class="text-red-400">*</span>
+        <div class="player-form-field">
+          <label class="pp-label">
+            {{ t('auth.email') }} <span class="player-form-required">*</span>
           </label>
           <input
             v-model="form.email"
             type="email"
             required
-            class="w-full px-3 py-2 bg-pp-bg-primary border border-pp-border rounded-lg text-white focus:ring-2 focus:ring-pp-accent-gold focus:border-pp-accent-gold"
+            class="pp-input"
             :placeholder="t('players.emailPlaceholder')"
           />
-          <p v-if="emailError" class="text-red-400 text-sm mt-1">{{ emailError }}</p>
+          <p v-if="emailError" class="player-form-error">{{ emailError }}</p>
         </div>
 
         <!-- Username -->
-        <div>
-          <label class="block text-sm font-medium text-white/70 mb-2">
+        <div class="player-form-field">
+          <label class="pp-label">
             {{ t('auth.username') }}
           </label>
           <input
             v-model="form.username"
             type="text"
-            class="w-full px-3 py-2 bg-pp-bg-primary border border-pp-border rounded-lg text-white focus:ring-2 focus:ring-pp-accent-gold focus:border-pp-accent-gold"
+            class="pp-input"
             :placeholder="t('players.usernamePlaceholder')"
           />
         </div>
 
         <!-- Phone -->
-        <div>
-          <label class="block text-sm font-medium text-white/70 mb-2">
+        <div class="player-form-field">
+          <label class="pp-label">
             {{ t('players.phone') }}
           </label>
           <input
             v-model="form.phone"
             type="tel"
-            class="w-full px-3 py-2 bg-pp-bg-primary border border-pp-border rounded-lg text-white focus:ring-2 focus:ring-pp-accent-gold focus:border-pp-accent-gold"
+            class="pp-input"
             :placeholder="t('players.phonePlaceholder')"
           />
         </div>
 
         <!-- Actions -->
-        <div class="flex items-center justify-end gap-3 pt-4 border-t border-pp-border/50">
+        <div class="player-form-actions">
           <button
             type="button"
             @click="closeModal"
@@ -105,7 +105,7 @@
             :disabled="!isFormValid || saving"
             class="pp-action-button pp-action-button--primary"
           >
-            <IonIcon v-if="saving" :icon="refreshOutline" class="w-4 h-4 animate-spin" />
+            <IonIcon v-if="saving" :icon="refreshOutline" class="player-form-spinner" />
             {{ saving ? t('status.saving') : (mode === 'create' ? t('players.create') : t('players.save')) }}
           </button>
         </div>
@@ -231,3 +231,50 @@ const closeModal = () => {
   emit('close')
 }
 </script>
+
+<style scoped>
+.player-form-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--pp-text-primary);
+}
+
+.player-form-close-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.player-form > * + * {
+  margin-top: 1rem;
+}
+
+.player-form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-form-required {
+  color: var(--pp-red-400);
+}
+
+.player-form-error {
+  color: var(--pp-red-400);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.player-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--pp-border);
+}
+
+.player-form-spinner {
+  width: 1rem;
+  height: 1rem;
+  animation: pp-spin 1s linear infinite;
+}
+</style>

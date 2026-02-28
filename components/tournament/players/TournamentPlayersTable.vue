@@ -1,26 +1,26 @@
 <template>
-  <div class="space-y-6">
+  <div class="players-container">
     <!-- Players Toolbar -->
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-4">
+    <div class="toolbar">
+      <div class="toolbar-left">
         <!-- Search Input -->
-        <div class="relative">
-          <IonIcon :icon="searchOutline" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white" />
-          <input 
+        <div class="search-wrapper">
+          <IonIcon :icon="searchOutline" class="search-icon" />
+          <input
             v-model="playerSearch"
-            type="text" 
+            type="text"
             :placeholder="t('placeholders.searchPlayers')"
-            class="pl-10 pr-4 py-2 border border-pp-border rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64"
+            class="search-input"
           />
         </div>
-        
+
         <!-- Filter Dropdown -->
-        <div class="relative">
-          <ion-select 
+        <div class="filter-wrapper">
+          <ion-select
             v-model="playerFilter"
             :placeholder="t('filters.allPlayers')"
             interface="action-sheet"
-            class="min-w-32"
+            class="filter-select"
           >
             <ion-select-option value="all">{{ t('filters.allPlayers') }}</ion-select-option>
             <ion-select-option value="REGISTERED">{{ t('filters.registered') }}</ion-select-option>
@@ -33,7 +33,7 @@
       </div>
 
       <!-- Action Buttons -->
-      <div class="flex items-center gap-3">
+      <div class="toolbar-right">
         <button
           v-if="registeredPlayers.length > 0"
           @click="checkInAllPlayers"
@@ -42,7 +42,7 @@
         >
           <IonIcon
             :icon="checkingInAll ? refreshOutline : checkmarkDoneOutline"
-            :class="['w-4 h-4', checkingInAll && 'animate-spin']"
+            :class="['icon-sm', checkingInAll && 'pp-animate-spin']"
           />
           {{ checkingInAll ? `${checkInProgress}/${registeredPlayers.length}` : t('buttons.checkInAll') }}
         </button>
@@ -51,56 +51,54 @@
           @click="$emit('registerPlayer')"
           class="pp-action-button pp-action-button--primary"
         >
-          <IonIcon :icon="personAddOutline" class="w-4 h-4" />
+          <IonIcon :icon="personAddOutline" class="icon-sm" />
           {{ t('buttons.registerPlayer') }}
         </button>
       </div>
     </div>
 
     <!-- Players List -->
-    <div class="bg-pp-bg-secondary rounded-2xl shadow-sm border border-pp-border" style="background-color: #24242a !important;">
+    <div class="players-list">
       <!-- Column Headers -->
-      <div class="grid grid-cols-[1fr_7.5rem_7rem_auto] items-center gap-2 px-4 py-2 border-b border-pp-border text-xs font-medium text-pp-text-secondary uppercase tracking-wider">
+      <div class="column-headers">
         <button
           @click="sortBy = sortBy === 'name' ? 'status' : 'name'"
-          class="flex items-center gap-1 hover:text-white transition-colors"
-          :class="sortBy === 'name' && 'text-pp-accent-gold'"
+          :class="['sort-button', sortBy === 'name' && 'sort-button--active']"
         >
           {{ t('labels.name') }}
-          <IonIcon :icon="swapVerticalOutline" class="w-3.5 h-3.5" />
+          <IonIcon :icon="swapVerticalOutline" class="icon-xs" />
         </button>
         <button
           @click="sortBy = sortBy === 'table' ? 'status' : 'table'"
-          class="flex items-center gap-1 justify-center hover:text-white transition-colors"
-          :class="sortBy === 'table' && 'text-pp-accent-gold'"
+          :class="['sort-button sort-button--center', sortBy === 'table' && 'sort-button--active']"
         >
           {{ t('labels.tableSeat') }}
-          <IonIcon :icon="swapVerticalOutline" class="w-3.5 h-3.5" />
+          <IonIcon :icon="swapVerticalOutline" class="icon-xs" />
         </button>
-        <span class="text-center">{{ t('labels.status') }}</span>
-        <span class="text-right">{{ t('labels.actions') }}</span>
+        <span class="column-header--center">{{ t('labels.status') }}</span>
+        <span class="column-header--right">{{ t('labels.actions') }}</span>
       </div>
 
       <!-- Player Rows -->
-      <div class="divide-y divide-pp-border">
+      <div class="player-rows">
         <div
           v-for="player in filteredPlayers"
           :key="player.id"
-          class="grid grid-cols-[1fr_7.5rem_7rem_auto] items-center gap-2 px-4 py-2"
+          class="player-row"
         >
           <!-- Name Column -->
-          <div class="flex items-center gap-3 min-w-0">
-            <div class="w-8 h-8 shrink-0 bg-pp-text-secondary rounded-full flex items-center justify-center text-white font-bold text-sm">
+          <div class="player-name-col">
+            <div class="player-avatar">
               {{ getInitials(player.name) }}
             </div>
-            <h3 class="font-semibold text-white text-sm truncate">{{ player.name }}</h3>
+            <h3 class="player-name">{{ player.name }}</h3>
           </div>
 
           <!-- Table / Seat Column -->
-          <div class="flex justify-center">
+          <div class="table-seat-col">
             <span
               v-if="player.tableNumber !== null"
-              class="px-2 py-0.5 rounded-full text-xs font-medium border bg-pp-accent-gold/10 text-pp-accent-gold border-pp-accent-gold/30"
+              class="table-seat-badge"
             >
               T{{ player.tableNumber }} / S{{ player.seatNumber }}
             </span>
@@ -108,39 +106,36 @@
               v-else-if="player.status === 'CHECKED_IN'"
               @click="handleSeatPlayer(player)"
               :disabled="seatingPlayer === player.id"
-              class="pp-action-button pp-action-button--primary text-xs px-2 py-1"
+              class="pp-action-button pp-action-button--primary seat-button"
             >
               <IonIcon
                 :icon="seatingPlayer === player.id ? refreshOutline : locationOutline"
-                :class="['w-3 h-3', seatingPlayer === player.id && 'animate-spin']"
+                :class="['icon-xs', seatingPlayer === player.id && 'pp-animate-spin']"
               />
               {{ t('buttons.seat') }}
             </button>
-            <span v-else class="text-xs text-pp-text-secondary">&mdash;</span>
+            <span v-else class="table-seat-empty">&mdash;</span>
           </div>
 
           <!-- Status Column -->
-          <div class="flex justify-center">
-            <span :class="[
-              'px-2 py-0.5 rounded-full text-xs font-medium border',
-              getRegistrationStatusClass(player.status)
-            ]">
+          <div class="status-col">
+            <span :class="['pp-status-badge', getRegistrationStatusClass(player.status)]">
               {{ getRegistrationStatusLabel(player.status, t) }}
             </span>
           </div>
 
           <!-- Actions Column -->
-          <div class="flex items-center justify-end gap-1">
+          <div class="actions-col">
             <!-- Check In Button -->
             <button
               v-if="player.status === 'REGISTERED'"
               @click="checkInPlayer(player.id)"
               :disabled="checkingIn === player.id"
-              class="pp-action-button pp-action-button--secondary text-xs px-2 py-1"
+              class="pp-action-button pp-action-button--secondary checkin-button"
             >
               <IonIcon
                 :icon="checkingIn === player.id ? refreshOutline : checkmarkCircleOutline"
-                :class="['w-3 h-3', checkingIn === player.id && 'animate-spin']"
+                :class="['icon-xs', checkingIn === player.id && 'pp-animate-spin']"
               />
               {{ checkingIn === player.id ? t('status.checkingIn') : t('buttons.checkIn') }}
             </button>
@@ -148,31 +143,31 @@
             <!-- Waitlist Position Badge -->
             <span
               v-if="player.status === 'WAITLISTED' && player.waitlistPosition"
-              class="text-xs text-amber-400"
+              class="waitlist-position"
             >
               #{{ player.waitlistPosition }}
             </span>
 
             <!-- More Actions Dropdown -->
-            <div class="relative">
+            <div class="dropdown-wrapper">
               <button
                 @click="toggleMenu(player.id)"
-                class="pp-action-button pp-action-button--ghost p-3 text-xs"
+                class="pp-action-button pp-action-button--ghost menu-button"
               >
-                <IonIcon :icon="ellipsisVerticalOutline" class="w-5 h-5" />
+                <IonIcon :icon="ellipsisVerticalOutline" class="icon-md" />
               </button>
               <div
                 v-if="openMenuId === player.id"
-                class="absolute right-0 top-full mt-1 z-50 bg-pp-bg-secondary border border-pp-border rounded-xl shadow-xl min-w-[180px] py-2"
+                class="dropdown-menu"
               >
                 <button
                   @click="cancelRegistration(player)"
                   :disabled="cancelling === player.id"
-                  class="w-full flex items-center gap-3 px-4 py-3 text-base text-red-400 hover:bg-red-500/10 active:bg-red-500/20 transition-colors"
+                  class="dropdown-item dropdown-item--danger"
                 >
                   <IonIcon
                     :icon="cancelling === player.id ? refreshOutline : trashOutline"
-                    :class="['w-5 h-5', cancelling === player.id && 'animate-spin']"
+                    :class="['icon-md', cancelling === player.id && 'pp-animate-spin']"
                   />
                   {{ t('buttons.remove') }}
                 </button>
@@ -192,6 +187,7 @@ import { searchOutline, personAddOutline, checkmarkCircleOutline, checkmarkDoneO
 import { AssignmentStrategy } from '@/types/seating'
 import { useI18n } from '~/composables/useI18n'
 import { getRegistrationStatusLabel, getRegistrationStatusClass } from '~/utils/registrationStatus'
+import { EntryType } from '#gql/default'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -378,7 +374,7 @@ const checkInPlayer = async (playerId: string) => {
           input: {
             tournamentId: selectedTournamentId,
             userId: playerId,
-            entryType: 'INITIAL'
+            entryType: EntryType.INITIAL
           }
         })
       } catch {
@@ -542,7 +538,7 @@ const checkInAllPlayers = async () => {
           input: {
             tournamentId: selectedTournamentId,
             userId: tp.user.id,
-            entryType: 'INITIAL'
+            entryType: EntryType.INITIAL
           }
         })
       } catch {
@@ -573,3 +569,283 @@ const checkInAllPlayers = async () => {
 }
 
 </script>
+
+<style scoped>
+/* Icon sizes */
+.icon-xs {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.icon-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+.icon-md {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Container */
+.players-container > * + * {
+  margin-top: 1.5rem;
+}
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Search */
+.search-wrapper {
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #ffffff;
+}
+
+.search-input {
+  padding: 0.5rem 1rem 0.5rem 2.5rem;
+  border: 1px solid var(--pp-border);
+  border-radius: 0.5rem;
+  color: #ffffff;
+  width: 100%;
+  background: transparent;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(254, 231, 138, 0.5);
+  border-color: rgba(254, 231, 138, 0.5);
+}
+
+@media (min-width: 640px) {
+  .search-input {
+    width: 16rem;
+  }
+}
+
+/* Filter */
+.filter-wrapper {
+  position: relative;
+}
+
+.filter-select {
+  min-width: 8rem;
+}
+
+/* Players List */
+.players-list {
+  background-color: var(--pp-bg-secondary);
+  border-radius: 1rem;
+  box-shadow: var(--pp-shadow-sm);
+  border: 1px solid var(--pp-border);
+}
+
+/* Column Headers */
+.column-headers {
+  display: grid;
+  grid-template-columns: 1fr 7.5rem 7rem auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--pp-border);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--pp-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sort-button {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: inherit;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.sort-button:hover {
+  color: #ffffff;
+}
+
+.sort-button--center {
+  justify-content: center;
+}
+
+.sort-button--active {
+  color: var(--pp-accent-gold);
+}
+
+.column-header--center {
+  text-align: center;
+}
+
+.column-header--right {
+  text-align: right;
+}
+
+/* Player Rows */
+.player-rows > * + * {
+  border-top: 1px solid var(--pp-border);
+}
+
+.player-row {
+  display: grid;
+  grid-template-columns: 1fr 7.5rem 7rem auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+}
+
+/* Name Column */
+.player-name-col {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.player-avatar {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  background-color: var(--pp-text-secondary);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.player-name {
+  font-weight: 600;
+  color: #ffffff;
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Table / Seat Column */
+.table-seat-col {
+  display: flex;
+  justify-content: center;
+}
+
+.table-seat-badge {
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid rgba(254, 231, 138, 0.3);
+  background-color: rgba(254, 231, 138, 0.1);
+  color: var(--pp-accent-gold);
+}
+
+.seat-button {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.table-seat-empty {
+  font-size: 0.75rem;
+  color: var(--pp-text-secondary);
+}
+
+/* Status Column */
+.status-col {
+  display: flex;
+  justify-content: center;
+}
+
+/* Actions Column */
+.actions-col {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+
+.checkin-button {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.waitlist-position {
+  font-size: 0.75rem;
+  color: var(--pp-amber-400);
+}
+
+/* Dropdown */
+.dropdown-wrapper {
+  position: relative;
+}
+
+.menu-button {
+  padding: 0.75rem;
+  font-size: 0.75rem;
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 0.25rem;
+  z-index: 50;
+  background-color: var(--pp-bg-secondary);
+  border: 1px solid var(--pp-border);
+  border-radius: 0.75rem;
+  box-shadow: var(--pp-shadow-xl);
+  min-width: 180px;
+  padding: 0.5rem 0;
+}
+
+.dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: background-color 0.15s ease;
+  cursor: pointer;
+}
+
+.dropdown-item--danger {
+  color: var(--pp-red-400);
+}
+
+.dropdown-item--danger:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.dropdown-item--danger:active {
+  background-color: rgba(239, 68, 68, 0.2);
+}
+</style>

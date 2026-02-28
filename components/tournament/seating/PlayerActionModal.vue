@@ -1,46 +1,46 @@
 <template>
-  <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div v-if="isOpen" class="pp-modal-overlay">
     <!-- Backdrop -->
-    <div 
-      class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+    <div
+      class="pp-modal-backdrop"
       @click="$emit('close')"
     ></div>
-    
+
     <!-- Modal Content -->
-    <div class="relative bg-pp-bg-secondary rounded-2xl w-full max-w-lg border border-pp-border shadow-2xl" style="background-color: #24242a !important;">
+    <div class="pp-modal-content pp-modal-content--lg">
       <!-- Header -->
-      <div class="flex items-center justify-between p-6 border-b border-pp-border/50">
-        <h2 class="text-2xl font-bold text-pp-text-primary">{{ t('playerAction.title') }}</h2>
-        <button 
+      <div class="pp-modal-header">
+        <h3 class="modal-title">{{ t('playerAction.title') }}</h3>
+        <button
           @click="$emit('close')"
-          class="p-2 text-white/60 hover:text-white rounded-lg hover:bg-pp-bg-primary/50 transition-colors"
+          class="pp-close-button"
         >
-          <IonIcon :icon="closeOutline" class="w-5 h-5" />
+          <IonIcon :icon="closeOutline" class="icon-md" />
         </button>
       </div>
 
-      <div class="p-6">
+      <div class="pp-modal-body">
         <!-- Player Info Header -->
-        <div v-if="player" class="bg-pp-bg-primary/30 rounded-xl p-4 mb-6 border border-pp-border/30">
-          <div class="flex items-center gap-4 mb-3">
-            <div class="w-14 h-14 bg-gradient-to-br from-pp-accent-gold/20 to-pp-accent-gold/40 rounded-full flex items-center justify-center border-2 border-pp-accent-gold/50">
-              <span class="text-lg font-bold text-pp-accent-gold">{{ getInitials(player.firstName, player.lastName) }}</span>
+        <div v-if="player" class="player-info-card">
+          <div class="player-info-header">
+            <div class="player-avatar">
+              <span class="player-avatar-text">{{ getInitials(player.firstName, player.lastName) }}</span>
             </div>
-            <div class="flex-1">
-              <h3 class="text-xl font-semibold text-pp-text-primary">{{ getPlayerDisplayName(player) }}</h3>
-              <div class="flex items-center gap-3 text-sm text-white/70 mt-1">
-                <span class="flex items-center gap-1">
-                  <IonIcon :icon="locationOutline" class="w-4 h-4" />
+            <div class="player-details">
+              <h3 class="player-name">{{ getPlayerDisplayName(player) }}</h3>
+              <div class="player-location">
+                <span class="location-item">
+                  <IonIcon :icon="locationOutline" class="icon-sm" />
                   {{ t('labels.table') }} {{ tableNumber }}, {{ t('labels.seat') }} {{ seatNumber }}
                 </span>
               </div>
             </div>
           </div>
-          
-          <div class="flex items-center gap-2">
-            <span class="text-sm text-white/60">{{ t('labels.status') }}:</span>
+
+          <div class="player-status-row">
+            <span class="status-label">{{ t('labels.status') }}:</span>
             <span :class="[
-              'px-3 py-1 rounded-full text-sm font-medium border',
+              'pp-status-badge',
               getRegistrationStatusClass(currentStatus)
             ]">
               {{ getRegistrationStatusLabel(currentStatus, t) }}
@@ -49,47 +49,47 @@
         </div>
 
         <!-- Action Buttons -->
-        <div class="space-y-3">
-          <h4 class="text-lg font-semibold text-pp-text-primary mb-4">{{ t('playerAction.availableActions') }}</h4>
-          
+        <div class="actions-section">
+          <h4 class="actions-title">{{ t('playerAction.availableActions') }}</h4>
+
           <!-- Action Grid -->
-          <div class="grid grid-cols-1 gap-3">
+          <div class="actions-grid">
             <!-- Bust Player -->
             <button
               @click="handleStatusChange('ELIMINATED')"
               :disabled="processing"
-              class="pp-action-button pp-action-button--danger w-full justify-start"
+              class="pp-action-button pp-action-button--danger action-button-full"
             >
-              <IonIcon :icon="skullOutline" class="w-5 h-5" />
-              <div class="flex-1 text-left">
-                <div class="font-medium">{{ t('playerAction.bustPlayer') }}</div>
-                <div class="text-xs opacity-80">{{ t('playerAction.removeFromTournament') }}</div>
+              <IonIcon :icon="skullOutline" class="icon-md" />
+              <div class="action-button-content">
+                <div class="action-button-label">{{ t('playerAction.bustPlayer') }}</div>
+                <div class="action-button-desc">{{ t('playerAction.removeFromTournament') }}</div>
               </div>
             </button>
 
             <!-- Move to Different Table -->
-            <button 
+            <button
               @click="handleTableMove"
               :disabled="processing"
-              class="pp-action-button pp-action-button--secondary w-full justify-start"
+              class="pp-action-button pp-action-button--secondary action-button-full"
             >
-              <IonIcon :icon="swapHorizontalOutline" class="w-5 h-5" />
-              <div class="flex-1 text-left">
-                <div class="font-medium">{{ t('playerAction.moveTable') }}</div>
-                <div class="text-xs opacity-80">{{ t('playerAction.relocateToAnother') }}</div>
+              <IonIcon :icon="swapHorizontalOutline" class="icon-md" />
+              <div class="action-button-content">
+                <div class="action-button-label">{{ t('playerAction.moveTable') }}</div>
+                <div class="action-button-desc">{{ t('playerAction.relocateToAnother') }}</div>
               </div>
             </button>
 
             <!-- Away from Table -->
-            <button 
+            <button
               @click="handleStatusChange('AWAY')"
               :disabled="processing"
-              class="pp-action-button pp-action-button--warning w-full justify-start"
+              class="pp-action-button pp-action-button--warning action-button-full"
             >
-              <IonIcon :icon="walkOutline" class="w-5 h-5" />
-              <div class="flex-1 text-left">
-                <div class="font-medium">{{ t('playerAction.markAway') }}</div>
-                <div class="text-xs opacity-80">{{ t('playerAction.temporarilyAway') }}</div>
+              <IonIcon :icon="walkOutline" class="icon-md" />
+              <div class="action-button-content">
+                <div class="action-button-label">{{ t('playerAction.markAway') }}</div>
+                <div class="action-button-desc">{{ t('playerAction.temporarilyAway') }}</div>
               </div>
             </button>
           </div>
@@ -147,7 +147,7 @@ const getPlayerDisplayName = (player: Player) => {
   if (!player) return ''
   const firstName = player.firstName || ''
   const lastName = player.lastName || ''
-  
+
   if (firstName && lastName) {
     return `${firstName} ${lastName}`
   } else if (firstName) {
@@ -161,7 +161,7 @@ const getPlayerDisplayName = (player: Player) => {
 // Action handlers
 const handleStatusChange = async (newStatus: string) => {
   if (!props.player) return
-  
+
   processing.value = true
   try {
     emit('status-changed', {
@@ -175,7 +175,7 @@ const handleStatusChange = async (newStatus: string) => {
 
 const handleTableMove = () => {
   if (!props.player) return
-  
+
   emit('move-player', {
     playerId: props.player.id,
     fromTable: props.tableNumber,
@@ -192,16 +192,123 @@ watch(() => props.isOpen, (isOpen) => {
 </script>
 
 <style scoped>
-ion-modal {
-  --background: #18181a;
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--pp-text-primary);
 }
 
-ion-header ion-toolbar {
-  --background: #24242a;
-  --color: #fee78a;
+.player-info-card {
+  background-color: rgba(24, 24, 26, 0.3);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(84, 84, 95, 0.3);
 }
 
-ion-content {
-  --background: #18181a;
+.player-info-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.player-avatar {
+  width: 3.5rem;
+  height: 3.5rem;
+  background: linear-gradient(to bottom right, rgba(254, 231, 138, 0.2), rgba(254, 231, 138, 0.4));
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(254, 231, 138, 0.5);
+}
+
+.player-avatar-text {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--pp-accent-gold);
+}
+
+.player-details {
+  flex: 1;
+}
+
+.player-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--pp-text-primary);
+}
+
+.player-location {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 0.25rem;
+}
+
+.location-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.player-status-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-label {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.actions-section > * + * {
+  margin-top: 0.75rem;
+}
+
+.actions-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--pp-text-primary);
+  margin-bottom: 1rem;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+.action-button-full {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.action-button-content {
+  flex: 1;
+  text-align: left;
+}
+
+.action-button-label {
+  font-weight: 500;
+}
+
+.action-button-desc {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.icon-md {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.icon-sm {
+  width: 1rem;
+  height: 1rem;
 }
 </style>

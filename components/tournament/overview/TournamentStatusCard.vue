@@ -1,22 +1,22 @@
 <template>
-  <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-    <div class="flex items-center justify-between mb-8">
-      <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('statusWorkflow.title') }}</h3>
-      <IonIcon :icon="trophyOutline" class="w-6 h-6 text-white" />
+  <div class="status-card">
+    <div class="status-card__header">
+      <h3 class="status-card__title">{{ t('statusWorkflow.title') }}</h3>
+      <IonIcon :icon="trophyOutline" class="status-card__icon" />
     </div>
 
     <!-- Status Stepper -->
-    <div ref="stepperContainer" class="flex items-center gap-1 mb-8 overflow-x-auto flex-nowrap pb-2">
+    <div ref="stepperContainer" class="status-stepper">
       <template v-for="(status, index) in statusFlow" :key="status">
         <div
           :ref="el => { if (currentStatusIndex === index) currentStatusEl = el as HTMLElement }"
           :class="[
-            'flex-shrink-0 px-2.5 py-1 rounded-full text-xs font-medium border transition-all',
+            'status-stepper__step',
             currentStatusIndex === index
               ? getTournamentStatusClass(status)
               : currentStatusIndex > index
-                ? 'bg-green-500/10 text-green-400/60 border-green-500/20'
-                : 'bg-white/5 text-white/30 border-white/10'
+                ? 'status-stepper__step--completed'
+                : 'status-stepper__step--upcoming'
           ]"
         >
           {{ getTournamentStatusLabel(status, t) }}
@@ -25,28 +25,28 @@
           v-if="index < statusFlow.length - 1"
           :icon="chevronForwardOutline"
           :class="[
-            'w-3 h-3 flex-shrink-0',
-            currentStatusIndex > index ? 'text-green-400/40' : 'text-white/20'
+            'status-stepper__chevron',
+            currentStatusIndex > index ? 'status-stepper__chevron--completed' : ''
           ]"
         />
       </template>
     </div>
 
     <!-- Late Registration Info -->
-    <div v-if="tournament?.lateRegistrationLevel" class="flex items-center gap-2 mb-4 px-3 py-2 bg-orange-500/10 border border-orange-500/20 rounded-lg">
-      <IonIcon :icon="timeOutline" class="w-4 h-4 text-orange-400 flex-shrink-0" />
-      <span class="text-sm text-orange-300">{{ t('labels.lateRegThroughLevel', { level: tournament.lateRegistrationLevel }) }}</span>
+    <div v-if="tournament?.lateRegistrationLevel" class="late-reg-info">
+      <IonIcon :icon="timeOutline" class="late-reg-info__icon" />
+      <span class="late-reg-info__text">{{ t('labels.lateRegThroughLevel', { level: tournament.lateRegistrationLevel }) }}</span>
     </div>
 
     <!-- Action Buttons -->
-    <div v-if="availableActions.length > 0" class="flex flex-wrap gap-2">
+    <div v-if="availableActions.length > 0" class="status-actions">
       <button
         v-for="action in availableActions"
         :key="action.targetStatus || action.key"
         @click="action.handler()"
         :disabled="isUpdating"
         :class="[
-          'w-full pp-action-button text-sm',
+          'status-actions__button pp-action-button',
           action.variant === 'primary' ? 'pp-action-button--primary' :
           action.variant === 'success' ? 'pp-action-button--success' :
           action.variant === 'warning' ? 'pp-action-button--warning' :
@@ -54,25 +54,25 @@
           'pp-action-button--secondary'
         ]"
       >
-        <IonIcon v-if="isUpdating && action.targetStatus" :icon="refreshOutline" class="w-4 h-4 animate-spin" />
+        <IonIcon v-if="isUpdating && action.targetStatus" :icon="refreshOutline" class="status-actions__spinner pp-animate-spin" />
         {{ action.label }}
       </button>
     </div>
 
     <!-- Confirmation Dialog -->
-    <div v-if="showConfirmDialog" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="showConfirmDialog = false"></div>
-      <div class="relative bg-pp-bg-secondary rounded-2xl w-full max-w-sm border border-pp-border shadow-2xl p-6" style="background-color: #24242a !important;">
-        <h3 class="text-lg font-bold text-pp-text-primary mb-3">{{ t('statusWorkflow.confirmTitle') }}</h3>
-        <p class="text-white/70 mb-6">
+    <div v-if="showConfirmDialog" class="pp-modal-overlay">
+      <div class="pp-modal-backdrop" @click="showConfirmDialog = false"></div>
+      <div class="pp-modal-content pp-modal-content--sm confirm-dialog">
+        <h3 class="confirm-dialog__title">{{ t('statusWorkflow.confirmTitle') }}</h3>
+        <p class="confirm-dialog__message">
           {{ t('statusWorkflow.confirmMessage', { status: pendingAction?.label || '' }) }}
         </p>
-        <div class="flex items-center justify-end gap-3">
+        <div class="confirm-dialog__actions">
           <button @click="showConfirmDialog = false" class="pp-action-button pp-action-button--secondary">
             {{ t('buttons.cancel') }}
           </button>
           <button @click="executeStatusChange" :disabled="isUpdating" class="pp-action-button pp-action-button--primary">
-            <IonIcon v-if="isUpdating" :icon="refreshOutline" class="w-4 h-4 animate-spin" />
+            <IonIcon v-if="isUpdating" :icon="refreshOutline" class="status-actions__spinner pp-animate-spin" />
             {{ t('statusWorkflow.confirm') }}
           </button>
         </div>
@@ -87,7 +87,7 @@ import { trophyOutline, chevronForwardOutline, refreshOutline, timeOutline } fro
 import { useTournamentStore } from '~/stores/useTournamentStore'
 import { useI18n } from '~/composables/useI18n'
 import { getTournamentStatusLabel, getTournamentStatusClass } from '~/utils/tournamentStatus'
-import type { TournamentLiveStatus } from '~/types/tournament'
+import { TournamentLiveStatus } from '#gql/default'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -107,17 +107,17 @@ const currentStatusEl = ref<HTMLElement | null>(null)
 
 // Status flow
 const statusFlow: TournamentLiveStatus[] = [
-  'NOT_STARTED',
-  'REGISTRATION_OPEN',
-  'LATE_REGISTRATION',
-  'IN_PROGRESS',
-  'BREAK',
-  'FINAL_TABLE',
-  'FINISHED'
+  TournamentLiveStatus.NOT_STARTED,
+  TournamentLiveStatus.REGISTRATION_OPEN,
+  TournamentLiveStatus.LATE_REGISTRATION,
+  TournamentLiveStatus.IN_PROGRESS,
+  TournamentLiveStatus.BREAK,
+  TournamentLiveStatus.FINAL_TABLE,
+  TournamentLiveStatus.FINISHED,
 ]
 
 const currentStatusIndex = computed(() => {
-  const status = tournament.value?.liveStatus
+  const status = tournament.value?.liveStatus as TournamentLiveStatus | undefined
   if (!status) return -1
   return statusFlow.indexOf(status)
 })
@@ -154,29 +154,28 @@ const availableActions = computed<StatusAction[]>(() => {
 
   const actions: StatusAction[] = []
 
+  const pushAction = (action: StatusAction) => {
+    action.handler = () => confirmStatusChange(action)
+    actions.push(action)
+  }
+
   switch (status) {
-    case 'NOT_STARTED':
-      actions.push({ label: t('statusWorkflow.actions.openRegistration'), targetStatus: 'REGISTRATION_OPEN', variant: 'primary', handler: () => confirmStatusChange(actions[0]) })
+    case TournamentLiveStatus.NOT_STARTED:
+      pushAction({ label: t('statusWorkflow.actions.openRegistration'), targetStatus: TournamentLiveStatus.REGISTRATION_OPEN, variant: 'primary', handler: () => {} })
       break
-    case 'REGISTRATION_OPEN':
-      actions.push(
-        { label: t('statusWorkflow.actions.startTournament'), targetStatus: 'LATE_REGISTRATION', variant: 'primary', handler: () => confirmStatusChange(actions[0]) }
-      )
+    case TournamentLiveStatus.REGISTRATION_OPEN:
+      pushAction({ label: t('statusWorkflow.actions.startTournament'), targetStatus: TournamentLiveStatus.LATE_REGISTRATION, variant: 'primary', handler: () => {} })
       break
-    case 'LATE_REGISTRATION':
-      actions.push(
-        { label: t('statusWorkflow.actions.closeLateRegAndStart'), targetStatus: 'IN_PROGRESS', variant: 'warning', handler: () => confirmStatusChange(actions[0]) }
-      )
+    case TournamentLiveStatus.LATE_REGISTRATION:
+      pushAction({ label: t('statusWorkflow.actions.closeLateRegAndStart'), targetStatus: TournamentLiveStatus.IN_PROGRESS, variant: 'warning', handler: () => {} })
       break
-    case 'IN_PROGRESS':
-      actions.push(
-        { label: t('statusWorkflow.actions.callBreak'), targetStatus: 'BREAK', variant: 'warning', handler: () => confirmStatusChange(actions[0]) }
-      )
+    case TournamentLiveStatus.IN_PROGRESS:
+      pushAction({ label: t('statusWorkflow.actions.callBreak'), targetStatus: TournamentLiveStatus.BREAK, variant: 'warning', handler: () => {} })
       break
-    case 'BREAK':
-      actions.push({ label: t('statusWorkflow.actions.resumePlay'), targetStatus: 'IN_PROGRESS', variant: 'success', handler: () => confirmStatusChange(actions[0]) })
+    case TournamentLiveStatus.BREAK:
+      pushAction({ label: t('statusWorkflow.actions.resumePlay'), targetStatus: TournamentLiveStatus.IN_PROGRESS, variant: 'success', handler: () => {} })
       break
-    case 'FINAL_TABLE':
+    case TournamentLiveStatus.FINAL_TABLE:
       {
         const seatedCount = tournamentStore.registrations?.filter(r => r.status === 'SEATED').length || 0
         if (seatedCount > 1) {
@@ -184,9 +183,7 @@ const availableActions = computed<StatusAction[]>(() => {
             { label: t('statusWorkflow.actions.endTournament'), key: 'end-tournament', variant: 'danger', handler: () => emit('enter-results') }
           )
         } else {
-          actions.push(
-            { label: t('statusWorkflow.actions.endTournament'), targetStatus: 'FINISHED', variant: 'danger', handler: () => confirmStatusChange(actions[0]) }
-          )
+          pushAction({ label: t('statusWorkflow.actions.endTournament'), targetStatus: TournamentLiveStatus.FINISHED, variant: 'danger', handler: () => {} })
         }
       }
       break
@@ -257,3 +254,141 @@ const executeStatusChange = async () => {
   }
 }
 </script>
+
+<style scoped>
+.status-card {
+  background-color: var(--pp-bg-secondary);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: var(--pp-shadow-sm);
+  border: 1px solid var(--pp-border);
+}
+
+.status-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.status-card__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--pp-text-primary);
+}
+
+.status-card__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #ffffff;
+}
+
+/* Status Stepper */
+.status-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  padding-bottom: 0.5rem;
+}
+
+.status-stepper__step {
+  flex-shrink: 0;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid;
+  transition: all 0.2s ease;
+}
+
+.status-stepper__step--completed {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: rgba(74, 222, 128, 0.6);
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+.status-stepper__step--upcoming {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.status-stepper__chevron {
+  width: 0.75rem;
+  height: 0.75rem;
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.status-stepper__chevron--completed {
+  color: rgba(74, 222, 128, 0.4);
+}
+
+/* Late Registration Info */
+.late-reg-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.5rem 0.75rem;
+  background-color: rgba(249, 115, 22, 0.1);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+  border-radius: 0.5rem;
+}
+
+.late-reg-info__icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--pp-orange-400);
+  flex-shrink: 0;
+}
+
+.late-reg-info__text {
+  font-size: 0.875rem;
+  color: #fdba74;
+}
+
+/* Action Buttons */
+.status-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.status-actions__button {
+  width: 100%;
+  font-size: 0.875rem;
+}
+
+.status-actions__spinner {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Confirmation Dialog */
+.confirm-dialog {
+  padding: 1.5rem;
+}
+
+.confirm-dialog__title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--pp-text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.confirm-dialog__message {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 1.5rem;
+}
+
+.confirm-dialog__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+</style>

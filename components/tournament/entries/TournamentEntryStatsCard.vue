@@ -1,45 +1,45 @@
 <template>
-  <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-    <div class="flex items-center justify-between mb-8">
-      <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('entries.stats.title') }}</h3>
-      <IonIcon :icon="cashOutline" class="w-6 h-6 text-white" />
+  <div class="stats-card">
+    <div class="stats-header">
+      <h3 class="stats-title">{{ t('entries.stats.title') }}</h3>
+      <IonIcon :icon="cashOutline" class="stats-header-icon" />
     </div>
 
-    <div class="space-y-4">
+    <div class="stats-body">
       <!-- Total Amount -->
-      <div class="text-3xl font-bold text-pp-text-primary mb-4">
+      <div class="stats-total-amount">
         {{ formatPrice(stats?.totalAmountCents, locale) }}
       </div>
 
       <!-- Stats Grid -->
-      <div class="grid grid-cols-2 gap-3">
-        <div class="bg-pp-bg-primary/50 rounded-lg p-3">
-          <div class="text-xs text-white/50 mb-1">{{ t('entries.stats.totalEntries') }}</div>
-          <div class="text-lg font-bold text-white">{{ stats?.totalEntries || 0 }}</div>
+      <div class="stats-grid">
+        <div class="stats-grid-item">
+          <div class="stats-grid-label">{{ t('entries.stats.totalEntries') }}</div>
+          <div class="stats-grid-value">{{ stats?.totalEntries || 0 }}</div>
         </div>
-        <div class="bg-pp-bg-primary/50 rounded-lg p-3">
-          <div class="text-xs text-white/50 mb-1">{{ t('entries.stats.uniquePlayers') }}</div>
-          <div class="text-lg font-bold text-white">{{ stats?.uniquePlayers || 0 }}</div>
+        <div class="stats-grid-item">
+          <div class="stats-grid-label">{{ t('entries.stats.uniquePlayers') }}</div>
+          <div class="stats-grid-value">{{ stats?.uniquePlayers || 0 }}</div>
         </div>
       </div>
 
       <!-- Breakdown -->
-      <div class="space-y-2 pt-2">
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-white/60">{{ t('entries.stats.initialCount') }}</span>
-          <span class="font-medium text-white">{{ stats?.initialCount || 0 }}</span>
+      <div class="stats-breakdown">
+        <div class="stats-breakdown-row">
+          <span class="stats-breakdown-label">{{ t('entries.stats.initialCount') }}</span>
+          <span class="stats-breakdown-value">{{ stats?.initialCount || 0 }}</span>
         </div>
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-white/60">{{ t('entries.stats.rebuyCount') }}</span>
-          <span class="font-medium text-white">{{ stats?.rebuyCount || 0 }}</span>
+        <div class="stats-breakdown-row">
+          <span class="stats-breakdown-label">{{ t('entries.stats.rebuyCount') }}</span>
+          <span class="stats-breakdown-value">{{ stats?.rebuyCount || 0 }}</span>
         </div>
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-white/60">{{ t('entries.stats.reEntryCount') }}</span>
-          <span class="font-medium text-white">{{ stats?.reEntryCount || 0 }}</span>
+        <div class="stats-breakdown-row">
+          <span class="stats-breakdown-label">{{ t('entries.stats.reEntryCount') }}</span>
+          <span class="stats-breakdown-value">{{ stats?.reEntryCount || 0 }}</span>
         </div>
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-white/60">{{ t('entries.stats.addonCount') }}</span>
-          <span class="font-medium text-white">{{ stats?.addonCount || 0 }}</span>
+        <div class="stats-breakdown-row">
+          <span class="stats-breakdown-label">{{ t('entries.stats.addonCount') }}</span>
+          <span class="stats-breakdown-value">{{ stats?.addonCount || 0 }}</span>
         </div>
       </div>
     </div>
@@ -66,3 +66,91 @@ const stats = computed(() => statsData.value?.tournamentEntryStats)
 
 defineExpose({ refreshStats })
 </script>
+
+<style scoped>
+.stats-card {
+  background-color: var(--pp-bg-secondary);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: var(--pp-shadow-sm);
+  border: 1px solid var(--pp-border);
+}
+
+.stats-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.stats-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--pp-text-primary);
+}
+
+.stats-header-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #ffffff;
+}
+
+.stats-body > * + * {
+  margin-top: 1rem;
+}
+
+.stats-total-amount {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--pp-accent-gold);
+  margin-bottom: 1rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.stats-grid-item {
+  background-color: rgba(24, 24, 26, 0.5);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+.stats-grid-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.25rem;
+}
+
+.stats-grid-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.stats-breakdown {
+  padding-top: 0.5rem;
+}
+
+.stats-breakdown > * + * {
+  margin-top: 0.5rem;
+}
+
+.stats-breakdown-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+}
+
+.stats-breakdown-label {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.stats-breakdown-value {
+  font-weight: 500;
+  color: #ffffff;
+}
+</style>

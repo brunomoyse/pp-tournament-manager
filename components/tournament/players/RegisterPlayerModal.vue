@@ -1,93 +1,91 @@
 <template>
-  <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div v-if="isOpen" class="pp-modal-overlay">
     <!-- Backdrop -->
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="close"></div>
+    <div class="pp-modal-backdrop" @click="close"></div>
 
     <!-- Modal Content -->
-    <div class="relative bg-pp-bg-secondary rounded-2xl shadow-xl border border-pp-border w-full max-w-lg max-h-[80vh] flex flex-col">
+    <div class="pp-modal-content pp-modal-content--lg modal-flex-container">
       <!-- Header -->
-      <div class="flex items-center justify-between p-4 border-b border-pp-border">
-        <h2 class="text-lg font-bold text-pp-text-primary">{{ t('buttons.registerPlayer') }}</h2>
-        <button @click="close" class="text-white/60 hover:text-white transition-colors">
-          <IonIcon :icon="closeOutline" class="w-6 h-6" />
+      <div class="pp-modal-header">
+        <h3>{{ t('buttons.registerPlayer') }}</h3>
+        <button @click="close" class="pp-close-button">
+          <IonIcon :icon="closeOutline" class="icon-lg" />
         </button>
       </div>
 
       <!-- Tabs -->
-      <div class="flex gap-2 p-2 bg-pp-bg-primary/50 rounded-2xl border border-pp-border mx-4 mt-3">
-        <button
-          @click="activeTab = 'search'"
-          :class="[
-            'flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap',
-            activeTab === 'search'
-              ? 'bg-pp-bg-secondary text-pp-accent-gold border border-pp-accent-gold/40 shadow-sm'
-              : 'text-white hover:bg-pp-bg-secondary/50'
-          ]"
-        >
-          <IonIcon :icon="searchOutline" class="w-4 h-4" />
-          {{ t('registerModal.searchExisting') }}
-        </button>
-        <button
-          @click="activeTab = 'create'"
-          :class="[
-            'flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap',
-            activeTab === 'create'
-              ? 'bg-pp-bg-secondary text-pp-accent-gold border border-pp-accent-gold/40 shadow-sm'
-              : 'text-white hover:bg-pp-bg-secondary/50'
-          ]"
-        >
-          <IonIcon :icon="personAddOutline" class="w-4 h-4" />
-          {{ t('registerModal.createNew') }}
-        </button>
+      <div class="tabs-wrapper">
+        <div class="tabs-container">
+          <button
+            @click="activeTab = 'search'"
+            :class="[
+              'tab-button',
+              activeTab === 'search' ? 'tab-button--active' : ''
+            ]"
+          >
+            <IonIcon :icon="searchOutline" class="icon-sm" />
+            {{ t('registerModal.searchExisting') }}
+          </button>
+          <button
+            @click="activeTab = 'create'"
+            :class="[
+              'tab-button',
+              activeTab === 'create' ? 'tab-button--active' : ''
+            ]"
+          >
+            <IonIcon :icon="personAddOutline" class="icon-sm" />
+            {{ t('registerModal.createNew') }}
+          </button>
+        </div>
       </div>
 
       <!-- Content -->
-      <div class="flex-1 overflow-y-auto p-4">
+      <div class="tab-content">
         <!-- Search Tab -->
-        <div v-if="activeTab === 'search'" class="space-y-4">
+        <div v-if="activeTab === 'search'" class="search-tab">
           <!-- Search Input -->
-          <div class="relative">
-            <IonIcon :icon="searchOutline" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/40" />
+          <div class="search-input-wrapper">
+            <IonIcon :icon="searchOutline" class="search-input-icon" />
             <input
               v-model="searchQuery"
               type="text"
               :placeholder="t('registerModal.searchPlaceholder')"
-              class="w-full pl-10 pr-4 py-3 bg-pp-bg-primary border border-pp-border rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-pp-accent-gold focus:border-pp-accent-gold"
+              class="pp-input search-input"
               @input="debouncedSearch"
             />
           </div>
 
           <!-- Loading State -->
-          <div v-if="searching" class="flex items-center justify-center py-8">
-            <IonIcon :icon="refreshOutline" class="w-6 h-6 text-pp-accent-gold animate-spin" />
-            <span class="ml-2 text-white/60">{{ t('registerModal.searching') }}</span>
+          <div v-if="searching" class="search-loading">
+            <IonIcon :icon="refreshOutline" class="search-spinner pp-animate-spin" />
+            <span class="search-loading-text">{{ t('registerModal.searching') }}</span>
           </div>
 
           <!-- Search Results -->
-          <div v-else-if="searchResults.length > 0" class="space-y-2">
-            <p class="text-xs text-white/40 mb-2">{{ t('registerModal.playersFound', { count: searchResults.length }) }}</p>
+          <div v-else-if="searchResults.length > 0" class="search-results">
+            <p class="results-count">{{ t('registerModal.playersFound', { count: searchResults.length }) }}</p>
             <div
               v-for="player in searchResults"
               :key="player.id"
-              class="flex items-center justify-between p-3 bg-pp-bg-primary rounded-lg border border-pp-border hover:border-pp-accent-gold/50 transition-colors"
+              class="result-card"
             >
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-pp-text-secondary rounded-full flex items-center justify-center text-white font-bold text-sm">
+              <div class="result-player">
+                <div class="result-avatar">
                   {{ getInitials(player.firstName, player.lastName) }}
                 </div>
                 <div>
-                  <h4 class="font-medium text-white">{{ getPlayerName(player) }}</h4>
-                  <p class="text-xs text-white/50">{{ player.email }}</p>
+                  <h4 class="result-name">{{ getPlayerName(player) }}</h4>
+                  <p class="result-email">{{ player.email }}</p>
                 </div>
               </div>
               <button
                 @click="registerExistingPlayer(player.id)"
                 :disabled="registering === player.id"
-                class="pp-action-button pp-action-button--primary text-sm px-3 py-1.5"
+                class="pp-action-button pp-action-button--primary result-register-btn"
               >
                 <IonIcon
                   :icon="registering === player.id ? refreshOutline : personAddOutline"
-                  :class="['w-4 h-4', registering === player.id && 'animate-spin']"
+                  :class="['icon-sm', registering === player.id && 'pp-animate-spin']"
                 />
                 {{ registering === player.id ? t('registerModal.registering') : t('buttons.register') }}
               </button>
@@ -95,84 +93,84 @@
           </div>
 
           <!-- Empty State -->
-          <div v-else-if="searchQuery && !searching" class="text-center py-8">
-            <IonIcon :icon="searchOutline" class="w-12 h-12 text-white/20 mx-auto mb-2" />
-            <p class="text-white/50">{{ t('registerModal.noPlayersMatching', { query: searchQuery }) }}</p>
+          <div v-else-if="searchQuery && !searching" class="search-empty">
+            <IonIcon :icon="searchOutline" class="empty-icon" />
+            <p class="empty-text">{{ t('registerModal.noPlayersMatching', { query: searchQuery }) }}</p>
             <button
               @click="activeTab = 'create'"
-              class="mt-3 text-pp-accent-gold text-sm hover:underline"
+              class="create-instead-link"
             >
               {{ t('registerModal.createInstead') }}
             </button>
           </div>
 
           <!-- Initial State -->
-          <div v-else class="text-center py-8">
-            <IonIcon :icon="personOutline" class="w-12 h-12 text-white/20 mx-auto mb-2" />
-            <p class="text-white/50">{{ t('registerModal.searchPrompt') }}</p>
+          <div v-else class="search-empty">
+            <IonIcon :icon="personOutline" class="empty-icon" />
+            <p class="empty-text">{{ t('registerModal.searchPrompt') }}</p>
           </div>
         </div>
 
         <!-- Create Tab -->
-        <div v-if="activeTab === 'create'" class="space-y-4">
-          <form @submit.prevent="createAndRegister" class="space-y-4">
-            <div class="grid grid-cols-2 gap-4">
+        <div v-if="activeTab === 'create'" class="create-tab">
+          <form @submit.prevent="createAndRegister" class="create-form">
+            <div class="name-grid">
               <div>
-                <label class="block text-sm font-medium text-white/70 mb-1">{{ t('players.firstName') }} *</label>
+                <label class="pp-label">{{ t('players.firstName') }} *</label>
                 <input
                   v-model="newPlayer.firstName"
                   type="text"
                   required
-                  class="w-full px-3 py-2 bg-pp-bg-primary border border-pp-border rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-pp-accent-gold focus:border-pp-accent-gold"
+                  class="pp-input"
                   placeholder="John"
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-white/70 mb-1">{{ t('players.lastName') }} *</label>
+                <label class="pp-label">{{ t('players.lastName') }} *</label>
                 <input
                   v-model="newPlayer.lastName"
                   type="text"
                   required
-                  class="w-full px-3 py-2 bg-pp-bg-primary border border-pp-border rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-pp-accent-gold focus:border-pp-accent-gold"
+                  class="pp-input"
                   placeholder="Doe"
                 />
               </div>
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-white/70 mb-1">{{ t('auth.email') }} *</label>
+              <label class="pp-label">{{ t('auth.email') }} *</label>
               <input
                 v-model="newPlayer.email"
                 type="email"
                 required
-                class="w-full px-3 py-2 bg-pp-bg-primary border border-pp-border rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-pp-accent-gold focus:border-pp-accent-gold"
+                class="pp-input"
                 placeholder="john@example.com"
               />
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-white/70 mb-1">{{ t('registerModal.phoneOptional') }}</label>
+              <label class="pp-label">{{ t('registerModal.phoneOptional') }}</label>
               <input
                 v-model="newPlayer.phone"
                 type="tel"
-                class="w-full px-3 py-2 bg-pp-bg-primary border border-pp-border rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-pp-accent-gold focus:border-pp-accent-gold"
+                class="pp-input"
                 placeholder="+1 234 567 890"
               />
             </div>
 
             <!-- Error Message -->
-            <div v-if="error" class="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-              <p class="text-red-400 text-sm">{{ error }}</p>
+            <div v-if="error" class="form-error">
+              <p class="form-error-text">{{ error }}</p>
             </div>
 
             <button
               type="submit"
               :disabled="creating"
-              class="w-full pp-action-button pp-action-button--primary py-3"
+              class="pp-action-button pp-action-button--primary submit-button"
             >
               <IonIcon
                 :icon="creating ? refreshOutline : personAddOutline"
-                :class="['w-5 h-5', creating && 'animate-spin']"
+                :class="['icon-md', creating && 'pp-animate-spin']"
               />
               {{ creating ? t('registerModal.creatingAndRegistering') : t('registerModal.createAndRegister') }}
             </button>
@@ -189,6 +187,7 @@ import { closeOutline, searchOutline, personAddOutline, personOutline, refreshOu
 import { useI18n } from '~/composables/useI18n'
 
 const { t } = useI18n()
+const clubStore = useClubStore()
 
 const props = defineProps<{
   isOpen: boolean
@@ -240,7 +239,7 @@ const performSearch = async () => {
     const result = await GqlGetUsers({
       search: searchQuery.value,
       isActive: true,
-      limit: 20
+      pagination: { limit: 20 }
     })
 
     // Filter out already registered players
@@ -287,6 +286,7 @@ const createAndRegister = async () => {
     // First create the player
     const createResult = await GqlCreatePlayer({
       input: {
+        clubId: clubStore.club!.id,
         firstName: newPlayer.firstName,
         lastName: newPlayer.lastName,
         email: newPlayer.email,
@@ -352,3 +352,238 @@ watch(() => props.isOpen, (isOpen) => {
   }
 })
 </script>
+
+<style scoped>
+.modal-flex-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+}
+
+/* Tabs */
+.tabs-wrapper {
+  padding: 0.75rem 1rem 0;
+}
+
+.tabs-container {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background-color: rgba(24, 24, 26, 0.5);
+  border-radius: 1rem;
+  border: 1px solid var(--pp-border);
+}
+
+.tab-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.tab-button:hover:not(.tab-button--active) {
+  background-color: rgba(36, 36, 42, 0.5);
+}
+
+.tab-button--active {
+  background-color: var(--pp-bg-secondary);
+  color: var(--pp-accent-gold);
+  border: 1px solid rgba(254, 231, 138, 0.4);
+  box-shadow: var(--pp-shadow-sm);
+}
+
+/* Content */
+.tab-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+/* Search Tab */
+.search-tab > * + * {
+  margin-top: 1rem;
+}
+
+.search-input-wrapper {
+  position: relative;
+}
+
+.search-input-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.25rem;
+  height: 1.25rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.search-input {
+  padding-left: 2.5rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.search-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.search-spinner {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--pp-accent-gold);
+}
+
+.search-loading-text {
+  margin-left: 0.5rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Search Results */
+.search-results > * + * {
+  margin-top: 0.5rem;
+}
+
+.results-count {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 0.5rem;
+}
+
+.result-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background-color: var(--pp-bg-primary);
+  border-radius: 0.5rem;
+  border: 1px solid var(--pp-border);
+  transition: border-color 0.15s ease;
+}
+
+.result-card:hover {
+  border-color: rgba(254, 231, 138, 0.5);
+}
+
+.result-player {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.result-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: var(--pp-text-secondary);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.result-name {
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.result-email {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.result-register-btn {
+  font-size: 0.875rem;
+  padding: 0.375rem 0.75rem;
+}
+
+/* Empty / Initial State */
+.search-empty {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.empty-icon {
+  width: 3rem;
+  height: 3rem;
+  color: rgba(255, 255, 255, 0.2);
+  margin: 0 auto 0.5rem;
+}
+
+.empty-text {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.create-instead-link {
+  margin-top: 0.75rem;
+  color: var(--pp-accent-gold);
+  font-size: 0.875rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.create-instead-link:hover {
+  text-decoration: underline;
+}
+
+/* Create Tab */
+.create-form > * + * {
+  margin-top: 1rem;
+}
+
+.name-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.form-error {
+  padding: 0.75rem;
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 0.5rem;
+}
+
+.form-error-text {
+  color: var(--pp-red-400);
+  font-size: 0.875rem;
+}
+
+.submit-button {
+  width: 100%;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  justify-content: center;
+}
+
+/* Icon sizes */
+.icon-lg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.icon-md {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.icon-sm {
+  width: 1rem;
+  height: 1rem;
+}
+</style>

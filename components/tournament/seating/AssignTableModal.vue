@@ -1,50 +1,48 @@
 <template>
-  <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div v-if="isOpen" class="pp-modal-overlay">
     <!-- Backdrop -->
-    <div 
-      class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+    <div
+      class="pp-modal-backdrop"
       @click="closeModal"
     ></div>
-    
+
     <!-- Modal Content -->
-    <div class="relative bg-pp-bg-secondary rounded-2xl p-6 w-full max-w-md border border-pp-border" style="background-color: #24242a !important;">
+    <div class="pp-modal-content pp-modal-content--md">
       <!-- Header -->
-      <div class="flex items-center justify-between mb-6">
-        <h3 class="text-xl font-bold text-pp-text-primary">{{ t('modals.linkClubTables.title') }}</h3>
-        <button 
+      <div class="pp-modal-header">
+        <h3>{{ t('modals.linkClubTables.title') }}</h3>
+        <button
           @click="closeModal"
-          class="p-2 text-white/60 hover:text-white rounded-lg hover:bg-pp-bg-primary/50"
+          class="pp-close-button"
         >
-          <IonIcon :icon="closeOutline" class="w-5 h-5" />
+          <IonIcon :icon="closeOutline" class="icon-md" />
         </button>
       </div>
 
       <!-- Loading State -->
-      <div v-if="loading" class="text-center py-8">
-        <div class="text-white/60">{{ t('messages.loadingClubTables') }}</div>
+      <div v-if="loading" class="loading-state">
+        <div class="loading-text">{{ t('messages.loadingClubTables') }}</div>
       </div>
 
       <!-- Table Selection -->
-      <div v-else-if="clubTables && clubTables.length > 0" class="space-y-4">
-        <p class="text-white/70 text-sm mb-4">
+      <div v-else-if="clubTables && clubTables.length > 0" class="pp-modal-body table-selection-body">
+        <p class="selection-description">
           {{ t('messages.selectTablesToAssign', { clubName }) }}
         </p>
 
         <!-- Table Format Selector -->
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-white/70 mb-2">
+        <div class="format-selector">
+          <label class="pp-label">
             {{ t('seating.tableFormat') }}
           </label>
-          <div class="flex gap-2">
+          <div class="format-options">
             <button
               v-for="format in tableFormats"
               :key="format"
               @click="selectedFormat = format"
               :class="[
-                'px-3 py-2 rounded-lg text-sm font-medium transition-all border',
-                selectedFormat === format
-                  ? 'bg-pp-accent-gold/20 text-pp-accent-gold border-pp-accent-gold/40'
-                  : 'bg-pp-bg-primary border-pp-border text-white/60 hover:border-pp-accent-gold/30'
+                'format-button',
+                selectedFormat === format ? 'format-button--active' : ''
               ]"
             >
               {{ format }}-max
@@ -52,58 +50,56 @@
           </div>
         </div>
 
-        <div class="space-y-3 max-h-64 overflow-y-auto">
-          <div 
-            v-for="table in clubTables" 
+        <div class="table-list">
+          <div
+            v-for="table in clubTables"
             :key="table.id"
             :class="[
-              'flex items-center justify-between p-3 rounded-xl border transition-all',
-              table.isAssigned 
-                ? 'bg-pp-bg-primary/10 border-pp-border/30 opacity-50 cursor-not-allowed'
-                : 'bg-pp-bg-primary/30 border-pp-border/50 hover:border-pp-accent-gold/50'
+              'table-row',
+              table.isAssigned ? 'table-row--disabled' : 'table-row--selectable'
             ]"
           >
-            <div class="flex items-center gap-3">
-              <input 
+            <div class="table-row-left">
+              <input
                 :id="`table-${table.id}`"
                 v-model="selectedTableIds"
                 :value="table.id"
                 :disabled="table.isAssigned"
                 type="checkbox"
                 :class="[
-                  'w-4 h-4 text-pp-accent-gold bg-pp-bg-primary border-pp-border rounded focus:ring-pp-accent-gold focus:ring-2',
-                  table.isAssigned && 'cursor-not-allowed opacity-50'
+                  'table-checkbox',
+                  table.isAssigned ? 'table-checkbox--disabled' : ''
                 ]"
               />
-              <label 
-                :for="`table-${table.id}`" 
+              <label
+                :for="`table-${table.id}`"
                 :class="[
-                  'flex-1',
-                  table.isAssigned ? 'cursor-not-allowed' : 'cursor-pointer'
+                  'table-label',
+                  table.isAssigned ? 'table-label--disabled' : ''
                 ]"
               >
                 <div :class="[
-                  'font-semibold',
-                  table.isAssigned ? 'text-white/40' : 'text-white'
+                  'table-name',
+                  table.isAssigned ? 'table-name--disabled' : ''
                 ]">
                   {{ `${t('labels.table')} ${table.tableNumber}` }}
                   {{ table.isAssigned ? ` (${t('seating.alreadyAssigned')})` : '' }}
                 </div>
                 <div :class="[
-                  'text-xs',
-                  table.isAssigned ? 'text-white/30' : 'text-white/60'
+                  'table-seats',
+                  table.isAssigned ? 'table-seats--disabled' : ''
                 ]">
-                  {{ table.maxSeats }} {{ t('labels.seats') }} • {{ table.location || t('labels.noLocation') }}
+                  {{ table.maxSeats }} {{ t('labels.seats') }}
                 </div>
               </label>
             </div>
             <div :class="[
-              'px-2 py-1 rounded-full text-xs font-medium',
-              table.isAssigned 
-                ? 'bg-gray-500/20 text-gray-400'
-                : table.isActive 
-                  ? 'bg-green-500/20 text-green-400' 
-                  : 'bg-red-500/20 text-red-400'
+              'table-status-badge',
+              table.isAssigned
+                ? 'table-status-badge--assigned'
+                : table.isActive
+                  ? 'table-status-badge--active'
+                  : 'table-status-badge--inactive'
             ]">
               {{ table.isAssigned ? t('status.assigned') : table.isActive ? t('status.active') : t('status.inactive') }}
             </div>
@@ -111,8 +107,8 @@
         </div>
 
         <!-- Actions -->
-        <div class="flex items-center justify-end gap-3 pt-4 border-t border-pp-border/50">
-          <button 
+        <div class="pp-modal-footer table-actions">
+          <button
             @click="closeModal"
             class="pp-action-button pp-action-button--secondary"
           >
@@ -123,16 +119,16 @@
             :disabled="selectedTableIds.length === 0 || assigning"
             class="pp-action-button pp-action-button--primary"
           >
-            <IonIcon v-if="assigning" :icon="refreshOutline" class="w-4 h-4 animate-spin" />
+            <IonIcon v-if="assigning" :icon="refreshOutline" class="icon-sm pp-animate-spin" />
             {{ assigning ? t('status.linking') : `${t('buttons.link')} ${selectedTableIds.length} ${t('labels.tables')}` }}
           </button>
         </div>
       </div>
 
       <!-- No Tables State -->
-      <div v-else-if="!loading" class="text-center py-8">
-        <div class="text-white/60 mb-2">{{ t('messages.noTablesFound') }}</div>
-        <div class="text-white/50 text-sm">{{ t('messages.contactClubAdmin') }}</div>
+      <div v-else-if="!loading" class="empty-state">
+        <div class="empty-state-title">{{ t('messages.noTablesFound') }}</div>
+        <div class="empty-state-subtitle">{{ t('messages.contactClubAdmin') }}</div>
       </div>
     </div>
   </div>
@@ -187,7 +183,7 @@ watch(() => props.isOpen, async (isOpen) => {
 // Methods
 const fetchClubTables = async () => {
   if (!props.clubId) return
-  
+
   try {
     loading.value = true
     const result = await GqlGetClubTables({ clubId: props.clubId })
@@ -202,10 +198,10 @@ const fetchClubTables = async () => {
 
 const assignSelectedTables = async () => {
   if (selectedTableIds.value.length === 0) return
-  
+
   try {
     assigning.value = true
-    
+
     // Assign each selected table
     for (const clubTableId of selectedTableIds.value) {
       await GqlAssignTableToTournament({
@@ -216,7 +212,7 @@ const assignSelectedTables = async () => {
         }
       })
     }
-    
+
     emit('tablesAssigned')
     closeModal()
   } catch (error) {
@@ -233,3 +229,188 @@ const closeModal = () => {
   emit('close')
 }
 </script>
+
+<style scoped>
+.loading-state {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.loading-text {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.table-selection-body > * + * {
+  margin-top: 1rem;
+}
+
+.selection-description {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.format-selector {
+  margin-bottom: 1rem;
+}
+
+.format-options {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.format-button {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid var(--pp-border);
+  background-color: var(--pp-bg-primary);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+}
+
+.format-button:hover {
+  border-color: rgba(254, 231, 138, 0.3);
+}
+
+.format-button--active {
+  background-color: rgba(254, 231, 138, 0.2);
+  color: var(--pp-accent-gold);
+  border-color: rgba(254, 231, 138, 0.4);
+}
+
+.table-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+.table-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid;
+  transition: all 0.2s ease;
+}
+
+.table-row--disabled {
+  background-color: rgba(24, 24, 26, 0.1);
+  border-color: rgba(84, 84, 95, 0.3);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.table-row--selectable {
+  background-color: rgba(24, 24, 26, 0.3);
+  border-color: rgba(84, 84, 95, 0.5);
+}
+
+.table-row--selectable:hover {
+  border-color: rgba(254, 231, 138, 0.5);
+}
+
+.table-row-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.table-checkbox {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--pp-accent-gold);
+  background-color: var(--pp-bg-primary);
+  border: 1px solid var(--pp-border);
+  border-radius: 0.25rem;
+}
+
+.table-checkbox--disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.table-label {
+  flex: 1;
+  cursor: pointer;
+}
+
+.table-label--disabled {
+  cursor: not-allowed;
+}
+
+.table-name {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.table-name--disabled {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.table-seats {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.table-seats--disabled {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.table-status-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.table-status-badge--assigned {
+  background-color: rgba(107, 114, 128, 0.2);
+  color: var(--pp-gray-400);
+}
+
+.table-status-badge--active {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: var(--pp-green-400);
+}
+
+.table-status-badge--inactive {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: var(--pp-red-400);
+}
+
+.table-actions {
+  padding: 1rem 0 0 0;
+  border-top: 1px solid rgba(84, 84, 95, 0.5);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.empty-state-title {
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-subtitle {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.875rem;
+}
+
+.icon-md {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.icon-sm {
+  width: 1rem;
+  height: 1rem;
+}
+</style>

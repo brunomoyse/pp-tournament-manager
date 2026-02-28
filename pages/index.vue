@@ -1,164 +1,110 @@
 <template>
-  <IonPage class="bg-pp-bg-primary">
-    <!-- Custom Header -->
-    <div class="bg-pp-bg-primary border-b border-pp-border px-8 py-6">
-      <div class="flex justify-between items-center">
-        <div class="flex items-center gap-4">
-          <img src="/assets/icon-no-bg.png" alt="Pocket Pair Logo" class="w-12 h-12" />
+  <IonPage class="page-root">
+    <IonContent class="page-content">
+      <div class="page-container">
+        <!-- Page Header -->
+        <div class="page-header">
           <div>
-            <h1 class="text-4xl font-bold text-pp-text-primary">{{ t('app.title') }}</h1>
-            <p class="text-white/70 text-lg">{{ t('messages.welcomeBack', { name: currentUser?.firstName || currentUser?.username || t('common.user') }) }}</p>
+            <h1 class="page-title">{{ t('nav.dashboard') }}</h1>
+            <p class="page-subtitle">{{ t('messages.welcomeBack', { name: currentUser?.firstName || currentUser?.username || t('common.user') }) }}</p>
+          </div>
+          <button
+            @click="createTournament"
+            class="pp-action-button pp-action-button--primary"
+          >
+            <IonIcon :icon="addOutline" class="icon-md" />
+            {{ t('buttons.createTournament') }}
+          </button>
+        </div>
+        <!-- LIVE Tournament Hero -->
+        <div
+          v-if="activeTournaments.length > 0"
+          class="live-hero pp-card-interactive pp-shimmer-hover"
+          @click="activeTournaments[0] && goToTournament(activeTournaments[0].id)"
+        >
+          <div class="live-hero-inner">
+            <div class="live-hero-left">
+              <div class="live-icon-wrapper">
+                <div class="pp-live-dot live-hero-dot" />
+              </div>
+              <div>
+                <div class="live-hero-badge-row">
+                  <span class="live-hero-badge">{{ t('status.live') }}</span>
+                </div>
+                <h3 class="live-hero-title">{{ activeTournaments[0]?.title }}</h3>
+                <div class="live-hero-meta">
+                  <span>{{ formatPrice(activeTournaments[0]?.buyInCents, locale) }}</span>
+                  <span v-if="activeTournaments.length > 1">&bull;</span>
+                  <span v-if="activeTournaments.length > 1" class="live-hero-more">+{{ activeTournaments.length - 1 }} {{ t('labels.more') }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="live-hero-right">
+              <span class="pp-action-button pp-action-button--primary">
+                {{ t('buttons.viewTournament') }}
+                <IonIcon :icon="chevronForwardOutline" class="icon-sm" />
+              </span>
+            </div>
           </div>
         </div>
-        <IonButton @click="handleLogout" fill="clear" class="text-white hover:text-pp-accent-gold">
-          <IonIcon :icon="logOutOutline" slot="icon-only" class="w-6 h-6" />
-        </IonButton>
-      </div>
-    </div>
 
-    <IonContent class="bg-pp-bg-primary">
-      <div class="px-8 py-6">
-        <!-- Dashboard Statistics Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          <!-- Active Tournaments Card -->
-          <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-            <div class="flex items-center justify-between mb-8">
-              <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('headings.activeTournaments') }}</h3>
-              <IonIcon :icon="trophyOutline" class="w-6 h-6 text-pp-accent-gold" />
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+          <div class="pp-card pp-poker-watermark stat-card" data-suit="&#9824;">
+            <div class="stat-header">
+              <span class="stat-label">{{ t('headings.activeTournaments') }}</span>
+              <IonIcon :icon="trophyOutline" class="stat-icon" />
             </div>
-            <div class="space-y-6">
-              <div class="text-center">
-                <div class="text-4xl font-bold text-pp-text-primary mb-2">{{ activeTournaments.length }}</div>
-                <div class="text-white/60">{{ t('status.currentlyRunning') }}</div>
-              </div>
-              <div v-if="activeTournaments.length > 0" class="space-y-3">
-                <div class="text-sm text-white/60">{{ t('labels.latest') }}</div>
-                <div class="bg-pp-bg-primary/50 rounded-lg p-3 border border-pp-border">
-                  <div class="font-medium text-white">{{ activeTournaments?.[0]?.title }}</div>
-                  <div class="text-sm text-white/60">{{ t('labels.buyIn') }}: {{ formatPrice(activeTournaments[0]?.buyInCents, locale) }}</div>
-                </div>
-                <button 
-                  @click="activeTournaments[0]?.id && goToTournament(activeTournaments[0].id)"
-                  class="w-full pp-action-button pp-action-button--primary justify-center"
-                >
-                  {{ t('buttons.viewTournament') }}
-                </button>
-              </div>
-              <div v-else class="text-center py-4">
-                <IonIcon :icon="trophyOutline" class="w-8 h-8 text-white/30 mx-auto mb-2" />
-                <div class="text-white/60 text-sm">{{ t('messages.noActiveTournaments') }}</div>
-              </div>
-            </div>
+            <div class="stat-value">{{ activeTournaments.length }}</div>
           </div>
 
-          <!-- Players Statistics Card -->
-          <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-            <div class="flex items-center justify-between mb-8">
-              <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('headings.players') }}</h3>
-              <IonIcon :icon="peopleOutline" class="w-6 h-6 text-pp-accent-gold" />
+          <div class="pp-card pp-poker-watermark stat-card" data-suit="&#9829;">
+            <div class="stat-header">
+              <span class="stat-label">{{ t('reports.players') }}</span>
+              <IonIcon :icon="peopleOutline" class="stat-icon" />
             </div>
-            <div v-if="isLoading" class="space-y-6">
-              <div class="space-y-4">
-                <div class="flex justify-between items-center">
-                  <IonSkeletonText :animated="true" style="width: 60%; height: 20px" />
-                  <IonSkeletonText :animated="true" style="width: 30px; height: 20px" />
-                </div>
-                <div class="flex justify-between items-center">
-                  <IonSkeletonText :animated="true" style="width: 60%; height: 20px" />
-                  <IonSkeletonText :animated="true" style="width: 30px; height: 20px" />
-                </div>
-                <div class="flex justify-between items-center">
-                  <IonSkeletonText :animated="true" style="width: 60%; height: 20px" />
-                  <IonSkeletonText :animated="true" style="width: 50px; height: 20px" />
-                </div>
-                <div class="flex justify-between items-center">
-                  <IonSkeletonText :animated="true" style="width: 60%; height: 20px" />
-                  <IonSkeletonText :animated="true" style="width: 30px; height: 20px" />
-                </div>
-              </div>
-              <IonSkeletonText :animated="true" style="width: 100%; height: 44px; border-radius: 8px" />
-            </div>
-            <div v-else class="space-y-6">
-              <div class="space-y-4">
-                <div class="flex justify-between items-center">
-                  <span class="text-white/70">{{ t('reports.players') }}</span>
-                  <span class="text-pp-text-primary font-semibold">{{ playerStats.uniquePlayers }}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                  <span class="text-white/70">{{ t('reports.period.last7Days') }}</span>
-                  <span class="text-pp-text-primary font-semibold">{{ playerStats.thisWeek }}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                  <span class="text-white/70">{{ t('reports.avgBuyIn') }}</span>
-                  <span class="text-pp-text-primary font-semibold">{{ formatPrice(playerStats.avgBuyIn, locale) }}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                  <span class="text-white/70">{{ t('headings.regularPlayers') }}</span>
-                  <span class="text-pp-text-primary font-semibold">{{ playerStats.regularPlayers }}</span>
-                </div>
-              </div>
-              <button
-                @click="managePlayers"
-                class="w-full pp-action-button pp-action-button--secondary justify-center"
-              >
-                {{ t('buttons.managePlayers') }}
-              </button>
-            </div>
+            <div class="stat-value">{{ playerStats.uniquePlayers }}</div>
+            <div v-if="playerStats.thisWeek > 0" class="stat-trend">{{ playerStats.thisWeek }} {{ t('reports.period.last7Days').toLowerCase() }}</div>
           </div>
 
-          <!-- Quick Actions Card -->
-          <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-            <div class="flex items-center justify-between mb-8">
-              <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('headings.quickActions') }}</h3>
-              <IonIcon :icon="flashOutline" class="w-6 h-6 text-pp-accent-gold" />
+          <div class="pp-card pp-poker-watermark stat-card" data-suit="&#9830;">
+            <div class="stat-header">
+              <span class="stat-label">{{ t('reports.avgBuyIn') }}</span>
+              <IonIcon :icon="cashOutline" class="stat-icon" />
             </div>
-            <div class="space-y-4">
-              <button 
-                @click="createTournament"
-                class="w-full pp-action-button pp-action-button--primary justify-center"
-              >
-                <IonIcon :icon="addOutline" class="w-5 h-5" />
-                {{ t('buttons.createTournament') }}
-              </button>
-              <button 
-                @click="managePlayers"
-                class="w-full pp-action-button pp-action-button--secondary justify-center"
-              >
-                <IonIcon :icon="peopleOutline" class="w-5 h-5" />
-                {{ t('buttons.managePlayers') }}
-              </button>
-              <button 
-                @click="viewReports"
-                class="w-full pp-action-button pp-action-button--secondary justify-center"
-              >
-                <IonIcon :icon="statsChartOutline" class="w-5 h-5" />
-                {{ t('buttons.viewReports') }}
-              </button>
+            <div class="stat-value">{{ formatPrice(playerStats.avgBuyIn, locale) }}</div>
+          </div>
+
+          <div class="pp-card pp-poker-watermark stat-card" data-suit="&#9827;">
+            <div class="stat-header">
+              <span class="stat-label">{{ t('headings.regularPlayers') }}</span>
+              <IonIcon :icon="peopleOutline" class="stat-icon" />
             </div>
+            <div class="stat-value">{{ playerStats.regularPlayers }}</div>
           </div>
         </div>
 
         <!-- Recent Tournaments Section -->
-        <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-          <div class="flex items-center justify-between mb-8">
-            <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('headings.recentTournaments') }}</h3>
-            <div class="flex items-center gap-3">
-              <span class="px-3 py-1 bg-pp-border/50 text-white rounded-full text-sm font-medium">{{ recentTournaments.length }} {{ t('labels.tournaments') }}</span>
-              <button 
+        <div class="pp-card recent-section">
+          <div class="recent-header">
+            <h3 class="recent-title">{{ t('headings.recentTournaments') }}</h3>
+            <div class="recent-header-actions">
+              <span class="tournament-count-badge">{{ recentTournaments.length }} {{ t('labels.tournaments') }}</span>
+              <button
                 @click="viewAllTournaments"
-                class="px-4 py-2 border border-pp-border text-white rounded-lg font-medium hover:bg-pp-border/20 transition-colors text-sm"
+                class="view-all-button"
               >
                 {{ t('buttons.viewAll') }}
               </button>
             </div>
           </div>
-          
+
           <!-- Loading Skeletons -->
-          <div v-if="isLoading" class="space-y-2">
-            <div v-for="i in 3" :key="i" class="flex items-center justify-between p-4 bg-pp-bg-primary/50 rounded-lg border border-pp-border">
-              <div class="flex items-center gap-4 flex-1">
+          <div v-if="isLoading" class="skeleton-list">
+            <div v-for="i in 3" :key="i" class="skeleton-row">
+              <div class="skeleton-left">
                 <IonSkeletonText :animated="true" style="width: 48px; height: 48px; border-radius: 8px" />
-                <div class="flex-1">
+                <div class="skeleton-text">
                   <IonSkeletonText :animated="true" style="width: 60%; height: 20px; margin-bottom: 8px" />
                   <IonSkeletonText :animated="true" style="width: 40%; height: 16px" />
                 </div>
@@ -167,54 +113,52 @@
             </div>
           </div>
 
-          <div v-else-if="recentTournaments.length > 0" class="space-y-2">
-            <div 
-              v-for="tournament in recentTournaments" 
+          <div v-else-if="recentTournaments.length > 0" class="tournament-list">
+            <div
+              v-for="(tournament, index) in recentTournaments"
               :key="tournament.id"
-              class="flex items-center justify-between p-4 bg-pp-bg-primary/50 rounded-lg border border-pp-border hover:bg-pp-bg-primary/70 cursor-pointer transition-all group"
+              class="pp-stagger-item pp-shimmer-hover tournament-row"
+              :style="{ animationDelay: `${index * 50}ms` }"
               @click="goToTournament(tournament.id)"
             >
-              <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-pp-bg-secondary rounded-lg flex items-center justify-center border border-pp-border group-hover:border-pp-accent-gold/30 transition-colors">
-                  <IonIcon :icon="trophyOutline" class="w-6 h-6 text-pp-accent-gold" />
+              <div class="tournament-row-left">
+                <div class="tournament-icon-wrapper">
+                  <IonIcon :icon="trophyOutline" class="tournament-icon" />
                 </div>
                 <div>
-                  <h4 class="text-base font-semibold text-pp-text-primary mb-1">{{ tournament.title }}</h4>
-                  <div class="flex items-center gap-3 text-white/60 text-sm">
+                  <h4 class="tournament-name">{{ tournament.title }}</h4>
+                  <div class="tournament-meta">
                     <span>{{ formatPrice(tournament.buyInCents, locale) }}</span>
-                    <span>•</span>
+                    <span>&bull;</span>
                     <span>{{ new Date(tournament.startTime).toLocaleDateString(locale) }}</span>
                   </div>
                 </div>
               </div>
-              <div class="flex items-center gap-3">
-                <span :class="[
-                  'px-3 py-1 rounded-lg text-xs font-medium border',
-                  getTournamentSmartStatus(tournament).badge
-                ]">
+              <div class="tournament-row-right">
+                <span :class="['pp-status-badge', getTournamentSmartStatus(tournament).badge]">
                   {{ getTournamentSmartStatus(tournament).label }}
                 </span>
                 <IonIcon
                   v-if="getTournamentSmartStatus(tournament).needsAttention"
                   :icon="warningOutline"
-                  class="w-5 h-5 text-orange-400 animate-pulse"
+                  class="attention-icon pp-animate-pulse"
                 />
-                <IonIcon :icon="chevronForwardOutline" class="w-5 h-5 text-white/40 group-hover:text-pp-accent-gold transition-colors" />
+                <IonIcon :icon="chevronForwardOutline" class="chevron-icon" />
               </div>
             </div>
           </div>
-          
-          <div v-else class="text-center py-12">
-            <div class="w-20 h-20 bg-pp-bg-primary rounded-2xl flex items-center justify-center mx-auto mb-6 border border-pp-border">
-              <IonIcon :icon="trophyOutline" class="w-10 h-10 text-white/30" />
+
+          <div v-else class="empty-state">
+            <div class="empty-icon-wrapper">
+              <IonIcon :icon="trophyOutline" class="empty-icon" />
             </div>
-            <h4 class="text-lg font-medium text-white mb-2">{{ t('messages.noTournamentsYet') }}</h4>
-            <p class="text-white/60 mb-6">{{ t('messages.createFirstTournament') }}</p>
-            <button 
+            <h4 class="empty-title">{{ t('messages.noTournamentsYet') }}</h4>
+            <p class="empty-description">{{ t('messages.createFirstTournament') }}</p>
+            <button
               @click="createTournament"
-              class="pp-action-button pp-action-button--primary mx-auto"
+              class="pp-action-button pp-action-button--primary empty-cta"
             >
-              <IonIcon :icon="addOutline" class="w-5 h-5" />
+              <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('buttons.createTournament') }}
             </button>
           </div>
@@ -235,8 +179,8 @@
 
 <script setup lang="ts">
 // Protect this page with authentication
+import { LeaderboardPeriod } from '#gql/default'
 import type {GetTournamentsQuery, GetLeaderboardQuery} from "#gql";
-import type { LeaderboardPeriod } from '~/types/tournament';
 
 definePageMeta({
   middleware: 'auth'
@@ -245,7 +189,6 @@ definePageMeta({
 import {
   IonPage,
   IonContent,
-  IonButton,
   IonIcon,
   IonSkeletonText,
   alertController
@@ -254,10 +197,8 @@ import {
   trophyOutline,
   peopleOutline,
   addOutline,
-  logOutOutline,
   chevronForwardOutline,
-  flashOutline,
-  statsChartOutline,
+  cashOutline,
   warningOutline
 } from 'ionicons/icons'
 import { useAuthStore } from '~/stores/useAuthStore'
@@ -274,7 +215,7 @@ const { t, locale } = useI18n()
 const { currentUser } = authStore
 const { club } = clubStore
 
-const tournaments = ref<GetTournamentsQuery['tournaments']>([])
+const tournaments = ref<GetTournamentsQuery['tournaments']['items']>([])
 const allTimeLeaderboard = ref<GetLeaderboardQuery['leaderboard'] | null>(null)
 const weekLeaderboard = ref<GetLeaderboardQuery['leaderboard'] | null>(null)
 
@@ -327,8 +268,8 @@ const getTournamentSmartStatus = (tournament: any) => {
     return {
       needsAttention: true,
       suggestedStatus: 'LATE_START',
-      badge: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-      label: t('status.lateStart') || 'Démarrage en retard'
+      badge: 'pp-status--orange',
+      label: t('status.lateStart') || 'Demarrage en retard'
     }
   }
 
@@ -337,8 +278,8 @@ const getTournamentSmartStatus = (tournament: any) => {
     return {
       needsAttention: true,
       suggestedStatus: 'SHOULD_BE_COMPLETED',
-      badge: 'bg-red-500/20 text-red-400 border-red-500/30',
-      label: t('status.shouldBeCompleted') || 'Devrait être terminé'
+      badge: 'pp-status--red',
+      label: t('status.shouldBeCompleted') || 'Devrait etre termine'
     }
   }
 
@@ -394,21 +335,8 @@ const onTournamentSaved = async (newTournament?: any) => {
   }
 }
 
-const managePlayers = () => {
-  router.push('/players')
-}
-
-const viewReports = () => {
-  router.push('/reports')
-}
-
 const viewAllTournaments = () => {
   router.push('/tournaments')
-}
-
-const handleLogout = async () => {
-  await authStore.logout()
-  router.push('/login')
 }
 
 onMounted(async () => {
@@ -436,8 +364,8 @@ onMounted(async () => {
 
         // Then load leaderboard statistics in the background (non-blocking)
         Promise.all([
-            GqlGetLeaderboard({ clubId: club.id, period: 'ALL_TIME' as LeaderboardPeriod, limit: 500 }),
-            GqlGetLeaderboard({ clubId: club.id, period: 'LAST_7_DAYS' as LeaderboardPeriod })
+            GqlGetLeaderboard({ clubId: club.id, period: LeaderboardPeriod.ALL_TIME, pagination: { limit: 200 } }),
+            GqlGetLeaderboard({ clubId: club.id, period: LeaderboardPeriod.LAST_7_DAYS })
         ]).then(([allTimeRes, weekRes]) => {
             allTimeLeaderboard.value = allTimeRes.leaderboard
             weekLeaderboard.value = weekRes.leaderboard
@@ -453,38 +381,400 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Match the tournament page styling */
-ion-page {
-  --background: #18181a !important;
-  background-color: #18181a !important;
-}
-
-ion-content {
-  --background: #18181a !important;
-  background-color: #18181a !important;
-}
-
-/* Custom button hover effects to match the app */
-button:hover {
-  transform: translateY(-1px);
-}
-
-button:active {
-  transform: translateY(0);
-}
-
-/* Ensure consistent card styling */
-.bg-pp-bg-secondary {
-  background-color: #24242a !important;
-}
-
-/* Match the sophisticated spacing and typography from tournament page */
+/* Heading letter spacing */
 h1, h3, h4 {
   letter-spacing: -0.025em;
 }
 
-/* Smooth transitions for all interactive elements */
-button, .group {
+/* Icon sizes */
+.icon-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+.icon-md {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Page */
+.page-root {
+  background-color: var(--pp-bg-primary);
+}
+
+.page-content {
+  background-color: var(--pp-bg-primary);
+}
+
+.page-container {
+  padding: 1.5rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .page-container {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-container {
+    padding: 1.5rem 2rem;
+  }
+}
+
+/* Page Header */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.page-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--pp-text-primary);
+}
+
+.page-subtitle {
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.25rem;
+}
+
+/* LIVE Tournament Hero */
+.live-hero {
+  margin-bottom: 1.5rem;
+  border-radius: 1rem;
+  padding: 1rem;
+  border: 2px solid rgba(239, 68, 68, 0.4);
+  background: linear-gradient(to right, rgba(239, 68, 68, 0.1), var(--pp-bg-secondary), var(--pp-bg-secondary));
+}
+
+.live-hero-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.live-hero-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.live-icon-wrapper {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background-color: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.live-hero-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  background-color: var(--pp-red-500);
+  border-radius: 9999px;
+}
+
+.live-hero-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.125rem;
+}
+
+.live-hero-badge {
+  color: var(--pp-red-400);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.live-hero-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.live-hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.875rem;
+}
+
+.live-hero-more {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.live-hero-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Statistics Cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.stat-card {
+  background-color: var(--pp-bg-secondary);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--pp-border);
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--pp-accent-gold);
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--pp-accent-gold);
+}
+
+.stat-trend {
+  font-size: 0.75rem;
+  color: var(--pp-green-400);
+  margin-top: 0.25rem;
+}
+
+/* Recent Tournaments Section */
+.recent-section {
+  background-color: var(--pp-bg-secondary);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: var(--pp-shadow-sm);
+  border: 1px solid var(--pp-border);
+}
+
+.recent-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.recent-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--pp-text-primary);
+}
+
+.recent-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.tournament-count-badge {
+  padding: 0.25rem 0.75rem;
+  background-color: rgba(84, 84, 95, 0.5);
+  color: #ffffff;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.view-all-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--pp-border);
+  color: #ffffff;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.view-all-button:hover {
+  background-color: rgba(84, 84, 95, 0.2);
+}
+
+/* Skeleton */
+.skeleton-list > * + * {
+  margin-top: 0.5rem;
+}
+
+.skeleton-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: rgba(24, 24, 26, 0.5);
+  border-radius: 0.5rem;
+  border: 1px solid var(--pp-border);
+}
+
+.skeleton-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.skeleton-text {
+  flex: 1;
+}
+
+/* Tournament list */
+.tournament-list > * + * {
+  margin-top: 0.375rem;
+}
+
+.tournament-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background-color: rgba(24, 24, 26, 0.5);
+  border-radius: 0.5rem;
+  border: 1px solid var(--pp-border);
+  cursor: pointer;
   transition: all 0.2s ease;
+}
+
+.tournament-row:hover {
+  background-color: rgba(24, 24, 26, 0.7);
+}
+
+.tournament-row-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.tournament-icon-wrapper {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: var(--pp-bg-secondary);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--pp-border);
+  transition: border-color 0.15s ease;
+}
+
+.tournament-row:hover .tournament-icon-wrapper {
+  border-color: rgba(254, 231, 138, 0.3);
+}
+
+.tournament-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--pp-accent-gold);
+}
+
+.tournament-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--pp-text-primary);
+  margin-bottom: 0.125rem;
+}
+
+.tournament-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75rem;
+}
+
+.tournament-row-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.attention-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--pp-orange-400);
+}
+
+.chevron-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: rgba(255, 255, 255, 0.4);
+  transition: color 0.15s ease;
+}
+
+.tournament-row:hover .chevron-icon {
+  color: var(--pp-accent-gold);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.empty-icon-wrapper {
+  width: 5rem;
+  height: 5rem;
+  background-color: var(--pp-bg-primary);
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  border: 1px solid var(--pp-border);
+}
+
+.empty-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.empty-title {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.empty-description {
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 1.5rem;
+}
+
+.empty-cta {
+  margin: 0 auto;
 }
 </style>

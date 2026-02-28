@@ -6,10 +6,10 @@ import * as vueExports from 'vue'
 Object.assign(global, vueExports)
 
 // Mock Nuxt auto-imports
-global.defineNuxtRouteMiddleware = vi.fn((fn) => fn)
-global.definePageMeta = vi.fn()
-global.navigateTo = vi.fn()
-global.useRuntimeConfig = vi.fn(() => ({
+;(global as any).defineNuxtRouteMiddleware = vi.fn((fn: any) => fn)
+;(global as any).definePageMeta = vi.fn()
+;(global as any).navigateTo = vi.fn()
+;(global as any).useRuntimeConfig = vi.fn(() => ({
   public: {
     apiBaseUrl: 'http://localhost:8080',
     graphqlEndpoint: 'http://localhost:8080/graphql',
@@ -39,11 +39,11 @@ config.global.stubs = {
 }
 
 // Mock GraphQL client
-global.useGqlToken = vi.fn()
-global.GqlLoginUser = vi.fn()
-global.GqlGetMe = vi.fn()
-global.GqlGetTournaments = vi.fn()
-global.GqlGetTournament = vi.fn()
+;(global as any).useGqlToken = vi.fn()
+;(global as any).GqlLoginUser = vi.fn()
+;(global as any).GqlGetMe = vi.fn()
+;(global as any).GqlGetTournaments = vi.fn()
+;(global as any).GqlGetTournament = vi.fn()
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -70,7 +70,7 @@ Object.defineProperty(global, 'localStorage', {
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation((query) => ({
+  value: vi.fn().mockImplementation((query: string) => ({
     matches: false,
     media: query,
     onchange: null,
