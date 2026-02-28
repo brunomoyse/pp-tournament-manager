@@ -15,6 +15,7 @@ interface AuthUser {
 export interface LoginCredentials {
   email: string
   password: string
+  rememberMe?: boolean
 }
 
 export const useAuthStore = defineStore('auth', () => {
