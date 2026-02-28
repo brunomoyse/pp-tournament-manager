@@ -1,29 +1,29 @@
 <template>
-    <ion-page class="bg-pp-bg-primary">
+    <ion-page class="page-bg">
         <!-- Custom Header -->
-        <div class="bg-pp-bg-primary border-b border-pp-border px-8 py-6">
+        <div class="custom-header">
             <!-- Top row with title and status -->
-            <div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
-                <div class="flex items-center gap-4 cursor-pointer" @click="goHome">
-                    <img src="/assets/icon-no-bg.png" alt="Pocket Pair Logo" class="w-12 h-12" />
-                    <h1 class="text-4xl font-bold text-pp-text-primary hover:text-pp-accent-gold transition-colors">{{ t('app.title') }}</h1>
+            <div class="header-top">
+                <div class="header-brand" @click="goHome">
+                    <img src="/assets/icon-no-bg.png" alt="Pocket Pair Logo" class="brand-logo" />
+                    <h1 class="brand-title">{{ t('app.title') }}</h1>
                 </div>
-                <div class="text-right">
+                <div class="header-info">
                     <!-- Club name and tournament name -->
-                    <div class="text-lg font-semibold text-white mb-1">
+                    <div class="header-subtitle">
                         {{ club?.name || t('status.loading') }} - {{ tournament?.title || t('status.loadingTournament') }}
                     </div>
                     <!-- Connection status -->
-                    <div class="flex items-center justify-end gap-2">
+                    <div class="connection-status">
                         <div :class="[
-                            'w-2 h-2 rounded-full',
-                            connectionStatus === 'connected' ? 'bg-green-500' :
-                            connectionStatus === 'reconnecting' ? 'bg-orange-500' : 'bg-red-500'
+                            'status-dot',
+                            connectionStatus === 'connected' ? 'status-dot--connected' :
+                            connectionStatus === 'reconnecting' ? 'status-dot--reconnecting' : 'status-dot--offline'
                         ]"></div>
                         <span :class="[
-                            'text-sm capitalize font-medium',
-                            connectionStatus === 'connected' ? 'text-green-500' :
-                            connectionStatus === 'reconnecting' ? 'text-orange-500' : 'text-red-500'
+                            'status-label',
+                            connectionStatus === 'connected' ? 'status-label--connected' :
+                            connectionStatus === 'reconnecting' ? 'status-label--reconnecting' : 'status-label--offline'
                         ]">{{
                                 connectionStatus === 'connected' ? t('status.connected') :
                                     connectionStatus === 'reconnecting' ? t('status.reconnecting') : t('status.offline')
@@ -31,18 +31,16 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Full width tab navigation -->
-            <div class="flex overflow-x-auto gap-2 bg-pp-bg-secondary/50 p-2 rounded-2xl border border-pp-border">
+            <div class="tab-bar">
                 <button
                     v-for="tab in tabs"
                     :key="tab.value"
                     @click="activeTab = tab.value"
                     :class="[
-                        'flex-1 min-w-0 px-4 py-3 rounded-xl font-medium transition-all whitespace-nowrap',
-                        activeTab === tab.value
-                            ? 'bg-pp-bg-secondary text-pp-accent-gold border border-pp-accent-gold/40 shadow-sm'
-                            : 'text-white hover:bg-pp-bg-secondary/50'
+                        'tab-button',
+                        activeTab === tab.value ? 'tab-button--active' : 'tab-button--inactive'
                     ]"
                 >
                     {{ tab.label }}
@@ -50,43 +48,43 @@
             </div>
         </div>
 
-        <ion-content class="bg-pp-bg-primary">
+        <ion-content class="content-bg">
             <!-- Tab Content -->
-            <div class="px-8 pt-4 pb-24">
+            <div class="tab-content">
                 <!-- Overview Tab (v-show keeps components mounted so refs stay available from other tabs) -->
-                <div v-show="activeTab === 'overview'" class="">
+                <div v-show="activeTab === 'overview'">
                     <!-- Warning: No tables linked -->
-                    <div v-if="showNoTablesWarning" class="mb-6 flex items-center gap-3 p-4 bg-orange-500/10 border border-orange-500/30 rounded-xl">
-                        <ion-icon :icon="warningOutline" class="w-6 h-6 text-orange-400 flex-shrink-0" />
-                        <div class="flex-1">
-                            <p class="text-orange-300 font-medium text-sm">{{ t('warnings.noTablesLinked') }}</p>
-                            <p class="text-orange-400/70 text-xs mt-0.5">{{ t('warnings.noTablesLinkedDesc') }}</p>
+                    <div v-if="showNoTablesWarning" class="warning-banner warning-banner--orange">
+                        <ion-icon :icon="warningOutline" class="warning-icon warning-icon--orange" />
+                        <div class="warning-body">
+                            <p class="warning-title warning-title--orange">{{ t('warnings.noTablesLinked') }}</p>
+                            <p class="warning-desc warning-desc--orange">{{ t('warnings.noTablesLinkedDesc') }}</p>
                         </div>
                         <button
                             @click="activeTab = 'seating'"
-                            class="pp-action-button pp-action-button--warning text-xs px-3 py-1.5 flex-shrink-0"
+                            class="pp-action-button pp-action-button--warning warning-action"
                         >
                             {{ t('warnings.goToSeating') }}
                         </button>
                     </div>
 
                     <!-- Warning: Unseated checked-in players -->
-                    <div v-if="showUnseatedWarning" class="mb-6 flex items-center gap-3 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl">
-                        <ion-icon :icon="warningOutline" class="w-6 h-6 text-amber-400 flex-shrink-0" />
-                        <div class="flex-1">
-                            <p class="text-amber-300 font-medium text-sm">{{ t('warnings.unseatedPlayers', { count: unseatedCheckedInCount }) }}</p>
-                            <p class="text-amber-400/70 text-xs mt-0.5">{{ t('warnings.unseatedPlayersDesc') }}</p>
+                    <div v-if="showUnseatedWarning" class="warning-banner warning-banner--amber">
+                        <ion-icon :icon="warningOutline" class="warning-icon warning-icon--amber" />
+                        <div class="warning-body">
+                            <p class="warning-title warning-title--amber">{{ t('warnings.unseatedPlayers', { count: unseatedCheckedInCount }) }}</p>
+                            <p class="warning-desc warning-desc--amber">{{ t('warnings.unseatedPlayersDesc') }}</p>
                         </div>
                         <button
                             @click="activeTab = 'players'"
-                            class="pp-action-button pp-action-button--warning text-xs px-3 py-1.5 flex-shrink-0"
+                            class="pp-action-button pp-action-button--warning warning-action"
                         >
                             {{ t('warnings.goToPlayers') }}
                         </button>
                     </div>
 
                     <!-- Grid Layout -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12">
+                    <div class="overview-grid">
                         <TournamentStatusCard
                           @enter-results="showEnterResultsModal = true"
                           @status-changed="handleStatusChanged"
@@ -96,12 +94,12 @@
                     </div>
 
                     <!-- Check-in QR Code Button -->
-                    <div class="mb-6 flex justify-center">
+                    <div class="qr-section">
                         <button
                             @click="showTournamentQRModal = true"
-                            class="pp-action-button pp-action-button--secondary flex items-center gap-2"
+                            class="pp-action-button pp-action-button--secondary qr-button"
                         >
-                            <ion-icon :icon="qrCodeOutline" class="w-5 h-5" />
+                            <ion-icon :icon="qrCodeOutline" class="icon-md" />
                             {{ t('qr.tournament.button') }}
                         </button>
                     </div>
@@ -109,14 +107,14 @@
                     <!-- Results Display (FINISHED) -->
                     <TournamentResultsDisplay
                       v-if="tournament?.liveStatus === 'FINISHED'"
-                      class="mb-8"
+                      class="results-section"
                     />
 
                     <!-- Recent Activity -->
-                    <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-                        <h3 class="text-xl font-semibold text-pp-text-primary mb-8">{{ t('headings.recentActivity') }}</h3>
-                        <div class="space-y-6">
-                            <div class="text-center py-8 text-white/60">
+                    <div class="activity-card">
+                        <h3 class="activity-title">{{ t('headings.recentActivity') }}</h3>
+                        <div class="activity-content">
+                            <div class="activity-empty">
                                 {{ t('messages.noRecentActivity') }}
                             </div>
                         </div>
@@ -124,24 +122,28 @@
                 </div>
 
                 <!-- Clock Tab -->
-                <div v-if="activeTab === 'clock'" class="">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <Transition name="tab-fade" mode="out-in">
+                  <div v-if="activeTab === 'clock'" key="clock">
+                    <div class="clock-grid">
                         <TournamentClockCard />
                         <TournamentStructureCard
                             :current-level-index="(clock?.currentLevel || 1) - 1"
                         />
                     </div>
-                </div>
+                  </div>
+                </Transition>
 
                 <!-- Players Tab -->
-                <div v-if="activeTab === 'players'" class="">
+                <Transition name="tab-fade" mode="out-in">
+                  <div v-if="activeTab === 'players'" key="players">
                     <TournamentPlayersTable
                       ref="playersTable"
                       @player-checked-in="handlePlayerCheckedIn"
                       @registerPlayer="showRegisterPlayerModal = true"
                       @entry-added="handleEntryAdded"
                     />
-                </div>
+                  </div>
+                </Transition>
 
                 <!-- Register Player Modal -->
                 <RegisterPlayerModal
@@ -170,61 +172,61 @@
                 />
 
                 <!-- Seating Tab -->
-                <div v-if="activeTab === 'seating'" class="">
+                <Transition name="tab-fade" mode="out-in">
+                  <div v-if="activeTab === 'seating'" key="seating">
                     <TournamentSeatingManager ref="seatingManager" />
-                </div>
+                  </div>
+                </Transition>
 
                 <!-- Settings Tab -->
-                <div v-if="activeTab === 'settings'" class="">
-                    <div class="bg-pp-bg-secondary rounded-2xl p-8 shadow-sm border border-pp-border" style="background-color: #24242a !important;">
-                        <div class="flex items-center justify-between mb-6">
-                            <div class="flex items-center gap-3">
-                                <ion-icon :icon="settingsOutline" class="w-6 h-6 text-pp-text-primary"></ion-icon>
-                                <h3 class="text-xl font-semibold text-pp-text-primary">{{ t('headings.tournamentSettings') }}</h3>
+                <Transition name="tab-fade" mode="out-in">
+                  <div v-if="activeTab === 'settings'" key="settings">
+                    <div class="settings-card">
+                        <div class="settings-header">
+                            <div class="settings-title-group">
+                                <ion-icon :icon="settingsOutline" class="settings-icon"></ion-icon>
+                                <h3 class="settings-title">{{ t('headings.tournamentSettings') }}</h3>
                             </div>
                             <button
                                 v-if="canEditTournament"
                                 @click="openEditModal"
                                 class="pp-action-button pp-action-button--primary"
                             >
-                                <ion-icon :icon="createOutline" class="w-5 h-5" />
+                                <ion-icon :icon="createOutline" class="icon-md" />
                                 {{ t('tournament.edit') }}
                             </button>
                         </div>
 
                         <!-- Tournament Info Display -->
-                        <div class="space-y-4" v-if="tournament">
-                            <div class="grid grid-cols-2 gap-4">
+                        <div class="settings-info" v-if="tournament">
+                            <div class="settings-grid">
                                 <div>
-                                    <label class="text-sm text-white/60">{{ t('tournament.name') }}</label>
-                                    <p class="text-white font-medium">{{ tournament.title }}</p>
+                                    <label class="info-label">{{ t('tournament.name') }}</label>
+                                    <p class="info-value">{{ tournament.title }}</p>
                                 </div>
                                 <div>
-                                    <label class="text-sm text-white/60">{{ t('tournament.buyIn') }}</label>
-                                    <p class="text-white font-medium">{{ formatPrice(tournament.buyInCents, locale) }}</p>
+                                    <label class="info-label">{{ t('tournament.buyIn') }}</label>
+                                    <p class="info-value">{{ formatPrice(tournament.buyInCents, locale) }}</p>
                                 </div>
                                 <div>
-                                    <label class="text-sm text-white/60">{{ t('tournament.startTime') }}</label>
-                                    <p class="text-white font-medium">{{ new Date(tournament.startTime).toLocaleString() }}</p>
+                                    <label class="info-label">{{ t('tournament.startTime') }}</label>
+                                    <p class="info-value">{{ new Date(tournament.startTime).toLocaleString() }}</p>
                                 </div>
                                 <div>
-                                    <label class="text-sm text-white/60">{{ t('tournament.seatCap') }}</label>
-                                    <p class="text-white font-medium">{{ tournament.seatCap || t('tournament.unlimited') }}</p>
+                                    <label class="info-label">{{ t('tournament.seatCap') }}</label>
+                                    <p class="info-value">{{ tournament.seatCap || t('tournament.unlimited') }}</p>
                                 </div>
                                 <div>
-                                    <label class="text-sm text-white/60">{{ t('tournament.status') }}</label>
-                                    <p class="mt-1">
-                                        <span :class="[
-                                            'px-3 py-1 rounded-full text-sm font-medium border',
-                                            getTournamentStatusClass(tournament.liveStatus || 'UNKNOWN')
-                                        ]">
+                                    <label class="info-label">{{ t('tournament.status') }}</label>
+                                    <p class="info-value-status">
+                                        <span :class="['pp-status-badge', getTournamentStatusClass(tournament.liveStatus || 'UNKNOWN')]">
                                             {{ getTournamentStatusLabel(tournament.liveStatus || 'UNKNOWN', t) }}
                                         </span>
                                     </p>
                                 </div>
                                 <div v-if="tournament.description">
-                                    <label class="text-sm text-white/60">{{ t('tournament.description') }}</label>
-                                    <p class="text-white font-medium">{{ tournament.description }}</p>
+                                    <label class="info-label">{{ t('tournament.description') }}</label>
+                                    <p class="info-value">{{ tournament.description }}</p>
                                 </div>
                             </div>
                         </div>
@@ -239,6 +241,7 @@
                         @saved="onTournamentUpdated"
                     />
                 </div>
+                </Transition>
             </div>
         </ion-content>
     </ion-page>
@@ -478,7 +481,8 @@ const { data: clockUpdates } = useGqlSubscription({
 })
 
 // Watch for subscription updates and update the store
-watch(clockUpdates, (data: {tournamentClockUpdates: TournamentClock}) => {
+watch(clockUpdates, (raw) => {
+    const data = raw as { tournamentClockUpdates?: TournamentClock } | undefined
     console.log('[TournamentPage] Clock subscription update received:', data)
     if (data?.tournamentClockUpdates) {
         console.log('[TournamentPage] Updating store with clock:', data.tournamentClockUpdates)
@@ -590,6 +594,399 @@ onMounted(async () => {
 
 </script>
 
+<style scoped>
+.page-bg {
+  background-color: var(--pp-bg-primary);
+}
+
+.content-bg {
+  background-color: var(--pp-bg-primary);
+  --padding-top: 0 !important;
+}
+
+/* Custom Header */
+.custom-header {
+  background-color: var(--pp-bg-primary);
+  border-bottom: 1px solid var(--pp-border);
+  padding: 1rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .custom-header {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .custom-header {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.header-top {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 3rem;
+}
+
+@media (min-width: 640px) {
+  .header-top {
+    flex-direction: row;
+  }
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+}
+
+.brand-logo {
+  width: 3rem;
+  height: 3rem;
+}
+
+.brand-title {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  color: var(--pp-text-primary);
+  transition: color 0.2s ease;
+}
+
+.brand-title:hover {
+  color: var(--pp-accent-gold);
+}
+
+.header-info {
+  text-align: right;
+}
+
+.header-subtitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.25rem;
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.status-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+}
+
+.status-dot--connected {
+  background-color: var(--pp-green-500);
+}
+
+.status-dot--reconnecting {
+  background-color: var(--pp-orange-500);
+}
+
+.status-dot--offline {
+  background-color: var(--pp-red-500);
+}
+
+.status-label {
+  font-size: 0.875rem;
+  text-transform: capitalize;
+  font-weight: 500;
+}
+
+.status-label--connected {
+  color: var(--pp-green-500);
+}
+
+.status-label--reconnecting {
+  color: var(--pp-orange-500);
+}
+
+.status-label--offline {
+  color: var(--pp-red-500);
+}
+
+/* Tab Bar */
+.tab-bar {
+  display: flex;
+  overflow-x: auto;
+  gap: 0.5rem;
+  background-color: rgba(36, 36, 42, 0.5);
+  padding: 0.5rem;
+  border-radius: 1rem;
+  border: 1px solid var(--pp-border);
+}
+
+.tab-button {
+  flex: 1;
+  min-width: 0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tab-button--active {
+  background-color: var(--pp-bg-secondary);
+  color: var(--pp-accent-gold);
+  border: 1px solid rgba(254, 231, 138, 0.4);
+  box-shadow: var(--pp-shadow-sm);
+}
+
+.tab-button--inactive {
+  color: #ffffff;
+  border: 1px solid transparent;
+}
+
+.tab-button--inactive:hover {
+  background-color: rgba(36, 36, 42, 0.5);
+}
+
+/* Tab Content */
+.tab-content {
+  padding: 0.75rem 1rem 6rem;
+}
+
+@media (min-width: 640px) {
+  .tab-content {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .tab-content {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.icon-md {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Warning Banners */
+.warning-banner {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+}
+
+.warning-banner--orange {
+  background-color: rgba(249, 115, 22, 0.1);
+  border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+.warning-banner--amber {
+  background-color: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.warning-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+.warning-icon--orange {
+  color: var(--pp-orange-400);
+}
+
+.warning-icon--amber {
+  color: var(--pp-amber-400);
+}
+
+.warning-body {
+  flex: 1;
+}
+
+.warning-title {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.warning-title--orange {
+  color: rgba(253, 186, 116, 1);
+}
+
+.warning-title--amber {
+  color: rgba(252, 211, 77, 1);
+}
+
+.warning-desc {
+  font-size: 0.75rem;
+  margin-top: 0.125rem;
+}
+
+.warning-desc--orange {
+  color: rgba(251, 146, 60, 0.7);
+}
+
+.warning-desc--amber {
+  color: rgba(251, 191, 36, 0.7);
+}
+
+.warning-action {
+  font-size: 0.75rem;
+  padding: 0.375rem 0.75rem;
+  flex-shrink: 0;
+}
+
+/* Overview Grid */
+.overview-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .overview-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  /* Status card spans full width - stepper needs horizontal room */
+  .overview-grid > :first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* QR Section */
+.qr-section {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.qr-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Results Section */
+.results-section {
+  margin-bottom: 2rem;
+}
+
+/* Activity Card */
+.activity-card {
+  background-color: var(--pp-bg-secondary);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: var(--pp-shadow-sm);
+  border: 1px solid var(--pp-border);
+}
+
+.activity-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--pp-text-primary);
+  margin-bottom: 1rem;
+}
+
+.activity-content > * + * {
+  margin-top: 1.5rem;
+}
+
+.activity-empty {
+  text-align: center;
+  padding: 2rem 0;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Clock Grid */
+.clock-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .clock-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Settings Card */
+.settings-card {
+  background-color: var(--pp-bg-secondary);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: var(--pp-shadow-sm);
+  border: 1px solid var(--pp-border);
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.settings-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.settings-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--pp-text-primary);
+}
+
+.settings-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--pp-text-primary);
+}
+
+.settings-info > * + * {
+  margin-top: 1rem;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.info-label {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.info-value {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.info-value-status {
+  margin-top: 0.25rem;
+}
+</style>
+
 <style>
 /* Custom tab styling to match the design */
 .tab-button-custom {
@@ -679,7 +1076,7 @@ onMounted(async () => {
 .tab-button-custom ion-label {
     font-weight: 500;
     font-size: 16px;
-    opacity: 1 !important;
+    opacity: 1;
 }
 
 /* Grid-based tab styling */
@@ -718,25 +1115,7 @@ onMounted(async () => {
 .tab-button-custom-grid ion-label {
     font-weight: 500;
     font-size: 14px;
-    opacity: 1 !important;
+    opacity: 1;
     margin: 0;
-}
-
-
-/* Remove default ionic tab bar styling */
-ion-tab-bar {
-    border: none !important;
-}
-
-/* Custom Modal Animations */
-.modal-enter-active,
-.modal-leave-active {
-    transition: all 0.3s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-    opacity: 0;
-    transform: scale(0.95);
 }
 </style>
