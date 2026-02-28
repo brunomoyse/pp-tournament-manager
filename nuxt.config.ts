@@ -1,5 +1,3 @@
-import tailwindcss from "@tailwindcss/vite";
-
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   pages: true,
@@ -11,12 +9,10 @@ export default defineNuxtConfig({
     'nuxt-graphql-client'
   ],
   ssr: false,
-  css: ['~/assets/css/main.css'],
-  vite: {
-    plugins: [
-      tailwindcss(),
-    ],
+  app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
   },
+  css: ['~/assets/css/main.css'],
   'graphql-client': {
     clients: {
       default: {
