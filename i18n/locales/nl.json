@@ -590,5 +590,48 @@
     "unseatedPlayers": "{count} ingecheckte speler(s) niet geplaatst",
     "unseatedPlayersDesc": "Deze spelers zijn ingecheckt maar hebben geen stoel toegewezen. Plaats ze via het Spelers tabblad.",
     "goToPlayers": "Ga naar spelers"
+  },
+  "activity": {
+    "clock": {
+      "start": "Klok gestart",
+      "pause": "Klok gepauzeerd",
+      "resume": "Klok hervat",
+      "level_advance": "Niveau doorgeschoven naar {level_number}",
+      "manual_advance": "Niveau handmatig doorgeschoven naar {level_number}",
+      "manual_revert": "Niveau teruggedraaid naar {level_number}",
+      "final_level_complete": "Laatste niveau voltooid"
+    },
+    "registration": {
+      "registered": "Speler ingeschreven",
+      "waitlisted": "Speler op wachtlijst gezet",
+      "cancelled": "Inschrijving geannuleerd",
+      "promoted": "Speler gepromoveerd van wachtlijst",
+      "self_check_in": "Speler zelf ingecheckt",
+      "check_in": "Speler ingecheckt"
+    },
+    "seating": {
+      "table_assigned": "Tafel {table_number} toegewezen",
+      "table_unassigned": "Tafel {table_number} verwijderd",
+      "player_seated": "Speler geplaatst op stoel {seat_number}",
+      "player_moved": "Speler verplaatst naar stoel {seat_number}",
+      "stack_updated": "Stack bijgewerkt naar {stack_size}",
+      "tables_balanced": "Tafels gebalanceerd ({players_moved} spelers verplaatst)",
+      "player_eliminated": "Speler geëlimineerd"
+    },
+    "entry": {
+      "added": "Entry toegevoegd ({entry_type}, {amount_cents}c)",
+      "deleted": "Entry verwijderd ({entry_type}, {amount_cents}c)"
+    },
+    "result": {
+      "results_entered": "Resultaten ingevoerd voor {player_count} spelers"
+    },
+    "tournament": {
+      "status_changed": "Status gewijzigd van {from_status} naar {to_status}"
+    },
+    "time": {
+      "justNow": "Zojuist",
+      "minutesAgo": "{count}min geleden",
+      "hoursAgo": "{count}u geleden"
+    }
   }
 }

@@ -590,5 +590,48 @@
     "unseatedPlayers": "{count} joueur(s) présent(s) non assis",
     "unseatedPlayersDesc": "Ces joueurs sont présents mais n'ont pas de siège assigné. Placez-les depuis l'onglet Joueurs.",
     "goToPlayers": "Aller aux joueurs"
+  },
+  "activity": {
+    "clock": {
+      "start": "Horloge démarrée",
+      "pause": "Horloge en pause",
+      "resume": "Horloge reprise",
+      "level_advance": "Niveau avancé au {level_number}",
+      "manual_advance": "Niveau avancé manuellement au {level_number}",
+      "manual_revert": "Niveau revenu au {level_number}",
+      "final_level_complete": "Dernier niveau terminé"
+    },
+    "registration": {
+      "registered": "Joueur inscrit",
+      "waitlisted": "Joueur ajouté à la liste d'attente",
+      "cancelled": "Inscription annulée",
+      "promoted": "Joueur promu de la liste d'attente",
+      "self_check_in": "Joueur enregistré automatiquement",
+      "check_in": "Joueur enregistré"
+    },
+    "seating": {
+      "table_assigned": "Table {table_number} assignée",
+      "table_unassigned": "Table {table_number} retirée",
+      "player_seated": "Joueur placé au siège {seat_number}",
+      "player_moved": "Joueur déplacé au siège {seat_number}",
+      "stack_updated": "Stack mis à jour à {stack_size}",
+      "tables_balanced": "Tables équilibrées ({players_moved} joueurs déplacés)",
+      "player_eliminated": "Joueur éliminé"
+    },
+    "entry": {
+      "added": "Entrée ajoutée ({entry_type}, {amount_cents}c)",
+      "deleted": "Entrée supprimée ({entry_type}, {amount_cents}c)"
+    },
+    "result": {
+      "results_entered": "Résultats saisis pour {player_count} joueurs"
+    },
+    "tournament": {
+      "status_changed": "Statut changé de {from_status} à {to_status}"
+    },
+    "time": {
+      "justNow": "À l'instant",
+      "minutesAgo": "Il y a {count}min",
+      "hoursAgo": "Il y a {count}h"
+    }
   }
 }

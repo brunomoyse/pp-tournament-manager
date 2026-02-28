@@ -111,14 +111,7 @@
                     />
 
                     <!-- Recent Activity -->
-                    <div class="activity-card">
-                        <h3 class="activity-title">{{ t('headings.recentActivity') }}</h3>
-                        <div class="activity-content">
-                            <div class="activity-empty">
-                                {{ t('messages.noRecentActivity') }}
-                            </div>
-                        </div>
-                    </div>
+                    <TournamentActivityFeed :tournament-id="selectedTournamentId" />
                 </div>
 
                 <!-- Clock Tab -->
@@ -267,6 +260,7 @@ import RegisterPlayerModal from "~/components/tournament/players/RegisterPlayerM
 import TournamentQRModal from "~/components/tournament/TournamentQRModal.vue";
 import EnterResultsModal from "~/components/tournament/results/EnterResultsModal.vue";
 import TournamentResultsDisplay from "~/components/tournament/results/TournamentResultsDisplay.vue";
+import TournamentActivityFeed from "~/components/tournament/overview/TournamentActivityFeed.vue";
 import {useGqlSubscription} from "~/composables/useGqlSubscription";
 import type {TournamentClock} from "~/types/clock";
 import { formatPrice } from "~/utils";
@@ -887,32 +881,6 @@ onMounted(async () => {
 /* Results Section */
 .results-section {
   margin-bottom: 2rem;
-}
-
-/* Activity Card */
-.activity-card {
-  background-color: var(--pp-bg-secondary);
-  border-radius: 1rem;
-  padding: 1.25rem;
-  box-shadow: var(--pp-shadow-sm);
-  border: 1px solid var(--pp-border);
-}
-
-.activity-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--pp-text-primary);
-  margin-bottom: 1rem;
-}
-
-.activity-content > * + * {
-  margin-top: 1.5rem;
-}
-
-.activity-empty {
-  text-align: center;
-  padding: 2rem 0;
-  color: rgba(255, 255, 255, 0.6);
 }
 
 /* Clock Grid */
