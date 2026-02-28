@@ -16,33 +16,31 @@
     "test:e2e:ui": "playwright test --config e2e/playwright.config.ts --ui"
   },
   "dependencies": {
-    "@capacitor/android": "^8.1.0",
-    "@capacitor/core": "^8.0.2",
+    "@capacitor/core": "^8.1.0",
     "@capacitor/ios": "^8.1.0",
     "@capacitor/network": "^8.0.1",
     "@nuxtjs/ionic": "^1.0.2",
     "@pinia/nuxt": "^0.11.3",
-    "@tailwindcss/vite": "^4.1.18",
+    "@tailwindcss/vite": "^4.2.1",
     "graphql-ws": "^6.0.7",
     "nuxt": "^4.3.1",
     "nuxt-graphql-client": "^0.2.46",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
     "qrcode": "^1.5.4",
-    "tailwindcss": "^4.1.18",
-    "vue": "^3.5.28",
-    "vue-i18n": "^11.2.8",
-    "vue-router": "^5.0.2"
+    "tailwindcss": "^4.2.1",
+    "vue": "^3.5.29",
+    "vue-i18n": "^11.2.8"
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^8.1.0",
+    "@playwright/test": "^1.58.2",
     "@types/qrcode": "^1.5.6",
     "@vitejs/plugin-vue": "^6.0.4",
     "@vitest/coverage-v8": "^4.0.18",
     "@vue/test-utils": "^2.4.6",
-    "happy-dom": "^20.6.2",
-    "@playwright/test": "^1.50.0",
+    "happy-dom": "^20.7.0",
     "vitest": "^4.0.18"
   }
 }
