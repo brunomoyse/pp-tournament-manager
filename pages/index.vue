@@ -179,7 +179,7 @@
 
 <script setup lang="ts">
 // Protect this page with authentication
-import { LeaderboardPeriod } from '#gql/default'
+import { LeaderboardPeriod } from '~/types/enums'
 import type {GetTournamentsQuery, GetLeaderboardQuery} from "#gql";
 
 definePageMeta({

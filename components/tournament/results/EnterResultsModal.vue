@@ -303,7 +303,7 @@ import { useI18n } from '~/composables/useI18n'
 import { useTournamentStore } from '~/stores/useTournamentStore'
 import { formatPrice } from '~/utils'
 import type { DealType, PayoutTemplate } from '~/types/tournament'
-import { TournamentLiveStatus } from '#gql/default'
+import { TournamentLiveStatus } from '~/types/enums'
 
 interface Props {
   isOpen: boolean

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useAuthStore } from '~/stores/useAuthStore'
 import { useClubStore } from '~/stores/useClubStore'
-import { Role } from '#gql/default'
+import { Role } from '~/types/enums'
 
 describe('useAuthStore', () => {
   beforeEach(() => {

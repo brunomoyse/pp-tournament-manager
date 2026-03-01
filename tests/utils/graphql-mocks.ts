@@ -1,5 +1,5 @@
 import { vi } from 'vitest'
-import { Role, TournamentStatus, TournamentLiveStatus } from '#gql/default'
+import { Role, TournamentStatus, TournamentLiveStatus } from '~/types/enums'
 
 export const createMockTournament = (overrides = {}) => ({
   id: '1',

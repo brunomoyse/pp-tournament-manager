@@ -1,0 +1,32 @@
+########################################
+# Build stage
+########################################
+FROM node:22-alpine AS builder
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+ENV DISABLE_CODEGEN=true
+RUN npm install
+
+COPY . .
+RUN npm run build
+
+########################################
+# Runtime stage (minimal image)
+########################################
+FROM node:22-alpine
+WORKDIR /app
+
+RUN apk add --no-cache dumb-init \
+ && adduser -S -u 10001 appuser
+
+COPY --from=builder /app/.output ./.output
+
+USER 10001
+EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+    CMD wget -qO- http://127.0.0.1:3000/ || exit 1
+
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["node", ".output/server/index.mjs"]

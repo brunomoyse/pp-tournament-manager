@@ -214,7 +214,7 @@
 </template>
 
 <script setup lang="ts">
-import { LeaderboardPeriod } from '#gql/default'
+import { LeaderboardPeriod } from '~/types/enums'
 import type { GetLeaderboardQuery } from '#gql'
 
 definePageMeta({
