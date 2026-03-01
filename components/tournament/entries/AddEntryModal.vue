@@ -93,7 +93,7 @@
 import { IonIcon } from '@ionic/vue'
 import { closeOutline, refreshOutline } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
-import { EntryType } from '#gql/default'
+import { EntryType } from '~/types/enums'
 
 interface Props {
   isOpen: boolean

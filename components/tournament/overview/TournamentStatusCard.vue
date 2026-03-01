@@ -87,7 +87,7 @@ import { trophyOutline, chevronForwardOutline, refreshOutline, timeOutline } fro
 import { useTournamentStore } from '~/stores/useTournamentStore'
 import { useI18n } from '~/composables/useI18n'
 import { getTournamentStatusLabel, getTournamentStatusClass } from '~/utils/tournamentStatus'
-import { TournamentLiveStatus } from '#gql/default'
+import { TournamentLiveStatus } from '~/types/enums'
 
 const { t } = useI18n()
 const toast = useToast()

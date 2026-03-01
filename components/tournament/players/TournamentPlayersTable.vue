@@ -187,7 +187,7 @@ import { searchOutline, personAddOutline, checkmarkCircleOutline, checkmarkDoneO
 import { AssignmentStrategy } from '@/types/seating'
 import { useI18n } from '~/composables/useI18n'
 import { getRegistrationStatusLabel, getRegistrationStatusClass } from '~/utils/registrationStatus'
-import { EntryType } from '#gql/default'
+import { EntryType } from '~/types/enums'
 
 const { t } = useI18n()
 const toast = useToast()

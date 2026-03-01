@@ -175,7 +175,7 @@ import { IonIcon } from '@ionic/vue'
 import { playOutline, pauseOutline, playSkipForwardOutline, playSkipBackOutline, refreshOutline } from 'ionicons/icons'
 import {formatBlinds, formatDuration} from "~/utils";
 import { useI18n } from '~/composables/useI18n'
-import { TournamentLiveStatus } from '#gql/default'
+import { TournamentLiveStatus } from '~/types/enums'
 import type { TournamentClock } from '~/types/clock'
 
 const { t } = useI18n()
