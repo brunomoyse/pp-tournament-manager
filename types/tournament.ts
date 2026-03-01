@@ -4,6 +4,7 @@ import type {TournamentClock} from "~/types/clock";
 export interface Tournament {
     id: string;
     buyInCents: number;
+    rakeCents: number;
     clubId?: string;
     createdAt?: string;
     description?: string | null;
@@ -124,6 +125,7 @@ export interface TournamentEntryStats {
     rebuyCount: number;
     reEntryCount: number;
     addonCount: number;
+    totalRakeCents: number;
 }
 
 // Player Deal types (ICM, even split, custom)
@@ -273,6 +275,7 @@ export interface CreateTournamentInput {
     startTime: string;
     endTime?: string;
     buyInCents: number;
+    rakeCents?: number;
     seatCap?: number;
     earlyBirdBonusChips?: number;
     lateRegistrationLevel?: number;
@@ -287,6 +290,7 @@ export interface UpdateTournamentInput {
     startTime?: string;
     endTime?: string;
     buyInCents?: number;
+    rakeCents?: number;
     seatCap?: number;
     earlyBirdBonusChips?: number;
     lateRegistrationLevel?: number;
@@ -301,6 +305,7 @@ export interface TournamentFormData {
     startTime: string;
     endTime: string;
     buyInCents: number;
+    rakeCents: number;
     seatCap: number | null;
     earlyBirdBonusChips: number | null;
     lateRegistrationLevel: number | null;

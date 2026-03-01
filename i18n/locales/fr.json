@@ -270,6 +270,7 @@
     "minutes": "Min",
     "status": "Statut",
     "create": "Créer",
+    "rake": "Rake",
     "save": "Enregistrer",
     "saveFailed": "Échec de l'enregistrement du tournoi. Veuillez réessayer."
   },
@@ -525,7 +526,8 @@
       "initialCount": "Initiales",
       "rebuyCount": "Recaves",
       "reEntryCount": "Ré-entrées",
-      "addonCount": "Add-ons"
+      "addonCount": "Add-ons",
+      "totalRake": "Rake total"
     }
   },
   "prizePool": {
@@ -535,7 +537,8 @@
     "firstPrize": "1er Prix",
     "payoutBreakdown": "Répartition des gains",
     "payingPositions": "Places payées",
-    "percentage": "Pourcentage"
+    "percentage": "Pourcentage",
+    "rakeCollected": "Rake collecté"
   },
   "results": {
     "title": "Saisir les résultats",

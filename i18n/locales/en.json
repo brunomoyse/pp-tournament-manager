@@ -270,6 +270,7 @@
     "minutes": "Min",
     "status": "Status",
     "create": "Create",
+    "rake": "Rake",
     "save": "Save",
     "saveFailed": "Failed to save tournament. Please try again."
   },
@@ -525,7 +526,8 @@
       "initialCount": "Initial",
       "rebuyCount": "Rebuys",
       "reEntryCount": "Re-entries",
-      "addonCount": "Add-ons"
+      "addonCount": "Add-ons",
+      "totalRake": "Total Rake"
     }
   },
   "prizePool": {
@@ -535,7 +537,8 @@
     "firstPrize": "1st Prize",
     "payoutBreakdown": "Payout Breakdown",
     "payingPositions": "Paying Positions",
-    "percentage": "Percentage"
+    "percentage": "Percentage",
+    "rakeCollected": "Rake Collected"
   },
   "results": {
     "title": "Enter Results",
