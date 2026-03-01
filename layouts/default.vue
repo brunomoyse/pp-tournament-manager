@@ -122,6 +122,7 @@ import {
   homeOutline,
   trophyOutline,
   peopleOutline,
+  constructOutline,
   statsChartOutline,
   logOutOutline,
 } from 'ionicons/icons'
@@ -145,6 +146,7 @@ const navItems = computed(() => [
   { to: '/', icon: homeOutline, label: t('nav.dashboard') },
   { to: '/tournaments', icon: trophyOutline, label: t('nav.tournaments') },
   { to: '/players', icon: peopleOutline, label: t('nav.players') },
+  { to: '/templates', icon: constructOutline, label: t('nav.templates') },
   { to: '/reports', icon: statsChartOutline, label: t('nav.reports') },
 ])
 

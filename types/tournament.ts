@@ -79,6 +79,7 @@ export interface PayoutTemplate {
     maxPlayers?: number | null;
     payoutStructure: PayoutStructureEntry[];
     createdAt: string;
+    updatedAt: string;
 }
 
 // Blind Structure Template types
@@ -98,6 +99,7 @@ export interface BlindStructureTemplate {
     description?: string | null;
     levels: BlindStructureLevel[];
     createdAt: string;
+    updatedAt: string;
 }
 
 // Tournament Entry types (buy-ins, rebuys, add-ons)
