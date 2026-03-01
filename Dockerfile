@@ -8,6 +8,14 @@ COPY package.json package-lock.json ./
 ENV DISABLE_CODEGEN=true
 RUN npm install
 
+ARG API_BASE_URL=http://localhost:8080
+ENV API_BASE_URL=${API_BASE_URL}
+ENV NUXT_GRAPHQL_ENDPOINT=${API_BASE_URL}/graphql
+ENV NUXT_GRAPHQL_WS_ENDPOINT=${API_BASE_URL}/graphql
+ENV NUXT_AUTH_BASE_URL=${API_BASE_URL}
+ENV NUXT_AUTH_LOGIN_URL=${API_BASE_URL}/oauth/login
+ENV NUXT_AUTH_REGISTER_URL=${API_BASE_URL}/oauth/register
+
 COPY . .
 RUN npm run build
 

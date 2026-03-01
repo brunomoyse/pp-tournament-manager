@@ -39,6 +39,7 @@ jobs:
         run: |
           docker buildx build . \
             --platform linux/amd64 \
+            --build-arg API_BASE_URL=${{ vars.API_BASE_URL }} \
             --tag ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest-amd64 \
             --push
 
@@ -61,6 +62,7 @@ jobs:
         run: |
           docker buildx build . \
             --platform linux/arm64 \
+            --build-arg API_BASE_URL=${{ vars.API_BASE_URL }} \
             --tag ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest-arm64 \
             --push
 
@@ -116,6 +118,7 @@ jobs:
         run: |
           docker buildx build \
             --platform linux/amd64 \
+            --build-arg API_BASE_URL=${{ vars.API_BASE_URL }} \
             --tag ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:production \
             --tag ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }} \
             --push \
