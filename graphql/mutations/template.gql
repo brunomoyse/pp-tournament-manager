@@ -1,0 +1,77 @@
+mutation CreatePayoutTemplate($input: CreatePayoutTemplateInput!) {
+  createPayoutTemplate(input: $input) {
+    id
+    name
+    description
+    minPlayers
+    maxPlayers
+    payoutStructure {
+      position
+      percentage
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UpdatePayoutTemplate($input: UpdatePayoutTemplateInput!) {
+  updatePayoutTemplate(input: $input) {
+    id
+    name
+    description
+    minPlayers
+    maxPlayers
+    payoutStructure {
+      position
+      percentage
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+mutation DeletePayoutTemplate($id: ID!) {
+  deletePayoutTemplate(id: $id)
+}
+
+mutation CreateBlindStructureTemplate($input: CreateBlindStructureTemplateInput!) {
+  createBlindStructureTemplate(input: $input) {
+    id
+    name
+    description
+    levels {
+      levelNumber
+      smallBlind
+      bigBlind
+      ante
+      durationMinutes
+      isBreak
+      breakDurationMinutes
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UpdateBlindStructureTemplate($input: UpdateBlindStructureTemplateInput!) {
+  updateBlindStructureTemplate(input: $input) {
+    id
+    name
+    description
+    levels {
+      levelNumber
+      smallBlind
+      bigBlind
+      ante
+      durationMinutes
+      isBreak
+      breakDurationMinutes
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+mutation DeleteBlindStructureTemplate($id: ID!) {
+  deleteBlindStructureTemplate(id: $id)
+}
