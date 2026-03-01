@@ -67,8 +67,8 @@
             />
           </div>
 
-          <!-- Buy-in / Seat Cap row -->
-          <div class="tournament-form-row">
+          <!-- Buy-in / Rake / Seat Cap row -->
+          <div class="tournament-form-row tournament-form-row--3col">
             <div class="tournament-form-field">
               <label class="pp-label">
                 {{ t('tournament.buyIn') }} (EUR) <span class="tournament-form-required">*</span>
@@ -79,6 +79,18 @@
                 min="0"
                 step="0.01"
                 required
+                class="pp-input"
+              />
+            </div>
+            <div class="tournament-form-field">
+              <label class="pp-label">
+                {{ t('tournament.rake') }} (EUR)
+              </label>
+              <input
+                v-model.number="rakeEuros"
+                type="number"
+                min="0"
+                step="0.01"
                 class="pp-input"
               />
             </div>
@@ -239,6 +251,7 @@ const form = ref<TournamentFormData>({
   startTime: '',
   endTime: '',
   buyInCents: 0,
+  rakeCents: 0,
   seatCap: null,
   earlyBirdBonusChips: null,
   lateRegistrationLevel: null,
@@ -251,6 +264,12 @@ const saving = ref(false)
 const buyInEuros = computed({
   get: () => form.value.buyInCents / 100,
   set: (val: number) => { form.value.buyInCents = Math.round(val * 100) }
+})
+
+// Computed for rake in euros (display)
+const rakeEuros = computed({
+  get: () => form.value.rakeCents / 100,
+  set: (val: number) => { form.value.rakeCents = Math.round(val * 100) }
 })
 
 // Validation
@@ -282,6 +301,7 @@ watch(() => props.isOpen, (isOpen) => {
       startTime: formatDateTimeLocal(props.tournament.startTime),
       endTime: props.tournament.endTime ? formatDateTimeLocal(props.tournament.endTime) : '',
       buyInCents: props.tournament.buyInCents,
+      rakeCents: props.tournament.rakeCents || 0,
       seatCap: props.tournament.seatCap || null,
       earlyBirdBonusChips: null,
       lateRegistrationLevel: props.tournament.lateRegistrationLevel ?? null,
@@ -294,6 +314,7 @@ watch(() => props.isOpen, (isOpen) => {
       startTime: '',
       endTime: '',
       buyInCents: 0,
+      rakeCents: 0,
       seatCap: null,
       earlyBirdBonusChips: null,
       lateRegistrationLevel: null,
@@ -317,6 +338,7 @@ const handleSubmit = async () => {
           startTime: new Date(form.value.startTime).toISOString(),
           endTime: form.value.endTime ? new Date(form.value.endTime).toISOString() : undefined,
           buyInCents: form.value.buyInCents,
+          rakeCents: form.value.rakeCents || undefined,
           seatCap: form.value.seatCap || undefined,
           earlyBirdBonusChips: form.value.earlyBirdBonusChips || undefined,
           lateRegistrationLevel: form.value.lateRegistrationLevel || undefined,
@@ -332,6 +354,7 @@ const handleSubmit = async () => {
           startTime: new Date(form.value.startTime).toISOString(),
           endTime: form.value.endTime ? new Date(form.value.endTime).toISOString() : undefined,
           buyInCents: form.value.buyInCents,
+          rakeCents: form.value.rakeCents || undefined,
           seatCap: form.value.seatCap || undefined,
           earlyBirdBonusChips: form.value.earlyBirdBonusChips || undefined,
           lateRegistrationLevel: form.value.lateRegistrationLevel || undefined,
@@ -399,6 +422,10 @@ const closeModal = () => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
+}
+
+.tournament-form-row--3col {
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .tournament-form-help {

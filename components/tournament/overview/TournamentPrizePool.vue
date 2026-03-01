@@ -23,6 +23,10 @@
         <div class="prize-grid-label">{{ t('prizePool.entries') }}</div>
         <div class="prize-grid-value">{{ entryStats?.totalEntries || 0 }}</div>
       </div>
+      <div v-if="entryStats?.totalRakeCents" class="prize-grid-item">
+        <div class="prize-grid-label">{{ t('prizePool.rakeCollected') }}</div>
+        <div class="prize-grid-value">{{ formatPrice(entryStats.totalRakeCents, locale) }}</div>
+      </div>
       <template v-if="showFullPayout">
         <div class="prize-grid-item">
           <div class="prize-grid-label">{{ t('prizePool.firstPrize') }}</div>
@@ -90,7 +94,16 @@ const refreshStats = async () => {
 const entryStats = computed(() => entryStatsData.value?.tournamentEntryStats)
 const payoutPositions = computed(() => payoutData.value?.tournamentPayout?.positions || [])
 const prizePool = computed(() => formatPrice(payoutData.value?.tournamentPayout?.totalPrizePool, locale.value))
-const buyInDisplay = computed(() => formatPrice(tournamentStore.tournament?.buyInCents, locale.value))
+const buyInDisplay = computed(() => {
+  const tournament = tournamentStore.tournament
+  if (!tournament) return '—'
+  const buyIn = formatPrice(tournament.buyInCents, locale.value)
+  if (tournament.rakeCents > 0) {
+    const rake = formatPrice(tournament.rakeCents, locale.value)
+    return `${buyIn}+${rake}`
+  }
+  return buyIn
+})
 const firstPrizeDisplay = computed(() => {
   const first = payoutPositions.value[0]
   return first ? formatPrice(first.amountCents, locale.value) : '—'

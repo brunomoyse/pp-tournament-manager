@@ -270,6 +270,7 @@
     "minutes": "Min",
     "status": "Status",
     "create": "Aanmaken",
+    "rake": "Rake",
     "save": "Opslaan",
     "saveFailed": "Toernooi opslaan mislukt. Probeer opnieuw."
   },
@@ -525,7 +526,8 @@
       "initialCount": "Initieel",
       "rebuyCount": "Rebuys",
       "reEntryCount": "Re-entries",
-      "addonCount": "Add-ons"
+      "addonCount": "Add-ons",
+      "totalRake": "Totale rake"
     }
   },
   "prizePool": {
@@ -535,7 +537,8 @@
     "firstPrize": "1e Prijs",
     "payoutBreakdown": "Uitbetalingsoverzicht",
     "payingPositions": "Betaalde posities",
-    "percentage": "Percentage"
+    "percentage": "Percentage",
+    "rakeCollected": "Rake geïnd"
   },
   "results": {
     "title": "Resultaten invoeren",

@@ -23,6 +23,14 @@
         </div>
       </div>
 
+      <!-- Total Rake -->
+      <div v-if="stats?.totalRakeCents" class="stats-grid" style="margin-top: 0.75rem;">
+        <div class="stats-grid-item" style="grid-column: span 2;">
+          <div class="stats-grid-label">{{ t('entries.stats.totalRake') }}</div>
+          <div class="stats-grid-value">{{ formatPrice(stats.totalRakeCents, locale) }}</div>
+        </div>
+      </div>
+
       <!-- Breakdown -->
       <div class="stats-breakdown">
         <div class="stats-breakdown-row">
