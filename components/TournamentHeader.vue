@@ -49,8 +49,10 @@ const selectedId = computed({
 
 <style scoped>
 .header-title {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
   color: var(--color-pp-text);
 }
 

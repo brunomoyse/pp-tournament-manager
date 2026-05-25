@@ -261,9 +261,14 @@ onMounted(async () => {
 }
 
 .sidebar-title {
-  color: var(--color-pp-gold);
-  font-weight: 700;
-  font-size: 1.125rem;
+  font-family: var(--font-display);
+  background: linear-gradient(180deg, #fee78a 0%, #b8860b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
   line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -271,8 +276,11 @@ onMounted(async () => {
 }
 
 .sidebar-club {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.75rem;
+  color: var(--color-pp-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  margin-top: 0.15rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -290,17 +298,30 @@ onMounted(async () => {
 }
 
 .nav-link {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.625rem 0.75rem;
+  padding: 0.6rem 0.85rem;
   border-radius: 0.75rem;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .nav-link--active {
-  background-color: rgba(254, 231, 138, 0.15);
+  background-color: rgba(254, 231, 138, 0.1);
   color: var(--color-pp-gold);
+}
+
+.nav-link--active::before {
+  content: '';
+  position: absolute;
+  left: -0.75rem;
+  top: 22%;
+  bottom: 22%;
+  width: 2px;
+  border-radius: 2px;
+  background-color: var(--color-pp-gold);
+  box-shadow: 0 0 12px rgba(254, 231, 138, 0.45);
 }
 
 .nav-link--inactive {

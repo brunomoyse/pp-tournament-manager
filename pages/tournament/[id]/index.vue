@@ -648,9 +648,11 @@ onMounted(async () => {
 }
 
 .brand-title {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   color: var(--color-pp-text);
   transition: color 0.2s ease;
 }
@@ -728,18 +730,22 @@ onMounted(async () => {
   flex: 1;
   min-width: 0;
   padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
+  border-radius: 9999px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   white-space: nowrap;
   cursor: pointer;
 }
 
 .tab-button--active {
-  background-color: var(--color-pp-surface-2);
+  background-color: rgba(254, 231, 138, 0.1);
   color: var(--color-pp-gold);
   border: 1px solid rgba(254, 231, 138, 0.4);
-  box-shadow: var(--pp-shadow-sm);
+  box-shadow: 0 0 0 1px rgba(254, 231, 138, 0.12), 0 8px 30px -10px rgba(254, 231, 138, 0.25);
 }
 
 .tab-button--inactive {
