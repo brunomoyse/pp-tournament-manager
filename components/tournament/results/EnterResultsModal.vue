@@ -248,10 +248,7 @@
       <div class="pp-modal-footer modal-footer-nav modal-header-shrink">
         <button
           v-if="currentStep > 1"
-          @click="
-            currentStep--
-            errorMessage = ''
-          "
+          @click="goToPreviousStep"
           class="pp-action-button pp-action-button--secondary"
         >
           {{ t('results.back') }}
@@ -260,10 +257,7 @@
 
         <button
           v-if="currentStep < 3"
-          @click="
-            currentStep++
-            errorMessage = ''
-          "
+          @click="goToNextStep"
           :disabled="currentStep === 1 && orderedPlayers.length === 0"
           class="pp-action-button pp-action-button--primary"
         >
@@ -324,6 +318,16 @@ const currentStep = ref(1)
 const submitting = ref(false)
 const errorMessage = ref('')
 const includeDeal = ref(false)
+
+const goToPreviousStep = () => {
+  currentStep.value--
+  errorMessage.value = ''
+}
+
+const goToNextStep = () => {
+  currentStep.value++
+  errorMessage.value = ''
+}
 
 interface OrderedPlayer {
   userId: string
