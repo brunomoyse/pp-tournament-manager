@@ -396,7 +396,6 @@
     "CHECKED_IN": "Présent",
     "SEATED": "Assis",
     "ELIMINATED": "Éliminé",
-    "AWAY": "Absent",
     "DISQUALIFIED": "Disqualifié",
     "LATE_REGISTRATION": "Inscription tardive",
     "WAITLISTED": "En attente",
@@ -438,7 +437,12 @@
     "hasPlayers": "Joueurs présents",
     "allTablesHavePlayers": "Toutes les tables ont des joueurs. Déplacez ou éliminez les joueurs avant de retirer une table.",
     "alreadyAssigned": "Déjà assignée",
-    "tableFormat": "Format de table"
+    "tableFormat": "Format de table",
+    "naturalCapacity": "(capacité naturelle)",
+    "linkedNCount": "{success} table(s) sur {total} liée(s)",
+    "linkedFailures": "Échec : {tables}",
+    "goToPlayers": "Aller aux joueurs",
+    "currentSeat": "Siège actuel"
   },
   "playerAction": {
     "title": "Actions Joueur",
@@ -451,8 +455,6 @@
     "relocateToAnother": "Déplacer vers une autre table",
     "updateStack": "Modifier le Tapis",
     "modifyChipCount": "Modifier le nombre de jetons",
-    "markAway": "Marquer Absent",
-    "temporarilyAway": "Temporairement absent de la table",
     "updateStackSize": "Modifier le Tapis",
     "newStackSize": "Nouveau Tapis",
     "enterChipCount": "Entrez le nombre de jetons",

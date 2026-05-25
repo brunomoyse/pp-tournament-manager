@@ -1,270 +1,297 @@
 <template>
-    <ion-page class="page-bg">
-        <!-- Custom Header -->
-        <div class="custom-header">
-            <!-- Top row with title and status -->
-            <div class="header-top">
-                <div class="header-brand" @click="goHome">
-                    <img src="/assets/icon-no-bg.png" alt="Pocket Pair Logo" class="brand-logo" />
-                    <h1 class="brand-title">{{ t('app.title') }}</h1>
-                </div>
-                <div class="header-info">
-                    <!-- Club name and tournament name -->
-                    <div class="header-subtitle">
-                        {{ club?.name || t('status.loading') }} - {{ tournament?.title || t('status.loadingTournament') }}
-                    </div>
-                    <!-- Connection status -->
-                    <div class="connection-status">
-                        <div :class="[
-                            'status-dot',
-                            connectionStatus === 'connected' ? 'status-dot--connected' :
-                            connectionStatus === 'reconnecting' ? 'status-dot--reconnecting' : 'status-dot--offline'
-                        ]"></div>
-                        <span :class="[
-                            'status-label',
-                            connectionStatus === 'connected' ? 'status-label--connected' :
-                            connectionStatus === 'reconnecting' ? 'status-label--reconnecting' : 'status-label--offline'
-                        ]">{{
-                                connectionStatus === 'connected' ? t('status.connected') :
-                                    connectionStatus === 'reconnecting' ? t('status.reconnecting') : t('status.offline')
-                            }}</span>
-                    </div>
-                </div>
-            </div>
+  <ion-page class="page-bg">
+    <!-- Custom Header -->
+    <div class="custom-header">
+      <!-- Top row with title and status -->
+      <div class="header-top">
+        <div class="header-brand" @click="goHome">
+          <img src="/assets/icon-no-bg.png" alt="Pocket Pair Logo" class="brand-logo" />
+          <h1 class="brand-title">{{ t('app.title') }}</h1>
+        </div>
+        <div class="header-info">
+          <!-- Club name and tournament name -->
+          <div class="header-subtitle">
+            {{ club?.name || t('status.loading') }} -
+            {{ tournament?.title || t('status.loadingTournament') }}
+          </div>
+          <!-- Connection status -->
+          <div class="connection-status">
+            <div
+              :class="[
+                'status-dot',
+                connectionStatus === 'connected'
+                  ? 'status-dot--connected'
+                  : connectionStatus === 'reconnecting'
+                    ? 'status-dot--reconnecting'
+                    : 'status-dot--offline',
+              ]"
+            ></div>
+            <span
+              :class="[
+                'status-label',
+                connectionStatus === 'connected'
+                  ? 'status-label--connected'
+                  : connectionStatus === 'reconnecting'
+                    ? 'status-label--reconnecting'
+                    : 'status-label--offline',
+              ]"
+              >{{
+                connectionStatus === 'connected'
+                  ? t('status.connected')
+                  : connectionStatus === 'reconnecting'
+                    ? t('status.reconnecting')
+                    : t('status.offline')
+              }}</span
+            >
+          </div>
+        </div>
+      </div>
 
-            <!-- Full width tab navigation -->
-            <div class="tab-bar">
-                <button
-                    v-for="tab in tabs"
-                    :key="tab.value"
-                    @click="activeTab = tab.value"
-                    :class="[
-                        'tab-button',
-                        activeTab === tab.value ? 'tab-button--active' : 'tab-button--inactive'
-                    ]"
-                >
-                    {{ tab.label }}
-                </button>
+      <!-- Full width tab navigation -->
+      <div class="tab-bar">
+        <button
+          v-for="tab in tabs"
+          :key="tab.value"
+          @click="activeTab = tab.value"
+          :class="[
+            'tab-button',
+            activeTab === tab.value ? 'tab-button--active' : 'tab-button--inactive',
+          ]"
+        >
+          {{ tab.label }}
+        </button>
+      </div>
+    </div>
+
+    <ion-content class="content-bg">
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <!-- Overview Tab (v-show keeps components mounted so refs stay available from other tabs) -->
+        <div v-show="activeTab === 'overview'">
+          <!-- Warning: No tables linked -->
+          <div v-if="showNoTablesWarning" class="warning-banner warning-banner--orange">
+            <ion-icon :icon="warningOutline" class="warning-icon warning-icon--orange" />
+            <div class="warning-body">
+              <p class="warning-title warning-title--orange">{{ t('warnings.noTablesLinked') }}</p>
+              <p class="warning-desc warning-desc--orange">
+                {{ t('warnings.noTablesLinkedDesc') }}
+              </p>
             </div>
+            <button
+              @click="activeTab = 'seating'"
+              class="pp-action-button pp-action-button--warning warning-action"
+            >
+              {{ t('warnings.goToSeating') }}
+            </button>
+          </div>
+
+          <!-- Warning: Unseated checked-in players -->
+          <div v-if="showUnseatedWarning" class="warning-banner warning-banner--amber">
+            <ion-icon :icon="warningOutline" class="warning-icon warning-icon--amber" />
+            <div class="warning-body">
+              <p class="warning-title warning-title--amber">
+                {{ t('warnings.unseatedPlayers', { count: unseatedCheckedInCount }) }}
+              </p>
+              <p class="warning-desc warning-desc--amber">
+                {{ t('warnings.unseatedPlayersDesc') }}
+              </p>
+            </div>
+            <button
+              @click="activeTab = 'players'"
+              class="pp-action-button pp-action-button--warning warning-action"
+            >
+              {{ t('warnings.goToPlayers') }}
+            </button>
+          </div>
+
+          <!-- Grid Layout -->
+          <div class="overview-grid">
+            <TournamentStatusCard
+              @enter-results="showEnterResultsModal = true"
+              @status-changed="handleStatusChanged"
+            />
+            <TournamentPlayersCard />
+            <TournamentPrizePool ref="prizePoolCard" />
+          </div>
+
+          <!-- Check-in QR Code Button -->
+          <div class="qr-section">
+            <button
+              @click="showTournamentQRModal = true"
+              class="pp-action-button pp-action-button--secondary qr-button"
+            >
+              <ion-icon :icon="qrCodeOutline" class="icon-md" />
+              {{ t('qr.tournament.button') }}
+            </button>
+          </div>
+
+          <!-- Results Display (FINISHED) -->
+          <TournamentResultsDisplay
+            v-if="tournament?.liveStatus === 'FINISHED'"
+            class="results-section"
+          />
+
+          <!-- Recent Activity -->
+          <TournamentActivityFeed :tournament-id="selectedTournamentId" />
         </div>
 
-        <ion-content class="content-bg">
-            <!-- Tab Content -->
-            <div class="tab-content">
-                <!-- Overview Tab (v-show keeps components mounted so refs stay available from other tabs) -->
-                <div v-show="activeTab === 'overview'">
-                    <!-- Warning: No tables linked -->
-                    <div v-if="showNoTablesWarning" class="warning-banner warning-banner--orange">
-                        <ion-icon :icon="warningOutline" class="warning-icon warning-icon--orange" />
-                        <div class="warning-body">
-                            <p class="warning-title warning-title--orange">{{ t('warnings.noTablesLinked') }}</p>
-                            <p class="warning-desc warning-desc--orange">{{ t('warnings.noTablesLinkedDesc') }}</p>
-                        </div>
-                        <button
-                            @click="activeTab = 'seating'"
-                            class="pp-action-button pp-action-button--warning warning-action"
-                        >
-                            {{ t('warnings.goToSeating') }}
-                        </button>
-                    </div>
-
-                    <!-- Warning: Unseated checked-in players -->
-                    <div v-if="showUnseatedWarning" class="warning-banner warning-banner--amber">
-                        <ion-icon :icon="warningOutline" class="warning-icon warning-icon--amber" />
-                        <div class="warning-body">
-                            <p class="warning-title warning-title--amber">{{ t('warnings.unseatedPlayers', { count: unseatedCheckedInCount }) }}</p>
-                            <p class="warning-desc warning-desc--amber">{{ t('warnings.unseatedPlayersDesc') }}</p>
-                        </div>
-                        <button
-                            @click="activeTab = 'players'"
-                            class="pp-action-button pp-action-button--warning warning-action"
-                        >
-                            {{ t('warnings.goToPlayers') }}
-                        </button>
-                    </div>
-
-                    <!-- Grid Layout -->
-                    <div class="overview-grid">
-                        <TournamentStatusCard
-                          @enter-results="showEnterResultsModal = true"
-                          @status-changed="handleStatusChanged"
-                        />
-                        <TournamentPlayersCard />
-                        <TournamentPrizePool ref="prizePoolCard" />
-                    </div>
-
-                    <!-- Check-in QR Code Button -->
-                    <div class="qr-section">
-                        <button
-                            @click="showTournamentQRModal = true"
-                            class="pp-action-button pp-action-button--secondary qr-button"
-                        >
-                            <ion-icon :icon="qrCodeOutline" class="icon-md" />
-                            {{ t('qr.tournament.button') }}
-                        </button>
-                    </div>
-
-                    <!-- Results Display (FINISHED) -->
-                    <TournamentResultsDisplay
-                      v-if="tournament?.liveStatus === 'FINISHED'"
-                      class="results-section"
-                    />
-
-                    <!-- Recent Activity -->
-                    <TournamentActivityFeed :tournament-id="selectedTournamentId" />
-                </div>
-
-                <!-- Clock Tab -->
-                <Transition name="tab-fade" mode="out-in">
-                  <div v-if="activeTab === 'clock'" key="clock">
-                    <div class="clock-grid">
-                        <TournamentClockCard />
-                        <TournamentStructureCard
-                            :current-level-index="(clock?.currentLevel || 1) - 1"
-                        />
-                    </div>
-                  </div>
-                </Transition>
-
-                <!-- Players Tab -->
-                <Transition name="tab-fade" mode="out-in">
-                  <div v-if="activeTab === 'players'" key="players">
-                    <TournamentPlayersTable
-                      ref="playersTable"
-                      @player-checked-in="handlePlayerCheckedIn"
-                      @registerPlayer="showRegisterPlayerModal = true"
-                      @entry-added="handleEntryAdded"
-                    />
-                  </div>
-                </Transition>
-
-                <!-- Register Player Modal -->
-                <RegisterPlayerModal
-                  :isOpen="showRegisterPlayerModal"
-                  :tournamentId="selectedTournamentId"
-                  :registeredPlayerIds="registeredPlayerIds"
-                  @close="showRegisterPlayerModal = false"
-                  @registered="handlePlayerRegistered"
-                />
-
-                <!-- Tournament QR Code Modal -->
-                <TournamentQRModal
-                  :isOpen="showTournamentQRModal"
-                  :tournamentId="selectedTournamentId"
-                  :tournamentName="tournament?.title || ''"
-                  :tournamentDate="tournament?.startTime || ''"
-                  @close="showTournamentQRModal = false"
-                />
-
-                <!-- Enter Results Modal -->
-                <EnterResultsModal
-                  :is-open="showEnterResultsModal"
-                  :tournament-id="selectedTournamentId"
-                  @close="showEnterResultsModal = false"
-                  @results-entered="handleResultsEntered"
-                />
-
-                <!-- Seating Tab -->
-                <Transition name="tab-fade" mode="out-in">
-                  <div v-if="activeTab === 'seating'" key="seating">
-                    <TournamentSeatingManager ref="seatingManager" />
-                  </div>
-                </Transition>
-
-                <!-- Settings Tab -->
-                <Transition name="tab-fade" mode="out-in">
-                  <div v-if="activeTab === 'settings'" key="settings">
-                    <div class="settings-card">
-                        <div class="settings-header">
-                            <div class="settings-title-group">
-                                <ion-icon :icon="settingsOutline" class="settings-icon"></ion-icon>
-                                <h3 class="settings-title">{{ t('headings.tournamentSettings') }}</h3>
-                            </div>
-                            <button
-                                v-if="canEditTournament"
-                                @click="openEditModal"
-                                class="pp-action-button pp-action-button--primary"
-                            >
-                                <ion-icon :icon="createOutline" class="icon-md" />
-                                {{ t('tournament.edit') }}
-                            </button>
-                        </div>
-
-                        <!-- Tournament Info Display -->
-                        <div class="settings-info" v-if="tournament">
-                            <div class="settings-grid">
-                                <div>
-                                    <label class="info-label">{{ t('tournament.name') }}</label>
-                                    <p class="info-value">{{ tournament.title }}</p>
-                                </div>
-                                <div>
-                                    <label class="info-label">{{ t('tournament.buyIn') }}</label>
-                                    <p class="info-value">{{ formatPrice(tournament.buyInCents, locale) }}</p>
-                                </div>
-                                <div>
-                                    <label class="info-label">{{ t('tournament.startTime') }}</label>
-                                    <p class="info-value">{{ new Date(tournament.startTime).toLocaleString() }}</p>
-                                </div>
-                                <div>
-                                    <label class="info-label">{{ t('tournament.seatCap') }}</label>
-                                    <p class="info-value">{{ tournament.seatCap || t('tournament.unlimited') }}</p>
-                                </div>
-                                <div>
-                                    <label class="info-label">{{ t('tournament.status') }}</label>
-                                    <p class="info-value-status">
-                                        <span :class="['pp-status-badge', getTournamentStatusClass(tournament.liveStatus || 'UNKNOWN')]">
-                                            {{ getTournamentStatusLabel(tournament.liveStatus || 'UNKNOWN', t) }}
-                                        </span>
-                                    </p>
-                                </div>
-                                <div v-if="tournament.description">
-                                    <label class="info-label">{{ t('tournament.description') }}</label>
-                                    <p class="info-value">{{ tournament.description }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Edit Modal -->
-                    <TournamentFormModal
-                        :isOpen="showEditModal"
-                        :tournament="tournament"
-                        mode="edit"
-                        @close="closeEditModal"
-                        @saved="onTournamentUpdated"
-                    />
-                </div>
-                </Transition>
+        <!-- Clock Tab -->
+        <Transition name="tab-fade" mode="out-in">
+          <div v-if="activeTab === 'clock'" key="clock">
+            <div class="clock-grid">
+              <TournamentClockCard />
+              <TournamentStructureCard :current-level-index="(clock?.currentLevel || 1) - 1" />
             </div>
-        </ion-content>
-    </ion-page>
+          </div>
+        </Transition>
+
+        <!-- Players Tab -->
+        <Transition name="tab-fade" mode="out-in">
+          <div v-if="activeTab === 'players'" key="players">
+            <TournamentPlayersTable
+              ref="playersTable"
+              @player-checked-in="handlePlayerCheckedIn"
+              @registerPlayer="showRegisterPlayerModal = true"
+              @entry-added="handleEntryAdded"
+            />
+          </div>
+        </Transition>
+
+        <!-- Register Player Modal -->
+        <RegisterPlayerModal
+          :isOpen="showRegisterPlayerModal"
+          :tournamentId="selectedTournamentId"
+          :registeredPlayerIds="registeredPlayerIds"
+          @close="showRegisterPlayerModal = false"
+          @registered="handlePlayerRegistered"
+        />
+
+        <!-- Tournament QR Code Modal -->
+        <TournamentQRModal
+          :isOpen="showTournamentQRModal"
+          :tournamentId="selectedTournamentId"
+          :tournamentName="tournament?.title || ''"
+          :tournamentDate="tournament?.startTime || ''"
+          @close="showTournamentQRModal = false"
+        />
+
+        <!-- Enter Results Modal -->
+        <EnterResultsModal
+          :is-open="showEnterResultsModal"
+          :tournament-id="selectedTournamentId"
+          @close="showEnterResultsModal = false"
+          @results-entered="handleResultsEntered"
+        />
+
+        <!-- Seating Tab -->
+        <Transition name="tab-fade" mode="out-in">
+          <div v-if="activeTab === 'seating'" key="seating">
+            <TournamentSeatingManager
+              ref="seatingManager"
+              @navigate-to-players="activeTab = 'players'"
+            />
+          </div>
+        </Transition>
+
+        <!-- Settings Tab -->
+        <Transition name="tab-fade" mode="out-in">
+          <div v-if="activeTab === 'settings'" key="settings">
+            <div class="settings-card">
+              <div class="settings-header">
+                <div class="settings-title-group">
+                  <ion-icon :icon="settingsOutline" class="settings-icon"></ion-icon>
+                  <h3 class="settings-title">{{ t('headings.tournamentSettings') }}</h3>
+                </div>
+                <button
+                  v-if="canEditTournament"
+                  @click="openEditModal"
+                  class="pp-action-button pp-action-button--primary"
+                >
+                  <ion-icon :icon="createOutline" class="icon-md" />
+                  {{ t('tournament.edit') }}
+                </button>
+              </div>
+
+              <!-- Tournament Info Display -->
+              <div class="settings-info" v-if="tournament">
+                <div class="settings-grid">
+                  <div>
+                    <label class="info-label">{{ t('tournament.name') }}</label>
+                    <p class="info-value">{{ tournament.title }}</p>
+                  </div>
+                  <div>
+                    <label class="info-label">{{ t('tournament.buyIn') }}</label>
+                    <p class="info-value">{{ formatPrice(tournament.buyInCents, locale) }}</p>
+                  </div>
+                  <div>
+                    <label class="info-label">{{ t('tournament.startTime') }}</label>
+                    <p class="info-value">{{ new Date(tournament.startTime).toLocaleString() }}</p>
+                  </div>
+                  <div>
+                    <label class="info-label">{{ t('tournament.seatCap') }}</label>
+                    <p class="info-value">{{ tournament.seatCap || t('tournament.unlimited') }}</p>
+                  </div>
+                  <div>
+                    <label class="info-label">{{ t('tournament.status') }}</label>
+                    <p class="info-value-status">
+                      <span
+                        :class="[
+                          'pp-status-badge',
+                          getTournamentStatusClass(tournament.liveStatus || 'UNKNOWN'),
+                        ]"
+                      >
+                        {{ getTournamentStatusLabel(tournament.liveStatus || 'UNKNOWN', t) }}
+                      </span>
+                    </p>
+                  </div>
+                  <div v-if="tournament.description">
+                    <label class="info-label">{{ t('tournament.description') }}</label>
+                    <p class="info-value">{{ tournament.description }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Edit Modal -->
+            <TournamentFormModal
+              :isOpen="showEditModal"
+              :tournament="tournament"
+              mode="edit"
+              @close="closeEditModal"
+              @saved="onTournamentUpdated"
+            />
+          </div>
+        </Transition>
+      </div>
+    </ion-content>
+  </ion-page>
 </template>
 
 <script setup lang="ts">
-import { useI18n } from '~/composables/useI18n';
+import { useI18n } from '~/composables/useI18n'
 
 definePageMeta({
-    middleware: 'auth'
+  middleware: 'auth',
 })
 
 import { settingsOutline, createOutline, warningOutline, qrCodeOutline } from 'ionicons/icons'
 import { useNetworkStatus } from '@/composables/useNetworkStatus'
 import { useTournamentStore } from '~/stores/useTournamentStore'
-import TournamentStructureCard from "~/components/tournament/clock/TournamentStructureCard.vue";
-import TournamentStatusCard from "~/components/tournament/overview/TournamentStatusCard.vue";
-import TournamentPlayersCard from "~/components/tournament/overview/TournamentPlayersCard.vue";
-import TournamentPrizePool from "~/components/tournament/overview/TournamentPrizePool.vue";
-import TournamentSeatingManager from "~/components/tournament/seating/TournamentSeatingManager.vue";
-import TournamentFormModal from "~/components/tournament/TournamentFormModal.vue";
-import RegisterPlayerModal from "~/components/tournament/players/RegisterPlayerModal.vue";
-import TournamentQRModal from "~/components/tournament/TournamentQRModal.vue";
-import EnterResultsModal from "~/components/tournament/results/EnterResultsModal.vue";
-import TournamentResultsDisplay from "~/components/tournament/results/TournamentResultsDisplay.vue";
-import TournamentActivityFeed from "~/components/tournament/overview/TournamentActivityFeed.vue";
-import {useGqlSubscription} from "~/composables/useGqlSubscription";
-import type {TournamentClock} from "~/types/clock";
-import { formatPrice } from "~/utils";
-import { getTournamentStatusLabel, getTournamentStatusClass } from '~/utils/tournamentStatus';
+import TournamentStructureCard from '~/components/tournament/clock/TournamentStructureCard.vue'
+import TournamentStatusCard from '~/components/tournament/overview/TournamentStatusCard.vue'
+import TournamentPlayersCard from '~/components/tournament/overview/TournamentPlayersCard.vue'
+import TournamentPrizePool from '~/components/tournament/overview/TournamentPrizePool.vue'
+import TournamentSeatingManager from '~/components/tournament/seating/TournamentSeatingManager.vue'
+import TournamentFormModal from '~/components/tournament/TournamentFormModal.vue'
+import RegisterPlayerModal from '~/components/tournament/players/RegisterPlayerModal.vue'
+import TournamentQRModal from '~/components/tournament/TournamentQRModal.vue'
+import EnterResultsModal from '~/components/tournament/results/EnterResultsModal.vue'
+import TournamentResultsDisplay from '~/components/tournament/results/TournamentResultsDisplay.vue'
+import TournamentActivityFeed from '~/components/tournament/overview/TournamentActivityFeed.vue'
+import { useGqlSubscription } from '~/composables/useGqlSubscription'
+import type { TournamentClock } from '~/types/clock'
+import { formatPrice } from '~/utils'
+import { getTournamentStatusLabel, getTournamentStatusClass } from '~/utils/tournamentStatus'
 
 const { connectionStatus } = useNetworkStatus()
 const route = useRoute()
@@ -300,9 +327,9 @@ const showRegisterPlayerModal = ref(false)
 const showTournamentQRModal = ref(false)
 
 // Fetch seating data for warning banner
-const { data: overviewSeatingData } = await useLazyAsyncData(
+const { data: overviewSeatingData, refresh: refreshOverviewSeating } = await useLazyAsyncData(
   `overview-seating-${selectedTournamentId}`,
-  () => GqlGetTournamentSeatingChart({ tournamentId: selectedTournamentId })
+  () => GqlGetTournamentSeatingChart({ tournamentId: selectedTournamentId }),
 )
 
 // Show warning when tournament is active but no tables linked
@@ -316,7 +343,7 @@ const showNoTablesWarning = computed(() => {
 
 // Show warning when checked-in players are not seated during late reg or later
 const unseatedCheckedInCount = computed(() => {
-  return tournamentStore.registrations?.filter(r => r.status === 'CHECKED_IN').length || 0
+  return tournamentStore.registrations?.filter((r) => r.status === 'CHECKED_IN').length || 0
 })
 const showUnseatedWarning = computed(() => {
   const lateOrLaterStatuses = ['LATE_REGISTRATION', 'IN_PROGRESS', 'BREAK', 'FINAL_TABLE']
@@ -328,7 +355,7 @@ const showUnseatedWarning = computed(() => {
 // Fetch tournament players for filtering in RegisterPlayerModal
 const { data: playersData, refresh: refreshPlayers } = await useLazyAsyncData(
   `players-page-${selectedTournamentId}`,
-  () => GqlGetTournamentPlayers({ tournamentId: selectedTournamentId })
+  () => GqlGetTournamentPlayers({ tournamentId: selectedTournamentId }),
 )
 
 // Get registered player IDs to filter them out in search
@@ -338,94 +365,94 @@ const registeredPlayerIds = computed(() => {
 
 // Check if tournament can be edited (not FINISHED)
 const canEditTournament = computed(() => {
-    return tournament.value && tournament.value.liveStatus !== 'FINISHED'
+  return tournament.value && tournament.value.liveStatus !== 'FINISHED'
 })
 
 const openEditModal = () => {
-    showEditModal.value = true
+  showEditModal.value = true
 }
 
 const closeEditModal = () => {
-    showEditModal.value = false
+  showEditModal.value = false
 }
 
 const onTournamentUpdated = async () => {
-    closeEditModal()
-    // Refresh tournament data
-    const tournamentId = route.params.id as string
-    if (tournamentId) {
-        const response = await GqlGetTournament({ id: tournamentId })
-        if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
-    }
+  closeEditModal()
+  // Refresh tournament data
+  const tournamentId = route.params.id as string
+  if (tournamentId) {
+    const response = await GqlGetTournament({ id: tournamentId })
+    if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
+  }
 }
 
 const tabs = computed(() => [
-    { label: t('tabs.overview'), value: 'overview' },
-    { label: t('tabs.clock'), value: 'clock' },
-    { label: t('tabs.players'), value: 'players' },
-    { label: t('tabs.seating'), value: 'seating' },
-    { label: t('tabs.settings'), value: 'settings' }
+  { label: t('tabs.overview'), value: 'overview' },
+  { label: t('tabs.clock'), value: 'clock' },
+  { label: t('tabs.players'), value: 'players' },
+  { label: t('tabs.seating'), value: 'seating' },
+  { label: t('tabs.settings'), value: 'settings' },
 ])
 
 // Navigation
 const goHome = () => {
-    router.push('/')
+  router.push('/')
 }
 
 // Update connection status tracking
 watch(connectionStatus, () => {
-    // Connection status changed, could update UI here if needed
+  // Connection status changed, could update UI here if needed
 })
 
 // Cleanup on unmount
 onBeforeUnmount(() => {
-    // Component cleanup if needed
+  // Component cleanup if needed
 })
 
 // Handle player check-in events
-const handlePlayerCheckedIn = async (data: { playerId: string, result: any }) => {
-    // Refresh tournament data in store (updates registration counts in overview card)
-    const response = await GqlGetTournament({ id: selectedTournamentId })
-    if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
+const handlePlayerCheckedIn = async (data: { playerId: string; result: any }) => {
+  // Refresh tournament data in store (updates registration counts in overview card)
+  const response = await GqlGetTournament({ id: selectedTournamentId })
+  if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
 
-    // If seatingManager component is available, refresh its data
-    if (seatingManager.value && seatingManager.value.refreshSeatingData) {
-        await seatingManager.value.refreshSeatingData()
-    }
+  // If seatingManager component is available, refresh its data
+  if (seatingManager.value && seatingManager.value.refreshSeatingData) {
+    await seatingManager.value.refreshSeatingData()
+  }
 }
 
 // Handle player registered via modal
 const handlePlayerRegistered = async (data: { playerId: string }) => {
-    // Refresh the parent's player ID list (for filtering in RegisterPlayerModal)
-    await refreshPlayers()
-    // Refresh the players table component's own data
-    if (playersTable.value?.refreshPlayers) {
-        await playersTable.value.refreshPlayers()
-    }
-    // Refresh tournament data in store (updates overview cards)
-    const response = await GqlGetTournament({ id: selectedTournamentId })
-    if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
+  // Refresh the parent's player ID list (for filtering in RegisterPlayerModal)
+  await refreshPlayers()
+  // Refresh the players table component's own data
+  if (playersTable.value?.refreshPlayers) {
+    await playersTable.value.refreshPlayers()
+  }
+  // Refresh tournament data in store (updates overview cards)
+  const response = await GqlGetTournament({ id: selectedTournamentId })
+  if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
 }
 
 // Handle entry added (refresh stats in prize pool card)
 const handleEntryAdded = async () => {
-    if (prizePoolCard.value?.refreshStats) {
-        await prizePoolCard.value.refreshStats()
-    }
+  if (prizePoolCard.value?.refreshStats) {
+    await prizePoolCard.value.refreshStats()
+  }
 }
 
 // Handle status changed
 const handleStatusChanged = async (status: string) => {
-    // Refresh tournament data
-    const response = await GqlGetTournament({ id: selectedTournamentId })
-    if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
+  // Refresh tournament data
+  const response = await GqlGetTournament({ id: selectedTournamentId })
+  if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
 }
 
 // Handle results entered
 const handleResultsEntered = async () => {
-    showEnterResultsModal.value = false
-    const response = await GqlGetTournament({ id: selectedTournamentId })
-    if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
+  showEnterResultsModal.value = false
+  const response = await GqlGetTournament({ id: selectedTournamentId })
+  if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
 }
 
 // Clock subscription setup
@@ -469,19 +496,19 @@ const clockUpdateQuery = `
 
 // Subscribe to real-time clock updates globally
 const { data: clockUpdates } = useGqlSubscription({
-    query: clockUpdateQuery,
-    variables: { tournamentId: selectedTournamentId },
-    immediate: true
+  query: clockUpdateQuery,
+  variables: { tournamentId: selectedTournamentId },
+  immediate: true,
 })
 
 // Watch for subscription updates and update the store
 watch(clockUpdates, (raw) => {
-    const data = raw as { tournamentClockUpdates?: TournamentClock } | undefined
-    console.log('[TournamentPage] Clock subscription update received:', data)
-    if (data?.tournamentClockUpdates) {
-        console.log('[TournamentPage] Updating store with clock:', data.tournamentClockUpdates)
-        tournamentStore.setSelectedTournamentClock(data.tournamentClockUpdates)
-    }
+  const data = raw as { tournamentClockUpdates?: TournamentClock } | undefined
+  console.log('[TournamentPage] Clock subscription update received:', data)
+  if (data?.tournamentClockUpdates) {
+    console.log('[TournamentPage] Updating store with clock:', data.tournamentClockUpdates)
+    tournamentStore.setSelectedTournamentClock(data.tournamentClockUpdates)
+  }
 })
 
 // --- Registration subscription ---
@@ -499,22 +526,22 @@ const registrationSubQuery = `
 `
 
 const { data: registrationUpdates } = useGqlSubscription({
-    query: registrationSubQuery,
-    variables: { tournamentId: selectedTournamentId },
-    immediate: true
+  query: registrationSubQuery,
+  variables: { tournamentId: selectedTournamentId },
+  immediate: true,
 })
 
 watch(registrationUpdates, async (data: any) => {
-    if (data?.tournamentRegistrations) {
-        // Refresh players list and entry stats
-        await refreshPlayers()
-        if (prizePoolCard.value?.refreshStats) {
-            await prizePoolCard.value.refreshStats()
-        }
-        // Refresh tournament data in store
-        const response = await GqlGetTournament({ id: selectedTournamentId })
-        if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
+  if (data?.tournamentRegistrations) {
+    // Refresh players list and entry stats
+    await refreshPlayers()
+    if (prizePoolCard.value?.refreshStats) {
+      await prizePoolCard.value.refreshStats()
     }
+    // Refresh tournament data in store
+    const response = await GqlGetTournament({ id: selectedTournamentId })
+    if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
+  }
 })
 
 // --- Seating changes subscription ---
@@ -534,22 +561,24 @@ const seatingSubQuery = `
 const clubId = computed(() => clubStore.club?.id)
 
 const { data: seatingUpdates } = useGqlSubscription({
-    query: seatingSubQuery,
-    variables: { clubId: clubId.value || '' },
-    immediate: !!clubId.value
+  query: seatingSubQuery,
+  variables: { clubId: clubId.value || '' },
+  immediate: !!clubId.value,
 })
 
 watch(seatingUpdates, async (data: any) => {
-    if (data?.clubSeatingChanges) {
-        // Refresh seating data
-        if (seatingManager.value?.refreshSeatingData) {
-            await seatingManager.value.refreshSeatingData()
-        }
-        // Always refresh tournament data so registration statuses stay in sync
-        // (seating events change statuses: CHECKED_IN→SEATED, SEATED→BUSTED, etc.)
-        const response = await GqlGetTournament({ id: selectedTournamentId })
-        if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
-    }
+  const evt = data?.clubSeatingChanges
+  if (!evt) return
+  // Ignore events for other tournaments in the same club
+  if (evt.tournamentId && evt.tournamentId !== selectedTournamentId) return
+
+  // Refresh active seating tab (if mounted) and overview warning banner
+  await Promise.all([seatingManager.value?.refreshSeatingData?.(), refreshOverviewSeating()])
+
+  // Refresh tournament so registration statuses stay in sync
+  // (seating events change statuses: CHECKED_IN→SEATED, SEATED→BUSTED, etc.)
+  const response = await GqlGetTournament({ id: selectedTournamentId })
+  if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
 })
 
 // --- User notifications subscription ---
@@ -564,28 +593,26 @@ const notificationSubQuery = `
 const toast = useToast()
 
 const { data: notificationUpdates } = useGqlSubscription({
-    query: notificationSubQuery,
-    variables: {},
-    immediate: true
+  query: notificationSubQuery,
+  variables: {},
+  immediate: true,
 })
 
 watch(notificationUpdates, (data: any) => {
-    if (data?.userNotifications) {
-        const notif = data.userNotifications
-        toast.info(`${notif.title}: ${notif.message}`)
-    }
+  if (data?.userNotifications) {
+    const notif = data.userNotifications
+    toast.info(`${notif.title}: ${notif.message}`)
+  }
 })
 
 // ---
 
 onMounted(async () => {
-    if (selectedTournamentId) {
-        const response = await GqlGetTournament({ id: selectedTournamentId })
-        if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
-    }
+  if (selectedTournamentId) {
+    const response = await GqlGetTournament({ id: selectedTournamentId })
+    if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
+  }
 })
-
-
 </script>
 
 <style scoped>
@@ -736,7 +763,11 @@ onMounted(async () => {
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-weight: 500;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
   white-space: nowrap;
   cursor: pointer;
 }
@@ -745,7 +776,9 @@ onMounted(async () => {
   background-color: rgba(254, 231, 138, 0.1);
   color: var(--color-pp-gold);
   border: 1px solid rgba(254, 231, 138, 0.4);
-  box-shadow: 0 0 0 1px rgba(254, 231, 138, 0.12), 0 8px 30px -10px rgba(254, 231, 138, 0.25);
+  box-shadow:
+    0 0 0 1px rgba(254, 231, 138, 0.12),
+    0 8px 30px -10px rgba(254, 231, 138, 0.25);
 }
 
 .tab-button--inactive {
@@ -964,132 +997,132 @@ onMounted(async () => {
 <style>
 /* Custom tab styling to match the design */
 .tab-button-custom {
-    --background: transparent;
-    --background-selected: #24242a;
-    --color: #94a3b8;
-    --color-selected: #fee78a;
-    --border-radius: 12px;
-    --padding-start: 32px;
-    --padding-end: 32px;
-    --margin: 4px;
-    --box-shadow: none;
-    --box-shadow-selected: 0 2px 8px 0 rgb(254 231 138 / 0.2);
-    margin: 0 2px;
-    border: 1px solid #54545f; /* Subtle border for visibility */
-    transition: all 0.2s ease;
+  --background: transparent;
+  --background-selected: #24242a;
+  --color: #94a3b8;
+  --color-selected: #fee78a;
+  --border-radius: 12px;
+  --padding-start: 32px;
+  --padding-end: 32px;
+  --margin: 4px;
+  --box-shadow: none;
+  --box-shadow-selected: 0 2px 8px 0 rgb(254 231 138 / 0.2);
+  margin: 0 2px;
+  border: 1px solid #54545f; /* Subtle border for visibility */
+  transition: all 0.2s ease;
 }
 
-.tab-button-custom:hover:not([aria-selected="true"]) {
-    --background: rgba(94, 164, 184, 0.1);
-    --color: #ffffff;
-    border: 1px solid #94a3b8;
-    transform: translateY(-1px);
+.tab-button-custom:hover:not([aria-selected='true']) {
+  --background: rgba(94, 164, 184, 0.1);
+  --color: #ffffff;
+  border: 1px solid #94a3b8;
+  transform: translateY(-1px);
 }
 
-.tab-button-custom[aria-selected="true"] {
-    --background: #24242a;
-    border: 1px solid rgba(254, 231, 138, 0.6);
-    box-shadow: 0 2px 8px 0 rgb(254 231 138 / 0.2);
+.tab-button-custom[aria-selected='true'] {
+  --background: #24242a;
+  border: 1px solid rgba(254, 231, 138, 0.6);
+  box-shadow: 0 2px 8px 0 rgb(254 231 138 / 0.2);
 }
 
 /* Fullscreen styles for tournament clock */
 .tournament-clock-card:fullscreen {
-    display: flex;
-    flex-direction: column;
-    background-color: #1a1a1f !important;
-    padding: 0;
-    width: 100vw;
-    height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #1a1a1f !important;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
 }
 
 /* Hide normal view in fullscreen */
 .tournament-clock-card:fullscreen .normal-view {
-    display: none;
+  display: none;
 }
 
 .tournament-clock-card:fullscreen .fullscreen-header {
-    display: none;
+  display: none;
 }
 
 /* Show fullscreen view only in fullscreen */
 .tournament-clock-card:fullscreen .fullscreen-view {
-    display: block !important;
-    height: 100vh;
+  display: block !important;
+  height: 100vh;
 }
 
 /* Position fullscreen toggle button */
 .tournament-clock-card:fullscreen .fullscreen-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    background: rgba(36, 36, 42, 0.9);
-    backdrop-filter: blur(10px);
-    display: block !important;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: rgba(36, 36, 42, 0.9);
+  backdrop-filter: blur(10px);
+  display: block !important;
 }
 
 /* Hide all other buttons in fullscreen */
 .tournament-clock-card:fullscreen button:not(.fullscreen-toggle) {
-    display: none;
+  display: none;
 }
 
 /* Responsive timer scaling */
 .fullscreen-timer {
-    font-size: clamp(8rem, 18vw, 20rem);
-    line-height: 1;
+  font-size: clamp(8rem, 18vw, 20rem);
+  line-height: 1;
 }
 
 /* Extra large screens (4K+) */
 @media (min-width: 2560px) {
-    .fullscreen-timer {
-        font-size: clamp(16rem, 20vw, 24rem);
-    }
+  .fullscreen-timer {
+    font-size: clamp(16rem, 20vw, 24rem);
+  }
 }
 
 /* Make sure tab labels are visible */
 .tab-button-custom ion-label {
-    font-weight: 500;
-    font-size: 16px;
-    opacity: 1;
+  font-weight: 500;
+  font-size: 16px;
+  opacity: 1;
 }
 
 /* Grid-based tab styling */
 .tab-button-custom-grid {
-    --background: transparent;
-    --background-selected: #24242a;
-    --color: #ffffff;
-    --color-selected: #fee78a;
-    --border-radius: 12px;
-    --padding-start: 16px;
-    --padding-end: 16px;
-    --padding-top: 12px;
-    --padding-bottom: 12px;
-    --margin: 0;
-    --box-shadow: none;
-    --box-shadow-selected: 0 2px 8px 0 rgb(254 231 138 / 0.15);
-    border: 1px solid transparent;
-    border-radius: 12px;
-    transition: all 0.2s ease;
-    flex: 1;
+  --background: transparent;
+  --background-selected: #24242a;
+  --color: #ffffff;
+  --color-selected: #fee78a;
+  --border-radius: 12px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --margin: 0;
+  --box-shadow: none;
+  --box-shadow-selected: 0 2px 8px 0 rgb(254 231 138 / 0.15);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  flex: 1;
 }
 
-.tab-button-custom-grid:hover:not([aria-selected="true"]) {
-    --background: rgba(148, 163, 184, 0.1);
-    --color: #ffffff;
-    border: 1px solid #94a3b8;
+.tab-button-custom-grid:hover:not([aria-selected='true']) {
+  --background: rgba(148, 163, 184, 0.1);
+  --color: #ffffff;
+  border: 1px solid #94a3b8;
 }
 
-.tab-button-custom-grid[aria-selected="true"] {
-    --background: #24242a;
-    --color: #fee78a;
-    border: 1px solid rgba(254, 231, 138, 0.4);
-    box-shadow: 0 2px 8px 0 rgb(254 231 138 / 0.15);
+.tab-button-custom-grid[aria-selected='true'] {
+  --background: #24242a;
+  --color: #fee78a;
+  border: 1px solid rgba(254, 231, 138, 0.4);
+  box-shadow: 0 2px 8px 0 rgb(254 231 138 / 0.15);
 }
 
 .tab-button-custom-grid ion-label {
-    font-weight: 500;
-    font-size: 14px;
-    opacity: 1;
-    margin: 0;
+  font-weight: 500;
+  font-size: 14px;
+  opacity: 1;
+  margin: 0;
 }
 </style>

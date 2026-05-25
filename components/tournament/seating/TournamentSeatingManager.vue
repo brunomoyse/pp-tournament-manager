@@ -20,13 +20,13 @@
           :disabled="isBalancing"
           class="pp-action-button pp-action-button--secondary"
         >
-          <IonIcon :icon="scaleOutline" :class="['seating-manager__action-icon', isBalancing && 'pp-animate-spin']" />
+          <IonIcon
+            :icon="scaleOutline"
+            :class="['seating-manager__action-icon', isBalancing && 'pp-animate-spin']"
+          />
           {{ isBalancing ? t('status.balancing') : t('buttons.balanceTables') }}
         </button>
-        <button
-          @click="openBreakTableModal"
-          class="pp-action-button pp-action-button--danger"
-        >
+        <button @click="openBreakTableModal" class="pp-action-button pp-action-button--danger">
           <IonIcon :icon="unlinkOutline" class="seating-manager__action-icon" />
           {{ t('buttons.breakTable') }}
         </button>
@@ -40,6 +40,7 @@
         :key="tableData.table.id"
         :table="tableData.table"
         :seats="tableData.seats"
+        :processing="playerActionProcessing"
         data-table-card
         @seat-player="handleSeatPlayer"
         @status-changed="handlePlayerStatusChanged"
@@ -54,7 +55,10 @@
     </div>
 
     <!-- No Tables State -->
-    <div v-else-if="!seatingData?.tournamentSeatingChart?.tables?.length" class="seating-manager__empty">
+    <div
+      v-else-if="!seatingData?.tournamentSeatingChart?.tables?.length"
+      class="seating-manager__empty"
+    >
       <div class="seating-manager__empty-icon-wrapper">
         <IonIcon :icon="gridOutline" class="seating-manager__empty-icon" />
       </div>
@@ -86,19 +90,32 @@
         <p class="seating-manager__modal-description">{{ t('seating.selectDestination') }}</p>
 
         <div class="seating-manager__modal-scroll">
-          <div v-for="tableData in availableTables" :key="tableData.table.id" class="seating-manager__move-table">
-            <h3 class="seating-manager__move-table-title">{{ t('labels.table') }} {{ tableData.table.tableNumber }}</h3>
+          <div
+            v-for="tableData in availableTables"
+            :key="tableData.table.id"
+            class="seating-manager__move-table"
+          >
+            <h3 class="seating-manager__move-table-title">
+              {{ t('labels.table') }} {{ tableData.table.tableNumber }}
+            </h3>
             <div class="seating-manager__move-seats">
               <button
                 v-for="seatNum in tableData.table.maxSeats"
                 :key="seatNum"
-                :disabled="tableData.seats?.some(s => s.assignment.seatNumber === seatNum)"
+                :disabled="isSeatOccupied(tableData, seatNum)"
+                :title="
+                  isCurrentSeat(tableData.table.tableNumber, seatNum)
+                    ? t('seating.currentSeat')
+                    : undefined
+                "
                 @click="executePlayerMove(tableData.table.id, seatNum)"
                 :class="[
                   'seating-manager__move-seat',
-                  tableData.seats?.some(s => s.assignment.seatNumber === seatNum)
-                    ? 'seating-manager__move-seat--occupied'
-                    : 'seating-manager__move-seat--available'
+                  isCurrentSeat(tableData.table.tableNumber, seatNum)
+                    ? 'seating-manager__move-seat--current'
+                    : isSeatOccupied(tableData, seatNum)
+                      ? 'seating-manager__move-seat--occupied'
+                      : 'seating-manager__move-seat--available',
                 ]"
               >
                 {{ seatNum }}
@@ -120,9 +137,14 @@
       <div class="pp-modal-backdrop" @click="closePlayerSelectionModal"></div>
       <div class="pp-modal-content pp-modal-content--md seating-manager__modal-body">
         <h2 class="seating-manager__modal-title">{{ t('seating.selectPlayer') }}</h2>
-        <p class="seating-manager__modal-description">{{ t('seating.choosePlayerForSeat', { seat: targetSeat?.seatNumber }) }}</p>
+        <p class="seating-manager__modal-description">
+          {{ t('seating.choosePlayerForSeat', { seat: targetSeat?.seatNumber }) }}
+        </p>
 
-        <div v-if="unassignedPlayers.length > 0" class="seating-manager__modal-scroll seating-manager__player-list">
+        <div
+          v-if="unassignedPlayers.length > 0"
+          class="seating-manager__modal-scroll seating-manager__player-list"
+        >
           <button
             v-for="player in unassignedPlayers"
             :key="player.id"
@@ -134,19 +156,29 @@
             </div>
             <div>
               <div class="seating-manager__player-name">{{ getPlayerDisplayName(player) }}</div>
-              <div class="seating-manager__player-full-name">{{ player.firstName }} {{ player.lastName || '' }}</div>
+              <div class="seating-manager__player-full-name">
+                {{ player.firstName }} {{ player.lastName || '' }}
+              </div>
             </div>
           </button>
         </div>
 
         <div v-else class="seating-manager__no-players">
           {{ t('seating.noUnassignedPlayers') }}
-          <br>
+          <br />
           <span class="seating-manager__no-players-hint">{{ t('seating.mustBeCheckedIn') }}</span>
+          <div class="seating-manager__no-players-cta">
+            <button @click="goToPlayers" class="pp-action-button pp-action-button--secondary">
+              {{ t('seating.goToPlayers') }}
+            </button>
+          </div>
         </div>
 
         <div class="seating-manager__modal-footer">
-          <button @click="closePlayerSelectionModal" class="pp-action-button pp-action-button--secondary">
+          <button
+            @click="closePlayerSelectionModal"
+            class="pp-action-button pp-action-button--secondary"
+          >
             {{ t('buttons.cancel') }}
           </button>
         </div>
@@ -160,7 +192,10 @@
         <h2 class="seating-manager__modal-title">{{ t('buttons.breakTable') }}</h2>
         <p class="seating-manager__modal-description">{{ t('seating.selectTableToRemove') }}</p>
 
-        <div v-if="tablesWithStatus.length > 0" class="seating-manager__modal-scroll seating-manager__break-list">
+        <div
+          v-if="tablesWithStatus.length > 0"
+          class="seating-manager__modal-scroll seating-manager__break-list"
+        >
           <div
             v-for="tableData in tablesWithStatus"
             :key="tableData.table.id"
@@ -168,22 +203,30 @@
               'seating-manager__break-table',
               tableData.isEmpty
                 ? 'seating-manager__break-table--empty'
-                : 'seating-manager__break-table--occupied'
+                : 'seating-manager__break-table--occupied',
             ]"
           >
             <div class="seating-manager__break-table-left">
-              <div :class="[
-                'seating-manager__break-table-number',
-                tableData.isEmpty
-                  ? 'seating-manager__break-table-number--empty'
-                  : 'seating-manager__break-table-number--occupied'
-              ]">
+              <div
+                :class="[
+                  'seating-manager__break-table-number',
+                  tableData.isEmpty
+                    ? 'seating-manager__break-table-number--empty'
+                    : 'seating-manager__break-table-number--occupied',
+                ]"
+              >
                 {{ tableData.table.tableNumber }}
               </div>
               <div>
-                <div class="seating-manager__break-table-label">{{ t('labels.table') }} {{ tableData.table.tableNumber }}</div>
+                <div class="seating-manager__break-table-label">
+                  {{ t('labels.table') }} {{ tableData.table.tableNumber }}
+                </div>
                 <div class="seating-manager__break-table-status">
-                  {{ tableData.isEmpty ? t('seating.emptyCanBeRemoved') : t('seating.playersSeated', { count: tableData.seats?.length || 0 }) }}
+                  {{
+                    tableData.isEmpty
+                      ? t('seating.emptyCanBeRemoved')
+                      : t('seating.playersSeated', { count: tableData.seats?.length || 0 })
+                  }}
                 </div>
               </div>
             </div>
@@ -205,14 +248,20 @@
           {{ t('messages.noTablesLinked') }}
         </div>
 
-        <div v-if="tablesWithStatus.length > 0 && !hasEmptyTables" class="seating-manager__break-warning">
+        <div
+          v-if="tablesWithStatus.length > 0 && !hasEmptyTables"
+          class="seating-manager__break-warning"
+        >
           <p class="seating-manager__break-warning-text">
             {{ t('seating.allTablesHavePlayers') }}
           </p>
         </div>
 
         <div class="seating-manager__modal-footer">
-          <button @click="closeBreakTableModal" class="pp-action-button pp-action-button--secondary">
+          <button
+            @click="closeBreakTableModal"
+            class="pp-action-button pp-action-button--secondary"
+          >
             {{ t('common.close') }}
           </button>
         </div>
@@ -232,6 +281,15 @@ import { useI18n } from '~/composables/useI18n'
 const { t } = useI18n()
 const toast = useToast()
 
+const emit = defineEmits<{
+  'navigate-to-players': []
+}>()
+
+const goToPlayers = () => {
+  closePlayerSelectionModal()
+  emit('navigate-to-players')
+}
+
 const route = useRoute()
 const tournamentStore = useTournamentStore()
 const clubStore = useClubStore()
@@ -240,15 +298,18 @@ const clubStore = useClubStore()
 const showAssignTableModal = ref(false)
 const isBalancing = ref(false)
 const showMoveModal = ref(false)
-const playerToMove = ref<{ playerId: string, fromTable: number, fromSeat: number } | null>(null)
+const playerToMove = ref<{ playerId: string; fromTable: number; fromSeat: number } | null>(null)
 const showPlayerSelectionModal = ref(false)
-const targetSeat = ref<{ tableId: string, seatNumber: number } | null>(null)
+const targetSeat = ref<{ tableId: string; seatNumber: number } | null>(null)
+
+// Lifted busy state for PlayerActionModal so its buttons reflect real async work
+const playerActionProcessing = ref(false)
 
 // Fetch seating data
 const selectedTournamentId = route.params.id as string
 const { data: seatingData, refresh: refreshSeatingData } = await useLazyAsyncData(
   `seating-${selectedTournamentId}`,
-  () => GqlGetTournamentSeatingChart({ tournamentId: selectedTournamentId })
+  () => GqlGetTournamentSeatingChart({ tournamentId: selectedTournamentId }),
 )
 
 // Get tournament info for club details
@@ -258,10 +319,26 @@ const club = computed(() => clubStore.club)
 // Get available tables for move modal
 const availableTables = computed(() => seatingData.value?.tournamentSeatingChart?.tables || [])
 
+const isSeatOccupied = (tableData: any, seatNum: number) => {
+  return tableData.seats?.some((s: any) => s.assignment.seatNumber === seatNum)
+}
+
+const isCurrentSeat = (tableNumber: number, seatNum: number) => {
+  const move = playerToMove.value
+  if (!move) return false
+  return move.fromTable === tableNumber && move.fromSeat === seatNum
+}
+
 // Get unassigned players (checked-in but not seated)
-const unassignedPlayers = computed(() => seatingData.value?.tournamentSeatingChart?.unassignedPlayers || [])
+const unassignedPlayers = computed(
+  () => seatingData.value?.tournamentSeatingChart?.unassignedPlayers || [],
+)
 
 // Event handlers
+// Note: all mutation handlers below intentionally do NOT call refreshSeatingData().
+// The page-level `clubSeatingChanges` subscription is the single source of truth
+// and triggers refreshes for all subscribers (this component, the overview banner,
+// and the tournament store).
 const balanceTables = async () => {
   if (isBalancing.value) return
 
@@ -269,10 +346,9 @@ const balanceTables = async () => {
   try {
     await GqlBalanceTables({
       input: {
-        tournamentId: selectedTournamentId
-      }
+        tournamentId: selectedTournamentId,
+      },
     })
-    await refreshSeatingData()
   } catch (error) {
     console.error('Failed to balance tables:', error)
     toast.error(t('toast.balanceTablesFailed'))
@@ -288,14 +364,14 @@ const isBreakingTable = ref(false)
 // Get tables with their empty status
 const tablesWithStatus = computed(() => {
   const tables = seatingData.value?.tournamentSeatingChart?.tables || []
-  return tables.map(tableData => ({
+  return tables.map((tableData) => ({
     ...tableData,
-    isEmpty: !tableData.seats || tableData.seats.length === 0
+    isEmpty: !tableData.seats || tableData.seats.length === 0,
   }))
 })
 
 // Check if there are any empty tables
-const hasEmptyTables = computed(() => tablesWithStatus.value.some(t => t.isEmpty))
+const hasEmptyTables = computed(() => tablesWithStatus.value.some((t) => t.isEmpty))
 
 const openBreakTableModal = () => {
   showBreakTableModal.value = true
@@ -313,10 +389,9 @@ const breakTable = async (tableId: string) => {
     await GqlUnassignTableFromTournament({
       input: {
         tournamentId: selectedTournamentId,
-        clubTableId: tableId
-      }
+        clubTableId: tableId,
+      },
     })
-    await refreshSeatingData()
     closeBreakTableModal()
   } catch (error: any) {
     console.error('Failed to break table:', error)
@@ -326,45 +401,54 @@ const breakTable = async (tableId: string) => {
   }
 }
 
-const handleSeatPlayer = async (data: { tableId: string, seatNumber: number, playerId: string }) => {
+const handleSeatPlayer = async (data: {
+  tableId: string
+  seatNumber: number
+  playerId: string
+}) => {
   try {
     await GqlAssignPlayerToSeat({
       input: {
         tournamentId: selectedTournamentId,
         clubTableId: data.tableId,
         userId: data.playerId,
-        seatNumber: data.seatNumber
-      }
+        seatNumber: data.seatNumber,
+      },
     })
-    await refreshSeatingData()
   } catch (error) {
     console.error('Failed to seat player:', error)
     toast.error(t('toast.seatPlayerFailed'))
   }
 }
 
-const handleTablesAssigned = async () => {
-  // Refresh seating data after tables are assigned
-  await refreshSeatingData()
+const handleTablesAssigned = () => {
+  // Subscription will refresh; nothing to do here.
 }
 
-const handlePlayerStatusChanged = async (data: { playerId: string, status: string }) => {
+const handlePlayerStatusChanged = async (data: { playerId: string; status: string }) => {
+  if (playerActionProcessing.value) return
+  playerActionProcessing.value = true
   try {
     if (data.status === 'ELIMINATED') {
       await GqlEliminatePlayer({
         tournamentId: selectedTournamentId,
-        userId: data.playerId
+        userId: data.playerId,
       })
     }
-
-    await refreshSeatingData()
+    // Subscription will refresh seating data; no manual refetch needed.
   } catch (error) {
     console.error('Failed to update player:', error)
     toast.error(t('toast.updatePlayerFailed'))
+  } finally {
+    playerActionProcessing.value = false
   }
 }
 
-const handlePlayerMove = async (data: { playerId: string, fromTable: number, fromSeat: number }) => {
+const handlePlayerMove = async (data: {
+  playerId: string
+  fromTable: number
+  fromSeat: number
+}) => {
   // Store the player info and show move modal
   playerToMove.value = data
   showMoveModal.value = true
@@ -379,10 +463,9 @@ const executePlayerMove = async (targetTableId: string, targetSeatNumber: number
         tournamentId: selectedTournamentId,
         userId: playerToMove.value.playerId,
         newClubTableId: targetTableId,
-        newSeatNumber: targetSeatNumber
-      }
+        newSeatNumber: targetSeatNumber,
+      },
     })
-    await refreshSeatingData()
     closeMoveModal()
   } catch (error) {
     console.error('Failed to move player:', error)
@@ -396,7 +479,7 @@ const closeMoveModal = () => {
 }
 
 // Player selection for empty seats
-const handleSelectPlayerForSeat = (data: { tableId: string, seatNumber: number }) => {
+const handleSelectPlayerForSeat = (data: { tableId: string; seatNumber: number }) => {
   targetSeat.value = data
   showPlayerSelectionModal.value = true
 }
@@ -410,10 +493,9 @@ const selectPlayerForSeat = async (playerId: string) => {
         tournamentId: selectedTournamentId,
         clubTableId: targetSeat.value.tableId,
         userId: playerId,
-        seatNumber: targetSeat.value.seatNumber
-      }
+        seatNumber: targetSeat.value.seatNumber,
+      },
     })
-    await refreshSeatingData()
     closePlayerSelectionModal()
   } catch (error) {
     console.error('Failed to assign player:', error)
@@ -601,6 +683,14 @@ defineExpose({ refreshSeatingData })
   cursor: not-allowed;
 }
 
+.seating-manager__move-seat--current {
+  background-color: rgba(254, 231, 138, 0.15);
+  border-color: var(--color-pp-gold);
+  color: var(--color-pp-gold);
+  cursor: not-allowed;
+  box-shadow: 0 0 0 2px rgba(254, 231, 138, 0.15);
+}
+
 .seating-manager__move-seat--available {
   background-color: var(--color-pp-bg);
   border-color: var(--color-pp-border-strong);
@@ -671,6 +761,12 @@ defineExpose({ refreshSeatingData })
 
 .seating-manager__no-players-hint {
   font-size: 0.875rem;
+}
+
+.seating-manager__no-players-cta {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
 }
 
 /* Break Table Modal */

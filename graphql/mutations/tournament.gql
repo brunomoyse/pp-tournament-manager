@@ -1,5 +1,14 @@
-mutation AssignTableToTournament ($input: AssignTableToTournamentInput!) {
+mutation AssignTableToTournament($input: AssignTableToTournamentInput!) {
   assignTableToTournament(input: $input) {
+    id
+    tournamentId
+    tableNumber
+    maxSeats
+  }
+}
+
+mutation AssignTablesToTournament($input: AssignTablesToTournamentInput!) {
+  assignTablesToTournament(input: $input) {
     id
     tournamentId
     tableNumber

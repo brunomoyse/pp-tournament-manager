@@ -1,20 +1,14 @@
 <template>
   <div v-if="isOpen" class="pp-modal-overlay">
     <!-- Backdrop -->
-    <div
-      class="pp-modal-backdrop"
-      @click="$emit('close')"
-    ></div>
+    <div class="pp-modal-backdrop" @click="$emit('close')"></div>
 
     <!-- Modal Content -->
     <div class="pp-modal-content pp-modal-content--lg">
       <!-- Header -->
       <div class="pp-modal-header">
         <h3 class="modal-title">{{ t('playerAction.title') }}</h3>
-        <button
-          @click="$emit('close')"
-          class="pp-close-button"
-        >
+        <button @click="$emit('close')" class="pp-close-button">
           <IonIcon :icon="closeOutline" class="icon-md" />
         </button>
       </div>
@@ -24,7 +18,9 @@
         <div v-if="player" class="player-info-card">
           <div class="player-info-header">
             <div class="player-avatar">
-              <span class="player-avatar-text">{{ getInitials(player.firstName, player.lastName) }}</span>
+              <span class="player-avatar-text">{{
+                getInitials(player.firstName, player.lastName)
+              }}</span>
             </div>
             <div class="player-details">
               <h3 class="player-name">{{ getPlayerDisplayName(player) }}</h3>
@@ -39,10 +35,7 @@
 
           <div class="player-status-row">
             <span class="status-label">{{ t('labels.status') }}:</span>
-            <span :class="[
-              'pp-status-badge',
-              getRegistrationStatusClass(currentStatus)
-            ]">
+            <span :class="['pp-status-badge', getRegistrationStatusClass(currentStatus)]">
               {{ getRegistrationStatusLabel(currentStatus, t) }}
             </span>
           </div>
@@ -79,22 +72,8 @@
                 <div class="action-button-desc">{{ t('playerAction.relocateToAnother') }}</div>
               </div>
             </button>
-
-            <!-- Away from Table -->
-            <button
-              @click="handleStatusChange('AWAY')"
-              :disabled="processing"
-              class="pp-action-button pp-action-button--warning action-button-full"
-            >
-              <IonIcon :icon="walkOutline" class="icon-md" />
-              <div class="action-button-content">
-                <div class="action-button-label">{{ t('playerAction.markAway') }}</div>
-                <div class="action-button-desc">{{ t('playerAction.temporarilyAway') }}</div>
-              </div>
-            </button>
           </div>
         </div>
-
       </div>
     </div>
   </div>
@@ -102,10 +81,7 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import {
-  skullOutline, swapHorizontalOutline, walkOutline,
-  closeOutline, locationOutline
-} from 'ionicons/icons'
+import { skullOutline, swapHorizontalOutline, closeOutline, locationOutline } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 import { getRegistrationStatusLabel, getRegistrationStatusClass } from '~/utils/registrationStatus'
 
@@ -123,18 +99,18 @@ interface Props {
   tableNumber: number
   seatNumber: number
   currentStatus: string
+  processing?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  processing: false,
+})
 
 const emit = defineEmits<{
   close: []
-  'status-changed': [data: { playerId: string, status: string }]
-  'move-player': [data: { playerId: string, fromTable: number, fromSeat: number }]
+  'status-changed': [data: { playerId: string; status: string }]
+  'move-player': [data: { playerId: string; fromTable: number; fromSeat: number }]
 }>()
-
-// State
-const processing = ref(false)
 
 // Helper functions
 const getInitials = (firstName: string, lastName?: string | null) => {
@@ -159,36 +135,22 @@ const getPlayerDisplayName = (player: Player) => {
 }
 
 // Action handlers
-const handleStatusChange = async (newStatus: string) => {
-  if (!props.player) return
-
-  processing.value = true
-  try {
-    emit('status-changed', {
-      playerId: props.player.id,
-      status: newStatus
-    })
-  } finally {
-    processing.value = false
-  }
-}
-
-const handleTableMove = () => {
-  if (!props.player) return
-
-  emit('move-player', {
+const handleStatusChange = (newStatus: string) => {
+  if (!props.player || props.processing) return
+  emit('status-changed', {
     playerId: props.player.id,
-    fromTable: props.tableNumber,
-    fromSeat: props.seatNumber
+    status: newStatus,
   })
 }
 
-// Reset state when modal closes
-watch(() => props.isOpen, (isOpen) => {
-  if (!isOpen) {
-    processing.value = false
-  }
-})
+const handleTableMove = () => {
+  if (!props.player || props.processing) return
+  emit('move-player', {
+    playerId: props.player.id,
+    fromTable: props.tableNumber,
+    fromSeat: props.seatNumber,
+  })
+}
 </script>
 
 <style scoped>

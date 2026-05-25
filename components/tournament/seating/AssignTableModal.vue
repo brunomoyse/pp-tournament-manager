@@ -1,20 +1,14 @@
 <template>
   <div v-if="isOpen" class="pp-modal-overlay">
     <!-- Backdrop -->
-    <div
-      class="pp-modal-backdrop"
-      @click="closeModal"
-    ></div>
+    <div class="pp-modal-backdrop" @click="closeModal"></div>
 
     <!-- Modal Content -->
     <div class="pp-modal-content pp-modal-content--md">
       <!-- Header -->
       <div class="pp-modal-header">
         <h3>{{ t('modals.linkClubTables.title') }}</h3>
-        <button
-          @click="closeModal"
-          class="pp-close-button"
-        >
+        <button @click="closeModal" class="pp-close-button">
           <IonIcon :icon="closeOutline" class="icon-md" />
         </button>
       </div>
@@ -25,30 +19,13 @@
       </div>
 
       <!-- Table Selection -->
-      <div v-else-if="clubTables && clubTables.length > 0" class="pp-modal-body table-selection-body">
+      <div
+        v-else-if="clubTables && clubTables.length > 0"
+        class="pp-modal-body table-selection-body"
+      >
         <p class="selection-description">
           {{ t('messages.selectTablesToAssign', { clubName }) }}
         </p>
-
-        <!-- Table Format Selector -->
-        <div class="format-selector">
-          <label class="pp-label">
-            {{ t('seating.tableFormat') }}
-          </label>
-          <div class="format-options">
-            <button
-              v-for="format in tableFormats"
-              :key="format"
-              @click="selectedFormat = format"
-              :class="[
-                'format-button',
-                selectedFormat === format ? 'format-button--active' : ''
-              ]"
-            >
-              {{ format }}-max
-            </button>
-          </div>
-        </div>
 
         <div class="table-list">
           <div
@@ -56,71 +33,84 @@
             :key="table.id"
             :class="[
               'table-row',
-              table.isAssigned ? 'table-row--disabled' : 'table-row--selectable'
+              table.isAssigned ? 'table-row--disabled' : 'table-row--selectable',
             ]"
           >
             <div class="table-row-left">
               <input
                 :id="`table-${table.id}`"
-                v-model="selectedTableIds"
-                :value="table.id"
+                :checked="isSelected(table.id)"
                 :disabled="table.isAssigned"
                 type="checkbox"
-                :class="[
-                  'table-checkbox',
-                  table.isAssigned ? 'table-checkbox--disabled' : ''
-                ]"
+                :class="['table-checkbox', table.isAssigned ? 'table-checkbox--disabled' : '']"
+                @change="toggleTable(table)"
               />
               <label
                 :for="`table-${table.id}`"
-                :class="[
-                  'table-label',
-                  table.isAssigned ? 'table-label--disabled' : ''
-                ]"
+                :class="['table-label', table.isAssigned ? 'table-label--disabled' : '']"
               >
-                <div :class="[
-                  'table-name',
-                  table.isAssigned ? 'table-name--disabled' : ''
-                ]">
+                <div :class="['table-name', table.isAssigned ? 'table-name--disabled' : '']">
                   {{ `${t('labels.table')} ${table.tableNumber}` }}
                   {{ table.isAssigned ? ` (${t('seating.alreadyAssigned')})` : '' }}
                 </div>
-                <div :class="[
-                  'table-seats',
-                  table.isAssigned ? 'table-seats--disabled' : ''
-                ]">
-                  {{ table.maxSeats }} {{ t('labels.seats') }}
+                <div :class="['table-seats', table.isAssigned ? 'table-seats--disabled' : '']">
+                  {{ table.maxSeats }} {{ t('labels.seats') }} {{ t('seating.naturalCapacity') }}
                 </div>
               </label>
             </div>
-            <div :class="[
-              'table-status-badge',
-              table.isAssigned
-                ? 'table-status-badge--assigned'
-                : table.isActive
-                  ? 'table-status-badge--active'
-                  : 'table-status-badge--inactive'
-            ]">
-              {{ table.isAssigned ? t('status.assigned') : table.isActive ? t('status.active') : t('status.inactive') }}
+
+            <!-- Per-table seat count override -->
+            <div class="table-row-right">
+              <select
+                v-if="!table.isAssigned && isSelected(table.id)"
+                :value="selectedTables[table.id]"
+                class="seat-count-select"
+                :aria-label="t('seating.tableFormat')"
+                @change="setSeatCount(table.id, ($event.target as HTMLSelectElement).value)"
+              >
+                <option v-for="format in tableFormats" :key="format" :value="format">
+                  {{ format }}-max
+                </option>
+              </select>
+              <div
+                v-else
+                :class="[
+                  'table-status-badge',
+                  table.isAssigned
+                    ? 'table-status-badge--assigned'
+                    : table.isActive
+                      ? 'table-status-badge--active'
+                      : 'table-status-badge--inactive',
+                ]"
+              >
+                {{
+                  table.isAssigned
+                    ? t('status.assigned')
+                    : table.isActive
+                      ? t('status.active')
+                      : t('status.inactive')
+                }}
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Actions -->
         <div class="pp-modal-footer table-actions">
-          <button
-            @click="closeModal"
-            class="pp-action-button pp-action-button--secondary"
-          >
+          <button @click="closeModal" class="pp-action-button pp-action-button--secondary">
             {{ t('buttons.cancel') }}
           </button>
           <button
             @click="assignSelectedTables"
-            :disabled="selectedTableIds.length === 0 || assigning"
+            :disabled="selectedCount === 0 || assigning"
             class="pp-action-button pp-action-button--primary"
           >
             <IonIcon v-if="assigning" :icon="refreshOutline" class="icon-sm pp-animate-spin" />
-            {{ assigning ? t('status.linking') : `${t('buttons.link')} ${selectedTableIds.length} ${t('labels.tables')}` }}
+            {{
+              assigning
+                ? t('status.linking')
+                : `${t('buttons.link')} ${selectedCount} ${t('labels.tables')}`
+            }}
           </button>
         </div>
       </div>
@@ -169,16 +159,49 @@ const emit = defineEmits<{
 const loading = ref(false)
 const assigning = ref(false)
 const clubTables = ref<ClubTable[]>([])
-const selectedTableIds = ref<string[]>([])
-const tableFormats = [6, 8, 9, 10]
-const selectedFormat = ref(9)
+// tableId -> chosen maxSeats. Presence in the map = selected.
+const selectedTables = reactive<Record<string, number>>({})
+const tableFormats = [6, 8, 9, 10] as const
+
+const selectedCount = computed(() => Object.keys(selectedTables).length)
+
+const isSelected = (tableId: string) => tableId in selectedTables
+
+const toggleTable = (table: ClubTable) => {
+  if (table.isAssigned) return
+  if (isSelected(table.id)) {
+    delete selectedTables[table.id]
+  } else {
+    // Default to the table's natural maxSeats, snapped into the allowed formats
+    const natural = table.maxSeats
+    const fallback = tableFormats.includes(natural as any)
+      ? natural
+      : tableFormats.reduce(
+          (best, f) => (Math.abs(f - natural) < Math.abs(best - natural) ? f : best),
+          tableFormats[0],
+        )
+    selectedTables[table.id] = fallback
+  }
+}
+
+const setSeatCount = (tableId: string, value: string) => {
+  const n = Number(value)
+  if (!Number.isNaN(n)) selectedTables[tableId] = n
+}
+
+const resetSelection = () => {
+  for (const key of Object.keys(selectedTables)) delete selectedTables[key]
+}
 
 // Watch for modal opening to fetch tables
-watch(() => props.isOpen, async (isOpen) => {
-  if (isOpen && props.clubId) {
-    await fetchClubTables()
-  }
-})
+watch(
+  () => props.isOpen,
+  async (isOpen) => {
+    if (isOpen && props.clubId) {
+      await fetchClubTables()
+    }
+  },
+)
 
 // Methods
 const fetchClubTables = async () => {
@@ -197,25 +220,25 @@ const fetchClubTables = async () => {
 }
 
 const assignSelectedTables = async () => {
-  if (selectedTableIds.value.length === 0) return
+  if (selectedCount.value === 0) return
+
+  const entries = Object.entries(selectedTables).map(([clubTableId, maxSeats]) => ({
+    clubTableId,
+    maxSeats,
+  }))
 
   try {
     assigning.value = true
-
-    // Assign each selected table
-    for (const clubTableId of selectedTableIds.value) {
-      await GqlAssignTableToTournament({
-        input: {
-          tournamentId: props.tournamentId,
-          clubTableId,
-          maxSeats: selectedFormat.value,
-        }
-      })
-    }
-
+    await GqlAssignTablesToTournament({
+      input: {
+        tournamentId: props.tournamentId,
+        tables: entries,
+      },
+    })
     emit('tablesAssigned')
     closeModal()
   } catch (error) {
+    // Server rolls back on any failure, so no partial state to reconcile.
     console.error('Failed to assign tables:', error)
     toast.error(t('toast.assignTablesFailed'))
   } finally {
@@ -224,8 +247,7 @@ const assignSelectedTables = async () => {
 }
 
 const closeModal = () => {
-  selectedTableIds.value = []
-  selectedFormat.value = 9
+  resetSelection()
   emit('close')
 }
 </script>
@@ -250,35 +272,32 @@ const closeModal = () => {
   margin-bottom: 1rem;
 }
 
-.format-selector {
-  margin-bottom: 1rem;
-}
-
-.format-options {
+.table-row-right {
   display: flex;
+  align-items: center;
   gap: 0.5rem;
 }
 
-.format-button {
-  padding: 0.5rem 0.75rem;
+.seat-count-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 0.375rem 1.75rem 0.375rem 0.625rem;
   border-radius: 0.5rem;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 500;
-  transition: all 0.2s ease;
-  border: 1px solid var(--color-pp-border-strong);
-  background-color: var(--color-pp-bg);
-  color: rgba(255, 255, 255, 0.6);
-  cursor: pointer;
-}
-
-.format-button:hover {
-  border-color: rgba(254, 231, 138, 0.3);
-}
-
-.format-button--active {
-  background-color: rgba(254, 231, 138, 0.2);
+  background-color: rgba(254, 231, 138, 0.12);
   color: var(--color-pp-gold);
-  border-color: rgba(254, 231, 138, 0.4);
+  border: 1px solid rgba(254, 231, 138, 0.4);
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23fee78a' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.375rem center;
+  background-size: 1rem 1rem;
+}
+
+.seat-count-select:focus {
+  outline: none;
+  border-color: var(--color-pp-gold);
 }
 
 .table-list {

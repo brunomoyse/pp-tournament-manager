@@ -396,7 +396,6 @@
     "CHECKED_IN": "Checked In",
     "SEATED": "Seated",
     "ELIMINATED": "Eliminated",
-    "AWAY": "Away",
     "DISQUALIFIED": "Disqualified",
     "LATE_REGISTRATION": "Late Registration",
     "WAITLISTED": "Waitlisted",
@@ -438,7 +437,12 @@
     "hasPlayers": "Has players",
     "allTablesHavePlayers": "All tables have players seated. Move or eliminate players before breaking a table.",
     "alreadyAssigned": "Already assigned",
-    "tableFormat": "Table Format"
+    "tableFormat": "Table Format",
+    "naturalCapacity": "(natural capacity)",
+    "linkedNCount": "Linked {success} of {total} tables",
+    "linkedFailures": "Failed: {tables}",
+    "goToPlayers": "Go to Players",
+    "currentSeat": "Current seat"
   },
   "playerAction": {
     "title": "Player Actions",
@@ -451,8 +455,6 @@
     "relocateToAnother": "Relocate to another table",
     "updateStack": "Update Stack",
     "modifyChipCount": "Modify chip count",
-    "markAway": "Mark Away",
-    "temporarilyAway": "Temporarily away from table",
     "updateStackSize": "Update Stack Size",
     "newStackSize": "New Stack Size",
     "enterChipCount": "Enter chip count",

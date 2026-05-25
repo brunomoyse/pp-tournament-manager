@@ -396,7 +396,6 @@
     "CHECKED_IN": "Ingecheckt",
     "SEATED": "Geplaatst",
     "ELIMINATED": "Uitgeschakeld",
-    "AWAY": "Afwezig",
     "DISQUALIFIED": "Gediskwalificeerd",
     "LATE_REGISTRATION": "Late inschrijving",
     "WAITLISTED": "Wachtlijst",
@@ -438,7 +437,12 @@
     "hasPlayers": "Heeft spelers",
     "allTablesHavePlayers": "Alle tafels hebben spelers. Verplaats of elimineer spelers voordat je een tafel opheft.",
     "alreadyAssigned": "Al toegewezen",
-    "tableFormat": "Tafelformaat"
+    "tableFormat": "Tafelformaat",
+    "naturalCapacity": "(natuurlijke capaciteit)",
+    "linkedNCount": "{success} van {total} tafels gekoppeld",
+    "linkedFailures": "Mislukt: {tables}",
+    "goToPlayers": "Naar Spelers",
+    "currentSeat": "Huidige stoel"
   },
   "playerAction": {
     "title": "Speler Acties",
@@ -451,8 +455,6 @@
     "relocateToAnother": "Verplaatsen naar andere tafel",
     "updateStack": "Stack Bijwerken",
     "modifyChipCount": "Aantal fiches wijzigen",
-    "markAway": "Markeer Afwezig",
-    "temporarilyAway": "Tijdelijk afwezig van tafel",
     "updateStackSize": "Stack Bijwerken",
     "newStackSize": "Nieuwe Stack",
     "enterChipCount": "Voer aantal fiches in",

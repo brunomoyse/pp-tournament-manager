@@ -47,9 +47,7 @@
         <div
           :class="[
             'table-card__seat',
-            getSeatPlayer(seatNumber)
-              ? 'table-card__seat--occupied'
-              : 'table-card__seat--empty'
+            getSeatPlayer(seatNumber) ? 'table-card__seat--occupied' : 'table-card__seat--empty',
           ]"
           @click="handleSeatClick(seatNumber)"
         >
@@ -61,7 +59,9 @@
           v-if="getSeatPlayer(seatNumber)"
           :class="[
             'table-card__player-label',
-            isTopHalf(seatNumber) ? 'table-card__player-label--top' : 'table-card__player-label--bottom'
+            isTopHalf(seatNumber)
+              ? 'table-card__player-label--top'
+              : 'table-card__player-label--bottom',
           ]"
         >
           {{ getPlayerDisplayName(getSeatPlayer(seatNumber)) }}
@@ -80,7 +80,9 @@
           @click="openPlayerModal(seatData.assignment.seatNumber)"
         >
           <div class="table-card__player-info">
-            <span class="table-card__player-seat">{{ t('labels.seat') }} {{ seatData.assignment.seatNumber }}:</span>
+            <span class="table-card__player-seat"
+              >{{ t('labels.seat') }} {{ seatData.assignment.seatNumber }}:</span
+            >
             <span class="table-card__player-name">{{ getPlayerFullName(seatData.player) }}</span>
           </div>
           <IonIcon :icon="chevronForwardOutline" class="table-card__player-chevron" />
@@ -98,6 +100,7 @@
       :table-number="table.tableNumber"
       :seat-number="selectedSeatNumber"
       :current-status="selectedPlayerStatus"
+      :processing="processing"
       @close="closePlayerModal"
       @status-changed="handleStatusChanged"
       @move-player="handleMovePlayer"
@@ -110,8 +113,14 @@ import { IonIcon } from '@ionic/vue'
 import { chevronForwardOutline } from 'ionicons/icons'
 import PlayerActionModal from './PlayerActionModal.vue'
 import { useI18n } from '~/composables/useI18n'
+import { useTournamentStore } from '~/stores/useTournamentStore'
 
 const { t } = useI18n()
+const tournamentStore = useTournamentStore()
+
+const lookupPlayerStatus = (playerId: string): string => {
+  return tournamentStore.registrations?.find((r) => r.userId === playerId)?.status || 'SEATED'
+}
 
 interface Table {
   id: string
@@ -135,22 +144,25 @@ interface SeatAssignment {
 interface Props {
   table: Table
   seats: SeatAssignment[]
+  processing?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  processing: false,
+})
 
 const emit = defineEmits<{
-  seatPlayer: [data: { tableId: string, seatNumber: number, playerId: string }]
-  statusChanged: [data: { playerId: string, status: string }]
-  movePlayer: [data: { playerId: string, fromTable: number, fromSeat: number }]
-  selectPlayerForSeat: [data: { tableId: string, seatNumber: number }]
+  seatPlayer: [data: { tableId: string; seatNumber: number; playerId: string }]
+  statusChanged: [data: { playerId: string; status: string }]
+  movePlayer: [data: { playerId: string; fromTable: number; fromSeat: number }]
+  selectPlayerForSeat: [data: { tableId: string; seatNumber: number }]
 }>()
 
 // Modal state
 const showPlayerModal = ref(false)
 const selectedPlayer = ref<any>(null)
 const selectedSeatNumber = ref(0)
-const selectedPlayerStatus = ref('SEATED')
+const selectedPlayerStatus = ref<string>('SEATED')
 
 // Computed properties
 const occupiedSeats = computed(() => props.seats?.length || 0)
@@ -187,7 +199,7 @@ const getSeatStyle = (seatNumber: number) => {
   return {
     left: `${x}%`,
     top: `${y}%`,
-    transform: 'translate(-50%, -50%)'
+    transform: 'translate(-50%, -50%)',
   }
 }
 
@@ -200,7 +212,7 @@ const isTopHalf = (seatNumber: number): boolean => {
 
 // Helper functions
 const getSeatPlayer = (seatNumber: number) => {
-  return props.seats?.find(s => s.assignment.seatNumber === seatNumber)?.player
+  return props.seats?.find((s) => s.assignment.seatNumber === seatNumber)?.player
 }
 
 const getPlayerDisplayName = (player: any) => {
@@ -221,13 +233,13 @@ const getPlayerFullName = (player: any) => {
 
 // Event handlers
 const openPlayerModal = (seatNumber: number) => {
-  const seatData = props.seats?.find(s => s.assignment.seatNumber === seatNumber)
+  const seatData = props.seats?.find((s) => s.assignment.seatNumber === seatNumber)
   const player = seatData?.player
   if (!player) return
 
   selectedPlayer.value = player
   selectedSeatNumber.value = seatNumber
-  selectedPlayerStatus.value = 'SEATED'
+  selectedPlayerStatus.value = lookupPlayerStatus(player.id)
   showPlayerModal.value = true
 }
 
@@ -245,15 +257,14 @@ const closePlayerModal = () => {
   showPlayerModal.value = false
   selectedPlayer.value = null
   selectedSeatNumber.value = 0
-  selectedPlayerStatus.value = 'SEATED'
 }
 
-const handleStatusChanged = (data: { playerId: string, status: string }) => {
+const handleStatusChanged = (data: { playerId: string; status: string }) => {
   emit('statusChanged', data)
   closePlayerModal()
 }
 
-const handleMovePlayer = (data: { playerId: string, fromTable: number, fromSeat: number }) => {
+const handleMovePlayer = (data: { playerId: string; fromTable: number; fromSeat: number }) => {
   emit('movePlayer', data)
   closePlayerModal()
 }
