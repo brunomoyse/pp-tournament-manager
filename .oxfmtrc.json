@@ -1,0 +1,21 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "semi": false,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "printWidth": 100,
+  "tabWidth": 2,
+  "endOfLine": "lf",
+  "ignorePatterns": [
+    ".nuxt/",
+    ".output/",
+    "dist/",
+    "node_modules/",
+    "ios/App/Pods/",
+    "android/",
+    "playwright-report/",
+    "test-results/",
+    "*.lock",
+    "package-lock.json"
+  ]
+}
