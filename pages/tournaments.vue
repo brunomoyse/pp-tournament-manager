@@ -2,16 +2,22 @@
   <IonPage class="page-bg">
     <IonContent class="content-bg">
       <div class="page-container">
-        <!-- Page Header -->
         <div class="page-header">
-          <h1 class="page-title">{{ t('tournaments.title') }}</h1>
-          <button
-            @click="createTournament"
-            class="pp-action-button pp-action-button--primary"
-          >
-            <IonIcon :icon="addOutline" class="icon-md" />
-            {{ t('buttons.createTournament') }}
-          </button>
+          <PpFadeUp>
+            <p class="eyebrow">{{ t('nav.tournaments') }}</p>
+            <h1 class="page-title">
+              <span>{{ t('tournaments.title') }}</span>
+            </h1>
+          </PpFadeUp>
+          <PpFadeUp :delay="0.08">
+            <button
+              @click="createTournament"
+              class="pp-action-button pp-action-button--primary"
+            >
+              <IonIcon :icon="addOutline" class="icon-md" />
+              {{ t('buttons.createTournament') }}
+            </button>
+          </PpFadeUp>
         </div>
 
         <!-- Search and Filter Bar -->
@@ -45,12 +51,13 @@
         </div>
 
         <!-- Tournaments Card Grid -->
-        <div v-else-if="filteredTournaments.length > 0" class="tournaments-grid">
-          <div
-            v-for="(tournament, index) in filteredTournaments"
+        <PpStagger v-else-if="filteredTournaments.length > 0" class="tournaments-grid" :stagger-children="0.04">
+          <PpStaggerItem
+            v-for="tournament in filteredTournaments"
             :key="tournament.id"
-            class="pp-stagger-item pp-card-interactive pp-shimmer-hover tournament-card"
-            :style="{ animationDelay: `${index * 50}ms` }"
+          >
+          <div
+            class="pp-card pp-card-interactive pp-shimmer-hover tournament-card"
             @click="goToTournament(tournament.id)"
           >
             <!-- Header: status badge + date -->
@@ -74,7 +81,8 @@
               <IonIcon :icon="chevronForwardOutline" class="card-chevron" />
             </div>
           </div>
-        </div>
+          </PpStaggerItem>
+        </PpStagger>
 
         <!-- Empty State -->
         <div v-else class="empty-state">
@@ -239,15 +247,28 @@ onMounted(() => {
 
 .page-header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--color-pp-gold-deep);
 }
 
 .page-title {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
-  font-weight: 700;
+  margin-top: 0.65rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3vw + 0.5rem, 2.5rem);
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   color: var(--color-pp-text);
 }
 
