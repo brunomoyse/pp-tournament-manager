@@ -51,7 +51,10 @@
               >
                 <IonIcon
                   :icon="copied ? checkmarkOutline : copyOutline"
-                  :class="['qr-checkin-copy-icon', copied ? 'qr-checkin-copy-icon--success' : 'qr-checkin-copy-icon--gold']"
+                  :class="[
+                    'qr-checkin-copy-icon',
+                    copied ? 'qr-checkin-copy-icon--success' : 'qr-checkin-copy-icon--gold',
+                  ]"
                 />
               </button>
             </div>
@@ -75,7 +78,10 @@
 
       <!-- Footer -->
       <div class="pp-modal-footer">
-        <button @click="close" class="qr-checkin-close-btn pp-action-button pp-action-button--secondary">
+        <button
+          @click="close"
+          class="qr-checkin-close-btn pp-action-button pp-action-button--secondary"
+        >
           {{ t('common.close') }}
         </button>
       </div>
@@ -90,7 +96,7 @@ import {
   qrCodeOutline,
   copyOutline,
   checkmarkOutline,
-  alertCircleOutline
+  alertCircleOutline,
 } from 'ionicons/icons'
 import QRCode from 'qrcode'
 
@@ -103,7 +109,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  'close': []
+  close: []
 }>()
 
 const { t } = useI18n()
@@ -115,17 +121,21 @@ const errorMessage = ref('')
 const copied = ref(false)
 
 // Generate QR code when modal opens or props change
-watch([() => props.isOpen, () => props.registrationId], async ([isOpen, registrationId]) => {
-  if (isOpen && registrationId) {
-    await generateCheckInCode()
-  } else {
-    // Reset state when modal closes
-    qrCodeDataUrl.value = ''
-    manualCode.value = ''
-    errorMessage.value = ''
-    copied.value = false
-  }
-}, { immediate: true })
+watch(
+  [() => props.isOpen, () => props.registrationId],
+  async ([isOpen, registrationId]) => {
+    if (isOpen && registrationId) {
+      await generateCheckInCode()
+    } else {
+      // Reset state when modal closes
+      qrCodeDataUrl.value = ''
+      manualCode.value = ''
+      errorMessage.value = ''
+      copied.value = false
+    }
+  },
+  { immediate: true },
+)
 
 const generateCheckInCode = async () => {
   try {
@@ -141,9 +151,9 @@ const generateCheckInCode = async () => {
       width: 256,
       margin: 2,
       color: {
-        dark: '#18181a',  // Dark color for QR code
-        light: '#ffffff'  // White background
-      }
+        dark: '#18181a', // Dark color for QR code
+        light: '#ffffff', // White background
+      },
     })
   } catch (err: any) {
     console.error('Failed to generate QR code:', err)

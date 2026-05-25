@@ -1,15 +1,13 @@
 <template>
-    <IonApp class="pp-app">
-        <NuxtLayout>
-            <NuxtPage />
-        </NuxtLayout>
-    </IonApp>
+  <IonApp class="pp-app">
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+  </IonApp>
 </template>
 
 <script setup lang="ts">
-import {
-  IonApp,
-} from '@ionic/vue'
+import { IonApp } from '@ionic/vue'
 </script>
 
 <style>

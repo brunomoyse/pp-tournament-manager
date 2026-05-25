@@ -99,18 +99,18 @@ const logClockError = (error: Error) => {
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `fallbackMessage` | `string` | `undefined` | Custom error message to display instead of error.message |
-| `showDetails` | `boolean` | `false` | Show "Show Details" button to reveal error stack trace |
-| `showReset` | `boolean` | `false` | Show "Reset" button alongside "Retry" |
-| `onRetry` | `() => void \| Promise<void>` | `undefined` | Function to call when user clicks "Retry" |
-| `onReset` | `() => void` | `undefined` | Function to call when user clicks "Reset" |
+| Prop              | Type                          | Default     | Description                                              |
+| ----------------- | ----------------------------- | ----------- | -------------------------------------------------------- |
+| `fallbackMessage` | `string`                      | `undefined` | Custom error message to display instead of error.message |
+| `showDetails`     | `boolean`                     | `false`     | Show "Show Details" button to reveal error stack trace   |
+| `showReset`       | `boolean`                     | `false`     | Show "Reset" button alongside "Retry"                    |
+| `onRetry`         | `() => void \| Promise<void>` | `undefined` | Function to call when user clicks "Retry"                |
+| `onReset`         | `() => void`                  | `undefined` | Function to call when user clicks "Reset"                |
 
 ## Events
 
-| Event | Payload | Description |
-|-------|---------|-------------|
+| Event   | Payload | Description                                                    |
+| ------- | ------- | -------------------------------------------------------------- |
 | `error` | `Error` | Emitted when an error is caught. Use for logging or analytics. |
 
 ## Recommended Usage Locations
@@ -118,6 +118,7 @@ const logClockError = (error: Error) => {
 Wrap these critical sections with ErrorBoundary:
 
 1. **Tournament Clock Display**
+
    ```vue
    <ErrorBoundary :on-retry="refetchClock">
      <TournamentClockCard />
@@ -125,6 +126,7 @@ Wrap these critical sections with ErrorBoundary:
    ```
 
 2. **Seating Manager**
+
    ```vue
    <ErrorBoundary fallback-message="Failed to load seating chart">
      <TournamentSeatingManager />
@@ -132,6 +134,7 @@ Wrap these critical sections with ErrorBoundary:
    ```
 
 3. **GraphQL Mutation Forms**
+
    ```vue
    <ErrorBoundary :on-retry="resetForm">
      <PlayerFormModal />
@@ -139,6 +142,7 @@ Wrap these critical sections with ErrorBoundary:
    ```
 
 4. **Subscription Components**
+
    ```vue
    <ErrorBoundary show-reset :on-reset="reconnect">
      <LiveNotifications />
@@ -188,7 +192,7 @@ In development, errors are logged to the console with full context:
 console.error('[ErrorBoundary] Caught error:', {
   error: err,
   instance, // Vue component instance
-  info,     // Error info (lifecycle hook, etc.)
+  info, // Error info (lifecycle hook, etc.)
 })
 ```
 

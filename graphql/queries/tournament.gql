@@ -1,4 +1,10 @@
-query GetTournaments($clubId: UUID, $from: DateTime, $to: DateTime, $status: TournamentStatus, $pagination: PaginationInput) {
+query GetTournaments(
+  $clubId: UUID
+  $from: DateTime
+  $to: DateTime
+  $status: TournamentStatus
+  $pagination: PaginationInput
+) {
   tournaments(clubId: $clubId, from: $from, to: $to, status: $status, pagination: $pagination) {
     items {
       id

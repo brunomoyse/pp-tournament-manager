@@ -1,10 +1,7 @@
 <template>
   <div v-if="isOpen" class="pp-modal-overlay">
     <!-- Backdrop -->
-    <div
-      class="pp-modal-backdrop"
-      @click="closeModal"
-    ></div>
+    <div class="pp-modal-backdrop" @click="closeModal"></div>
 
     <!-- Modal Content -->
     <div class="pp-modal-content pp-modal-content--md">
@@ -13,10 +10,7 @@
         <h2 class="player-form-title">
           {{ mode === 'create' ? t('players.createPlayer') : t('players.editPlayer') }}
         </h2>
-        <button
-          @click="closeModal"
-          class="pp-close-button"
-        >
+        <button @click="closeModal" class="pp-close-button">
           <IonIcon :icon="closeOutline" class="player-form-close-icon" />
         </button>
       </div>
@@ -106,7 +100,13 @@
             class="pp-action-button pp-action-button--primary"
           >
             <IonIcon v-if="saving" :icon="refreshOutline" class="player-form-spinner" />
-            {{ saving ? t('status.saving') : (mode === 'create' ? t('players.create') : t('players.save')) }}
+            {{
+              saving
+                ? t('status.saving')
+                : mode === 'create'
+                  ? t('players.create')
+                  : t('players.save')
+            }}
           </button>
         </div>
       </form>
@@ -142,7 +142,7 @@ const form = ref<PlayerFormData>({
   firstName: '',
   lastName: '',
   username: '',
-  phone: ''
+  phone: '',
 })
 
 const saving = ref(false)
@@ -159,34 +159,40 @@ const validateEmail = (email: string): boolean => {
 }
 
 // Watch for email changes to validate
-watch(() => form.value.email, (email) => {
-  if (email && !validateEmail(email)) {
-    emailError.value = t('auth.emailInvalid')
-  } else {
-    emailError.value = ''
-  }
-})
+watch(
+  () => form.value.email,
+  (email) => {
+    if (email && !validateEmail(email)) {
+      emailError.value = t('auth.emailInvalid')
+    } else {
+      emailError.value = ''
+    }
+  },
+)
 
 // Populate form when editing
-watch(() => props.isOpen, (isOpen) => {
-  if (isOpen && props.player && props.mode === 'edit') {
-    form.value = {
-      email: props.player.email,
-      firstName: props.player.firstName,
-      lastName: props.player.lastName || '',
-      username: props.player.username || '',
-      phone: props.player.phone || ''
+watch(
+  () => props.isOpen,
+  (isOpen) => {
+    if (isOpen && props.player && props.mode === 'edit') {
+      form.value = {
+        email: props.player.email,
+        firstName: props.player.firstName,
+        lastName: props.player.lastName || '',
+        username: props.player.username || '',
+        phone: props.player.phone || '',
+      }
+    } else if (isOpen && props.mode === 'create') {
+      form.value = {
+        email: '',
+        firstName: '',
+        lastName: '',
+        username: '',
+        phone: '',
+      }
     }
-  } else if (isOpen && props.mode === 'create') {
-    form.value = {
-      email: '',
-      firstName: '',
-      lastName: '',
-      username: '',
-      phone: ''
-    }
-  }
-})
+  },
+)
 
 // Submit handler
 const handleSubmit = async () => {
@@ -202,8 +208,8 @@ const handleSubmit = async () => {
           lastName: form.value.lastName || undefined,
           username: form.value.username || undefined,
           phone: form.value.phone || undefined,
-          clubId: clubStore.club?.id || ''
-        }
+          clubId: clubStore.club?.id || '',
+        },
       })
     } else if (props.player) {
       await GqlUpdatePlayer({
@@ -213,8 +219,8 @@ const handleSubmit = async () => {
           firstName: form.value.firstName,
           lastName: form.value.lastName || undefined,
           username: form.value.username || undefined,
-          phone: form.value.phone || undefined
-        }
+          phone: form.value.phone || undefined,
+        },
       })
     }
     emit('saved')

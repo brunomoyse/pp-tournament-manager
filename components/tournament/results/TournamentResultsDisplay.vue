@@ -17,20 +17,23 @@
         :key="player.id"
         :class="[
           'results-card__row',
-          player.position <= 3
-            ? 'results-card__row--podium'
-            : 'results-card__row--regular'
+          player.position <= 3 ? 'results-card__row--podium' : 'results-card__row--regular',
         ]"
       >
         <div class="results-card__row-left">
           <!-- Position Badge -->
-          <div :class="[
-            'results-card__position',
-            player.position === 1 ? 'results-card__position--first' :
-            player.position === 2 ? 'results-card__position--second' :
-            player.position === 3 ? 'results-card__position--third' :
-            'results-card__position--default'
-          ]">
+          <div
+            :class="[
+              'results-card__position',
+              player.position === 1
+                ? 'results-card__position--first'
+                : player.position === 2
+                  ? 'results-card__position--second'
+                  : player.position === 3
+                    ? 'results-card__position--third'
+                    : 'results-card__position--default',
+            ]"
+          >
             {{ player.position }}
           </div>
           <div>
@@ -70,15 +73,13 @@ const tournamentStore = useTournamentStore()
 const selectedTournamentId = route.params.id as string
 
 // Fetch tournament players to get results
-const { data: playersData } = await useLazyAsyncData(
-  `results-${selectedTournamentId}`,
-  () => GqlGetTournamentPlayers({ tournamentId: selectedTournamentId })
+const { data: playersData } = await useLazyAsyncData(`results-${selectedTournamentId}`, () =>
+  GqlGetTournamentPlayers({ tournamentId: selectedTournamentId }),
 )
 
 // Also fetch payout data
-const { data: payoutData } = await useLazyAsyncData(
-  `results-payout-${selectedTournamentId}`,
-  () => GqlGetTournamentPayout({ tournamentId: selectedTournamentId })
+const { data: payoutData } = await useLazyAsyncData(`results-payout-${selectedTournamentId}`, () =>
+  GqlGetTournamentPayout({ tournamentId: selectedTournamentId }),
 )
 
 interface FinishedPlayer {
@@ -99,17 +100,21 @@ const finishedPlayers = computed<FinishedPlayer[]>(() => {
   // For finished tournaments, we rely on the registration statuses (BUSTED players have positions)
   // Actually, we need the results - let's use payout positions + busted players
   const bustedPlayers = players
-    .filter((tp: any) => tp.registration.status === 'BUSTED' || tp.registration.status === 'SEATED' || tp.registration.status === 'CHECKED_IN')
+    .filter(
+      (tp: any) =>
+        tp.registration.status === 'BUSTED' ||
+        tp.registration.status === 'SEATED' ||
+        tp.registration.status === 'CHECKED_IN',
+    )
     .map((tp: any) => {
       const firstName = tp.user.firstName || ''
       const lastName = tp.user.lastName || ''
-      const displayName = lastName && firstName
-        ? `${lastName} ${firstName}`
-        : `${firstName} ${lastName}`.trim()
+      const displayName =
+        lastName && firstName ? `${lastName} ${firstName}` : `${firstName} ${lastName}`.trim()
       return {
         id: tp.user.id,
         name: displayName || tp.user.username || tp.user.email,
-        registrationStatus: tp.registration.status
+        registrationStatus: tp.registration.status,
       }
     })
 
@@ -123,7 +128,7 @@ const finishedPlayers = computed<FinishedPlayer[]>(() => {
       name: player.name,
       position,
       prizeCents: payoutPos?.amountCents || 0,
-      points: 0
+      points: 0,
     }
   })
 })

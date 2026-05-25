@@ -25,7 +25,11 @@ const props = withDefaults(
     :initial="{ opacity: 0, y: props.y }"
     :while-in-view="{ opacity: 1, y: 0 }"
     :in-view-options="{ once: props.once, amount: props.amount, margin: '0px 0px -10% 0px' }"
-    :transition="{ duration: props.duration, ease: easing as unknown as number[], delay: props.delay }"
+    :transition="{
+      duration: props.duration,
+      ease: easing as unknown as number[],
+      delay: props.delay,
+    }"
   >
     <slot />
   </Motion>

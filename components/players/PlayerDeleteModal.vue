@@ -1,10 +1,7 @@
 <template>
   <div v-if="isOpen" class="pp-modal-overlay">
     <!-- Backdrop -->
-    <div
-      class="pp-modal-backdrop"
-      @click="$emit('close')"
-    ></div>
+    <div class="pp-modal-backdrop" @click="$emit('close')"></div>
 
     <!-- Modal Content -->
     <div class="pp-modal-content pp-modal-content--sm">

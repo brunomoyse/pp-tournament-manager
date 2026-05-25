@@ -1,22 +1,18 @@
 <template>
   <div v-if="isOpen" class="pp-modal-overlay">
     <!-- Backdrop -->
-    <div
-      class="pp-modal-backdrop"
-      @click="closeModal"
-    ></div>
+    <div class="pp-modal-backdrop" @click="closeModal"></div>
 
     <!-- Modal Content -->
     <div class="pp-modal-content pp-modal-content--2xl">
       <!-- Header -->
       <div class="pp-modal-header tournament-form-header-sticky">
         <h2 class="tournament-form-title">
-          {{ mode === 'create' ? t('tournament.createTournament') : t('tournament.editTournament') }}
+          {{
+            mode === 'create' ? t('tournament.createTournament') : t('tournament.editTournament')
+          }}
         </h2>
-        <button
-          @click="closeModal"
-          class="pp-close-button"
-        >
+        <button @click="closeModal" class="pp-close-button">
           <IonIcon :icon="closeOutline" class="tournament-form-close-icon" />
         </button>
       </div>
@@ -59,12 +55,7 @@
             <label class="pp-label">
               {{ t('tournament.startTime') }} <span class="tournament-form-required">*</span>
             </label>
-            <input
-              v-model="form.startTime"
-              type="datetime-local"
-              required
-              class="pp-input"
-            />
+            <input v-model="form.startTime" type="datetime-local" required class="pp-input" />
           </div>
 
           <!-- Buy-in / Rake / Seat Cap row -->
@@ -83,9 +74,7 @@
               />
             </div>
             <div class="tournament-form-field">
-              <label class="pp-label">
-                {{ t('tournament.rake') }} (EUR)
-              </label>
+              <label class="pp-label"> {{ t('tournament.rake') }} (EUR) </label>
               <input
                 v-model.number="rakeEuros"
                 type="number"
@@ -147,11 +136,7 @@
             <label class="pp-label">
               {{ t('tournament.selectTemplate') }} <span class="tournament-form-required">*</span>
             </label>
-            <select
-              v-model="form.templateId"
-              required
-              class="pp-select"
-            >
+            <select v-model="form.templateId" required class="pp-select">
               <option value="" disabled>{{ t('tournament.selectTemplatePlaceholder') }}</option>
               <option v-for="template in templates" :key="template.id" :value="template.id">
                 {{ template.name }}
@@ -166,11 +151,25 @@
 
           <!-- Template Preview -->
           <div v-if="selectedTemplate" class="tournament-form-template-preview">
-            <p class="tournament-form-template-preview-label">{{ t('tournament.templatePreview') }}</p>
+            <p class="tournament-form-template-preview-label">
+              {{ t('tournament.templatePreview') }}
+            </p>
             <div class="tournament-form-template-levels">
-              <div v-for="level in selectedTemplate.levels" :key="level.levelNumber" class="tournament-form-template-level-row">
-                <span>{{ level.isBreak ? t('tournament.break') : t('tournament.level') + ' ' + level.levelNumber }}</span>
-                <span v-if="!level.isBreak">{{ level.smallBlind }}/{{ level.bigBlind }} ({{ level.ante > 0 ? 'Ante ' + level.ante : 'No Ante' }}) - {{ level.durationMinutes }}min</span>
+              <div
+                v-for="level in selectedTemplate.levels"
+                :key="level.levelNumber"
+                class="tournament-form-template-level-row"
+              >
+                <span>{{
+                  level.isBreak
+                    ? t('tournament.break')
+                    : t('tournament.level') + ' ' + level.levelNumber
+                }}</span>
+                <span v-if="!level.isBreak"
+                  >{{ level.smallBlind }}/{{ level.bigBlind }} ({{
+                    level.ante > 0 ? 'Ante ' + level.ante : 'No Ante'
+                  }}) - {{ level.durationMinutes }}min</span
+                >
                 <span v-else>{{ level.durationMinutes }}min</span>
               </div>
             </div>
@@ -192,7 +191,13 @@
             class="pp-action-button pp-action-button--primary"
           >
             <IonIcon v-if="saving" :icon="refreshOutline" class="tournament-form-spinner" />
-            {{ saving ? t('status.saving') : (mode === 'create' ? t('tournament.create') : t('tournament.save')) }}
+            {{
+              saving
+                ? t('status.saving')
+                : mode === 'create'
+                  ? t('tournament.create')
+                  : t('tournament.save')
+            }}
           </button>
         </div>
       </form>
@@ -241,7 +246,7 @@ onMounted(() => {
 
 // Computed to get selected template details
 const selectedTemplate = computed(() => {
-  return templates.value.find(t => t.id === form.value.templateId)
+  return templates.value.find((t) => t.id === form.value.templateId)
 })
 
 // Form state
@@ -255,7 +260,7 @@ const form = ref<TournamentFormData>({
   seatCap: null,
   earlyBirdBonusChips: null,
   lateRegistrationLevel: null,
-  templateId: ''
+  templateId: '',
 })
 
 const saving = ref(false)
@@ -263,21 +268,27 @@ const saving = ref(false)
 // Computed for buy-in in euros (display)
 const buyInEuros = computed({
   get: () => form.value.buyInCents / 100,
-  set: (val: number) => { form.value.buyInCents = Math.round(val * 100) }
+  set: (val: number) => {
+    form.value.buyInCents = Math.round(val * 100)
+  },
 })
 
 // Computed for rake in euros (display)
 const rakeEuros = computed({
   get: () => form.value.rakeCents / 100,
-  set: (val: number) => { form.value.rakeCents = Math.round(val * 100) }
+  set: (val: number) => {
+    form.value.rakeCents = Math.round(val * 100)
+  },
 })
 
 // Validation
 const isFormValid = computed(() => {
-  return form.value.name.trim() &&
-         form.value.startTime &&
-         form.value.buyInCents >= 0 &&
-         form.value.templateId
+  return (
+    form.value.name.trim() &&
+    form.value.startTime &&
+    form.value.buyInCents >= 0 &&
+    form.value.templateId
+  )
 })
 
 // Helper to format date for datetime-local input
@@ -293,35 +304,38 @@ const formatDateTimeLocal = (isoString: string): string => {
 }
 
 // Watch for mode/tournament changes to populate form
-watch(() => props.isOpen, (isOpen) => {
-  if (isOpen && props.tournament && props.mode === 'edit') {
-    form.value = {
-      name: props.tournament.title,
-      description: props.tournament.description || '',
-      startTime: formatDateTimeLocal(props.tournament.startTime),
-      endTime: props.tournament.endTime ? formatDateTimeLocal(props.tournament.endTime) : '',
-      buyInCents: props.tournament.buyInCents,
-      rakeCents: props.tournament.rakeCents || 0,
-      seatCap: props.tournament.seatCap || null,
-      earlyBirdBonusChips: null,
-      lateRegistrationLevel: props.tournament.lateRegistrationLevel ?? null,
-      templateId: templates.value[0]?.id ?? ''
+watch(
+  () => props.isOpen,
+  (isOpen) => {
+    if (isOpen && props.tournament && props.mode === 'edit') {
+      form.value = {
+        name: props.tournament.title,
+        description: props.tournament.description || '',
+        startTime: formatDateTimeLocal(props.tournament.startTime),
+        endTime: props.tournament.endTime ? formatDateTimeLocal(props.tournament.endTime) : '',
+        buyInCents: props.tournament.buyInCents,
+        rakeCents: props.tournament.rakeCents || 0,
+        seatCap: props.tournament.seatCap || null,
+        earlyBirdBonusChips: null,
+        lateRegistrationLevel: props.tournament.lateRegistrationLevel ?? null,
+        templateId: templates.value[0]?.id ?? '',
+      }
+    } else if (isOpen && props.mode === 'create') {
+      form.value = {
+        name: '',
+        description: '',
+        startTime: '',
+        endTime: '',
+        buyInCents: 0,
+        rakeCents: 0,
+        seatCap: null,
+        earlyBirdBonusChips: null,
+        lateRegistrationLevel: null,
+        templateId: templates.value[0]?.id ?? '',
+      }
     }
-  } else if (isOpen && props.mode === 'create') {
-    form.value = {
-      name: '',
-      description: '',
-      startTime: '',
-      endTime: '',
-      buyInCents: 0,
-      rakeCents: 0,
-      seatCap: null,
-      earlyBirdBonusChips: null,
-      lateRegistrationLevel: null,
-      templateId: templates.value[0]?.id ?? ''
-    }
-  }
-})
+  },
+)
 
 // Submit handler
 const handleSubmit = async () => {
@@ -342,8 +356,8 @@ const handleSubmit = async () => {
           seatCap: form.value.seatCap || undefined,
           earlyBirdBonusChips: form.value.earlyBirdBonusChips || undefined,
           lateRegistrationLevel: form.value.lateRegistrationLevel || undefined,
-          templateId: form.value.templateId
-        }
+          templateId: form.value.templateId,
+        },
       })
     } else if (props.tournament) {
       await GqlUpdateTournament({
@@ -358,8 +372,8 @@ const handleSubmit = async () => {
           seatCap: form.value.seatCap || undefined,
           earlyBirdBonusChips: form.value.earlyBirdBonusChips || undefined,
           lateRegistrationLevel: form.value.lateRegistrationLevel || undefined,
-          templateId: form.value.templateId
-        }
+          templateId: form.value.templateId,
+        },
       })
     }
     emit('saved')

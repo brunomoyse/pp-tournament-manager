@@ -6,7 +6,11 @@
       <!-- Header -->
       <div class="pp-modal-header">
         <h2 class="modal-title">
-          {{ mode === 'create' ? t('templates.createPayoutTemplate') : t('templates.editPayoutTemplate') }}
+          {{
+            mode === 'create'
+              ? t('templates.createPayoutTemplate')
+              : t('templates.editPayoutTemplate')
+          }}
         </h2>
         <button @click="closeModal" class="pp-close-button">
           <IonIcon :icon="closeOutline" class="close-icon" />
@@ -18,24 +22,49 @@
         <!-- Name -->
         <div class="form-field">
           <label class="pp-label">{{ t('templates.name') }} <span class="required">*</span></label>
-          <input v-model="form.name" type="text" required class="pp-input" :placeholder="t('templates.namePlaceholder')" />
+          <input
+            v-model="form.name"
+            type="text"
+            required
+            class="pp-input"
+            :placeholder="t('templates.namePlaceholder')"
+          />
         </div>
 
         <!-- Description -->
         <div class="form-field">
           <label class="pp-label">{{ t('templates.description') }}</label>
-          <input v-model="form.description" type="text" class="pp-input" :placeholder="t('templates.descriptionPlaceholder')" />
+          <input
+            v-model="form.description"
+            type="text"
+            class="pp-input"
+            :placeholder="t('templates.descriptionPlaceholder')"
+          />
         </div>
 
         <!-- Player Range -->
         <div class="form-row">
           <div class="form-field">
-            <label class="pp-label">{{ t('templates.minPlayers') }} <span class="required">*</span></label>
-            <input v-model.number="form.minPlayers" type="number" min="2" required class="pp-input" />
+            <label class="pp-label"
+              >{{ t('templates.minPlayers') }} <span class="required">*</span></label
+            >
+            <input
+              v-model.number="form.minPlayers"
+              type="number"
+              min="2"
+              required
+              class="pp-input"
+            />
           </div>
           <div class="form-field">
             <label class="pp-label">{{ t('templates.maxPlayers') }}</label>
-            <input v-model.number="form.maxPlayers" type="number" :min="form.minPlayers" class="pp-input" :placeholder="t('templates.maxPlayersPlaceholder')" />
+            <input
+              v-model.number="form.maxPlayers"
+              type="number"
+              :min="form.minPlayers"
+              class="pp-input"
+              :placeholder="t('templates.maxPlayersPlaceholder')"
+            />
           </div>
         </div>
 
@@ -75,7 +104,11 @@
             </div>
           </div>
 
-          <button type="button" @click="addPosition" class="pp-action-button pp-action-button--secondary add-btn">
+          <button
+            type="button"
+            @click="addPosition"
+            class="pp-action-button pp-action-button--secondary add-btn"
+          >
             <IonIcon :icon="addCircleOutline" class="add-icon" />
             {{ t('templates.addPosition') }}
           </button>
@@ -83,7 +116,11 @@
 
         <!-- Actions -->
         <div class="form-actions">
-          <button type="button" @click="closeModal" class="pp-action-button pp-action-button--secondary">
+          <button
+            type="button"
+            @click="closeModal"
+            class="pp-action-button pp-action-button--secondary"
+          >
             {{ t('common.cancel') }}
           </button>
           <button
@@ -92,7 +129,13 @@
             class="pp-action-button pp-action-button--primary"
           >
             <IonIcon v-if="saving" :icon="refreshOutline" class="spinner" />
-            {{ saving ? t('status.saving') : (mode === 'create' ? t('templates.create') : t('templates.save')) }}
+            {{
+              saving
+                ? t('status.saving')
+                : mode === 'create'
+                  ? t('templates.create')
+                  : t('templates.save')
+            }}
           </button>
         </div>
       </form>
@@ -132,7 +175,7 @@ const form = ref({
   description: '',
   minPlayers: 2,
   maxPlayers: null as number | null,
-  payoutStructure: [{ position: 1, percentage: 100 }] as PayoutEntry[]
+  payoutStructure: [{ position: 1, percentage: 100 }] as PayoutEntry[],
 })
 
 const totalPercentage = computed(() => {
@@ -152,28 +195,36 @@ const addPosition = () => {
 
 const removePosition = (index: number) => {
   form.value.payoutStructure.splice(index, 1)
-  form.value.payoutStructure.forEach((e, i) => { e.position = i + 1 })
+  form.value.payoutStructure.forEach((e, i) => {
+    e.position = i + 1
+  })
 }
 
-watch(() => props.isOpen, (isOpen) => {
-  if (isOpen && props.template && props.mode === 'edit') {
-    form.value = {
-      name: props.template.name,
-      description: props.template.description || '',
-      minPlayers: props.template.minPlayers,
-      maxPlayers: props.template.maxPlayers || null,
-      payoutStructure: props.template.payoutStructure.map(e => ({ position: e.position, percentage: e.percentage }))
+watch(
+  () => props.isOpen,
+  (isOpen) => {
+    if (isOpen && props.template && props.mode === 'edit') {
+      form.value = {
+        name: props.template.name,
+        description: props.template.description || '',
+        minPlayers: props.template.minPlayers,
+        maxPlayers: props.template.maxPlayers || null,
+        payoutStructure: props.template.payoutStructure.map((e) => ({
+          position: e.position,
+          percentage: e.percentage,
+        })),
+      }
+    } else if (isOpen && props.mode === 'create') {
+      form.value = {
+        name: '',
+        description: '',
+        minPlayers: 2,
+        maxPlayers: null,
+        payoutStructure: [{ position: 1, percentage: 100 }],
+      }
     }
-  } else if (isOpen && props.mode === 'create') {
-    form.value = {
-      name: '',
-      description: '',
-      minPlayers: 2,
-      maxPlayers: null,
-      payoutStructure: [{ position: 1, percentage: 100 }]
-    }
-  }
-})
+  },
+)
 
 const handleSubmit = async () => {
   if (!isFormValid.value) return
@@ -185,10 +236,10 @@ const handleSubmit = async () => {
       description: form.value.description || undefined,
       minPlayers: form.value.minPlayers,
       maxPlayers: form.value.maxPlayers || undefined,
-      payoutStructure: form.value.payoutStructure.map(e => ({
+      payoutStructure: form.value.payoutStructure.map((e) => ({
         position: e.position,
-        percentage: e.percentage
-      }))
+        percentage: e.percentage,
+      })),
     }
 
     if (props.mode === 'create') {

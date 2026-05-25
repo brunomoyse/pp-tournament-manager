@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     '@nuxtjs/ionic',
     '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt',
-    'nuxt-graphql-client'
+    'nuxt-graphql-client',
   ],
   ssr: false,
   app: {
@@ -46,8 +46,8 @@ export default defineNuxtConfig({
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
             maxAge: 60 * 60 * 24 * 7, // 7 days
-          }
-        }
+          },
+        },
       },
     },
     codegen: process.env.DISABLE_CODEGEN !== 'true',
@@ -60,6 +60,6 @@ export default defineNuxtConfig({
       authBaseUrl: process.env.NUXT_AUTH_BASE_URL || 'http://localhost:8080',
       authRegisterUrl: process.env.NUXT_AUTH_REGISTER_URL || 'http://localhost:8080/oauth/register',
       authLoginUrl: process.env.NUXT_AUTH_LOGIN_URL || 'http://localhost:8080/oauth/login',
-    }
-  }
+    },
+  },
 })

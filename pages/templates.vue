@@ -38,7 +38,11 @@
                 class="search-input"
               />
             </div>
-            <button v-if="isAdmin" @click="openPayoutCreate" class="pp-action-button pp-action-button--primary">
+            <button
+              v-if="isAdmin"
+              @click="openPayoutCreate"
+              class="pp-action-button pp-action-button--primary"
+            >
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('templates.addPayoutTemplate') }}
             </button>
@@ -53,7 +57,11 @@
           <div v-else-if="filteredPayoutTemplates.length === 0" class="centered-state">
             <h4 class="empty-title">{{ t('templates.noPayoutTemplates') }}</h4>
             <p class="empty-text">{{ t('templates.createFirstPayout') }}</p>
-            <button v-if="isAdmin" @click="openPayoutCreate" class="pp-action-button pp-action-button--primary">
+            <button
+              v-if="isAdmin"
+              @click="openPayoutCreate"
+              class="pp-action-button pp-action-button--primary"
+            >
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('templates.addPayoutTemplate') }}
             </button>
@@ -87,7 +95,11 @@
                 class="search-input"
               />
             </div>
-            <button v-if="isAdmin" @click="openBlindCreate" class="pp-action-button pp-action-button--primary">
+            <button
+              v-if="isAdmin"
+              @click="openBlindCreate"
+              class="pp-action-button pp-action-button--primary"
+            >
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('templates.addBlindStructure') }}
             </button>
@@ -102,7 +114,11 @@
           <div v-else-if="filteredBlindTemplates.length === 0" class="centered-state">
             <h4 class="empty-title">{{ t('templates.noBlindStructures') }}</h4>
             <p class="empty-text">{{ t('templates.createFirstBlind') }}</p>
-            <button v-if="isAdmin" @click="openBlindCreate" class="pp-action-button pp-action-button--primary">
+            <button
+              v-if="isAdmin"
+              @click="openBlindCreate"
+              class="pp-action-button pp-action-button--primary"
+            >
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('templates.addBlindStructure') }}
             </button>
@@ -157,18 +173,11 @@
 
 <script setup lang="ts">
 definePageMeta({
-  middleware: 'auth'
+  middleware: 'auth',
 })
 
-import {
-  IonPage,
-  IonContent,
-  IonIcon
-} from '@ionic/vue'
-import {
-  searchOutline,
-  addOutline
-} from 'ionicons/icons'
+import { IonPage, IonContent, IonIcon } from '@ionic/vue'
+import { searchOutline, addOutline } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 import { useAuthStore } from '~/stores/useAuthStore'
 import type { PayoutTemplate, BlindStructureTemplate } from '~/types/tournament'
@@ -208,18 +217,16 @@ const deleting = ref(false)
 const filteredPayoutTemplates = computed(() => {
   if (!payoutSearch.value) return payoutTemplates.value
   const search = payoutSearch.value.toLowerCase()
-  return payoutTemplates.value.filter(t =>
-    t.name.toLowerCase().includes(search) ||
-    t.description?.toLowerCase().includes(search)
+  return payoutTemplates.value.filter(
+    (t) => t.name.toLowerCase().includes(search) || t.description?.toLowerCase().includes(search),
   )
 })
 
 const filteredBlindTemplates = computed(() => {
   if (!blindSearch.value) return blindTemplates.value
   const search = blindSearch.value.toLowerCase()
-  return blindTemplates.value.filter(t =>
-    t.name.toLowerCase().includes(search) ||
-    t.description?.toLowerCase().includes(search)
+  return blindTemplates.value.filter(
+    (t) => t.name.toLowerCase().includes(search) || t.description?.toLowerCase().includes(search),
   )
 })
 
@@ -375,7 +382,6 @@ onMounted(fetchAll)
 .page-header {
   margin-bottom: 1.25rem;
 }
-
 
 .eyebrow {
   font-family: var(--font-mono);

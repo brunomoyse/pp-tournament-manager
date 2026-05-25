@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "./design-tokens.css";
+@import 'tailwindcss';
+@import './design-tokens.css';
 
 /*
  * Manager-specific styles.
@@ -251,11 +251,21 @@ textarea::placeholder {
   width: 100%;
 }
 
-.pp-modal-content--sm { max-width: 24rem; }
-.pp-modal-content--md { max-width: 28rem; }
-.pp-modal-content--lg { max-width: 32rem; }
-.pp-modal-content--xl { max-width: 36rem; }
-.pp-modal-content--2xl { max-width: 42rem; }
+.pp-modal-content--sm {
+  max-width: 24rem;
+}
+.pp-modal-content--md {
+  max-width: 28rem;
+}
+.pp-modal-content--lg {
+  max-width: 32rem;
+}
+.pp-modal-content--xl {
+  max-width: 36rem;
+}
+.pp-modal-content--2xl {
+  max-width: 42rem;
+}
 
 .pp-modal-header {
   display: flex;
@@ -310,7 +320,9 @@ textarea::placeholder {
   font-size: 0.875rem;
   line-height: 1.25rem;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .pp-input:focus {
@@ -345,7 +357,9 @@ textarea::placeholder {
   font-size: 0.875rem;
   line-height: 1.25rem;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .pp-select:focus {
@@ -442,20 +456,40 @@ textarea::placeholder {
   overflow: hidden;
 }
 
-@keyframes pp-spin { to { transform: rotate(360deg); } }
-@keyframes pp-pulse { 50% { opacity: 0.5; } }
+@keyframes pp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pp-pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
 
-.pp-animate-spin { animation: pp-spin 1s linear infinite; }
-.pp-animate-pulse { animation: pp-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+.pp-animate-spin {
+  animation: pp-spin 1s linear infinite;
+}
+.pp-animate-pulse {
+  animation: pp-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
 
 /* Page transitions (kept for now; motion-v handles in-component motion) */
 .page-enter-active,
 .page-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
-.page-enter-from { opacity: 0; transform: translateY(6px); }
-.page-leave-to { opacity: 0; transform: translateY(-6px); }
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
 
 .tab-fade-enter-active,
 .tab-fade-leave-active {
@@ -469,7 +503,9 @@ textarea::placeholder {
 
 .modal-enter-active,
 .modal-leave-active {
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
 }
 
 .modal-enter-from,
@@ -479,7 +515,9 @@ textarea::placeholder {
 }
 
 .list-enter-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .list-enter-from {
@@ -494,7 +532,9 @@ textarea::placeholder {
  * complementing rather than replacing the shared rules.
  */
 .pp-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 @media (hover: hover) {
@@ -505,22 +545,33 @@ textarea::placeholder {
 }
 
 .pp-card-interactive {
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
   cursor: pointer;
 }
 
 @media (hover: hover) {
   .pp-card-interactive:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 15px rgba(254, 231, 138, 0.08);
+    box-shadow:
+      0 8px 30px rgba(0, 0, 0, 0.3),
+      0 0 15px rgba(254, 231, 138, 0.08);
     border-color: rgba(254, 231, 138, 0.3);
   }
 }
 
 /* Staggered entry (legacy; prefer the motion-v <Stagger> for new code) */
 @keyframes pp-fade-in-up {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .pp-stagger-item {
@@ -530,8 +581,12 @@ textarea::placeholder {
 
 /* Gold shimmer on hover */
 @keyframes pp-shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 @media (hover: hover) {
@@ -559,8 +614,13 @@ textarea::placeholder {
 
 /* LIVE indicator pulse */
 @keyframes pp-live-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
-  50% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+  }
 }
 
 .pp-live-dot {

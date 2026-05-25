@@ -10,7 +10,12 @@
 
     <!-- Entry context subtitle -->
     <div v-if="entryStats" class="prize-subtitle">
-      {{ t('prizePool.entriesAndPlayers', { entries: entryStats.totalEntries, players: entryStats.uniquePlayers }) }}
+      {{
+        t('prizePool.entriesAndPlayers', {
+          entries: entryStats.totalEntries,
+          players: entryStats.uniquePlayers,
+        })
+      }}
     </div>
 
     <!-- 2x2 metrics grid -->
@@ -52,7 +57,9 @@
             <span class="prize-breakdown-position">{{ getPositionLabel(position.position) }}</span>
             <div class="prize-breakdown-values">
               <span class="prize-breakdown-percent">{{ position.percentage.toFixed(1) }}%</span>
-              <span class="prize-breakdown-amount">{{ formatPrice(position.amountCents, locale) }}</span>
+              <span class="prize-breakdown-amount">{{
+                formatPrice(position.amountCents, locale)
+              }}</span>
             </div>
           </div>
         </div>
@@ -77,13 +84,13 @@ const selectedTournamentId = route.params.id as string
 // Fetch payout data
 const { data: payoutData, refresh: refreshPayout } = await useLazyAsyncData(
   `payout-${selectedTournamentId}`,
-  () => GqlGetTournamentPayout({ tournamentId: selectedTournamentId })
+  () => GqlGetTournamentPayout({ tournamentId: selectedTournamentId }),
 )
 
 // Fetch entry stats
 const { data: entryStatsData, refresh: refreshEntryStats } = await useLazyAsyncData(
   `prize-entry-stats-${selectedTournamentId}`,
-  () => GqlGetTournamentEntryStats({ tournamentId: selectedTournamentId })
+  () => GqlGetTournamentEntryStats({ tournamentId: selectedTournamentId }),
 )
 
 // Refresh both payout and entry stats
@@ -93,7 +100,9 @@ const refreshStats = async () => {
 
 const entryStats = computed(() => entryStatsData.value?.tournamentEntryStats)
 const payoutPositions = computed(() => payoutData.value?.tournamentPayout?.positions || [])
-const prizePool = computed(() => formatPrice(payoutData.value?.tournamentPayout?.totalPrizePool, locale.value))
+const prizePool = computed(() =>
+  formatPrice(payoutData.value?.tournamentPayout?.totalPrizePool, locale.value),
+)
 const buyInDisplay = computed(() => {
   const tournament = tournamentStore.tournament
   if (!tournament) return '—'

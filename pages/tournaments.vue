@@ -10,10 +10,7 @@
             </h1>
           </PpFadeUp>
           <PpFadeUp :delay="0.08">
-            <button
-              @click="createTournament"
-              class="pp-action-button pp-action-button--primary"
-            >
+            <button @click="createTournament" class="pp-action-button pp-action-button--primary">
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('buttons.createTournament') }}
             </button>
@@ -34,10 +31,7 @@
           </div>
 
           <!-- Status Filter -->
-          <select
-            v-model="statusFilter"
-            class="status-filter"
-          >
+          <select v-model="statusFilter" class="status-filter">
             <option value="">{{ t('tournaments.all') }}</option>
             <option value="UPCOMING">{{ t('tournaments.upcoming') }}</option>
             <option value="IN_PROGRESS">{{ t('tournaments.inProgress') }}</option>
@@ -51,36 +45,41 @@
         </div>
 
         <!-- Tournaments Card Grid -->
-        <PpStagger v-else-if="filteredTournaments.length > 0" class="tournaments-grid" :stagger-children="0.04">
-          <PpStaggerItem
-            v-for="tournament in filteredTournaments"
-            :key="tournament.id"
-          >
-          <div
-            class="pp-card pp-card-interactive pp-shimmer-hover tournament-card"
-            @click="goToTournament(tournament.id)"
-          >
-            <!-- Header: status badge + date -->
-            <div class="card-header">
-              <span :class="['pp-status-badge', getTournamentStatusClass(tournament.status)]">
-                {{ getTournamentStatusLabel(tournament.status, t) }}
-              </span>
-              <span class="card-date">{{ formatDate(tournament.startTime) }}</span>
+        <PpStagger
+          v-else-if="filteredTournaments.length > 0"
+          class="tournaments-grid"
+          :stagger-children="0.04"
+        >
+          <PpStaggerItem v-for="tournament in filteredTournaments" :key="tournament.id">
+            <div
+              class="pp-card pp-card-interactive pp-shimmer-hover tournament-card"
+              @click="goToTournament(tournament.id)"
+            >
+              <!-- Header: status badge + date -->
+              <div class="card-header">
+                <span :class="['pp-status-badge', getTournamentStatusClass(tournament.status)]">
+                  {{ getTournamentStatusLabel(tournament.status, t) }}
+                </span>
+                <span class="card-date">{{ formatDate(tournament.startTime) }}</span>
+              </div>
+
+              <!-- Title -->
+              <h4 class="card-title">{{ tournament.title }}</h4>
+
+              <!-- Description snippet -->
+              <p v-if="tournament.description" class="card-description pp-line-clamp-2">
+                {{ tournament.description }}
+              </p>
+
+              <!-- Footer: buy-in + seats -->
+              <div class="card-footer">
+                <span class="card-buyin">{{ formatPrice(tournament.buyInCents, locale) }}</span>
+                <span v-if="tournament.seatCap" class="card-seats"
+                  >{{ tournament.seatCap }} {{ t('tournaments.seats') }}</span
+                >
+                <IonIcon :icon="chevronForwardOutline" class="card-chevron" />
+              </div>
             </div>
-
-            <!-- Title -->
-            <h4 class="card-title">{{ tournament.title }}</h4>
-
-            <!-- Description snippet -->
-            <p v-if="tournament.description" class="card-description pp-line-clamp-2">{{ tournament.description }}</p>
-
-            <!-- Footer: buy-in + seats -->
-            <div class="card-footer">
-              <span class="card-buyin">{{ formatPrice(tournament.buyInCents, locale) }}</span>
-              <span v-if="tournament.seatCap" class="card-seats">{{ tournament.seatCap }} {{ t('tournaments.seats') }}</span>
-              <IonIcon :icon="chevronForwardOutline" class="card-chevron" />
-            </div>
-          </div>
           </PpStaggerItem>
         </PpStagger>
 
@@ -91,7 +90,11 @@
           </div>
           <h4 class="empty-title">{{ t('tournaments.noTournaments') }}</h4>
           <p class="empty-text">
-            {{ searchQuery || statusFilter ? t('tournaments.tryDifferentFilter') : t('tournaments.createFirst') }}
+            {{
+              searchQuery || statusFilter
+                ? t('tournaments.tryDifferentFilter')
+                : t('tournaments.createFirst')
+            }}
           </p>
         </div>
       </div>
@@ -113,21 +116,11 @@ import type { GetTournamentsQuery } from '#gql'
 import type { TournamentStatus } from '~/types/tournament'
 
 definePageMeta({
-  middleware: 'auth'
+  middleware: 'auth',
 })
 
-import {
-  IonPage,
-  IonContent,
-  IonIcon,
-  IonSpinner
-} from '@ionic/vue'
-import {
-  searchOutline,
-  trophyOutline,
-  chevronForwardOutline,
-  addOutline
-} from 'ionicons/icons'
+import { IonPage, IonContent, IonIcon, IonSpinner } from '@ionic/vue'
+import { searchOutline, trophyOutline, chevronForwardOutline, addOutline } from 'ionicons/icons'
 import TournamentFormModal from '~/components/tournament/TournamentFormModal.vue'
 import { useI18n } from '~/composables/useI18n'
 import { formatPrice } from '~/utils'
@@ -153,20 +146,19 @@ const filteredTournaments = computed(() => {
   // Filter by search query
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    result = result.filter(t =>
-      t.title.toLowerCase().includes(query) ||
-      t.description?.toLowerCase().includes(query)
+    result = result.filter(
+      (t) => t.title.toLowerCase().includes(query) || t.description?.toLowerCase().includes(query),
     )
   }
 
   // Filter by status
   if (statusFilter.value) {
-    result = result.filter(t => t.status === statusFilter.value)
+    result = result.filter((t) => t.status === statusFilter.value)
   }
 
   // Sort by start time (most recent first)
-  result.sort((a, b) =>
-    new Date(b.startTime || '').getTime() - new Date(a.startTime || '').getTime()
+  result.sort(
+    (a, b) => new Date(b.startTime || '').getTime() - new Date(a.startTime || '').getTime(),
   )
 
   return result
@@ -177,7 +169,7 @@ const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString(locale.value, {
     day: 'numeric',
     month: 'short',
-    year: 'numeric'
+    year: 'numeric',
   })
 }
 
@@ -201,7 +193,7 @@ const fetchTournaments = async () => {
   loading.value = true
   try {
     const { tournaments: result } = await GqlGetTournaments({
-      clubId: club.id
+      clubId: club.id,
     })
     tournaments.value = result?.items || []
   } catch (error) {

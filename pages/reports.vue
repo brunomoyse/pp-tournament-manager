@@ -15,7 +15,10 @@
             v-for="period in periods"
             :key="period.value"
             @click="selectedPeriod = period.value"
-            :class="['period-tab', selectedPeriod === period.value ? 'period-tab--active' : 'period-tab--inactive']"
+            :class="[
+              'period-tab',
+              selectedPeriod === period.value ? 'period-tab--active' : 'period-tab--inactive',
+            ]"
           >
             {{ t(period.label) }}
           </button>
@@ -73,7 +76,9 @@
                 <IonIcon :icon="ribbonOutline" class="stat-icon" />
               </div>
               <div class="stat-value-name pp-truncate">{{ stats.topWinner?.name || '-' }}</div>
-              <div v-if="stats.topWinner" class="stat-subtitle-gold">{{ formatPrice(stats.topWinner.winnings, locale) }}</div>
+              <div v-if="stats.topWinner" class="stat-subtitle-gold">
+                {{ formatPrice(stats.topWinner.winnings, locale) }}
+              </div>
             </div>
 
             <!-- Most Games -->
@@ -83,7 +88,9 @@
                 <IonIcon :icon="gameControllerOutline" class="stat-icon" />
               </div>
               <div class="stat-value-name pp-truncate">{{ stats.mostGames?.name || '-' }}</div>
-              <div v-if="stats.mostGames" class="stat-subtitle-muted">{{ stats.mostGames.count }} {{ t('reports.tournaments').toLowerCase() }}</div>
+              <div v-if="stats.mostGames" class="stat-subtitle-muted">
+                {{ stats.mostGames.count }} {{ t('reports.tournaments').toLowerCase() }}
+              </div>
             </div>
           </div>
 
@@ -154,7 +161,11 @@
                   <tr
                     v-for="(entry, index) in leaderboard"
                     :key="entry.user.id"
-                    :class="['pp-stagger-item', 'table-row', entry.rank <= 3 ? 'table-row--top3' : '']"
+                    :class="[
+                      'pp-stagger-item',
+                      'table-row',
+                      entry.rank <= 3 ? 'table-row--top3' : '',
+                    ]"
                     :style="{ animationDelay: `${index * 50}ms` }"
                   >
                     <!-- Rank -->
@@ -173,7 +184,12 @@
                           {{ getInitials(entry.user) }}
                         </div>
                         <div>
-                          <div :class="['player-cell-name', entry.rank === 1 ? 'player-cell-name--gold' : '']">
+                          <div
+                            :class="[
+                              'player-cell-name',
+                              entry.rank === 1 ? 'player-cell-name--gold' : '',
+                            ]"
+                          >
                             {{ getFullName(entry.user) }}
                           </div>
                           <div class="player-cell-username">@{{ entry.user.username }}</div>
@@ -191,13 +207,15 @@
                     <!-- ROI% -->
                     <td class="td-cell td-center">
                       <span :class="entry.roiPercentage >= 0 ? 'text-green' : 'text-red'">
-                        {{ entry.roiPercentage >= 0 ? '+' : '' }}{{ entry.roiPercentage.toFixed(1) }}%
+                        {{ entry.roiPercentage >= 0 ? '+' : ''
+                        }}{{ entry.roiPercentage.toFixed(1) }}%
                       </span>
                     </td>
                     <!-- Net Profit -->
                     <td class="td-cell td-right">
                       <span :class="entry.netProfit >= 0 ? 'text-green' : 'text-red'">
-                        {{ entry.netProfit >= 0 ? '+' : '' }}{{ formatPrice(entry.netProfit, locale) }}
+                        {{ entry.netProfit >= 0 ? '+' : ''
+                        }}{{ formatPrice(entry.netProfit, locale) }}
                       </span>
                     </td>
                     <!-- Points -->
@@ -220,15 +238,10 @@ import { LeaderboardPeriod } from '~/types/enums'
 import type { GetLeaderboardQuery } from '#gql'
 
 definePageMeta({
-  middleware: 'auth'
+  middleware: 'auth',
 })
 
-import {
-  IonPage,
-  IonContent,
-  IonIcon,
-  IonSpinner
-} from '@ionic/vue'
+import { IonPage, IonContent, IonIcon, IonSpinner } from '@ionic/vue'
 import {
   trophyOutline,
   peopleOutline,
@@ -236,7 +249,7 @@ import {
   walletOutline,
   ribbonOutline,
   gameControllerOutline,
-  podiumOutline
+  podiumOutline,
 } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 import { formatPrice } from '~/utils'
@@ -253,7 +266,7 @@ type LeaderboardItem = GetLeaderboardQuery['leaderboard']['items'][number]
 const periods = [
   { value: LeaderboardPeriod.ALL_TIME, label: 'reports.period.allTime' },
   { value: LeaderboardPeriod.LAST_30_DAYS, label: 'reports.period.last30Days' },
-  { value: LeaderboardPeriod.LAST_7_DAYS, label: 'reports.period.last7Days' }
+  { value: LeaderboardPeriod.LAST_7_DAYS, label: 'reports.period.last7Days' },
 ]
 
 const selectedPeriod = ref<LeaderboardPeriod>(LeaderboardPeriod.ALL_TIME)
@@ -269,7 +282,7 @@ const stats = computed(() => {
       totalPrizePool: 0,
       avgBuyIn: 0,
       topWinner: null as { name: string; winnings: number } | null,
-      mostGames: null as { name: string; count: number } | null
+      mostGames: null as { name: string; count: number } | null,
     }
   }
 
@@ -281,31 +294,43 @@ const stats = computed(() => {
   const avgBuyIn = totalTournamentEntries > 0 ? Math.round(totalBuyIns / totalTournamentEntries) : 0
 
   // Find top winner
-  const topWinnerEntry = leaderboard.value.reduce((max, e) =>
-    e.totalWinnings > (max?.totalWinnings || 0) ? e : max, leaderboard.value[0])
+  const topWinnerEntry = leaderboard.value.reduce(
+    (max, e) => (e.totalWinnings > (max?.totalWinnings || 0) ? e : max),
+    leaderboard.value[0],
+  )
 
   // Find most games played
-  const mostGamesEntry = leaderboard.value.reduce((max, e) =>
-    e.totalTournaments > (max?.totalTournaments || 0) ? e : max, leaderboard.value[0])
+  const mostGamesEntry = leaderboard.value.reduce(
+    (max, e) => (e.totalTournaments > (max?.totalTournaments || 0) ? e : max),
+    leaderboard.value[0],
+  )
 
   return {
-    totalTournaments: Math.max(...leaderboard.value.map(e => e.totalTournaments), 0),
+    totalTournaments: Math.max(...leaderboard.value.map((e) => e.totalTournaments), 0),
     totalPlayers,
     totalPrizePool,
     avgBuyIn,
-    topWinner: topWinnerEntry ? {
-      name: getFullName(topWinnerEntry.user),
-      winnings: topWinnerEntry.totalWinnings
-    } : null,
-    mostGames: mostGamesEntry ? {
-      name: getFullName(mostGamesEntry.user),
-      count: mostGamesEntry.totalTournaments
-    } : null
+    topWinner: topWinnerEntry
+      ? {
+          name: getFullName(topWinnerEntry.user),
+          winnings: topWinnerEntry.totalWinnings,
+        }
+      : null,
+    mostGames: mostGamesEntry
+      ? {
+          name: getFullName(mostGamesEntry.user),
+          count: mostGamesEntry.totalTournaments,
+        }
+      : null,
   }
 })
 
 // Helper functions
-const getInitials = (user: { firstName?: string | null; lastName?: string | null; username?: string | null } | undefined) => {
+const getInitials = (
+  user:
+    | { firstName?: string | null; lastName?: string | null; username?: string | null }
+    | undefined,
+) => {
   if (!user) return '?'
   if (user.firstName && user.lastName) {
     return `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
@@ -313,7 +338,11 @@ const getInitials = (user: { firstName?: string | null; lastName?: string | null
   return user.username?.[0]?.toUpperCase() || '?'
 }
 
-const getFullName = (user: { firstName?: string | null; lastName?: string | null; username?: string | null } | undefined) => {
+const getFullName = (
+  user:
+    | { firstName?: string | null; lastName?: string | null; username?: string | null }
+    | undefined,
+) => {
   if (!user) return 'Unknown'
   if (user.firstName && user.lastName) {
     return `${user.firstName} ${user.lastName}`
@@ -330,7 +359,7 @@ const fetchLeaderboard = async () => {
     const { leaderboard: result } = await GqlGetLeaderboard({
       period: selectedPeriod.value,
       clubId: club.id,
-      pagination: { limit: 50 }
+      pagination: { limit: 50 },
     })
     leaderboard.value = result?.items || []
   } catch (error) {
@@ -382,7 +411,6 @@ onMounted(() => {
 .header-section {
   margin-bottom: 1.5rem;
 }
-
 
 .eyebrow {
   font-family: var(--font-mono);

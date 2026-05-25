@@ -8,23 +8,21 @@
               <p class="eyebrow">{{ t('nav.dashboard') }}</p>
               <h1 class="page-title">
                 <span>{{ t('messages.welcomeBack', { name: '' }).replace(/\s+$/, '') }}</span>
-                <span class="pp-gold-text">&nbsp;{{ currentUser?.firstName || currentUser?.username || t('common.user') }}</span>
+                <span class="pp-gold-text"
+                  >&nbsp;{{
+                    currentUser?.firstName || currentUser?.username || t('common.user')
+                  }}</span
+                >
               </h1>
             </div>
-            <button
-              @click="createTournament"
-              class="pp-action-button pp-action-button--primary"
-            >
+            <button @click="createTournament" class="pp-action-button pp-action-button--primary">
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('buttons.createTournament') }}
             </button>
           </div>
         </PpFadeUp>
 
-        <PpFadeUp
-          v-if="activeTournaments.length > 0"
-          :delay="0.08"
-        >
+        <PpFadeUp v-if="activeTournaments.length > 0" :delay="0.08">
           <div
             class="live-hero pp-card pp-shimmer-hover"
             @click="activeTournaments[0] && goToTournament(activeTournaments[0].id)"
@@ -120,10 +118,7 @@
                 <span class="tournament-count-badge">
                   {{ recentTournaments.length }} {{ t('labels.tournaments') }}
                 </span>
-                <button
-                  @click="viewAllTournaments"
-                  class="view-all-button"
-                >
+                <button @click="viewAllTournaments" class="view-all-button">
                   {{ t('buttons.viewAll') }}
                 </button>
               </div>
@@ -132,13 +127,22 @@
             <div v-if="isLoading" class="skeleton-list">
               <div v-for="i in 3" :key="i" class="skeleton-row">
                 <div class="skeleton-left">
-                  <IonSkeletonText :animated="true" style="width: 48px; height: 48px; border-radius: 8px" />
+                  <IonSkeletonText
+                    :animated="true"
+                    style="width: 48px; height: 48px; border-radius: 8px"
+                  />
                   <div class="skeleton-text">
-                    <IonSkeletonText :animated="true" style="width: 60%; height: 20px; margin-bottom: 8px" />
+                    <IonSkeletonText
+                      :animated="true"
+                      style="width: 60%; height: 20px; margin-bottom: 8px"
+                    />
                     <IonSkeletonText :animated="true" style="width: 40%; height: 16px" />
                   </div>
                 </div>
-                <IonSkeletonText :animated="true" style="width: 80px; height: 28px; border-radius: 6px" />
+                <IonSkeletonText
+                  :animated="true"
+                  style="width: 80px; height: 28px; border-radius: 6px"
+                />
               </div>
             </div>
 
@@ -147,14 +151,8 @@
               class="tournament-list"
               :stagger-children="0.04"
             >
-              <PpStaggerItem
-                v-for="tournament in recentTournaments"
-                :key="tournament.id"
-              >
-                <div
-                  class="pp-shimmer-hover tournament-row"
-                  @click="goToTournament(tournament.id)"
-                >
+              <PpStaggerItem v-for="tournament in recentTournaments" :key="tournament.id">
+                <div class="pp-shimmer-hover tournament-row" @click="goToTournament(tournament.id)">
                   <div class="tournament-row-left">
                     <div class="tournament-icon-wrapper">
                       <IonIcon :icon="trophyOutline" class="tournament-icon" />
@@ -220,13 +218,7 @@ definePageMeta({
   middleware: 'auth',
 })
 
-import {
-  IonPage,
-  IonContent,
-  IonIcon,
-  IonSkeletonText,
-  alertController,
-} from '@ionic/vue'
+import { IonPage, IonContent, IonIcon, IonSkeletonText, alertController } from '@ionic/vue'
 import {
   trophyOutline,
   peopleOutline,
@@ -263,18 +255,20 @@ const playerStats = computed(() => {
   const totalBuyIns = entries.reduce((sum, e) => sum + e.totalBuyIns, 0)
   const totalTournaments = entries.reduce((sum, e) => sum + e.totalTournaments, 0)
   const avgBuyIn = totalTournaments > 0 ? Math.round(totalBuyIns / totalTournaments) : 0
-  const regularPlayers = entries.filter(e => e.totalTournaments >= 3).length
+  const regularPlayers = entries.filter((e) => e.totalTournaments >= 3).length
   return { uniquePlayers, thisWeek, avgBuyIn, regularPlayers }
 })
 
 const activeTournaments = computed(() =>
-  tournaments.value.filter(t => t.status === 'IN_PROGRESS')
+  tournaments.value.filter((t) => t.status === 'IN_PROGRESS'),
 )
 
 const recentTournaments = computed(() =>
   [...tournaments.value]
-    .sort((a, b) => new Date(b.startTime || '').getTime() - new Date(a.startTime || '').getTime())
-    .slice(0, 5)
+    .toSorted(
+      (a, b) => new Date(b.startTime || '').getTime() - new Date(a.startTime || '').getTime(),
+    )
+    .slice(0, 5),
 )
 
 const getTournamentSmartStatus = (tournament: any) => {
@@ -365,14 +359,20 @@ onMounted(async () => {
     isLoading.value = false
 
     Promise.all([
-      GqlGetLeaderboard({ clubId: club.id, period: LeaderboardPeriod.ALL_TIME, pagination: { limit: 200 } }),
+      GqlGetLeaderboard({
+        clubId: club.id,
+        period: LeaderboardPeriod.ALL_TIME,
+        pagination: { limit: 200 },
+      }),
       GqlGetLeaderboard({ clubId: club.id, period: LeaderboardPeriod.LAST_7_DAYS }),
-    ]).then(([allTimeRes, weekRes]) => {
-      allTimeLeaderboard.value = allTimeRes.leaderboard
-      weekLeaderboard.value = weekRes.leaderboard
-    }).catch(err => {
-      console.error('Failed to load leaderboard data:', err)
-    })
+    ])
+      .then(([allTimeRes, weekRes]) => {
+        allTimeLeaderboard.value = allTimeRes.leaderboard
+        weekLeaderboard.value = weekRes.leaderboard
+      })
+      .catch((err) => {
+        console.error('Failed to load leaderboard data:', err)
+      })
   } catch (error) {
     console.error('Failed to load tournaments:', error)
     isLoading.value = false
@@ -381,8 +381,14 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.icon-sm { width: 1rem; height: 1rem; }
-.icon-md { width: 1.25rem; height: 1.25rem; }
+.icon-sm {
+  width: 1rem;
+  height: 1rem;
+}
+.icon-md {
+  width: 1.25rem;
+  height: 1.25rem;
+}
 
 .page-root,
 .page-content {
@@ -394,11 +400,15 @@ onMounted(async () => {
 }
 
 @media (min-width: 640px) {
-  .page-container { padding: 2rem 1.5rem 3rem; }
+  .page-container {
+    padding: 2rem 1.5rem 3rem;
+  }
 }
 
 @media (min-width: 1024px) {
-  .page-container { padding: 2.5rem 2rem 4rem; }
+  .page-container {
+    padding: 2.5rem 2rem 4rem;
+  }
 }
 
 .eyebrow {
@@ -513,7 +523,9 @@ onMounted(async () => {
   margin-top: 0.25rem;
 }
 
-.live-hero-more { color: var(--color-pp-text-dim); }
+.live-hero-more {
+  color: var(--color-pp-text-dim);
+}
 
 .live-hero-right {
   display: flex;
@@ -529,7 +541,9 @@ onMounted(async () => {
 }
 
 @media (min-width: 768px) {
-  .stats-grid { grid-template-columns: repeat(4, 1fr); }
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .stat-card {
@@ -622,7 +636,9 @@ onMounted(async () => {
   font-weight: 500;
   font-size: 0.875rem;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .view-all-button:hover {
@@ -631,7 +647,9 @@ onMounted(async () => {
   color: var(--color-pp-gold);
 }
 
-.skeleton-list > * + * { margin-top: 0.5rem; }
+.skeleton-list > * + * {
+  margin-top: 0.5rem;
+}
 
 .skeleton-row {
   display: flex;
@@ -650,9 +668,13 @@ onMounted(async () => {
   flex: 1;
 }
 
-.skeleton-text { flex: 1; }
+.skeleton-text {
+  flex: 1;
+}
 
-.tournament-list > * + * { margin-top: 0.5rem; }
+.tournament-list > * + * {
+  margin-top: 0.5rem;
+}
 
 .tournament-row {
   display: flex;
@@ -663,7 +685,10 @@ onMounted(async () => {
   border-radius: 0.85rem;
   border: 1px solid var(--color-pp-border-strong);
   cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .tournament-row:hover {
@@ -734,7 +759,9 @@ onMounted(async () => {
   width: 1.1rem;
   height: 1.1rem;
   color: var(--color-pp-text-dim);
-  transition: color 0.15s ease, transform 0.15s ease;
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
 }
 
 .tournament-row:hover .chevron-icon {

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type {Tournament, TournamentRegistration, TournamentStructure} from '~/types/tournament'
-import type {TournamentClock} from "~/types/clock";
+import type { Tournament, TournamentRegistration, TournamentStructure } from '~/types/tournament'
+import type { TournamentClock } from '~/types/clock'
 
 export const useTournamentStore = defineStore('selectedTournament', () => {
   // State
@@ -17,7 +17,9 @@ export const useTournamentStore = defineStore('selectedTournament', () => {
   const tournament = computed((): Tournament | null => selectedTournament.value || null)
   const structure = computed((): TournamentStructure[] | null => selectedTournamentStructure.value)
   const clock = computed((): TournamentClock | null => selectedTournamentClock.value || null)
-  const registrations = computed((): TournamentRegistration[] | null => selectedTournamentRegistrations.value || null)
+  const registrations = computed(
+    (): TournamentRegistration[] | null => selectedTournamentRegistrations.value || null,
+  )
 
   const hasSelectedTournament = computed(() => selectedTournament.value !== null)
 
@@ -51,7 +53,7 @@ export const useTournamentStore = defineStore('selectedTournament', () => {
     selectedTournament: readonly(selectedTournament),
     loading: readonly(loading),
     error: readonly(error),
-    
+
     // Getters
     hasSelectedTournament,
 
@@ -59,7 +61,7 @@ export const useTournamentStore = defineStore('selectedTournament', () => {
     registrations,
     structure,
     tournament,
-    
+
     // Actions
     setError,
     setLoading,

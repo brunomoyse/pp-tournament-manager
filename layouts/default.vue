@@ -1,11 +1,7 @@
 <template>
   <div class="layout-root">
     <!-- [A] Backdrop overlay -->
-    <div
-      v-if="drawerOpen"
-      class="backdrop"
-      @click="drawerOpen = false"
-    />
+    <div v-if="drawerOpen" class="backdrop" @click="drawerOpen = false" />
 
     <!-- [B] Sidebar drawer (always overlay, all sizes) -->
     <aside :class="['sidebar', drawerOpen ? 'sidebar--open' : 'sidebar--closed']">
@@ -32,10 +28,7 @@
             :class="['nav-icon', isActive(item.to) ? 'nav-icon--active' : 'nav-icon--inactive']"
           />
           <span class="nav-label">{{ item.label }}</span>
-          <div
-            v-if="isActive(item.to)"
-            class="nav-active-dot"
-          />
+          <div v-if="isActive(item.to)" class="nav-active-dot" />
         </NuxtLink>
       </nav>
 
@@ -64,10 +57,7 @@
             <div class="user-name-wrapper">
               <div class="user-name">{{ userName }}</div>
             </div>
-            <button
-              @click="handleLogout"
-              class="logout-button"
-            >
+            <button @click="handleLogout" class="logout-button">
               <IonIcon :icon="logOutOutline" class="icon-sm" />
             </button>
           </div>
@@ -76,11 +66,15 @@
     </aside>
 
     <!-- Hamburger button (fixed, z-30 to sit above Ionic's ion-page z-0) -->
-    <button
-      @click="drawerOpen = true"
-      class="hamburger-button"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" class="hamburger-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <button @click="drawerOpen = true" class="hamburger-button">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="hamburger-icon"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
         <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
       </svg>
     </button>
@@ -102,11 +96,15 @@
           <IonIcon :icon="item.icon" class="tab-icon" />
           <span class="tab-label">{{ item.label }}</span>
         </NuxtLink>
-        <button
-          class="tab-item tab-item--inactive"
-          @click="drawerOpen = true"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="tab-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <button class="tab-item tab-item--inactive" @click="drawerOpen = true">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="tab-icon"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
           <span class="tab-label">{{ t('nav.menu') }}</span>
@@ -176,9 +174,12 @@ const handleLogout = async () => {
 }
 
 // Auto-close drawer on route change
-watch(() => route.path, () => {
-  drawerOpen.value = false
-})
+watch(
+  () => route.path,
+  () => {
+    drawerOpen.value = false
+  },
+)
 
 // Try to find an active tournament for the quick-access link
 onMounted(async () => {
@@ -304,7 +305,9 @@ onMounted(async () => {
   gap: 0.75rem;
   padding: 0.6rem 0.85rem;
   border-radius: 0.75rem;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .nav-link--active {

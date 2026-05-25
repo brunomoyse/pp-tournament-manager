@@ -24,8 +24,8 @@
       </div>
 
       <!-- Total Rake -->
-      <div v-if="stats?.totalRakeCents" class="stats-grid" style="margin-top: 0.75rem;">
-        <div class="stats-grid-item" style="grid-column: span 2;">
+      <div v-if="stats?.totalRakeCents" class="stats-grid" style="margin-top: 0.75rem">
+        <div class="stats-grid-item" style="grid-column: span 2">
           <div class="stats-grid-label">{{ t('entries.stats.totalRake') }}</div>
           <div class="stats-grid-value">{{ formatPrice(stats.totalRakeCents, locale) }}</div>
         </div>
@@ -67,7 +67,7 @@ const selectedTournamentId = route.params.id as string
 
 const { data: statsData, refresh: refreshStats } = await useLazyAsyncData(
   `entry-stats-${selectedTournamentId}`,
-  () => GqlGetTournamentEntryStats({ tournamentId: selectedTournamentId })
+  () => GqlGetTournamentEntryStats({ tournamentId: selectedTournamentId }),
 )
 
 const stats = computed(() => statsData.value?.tournamentEntryStats)

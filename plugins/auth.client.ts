@@ -5,7 +5,7 @@ export default defineNuxtPlugin(() => {
   // Initialize stores on app start
   const authStore = useAuthStore()
   const clubStore = useClubStore()
-  
+
   // Wait for next tick to ensure persistence has been restored
   nextTick(() => {
     authStore.initialize()
