@@ -20,8 +20,6 @@ export const getRegistrationStatusClass = (status: string): string => {
     case 'ELIMINATED':
     case 'DISQUALIFIED':
       return 'pp-status--red'
-    case 'AWAY':
-      return 'pp-status--orange'
     case 'CANCELLED':
       return 'pp-status--gray'
     case 'WITHDREW':
