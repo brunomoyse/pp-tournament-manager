@@ -207,7 +207,7 @@ onMounted(async () => {
 /* Layout root */
 .layout-root {
   min-height: 100dvh;
-  background-color: var(--pp-bg-primary);
+  background-color: var(--color-pp-bg);
 }
 
 /* Backdrop */
@@ -228,8 +228,8 @@ onMounted(async () => {
   width: 15rem;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--pp-border);
-  background-color: var(--pp-bg-secondary);
+  border-right: 1px solid var(--color-pp-border-strong);
+  background-color: var(--color-pp-surface-2);
   transition: transform 0.3s ease;
 }
 
@@ -261,7 +261,7 @@ onMounted(async () => {
 }
 
 .sidebar-title {
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   font-weight: 700;
   font-size: 1.125rem;
   line-height: 1.2;
@@ -300,7 +300,7 @@ onMounted(async () => {
 
 .nav-link--active {
   background-color: rgba(254, 231, 138, 0.15);
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .nav-link--inactive {
@@ -319,7 +319,7 @@ onMounted(async () => {
 }
 
 .nav-icon--active {
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .nav-icon--inactive {
@@ -343,7 +343,7 @@ onMounted(async () => {
   width: 0.375rem;
   height: 0.375rem;
   border-radius: 9999px;
-  background-color: var(--pp-accent-gold);
+  background-color: var(--color-pp-gold);
 }
 
 /* Live Tournament Section */
@@ -416,7 +416,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   font-weight: 700;
   font-size: 0.875rem;
   flex-shrink: 0;
@@ -465,8 +465,8 @@ onMounted(async () => {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 0.75rem;
-  background-color: var(--pp-bg-secondary);
-  border: 1px solid var(--pp-border);
+  background-color: var(--color-pp-surface-2);
+  border: 1px solid var(--color-pp-border-strong);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -512,7 +512,7 @@ onMounted(async () => {
   left: 0;
   right: 0;
   z-index: 50;
-  border-top: 1px solid var(--pp-border);
+  border-top: 1px solid var(--color-pp-border-strong);
   background-color: rgba(24, 24, 26, 0.95);
   backdrop-filter: blur(24px);
   height: 70px;
@@ -547,7 +547,7 @@ onMounted(async () => {
 }
 
 .tab-item--active {
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .tab-item--inactive {

@@ -131,11 +131,11 @@ const finishedPlayers = computed<FinishedPlayer[]>(() => {
 
 <style scoped>
 .results-card {
-  background-color: var(--pp-bg-secondary);
+  background-color: var(--color-pp-surface-2);
   border-radius: 1rem;
   padding: 2rem;
   box-shadow: var(--pp-shadow-sm);
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
 }
 
 .results-card__header {
@@ -148,13 +148,13 @@ const finishedPlayers = computed<FinishedPlayer[]>(() => {
 .results-card__title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .results-card__icon {
   width: 1.5rem;
   height: 1.5rem;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 /* Loading */
@@ -208,7 +208,7 @@ const finishedPlayers = computed<FinishedPlayer[]>(() => {
 
 .results-card__position--first {
   background-color: rgba(254, 231, 138, 0.3);
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .results-card__position--second {
@@ -240,7 +240,7 @@ const finishedPlayers = computed<FinishedPlayer[]>(() => {
 
 .results-card__prize {
   font-weight: 600;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   font-size: 0.875rem;
 }
 

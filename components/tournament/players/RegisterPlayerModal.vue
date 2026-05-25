@@ -371,7 +371,7 @@ watch(() => props.isOpen, (isOpen) => {
   padding: 0.5rem;
   background-color: rgba(24, 24, 26, 0.5);
   border-radius: 1rem;
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
 }
 
 .tab-button {
@@ -395,8 +395,8 @@ watch(() => props.isOpen, (isOpen) => {
 }
 
 .tab-button--active {
-  background-color: var(--pp-bg-secondary);
-  color: var(--pp-accent-gold);
+  background-color: var(--color-pp-surface-2);
+  color: var(--color-pp-gold);
   border: 1px solid rgba(254, 231, 138, 0.4);
   box-shadow: var(--pp-shadow-sm);
 }
@@ -443,7 +443,7 @@ watch(() => props.isOpen, (isOpen) => {
 .search-spinner {
   width: 1.5rem;
   height: 1.5rem;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .search-loading-text {
@@ -467,9 +467,9 @@ watch(() => props.isOpen, (isOpen) => {
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem;
-  background-color: var(--pp-bg-primary);
+  background-color: var(--color-pp-bg);
   border-radius: 0.5rem;
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
   transition: border-color 0.15s ease;
 }
 
@@ -486,7 +486,7 @@ watch(() => props.isOpen, (isOpen) => {
 .result-avatar {
   width: 2.5rem;
   height: 2.5rem;
-  background-color: var(--pp-text-secondary);
+  background-color: var(--color-pp-text-muted);
   border-radius: 9999px;
   display: flex;
   align-items: center;
@@ -530,7 +530,7 @@ watch(() => props.isOpen, (isOpen) => {
 
 .create-instead-link {
   margin-top: 0.75rem;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   font-size: 0.875rem;
   cursor: pointer;
   background: none;

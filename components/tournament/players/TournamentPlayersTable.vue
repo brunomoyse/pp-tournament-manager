@@ -628,7 +628,7 @@ const checkInAllPlayers = async () => {
 
 .search-input {
   padding: 0.5rem 1rem 0.5rem 2.5rem;
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
   border-radius: 0.5rem;
   color: #ffffff;
   width: 100%;
@@ -658,10 +658,10 @@ const checkInAllPlayers = async () => {
 
 /* Players List */
 .players-list {
-  background-color: var(--pp-bg-secondary);
+  background-color: var(--color-pp-surface-2);
   border-radius: 1rem;
   box-shadow: var(--pp-shadow-sm);
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
 }
 
 /* Column Headers */
@@ -671,10 +671,10 @@ const checkInAllPlayers = async () => {
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  border-bottom: 1px solid var(--pp-border);
+  border-bottom: 1px solid var(--color-pp-border-strong);
   font-size: 0.75rem;
   font-weight: 500;
-  color: var(--pp-text-secondary);
+  color: var(--color-pp-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -697,7 +697,7 @@ const checkInAllPlayers = async () => {
 }
 
 .sort-button--active {
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .column-header--center {
@@ -710,7 +710,7 @@ const checkInAllPlayers = async () => {
 
 /* Player Rows */
 .player-rows > * + * {
-  border-top: 1px solid var(--pp-border);
+  border-top: 1px solid var(--color-pp-border-strong);
 }
 
 .player-row {
@@ -733,7 +733,7 @@ const checkInAllPlayers = async () => {
   width: 2rem;
   height: 2rem;
   flex-shrink: 0;
-  background-color: var(--pp-text-secondary);
+  background-color: var(--color-pp-text-muted);
   border-radius: 9999px;
   display: flex;
   align-items: center;
@@ -765,7 +765,7 @@ const checkInAllPlayers = async () => {
   font-weight: 500;
   border: 1px solid rgba(254, 231, 138, 0.3);
   background-color: rgba(254, 231, 138, 0.1);
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .seat-button {
@@ -775,7 +775,7 @@ const checkInAllPlayers = async () => {
 
 .table-seat-empty {
   font-size: 0.75rem;
-  color: var(--pp-text-secondary);
+  color: var(--color-pp-text-muted);
 }
 
 /* Status Column */
@@ -818,8 +818,8 @@ const checkInAllPlayers = async () => {
   top: 100%;
   margin-top: 0.25rem;
   z-index: 50;
-  background-color: var(--pp-bg-secondary);
-  border: 1px solid var(--pp-border);
+  background-color: var(--color-pp-surface-2);
+  border: 1px solid var(--color-pp-border-strong);
   border-radius: 0.75rem;
   box-shadow: var(--pp-shadow-xl);
   min-width: 180px;

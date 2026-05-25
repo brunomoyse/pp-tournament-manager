@@ -590,18 +590,18 @@ onMounted(async () => {
 
 <style scoped>
 .page-bg {
-  background-color: var(--pp-bg-primary);
+  background-color: var(--color-pp-bg);
 }
 
 .content-bg {
-  background-color: var(--pp-bg-primary);
+  background-color: var(--color-pp-bg);
   --padding-top: 0 !important;
 }
 
 /* Custom Header */
 .custom-header {
-  background-color: var(--pp-bg-primary);
-  border-bottom: 1px solid var(--pp-border);
+  background-color: var(--color-pp-bg);
+  border-bottom: 1px solid var(--color-pp-border-strong);
   padding: 1rem 1rem;
 }
 
@@ -651,12 +651,12 @@ onMounted(async () => {
   font-size: 1.875rem;
   line-height: 2.25rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
   transition: color 0.2s ease;
 }
 
 .brand-title:hover {
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .header-info {
@@ -721,7 +721,7 @@ onMounted(async () => {
   background-color: rgba(36, 36, 42, 0.5);
   padding: 0.5rem;
   border-radius: 1rem;
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
 }
 
 .tab-button {
@@ -736,8 +736,8 @@ onMounted(async () => {
 }
 
 .tab-button--active {
-  background-color: var(--pp-bg-secondary);
-  color: var(--pp-accent-gold);
+  background-color: var(--color-pp-surface-2);
+  color: var(--color-pp-gold);
   border: 1px solid rgba(254, 231, 138, 0.4);
   box-shadow: var(--pp-shadow-sm);
 }
@@ -898,11 +898,11 @@ onMounted(async () => {
 
 /* Settings Card */
 .settings-card {
-  background-color: var(--pp-bg-secondary);
+  background-color: var(--color-pp-surface-2);
   border-radius: 1rem;
   padding: 2rem;
   box-shadow: var(--pp-shadow-sm);
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
 }
 
 .settings-header {
@@ -921,13 +921,13 @@ onMounted(async () => {
 .settings-icon {
   width: 1.5rem;
   height: 1.5rem;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .settings-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .settings-info > * + * {

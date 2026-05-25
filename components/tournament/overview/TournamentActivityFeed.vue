@@ -116,17 +116,17 @@ function formatRelativeTime(dateStr: string): string {
 
 <style scoped>
 .activity-card {
-    background-color: var(--pp-bg-secondary);
+    background-color: var(--color-pp-surface-2);
     border-radius: 1rem;
     padding: 1.25rem;
     box-shadow: var(--pp-shadow-sm);
-    border: 1px solid var(--pp-border);
+    border: 1px solid var(--color-pp-border-strong);
 }
 
 .activity-title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--pp-text-primary);
+    color: var(--color-pp-text);
     margin-bottom: 1rem;
 }
 
@@ -171,7 +171,7 @@ function formatRelativeTime(dateStr: string): string {
 }
 
 .activity-dot--entry {
-    background-color: var(--pp-accent-gold);
+    background-color: var(--color-pp-gold);
 }
 
 .activity-dot--result {

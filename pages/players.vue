@@ -334,11 +334,11 @@ watch(statusFilter, fetchPlayers)
 
 <style scoped>
 .page-bg {
-  background-color: var(--pp-bg-primary);
+  background-color: var(--color-pp-bg);
 }
 
 .content-bg {
-  background-color: var(--pp-bg-primary);
+  background-color: var(--color-pp-bg);
 }
 
 .page-container {
@@ -379,7 +379,7 @@ watch(statusFilter, fetchPlayers)
   font-size: 1.875rem;
   line-height: 2.25rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .icon-md {
@@ -430,8 +430,8 @@ watch(statusFilter, fetchPlayers)
 
 .search-input {
   padding: 0.5rem 1rem 0.5rem 2.5rem;
-  background-color: var(--pp-bg-primary);
-  border: 1px solid var(--pp-border);
+  background-color: var(--color-pp-bg);
+  border: 1px solid var(--color-pp-border-strong);
   border-radius: 0.5rem;
   color: #ffffff;
   width: 100%;
@@ -445,13 +445,13 @@ watch(statusFilter, fetchPlayers)
 
 .search-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px var(--pp-accent-gold);
+  box-shadow: 0 0 0 2px var(--color-pp-gold);
 }
 
 .status-filter {
   padding: 0.5rem 0.75rem;
-  background-color: var(--pp-bg-primary);
-  border: 1px solid var(--pp-border);
+  background-color: var(--color-pp-bg);
+  border: 1px solid var(--color-pp-border-strong);
   border-radius: 0.5rem;
   color: #ffffff;
 }
@@ -462,10 +462,10 @@ watch(statusFilter, fetchPlayers)
 
 /* Players Card */
 .players-card {
-  background-color: var(--pp-bg-secondary);
+  background-color: var(--color-pp-surface-2);
   border-radius: 1rem;
   box-shadow: var(--pp-shadow-sm);
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
 }
 
 .centered-state {
@@ -511,7 +511,7 @@ watch(statusFilter, fetchPlayers)
     grid-template-columns: 2fr 2fr 1fr auto;
     gap: 1rem;
     padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--pp-border);
+    border-bottom: 1px solid var(--color-pp-border-strong);
     font-size: 0.75rem;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.5);
@@ -535,12 +535,12 @@ watch(statusFilter, fetchPlayers)
 }
 
 .sort-indicator {
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 /* Players List */
 .players-list > * + * {
-  border-top: 1px solid var(--pp-border);
+  border-top: 1px solid var(--color-pp-border-strong);
 }
 
 .player-row {
@@ -579,7 +579,7 @@ watch(statusFilter, fetchPlayers)
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   font-weight: 700;
   font-size: 0.875rem;
   flex-shrink: 0;

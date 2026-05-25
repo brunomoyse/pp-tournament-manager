@@ -236,7 +236,7 @@ const closeModal = () => {
 .player-form-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .player-form-close-icon {
@@ -269,7 +269,7 @@ const closeModal = () => {
   justify-content: flex-end;
   gap: 0.75rem;
   padding-top: 1rem;
-  border-top: 1px solid var(--pp-border);
+  border-top: 1px solid var(--color-pp-border-strong);
 }
 
 .player-form-spinner {

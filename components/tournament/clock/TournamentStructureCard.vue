@@ -119,11 +119,11 @@ onMounted(() => {
 
 <style scoped>
 .structure-card {
-  background-color: var(--pp-bg-secondary);
+  background-color: var(--color-pp-surface-2);
   border-radius: 1rem;
   padding: 1rem;
   box-shadow: var(--pp-shadow-sm);
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
 }
 
 .structure-header {
@@ -152,13 +152,13 @@ onMounted(() => {
 .structure-icon {
   width: 1rem;
   height: 1rem;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .structure-title {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .structure-levels {
@@ -182,7 +182,7 @@ onMounted(() => {
 
 .structure-level--active {
   background-color: rgba(254, 231, 138, 0.2);
-  border: 1px solid var(--pp-accent-gold);
+  border: 1px solid var(--color-pp-gold);
 }
 
 .structure-level--inactive {
@@ -208,19 +208,19 @@ onMounted(() => {
 }
 
 .structure-level-number--active {
-  background-color: var(--pp-accent-gold);
-  color: var(--pp-bg-primary);
+  background-color: var(--color-pp-gold);
+  color: var(--color-pp-bg);
 }
 
 .structure-level-number--inactive {
-  background-color: var(--pp-border);
+  background-color: var(--color-pp-border-strong);
   color: #ffffff;
 }
 
 .structure-level-blinds {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .structure-level-duration {
@@ -257,7 +257,7 @@ onMounted(() => {
 .structure-ante-value {
   font-size: 1.125rem;
   font-weight: 500;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .structure-empty {

@@ -200,7 +200,7 @@ const close = () => {
 .qr-modal-title {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .qr-modal-close-icon {
@@ -214,7 +214,7 @@ const close = () => {
 }
 
 .qr-tournament-name {
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   font-weight: 700;
   font-size: 1.25rem;
 }
@@ -253,8 +253,8 @@ const close = () => {
 
 .qr-manual-code {
   width: 100%;
-  background-color: var(--pp-bg-primary);
-  border: 1px solid var(--pp-border);
+  background-color: var(--color-pp-bg);
+  border: 1px solid var(--color-pp-border-strong);
   border-radius: 0.5rem;
   padding: 1rem;
 }
@@ -274,9 +274,9 @@ const close = () => {
 }
 
 .qr-manual-code-value {
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   font-size: 0.875rem;
-  font-family: var(--pp-font-mono);
+  font-family: var(--font-mono);
   flex: 1;
   text-align: center;
   word-break: break-all;
@@ -300,7 +300,7 @@ const close = () => {
 }
 
 .qr-copy-icon--gold {
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .qr-copy-icon--success {
@@ -318,7 +318,7 @@ const close = () => {
 .qr-loading-icon {
   width: 4rem;
   height: 4rem;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .qr-loading-text {

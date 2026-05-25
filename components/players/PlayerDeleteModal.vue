@@ -94,7 +94,7 @@ const playerName = computed(() => {
 .delete-modal-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
   margin-bottom: 0.5rem;
 }
 

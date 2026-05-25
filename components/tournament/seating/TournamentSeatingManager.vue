@@ -462,7 +462,7 @@ defineExpose({ refreshSeatingData })
 .seating-manager__title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .seating-manager__actions {
@@ -541,7 +541,7 @@ defineExpose({ refreshSeatingData })
 .seating-manager__modal-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
   margin-bottom: 0.5rem;
 }
 
@@ -567,7 +567,7 @@ defineExpose({ refreshSeatingData })
 
 /* Move Player Modal */
 .seating-manager__move-table {
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
   border-radius: 0.5rem;
   padding: 0.75rem;
 }
@@ -602,15 +602,15 @@ defineExpose({ refreshSeatingData })
 }
 
 .seating-manager__move-seat--available {
-  background-color: var(--pp-bg-primary);
-  border-color: var(--pp-border);
+  background-color: var(--color-pp-bg);
+  border-color: var(--color-pp-border-strong);
   color: #ffffff;
   cursor: pointer;
 }
 
 @media (hover: hover) {
   .seating-manager__move-seat--available:hover {
-    border-color: var(--pp-accent-gold);
+    border-color: var(--color-pp-gold);
     background-color: rgba(254, 231, 138, 0.2);
   }
 }
@@ -626,8 +626,8 @@ defineExpose({ refreshSeatingData })
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  background-color: var(--pp-bg-primary);
-  border: 1px solid var(--pp-border);
+  background-color: var(--color-pp-bg);
+  border: 1px solid var(--color-pp-border-strong);
   border-radius: 0.5rem;
   transition: all 0.2s ease;
   text-align: left;
@@ -636,7 +636,7 @@ defineExpose({ refreshSeatingData })
 
 @media (hover: hover) {
   .seating-manager__player-option:hover {
-    border-color: var(--pp-accent-gold);
+    border-color: var(--color-pp-gold);
     background-color: rgba(254, 231, 138, 0.1);
   }
 }
@@ -649,7 +649,7 @@ defineExpose({ refreshSeatingData })
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   font-weight: 700;
 }
 
@@ -689,8 +689,8 @@ defineExpose({ refreshSeatingData })
 }
 
 .seating-manager__break-table--empty {
-  background-color: var(--pp-bg-primary);
-  border-color: var(--pp-border);
+  background-color: var(--color-pp-bg);
+  border-color: var(--color-pp-border-strong);
   cursor: pointer;
 }
 

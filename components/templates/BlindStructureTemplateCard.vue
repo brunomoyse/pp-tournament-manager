@@ -107,8 +107,8 @@ const formatChips = (value: number): string => {
 
 <style scoped>
 .template-card {
-  background-color: var(--pp-bg-secondary);
-  border: 1px solid var(--pp-border);
+  background-color: var(--color-pp-surface-2);
+  border: 1px solid var(--color-pp-border-strong);
   border-radius: 0.75rem;
   overflow: hidden;
   transition: border-color 0.2s ease;
@@ -179,7 +179,7 @@ const formatChips = (value: number): string => {
 
 .card-body {
   padding: 0 1rem 1rem;
-  border-top: 1px solid var(--pp-border);
+  border-top: 1px solid var(--color-pp-border-strong);
   padding-top: 0.75rem;
   overflow-x: auto;
 }
@@ -226,7 +226,7 @@ const formatChips = (value: number): string => {
 .break-badge {
   padding: 0.0625rem 0.375rem;
   background-color: rgba(254, 231, 138, 0.15);
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   border-radius: 0.25rem;
   font-size: 0.6875rem;
   font-weight: 600;
@@ -243,7 +243,7 @@ const formatChips = (value: number): string => {
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  border-top: 1px solid var(--pp-border);
+  border-top: 1px solid var(--color-pp-border-strong);
 }
 
 .action-btn {

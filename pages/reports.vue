@@ -352,11 +352,11 @@ onMounted(() => {
 
 <style scoped>
 .page-bg {
-  background-color: var(--pp-bg-primary);
+  background-color: var(--color-pp-bg);
 }
 
 .content-bg {
-  background-color: var(--pp-bg-primary);
+  background-color: var(--color-pp-bg);
 }
 
 .page-container {
@@ -385,7 +385,7 @@ onMounted(() => {
   font-size: 1.875rem;
   line-height: 2.25rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 /* Period Tabs */
@@ -396,7 +396,7 @@ onMounted(() => {
   background-color: rgba(36, 36, 42, 0.5);
   padding: 0.5rem;
   border-radius: 1rem;
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
   margin-bottom: 2rem;
 }
 
@@ -412,8 +412,8 @@ onMounted(() => {
 }
 
 .period-tab--active {
-  background-color: var(--pp-bg-secondary);
-  color: var(--pp-accent-gold);
+  background-color: var(--color-pp-surface-2);
+  color: var(--color-pp-gold);
   border: 1px solid rgba(254, 231, 138, 0.4);
   box-shadow: var(--pp-shadow-sm);
 }
@@ -438,7 +438,7 @@ onMounted(() => {
 .spinner {
   width: 2rem;
   height: 2rem;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 /* Stats Grid */
@@ -462,10 +462,10 @@ onMounted(() => {
 }
 
 .stat-card {
-  background-color: var(--pp-bg-secondary);
+  background-color: var(--color-pp-surface-2);
   border-radius: 0.75rem;
   padding: 1rem;
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
 }
 
 .stat-header {
@@ -483,14 +483,14 @@ onMounted(() => {
 .stat-icon {
   width: 1rem;
   height: 1rem;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .stat-value {
   font-size: 1.5rem;
   line-height: 2rem;
   font-weight: 700;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .stat-value-name {
@@ -501,7 +501,7 @@ onMounted(() => {
 
 .stat-subtitle-gold {
   font-size: 0.75rem;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .stat-subtitle-muted {
@@ -511,16 +511,16 @@ onMounted(() => {
 
 /* Leaderboard Section */
 .leaderboard-section {
-  background-color: var(--pp-bg-secondary);
+  background-color: var(--color-pp-surface-2);
   border-radius: 1rem;
   padding: 1rem;
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
 }
 
 .leaderboard-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
   margin-bottom: 1rem;
 }
 
@@ -601,7 +601,7 @@ onMounted(() => {
   height: 4rem;
   background-color: rgba(254, 231, 138, 0.2);
   border: 2px solid rgba(254, 231, 138, 0.6);
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   font-size: 1.25rem;
   box-shadow: 0 0 25px rgba(254, 231, 138, 0.3);
 }
@@ -629,7 +629,7 @@ onMounted(() => {
 .podium-name-first {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -639,13 +639,13 @@ onMounted(() => {
 
 .podium-points {
   font-size: 0.75rem;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   font-weight: 500;
 }
 
 .podium-points-first {
   font-size: 0.875rem;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   font-weight: 600;
 }
 
@@ -715,7 +715,7 @@ onMounted(() => {
   text-align: left;
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.875rem;
-  border-bottom: 1px solid var(--pp-border);
+  border-bottom: 1px solid var(--color-pp-border-strong);
 }
 
 .th-cell {
@@ -792,7 +792,7 @@ onMounted(() => {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 9999px;
-  background-color: var(--pp-border);
+  background-color: var(--color-pp-border-strong);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -806,7 +806,7 @@ onMounted(() => {
 }
 
 .player-cell-name--gold {
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .player-cell-username {
@@ -828,6 +828,6 @@ onMounted(() => {
 
 .points-value {
   font-weight: 600;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 </style>

@@ -81,8 +81,8 @@ const playerRange = computed(() => {
 
 <style scoped>
 .template-card {
-  background-color: var(--pp-bg-secondary);
-  border: 1px solid var(--pp-border);
+  background-color: var(--color-pp-surface-2);
+  border: 1px solid var(--color-pp-border-strong);
   border-radius: 0.75rem;
   overflow: hidden;
   transition: border-color 0.2s ease;
@@ -124,7 +124,7 @@ const playerRange = computed(() => {
 .meta-badge {
   padding: 0.125rem 0.5rem;
   background-color: rgba(254, 231, 138, 0.1);
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 500;
@@ -162,7 +162,7 @@ const playerRange = computed(() => {
 
 .card-body {
   padding: 0 1rem 1rem;
-  border-top: 1px solid var(--pp-border);
+  border-top: 1px solid var(--color-pp-border-strong);
   padding-top: 0.75rem;
 }
 
@@ -196,7 +196,7 @@ const playerRange = computed(() => {
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  border-top: 1px solid var(--pp-border);
+  border-top: 1px solid var(--color-pp-border-strong);
 }
 
 .action-btn {

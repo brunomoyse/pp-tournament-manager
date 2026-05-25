@@ -540,10 +540,10 @@ const getClockButtonText = () => {
 
 <style scoped>
 .clock-card {
-  background-color: var(--pp-bg-secondary);
+  background-color: var(--color-pp-surface-2);
   border-radius: 1rem;
   box-shadow: var(--pp-shadow-xl);
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
   transition: all 0.5s ease;
 }
 
@@ -568,7 +568,7 @@ const getClockButtonText = () => {
 .clock-card__title {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .clock-card__live-badge {
@@ -690,7 +690,7 @@ const getClockButtonText = () => {
 
 .clock-card__timer-display {
   font-size: 3rem;
-  font-family: var(--pp-font-mono);
+  font-family: var(--font-mono);
   font-weight: 900;
   letter-spacing: 0.05em;
   line-height: 1;
@@ -753,7 +753,7 @@ const getClockButtonText = () => {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.25rem;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .clock-card__blinds-label--break {
@@ -767,7 +767,7 @@ const getClockButtonText = () => {
 .clock-card__blinds-value {
   font-size: 1.25rem;
   font-weight: 900;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .clock-card__blinds-value--break {
@@ -823,15 +823,15 @@ const getClockButtonText = () => {
 }
 
 .clock-card__main-button--running {
-  background-color: var(--pp-bg-primary);
+  background-color: var(--color-pp-bg);
   border: 2px solid rgba(254, 231, 138, 0.6);
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   box-shadow: 0 0 20px rgba(254, 231, 138, 0.15);
 }
 
 .clock-card__main-button--stopped {
-  background: linear-gradient(to right, var(--pp-accent-gold), rgba(254, 231, 138, 0.8));
-  color: var(--pp-bg-primary);
+  background: linear-gradient(to right, var(--color-pp-gold), rgba(254, 231, 138, 0.8));
+  color: var(--color-pp-bg);
   box-shadow: 0 4px 20px rgba(254, 231, 138, 0.3);
 }
 
@@ -917,7 +917,7 @@ const getClockButtonText = () => {
 .clock-card__confirm-title {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
   margin-bottom: 0.75rem;
 }
 
