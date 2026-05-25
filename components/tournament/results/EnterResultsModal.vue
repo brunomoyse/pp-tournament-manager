@@ -11,10 +11,7 @@
           <h3 class="modal-title">{{ t('results.title') }}</h3>
           <p class="modal-subtitle">{{ stepLabels[currentStep] }}</p>
         </div>
-        <button
-          @click="closeModal"
-          class="pp-close-button"
-        >
+        <button @click="closeModal" class="pp-close-button">
           <IonIcon :icon="closeOutline" class="icon-md" />
         </button>
       </div>
@@ -24,10 +21,7 @@
         <div
           v-for="step in 3"
           :key="step"
-          :class="[
-            'step-bar',
-            step <= currentStep ? 'step-bar--active' : 'step-bar--inactive'
-          ]"
+          :class="['step-bar', step <= currentStep ? 'step-bar--active' : 'step-bar--inactive']"
         ></div>
       </div>
 
@@ -62,10 +56,7 @@
                 <button
                   @click="movePlayer(index, -1)"
                   :disabled="index === 0"
-                  :class="[
-                    'move-button',
-                    index === 0 ? 'move-button--disabled' : ''
-                  ]"
+                  :class="['move-button', index === 0 ? 'move-button--disabled' : '']"
                 >
                   <IonIcon :icon="chevronUpOutline" class="icon-sm" />
                 </button>
@@ -74,7 +65,7 @@
                   :disabled="index === orderedPlayers.length - 1"
                   :class="[
                     'move-button',
-                    index === orderedPlayers.length - 1 ? 'move-button--disabled' : ''
+                    index === orderedPlayers.length - 1 ? 'move-button--disabled' : '',
                   ]"
                 >
                   <IonIcon :icon="chevronDownOutline" class="icon-sm" />
@@ -97,23 +88,16 @@
               class="pp-select"
             >
               <option value="">{{ t('results.useExistingPayout') }}</option>
-              <option
-                v-for="tmpl in availablePayoutTemplates"
-                :key="tmpl.id"
-                :value="tmpl.id"
-              >
-                {{ tmpl.name }} ({{ tmpl.minPlayers }}-{{ tmpl.maxPlayers || '&#x221e;' }} {{ t('headings.players').toLowerCase() }})
+              <option v-for="tmpl in availablePayoutTemplates" :key="tmpl.id" :value="tmpl.id">
+                {{ tmpl.name }} ({{ tmpl.minPlayers }}-{{ tmpl.maxPlayers || '&#x221e;' }}
+                {{ t('headings.players').toLowerCase() }})
               </option>
             </select>
           </div>
 
           <!-- Payout Table -->
           <div class="payout-list">
-            <div
-              v-for="(player, index) in orderedPlayers"
-              :key="player.userId"
-              class="payout-row"
-            >
+            <div v-for="(player, index) in orderedPlayers" :key="player.userId" class="payout-row">
               <div class="payout-row-left">
                 <div class="position-badge position-badge--sm">
                   {{ index + 1 }}
@@ -134,11 +118,7 @@
           <!-- Deal Section -->
           <div class="deal-section">
             <label class="deal-toggle">
-              <input
-                v-model="includeDeal"
-                type="checkbox"
-                class="deal-checkbox"
-              />
+              <input v-model="includeDeal" type="checkbox" class="deal-checkbox" />
               <span class="deal-toggle-label">{{ t('results.includeDeal') }}</span>
             </label>
 
@@ -154,7 +134,7 @@
                     @click="deal.dealType = type.value"
                     :class="[
                       'deal-type-button',
-                      deal.dealType === type.value ? 'deal-type-button--active' : ''
+                      deal.dealType === type.value ? 'deal-type-button--active' : '',
                     ]"
                   >
                     {{ type.label }}
@@ -185,12 +165,10 @@
               <!-- Custom Payouts (for CUSTOM deal type) -->
               <div v-if="deal.dealType === 'CUSTOM'" class="custom-payouts">
                 <label class="pp-label">{{ t('results.customAmount') }}</label>
-                <div
-                  v-for="pos in deal.affectedPositions"
-                  :key="pos"
-                  class="custom-payout-row"
-                >
-                  <span class="custom-payout-label">#{{ pos }} {{ orderedPlayers[pos - 1]?.name }}</span>
+                <div v-for="pos in deal.affectedPositions" :key="pos" class="custom-payout-row">
+                  <span class="custom-payout-label"
+                    >#{{ pos }} {{ orderedPlayers[pos - 1]?.name }}</span
+                  >
                   <div class="custom-payout-input-wrapper">
                     <span class="custom-payout-prefix">&euro;</span>
                     <input
@@ -243,8 +221,11 @@
 
             <div v-if="includeDeal" class="summary-deal">
               <div class="summary-deal-text">
-                {{ t('results.deal') }}: {{ dealTypes.find(d => d.value === deal.dealType)?.label }}
-                ({{ deal.affectedPositions.length }} {{ t('results.affectedPositions').toLowerCase() }})
+                {{ t('results.deal') }}:
+                {{ dealTypes.find((d) => d.value === deal.dealType)?.label }} ({{
+                  deal.affectedPositions.length
+                }}
+                {{ t('results.affectedPositions').toLowerCase() }})
               </div>
             </div>
           </div>
@@ -267,7 +248,10 @@
       <div class="pp-modal-footer modal-footer-nav modal-header-shrink">
         <button
           v-if="currentStep > 1"
-          @click="currentStep--; errorMessage = ''"
+          @click="
+            currentStep--
+            errorMessage = ''
+          "
           class="pp-action-button pp-action-button--secondary"
         >
           {{ t('results.back') }}
@@ -276,7 +260,10 @@
 
         <button
           v-if="currentStep < 3"
-          @click="currentStep++; errorMessage = ''"
+          @click="
+            currentStep++
+            errorMessage = ''
+          "
           :disabled="currentStep === 1 && orderedPlayers.length === 0"
           class="pp-action-button pp-action-button--primary"
         >
@@ -289,7 +276,13 @@
           class="pp-action-button pp-action-button--primary"
         >
           <IonIcon v-if="submitting" :icon="refreshOutline" class="icon-sm pp-animate-spin" />
-          {{ submitting ? t('results.submitting') : errorMessage ? t('results.retry') : t('results.confirmSubmit') }}
+          {{
+            submitting
+              ? t('results.submitting')
+              : errorMessage
+                ? t('results.retry')
+                : t('results.confirmSubmit')
+          }}
         </button>
       </div>
     </div>
@@ -298,7 +291,13 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { closeOutline, chevronUpOutline, chevronDownOutline, refreshOutline, alertCircleOutline } from 'ionicons/icons'
+import {
+  closeOutline,
+  chevronUpOutline,
+  chevronDownOutline,
+  refreshOutline,
+  alertCircleOutline,
+} from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 import { useTournamentStore } from '~/stores/useTournamentStore'
 import { formatPrice } from '~/utils'
@@ -337,7 +336,7 @@ const orderedPlayers = ref<OrderedPlayer[]>([])
 const deal = ref({
   dealType: 'EVEN_SPLIT' as DealType,
   affectedPositions: [] as number[],
-  notes: ''
+  notes: '',
 })
 
 const customPayoutAmounts = ref<Record<number, number>>({})
@@ -364,14 +363,16 @@ const applyPayoutTemplate = () => {
     fetchPayoutData()
     return
   }
-  const template = availablePayoutTemplates.value.find(t => t.id === selectedPayoutTemplateId.value)
+  const template = availablePayoutTemplates.value.find(
+    (t) => t.id === selectedPayoutTemplateId.value,
+  )
   if (!template) return
 
   const totalPrize = (tournamentStore.tournament?.buyInCents || 0) * orderedPlayers.value.length
-  payoutPositions.value = template.payoutStructure.map(entry => ({
+  payoutPositions.value = template.payoutStructure.map((entry) => ({
     position: entry.position,
     percentage: entry.percentage,
-    amountCents: Math.round(totalPrize * entry.percentage / 100)
+    amountCents: Math.round((totalPrize * entry.percentage) / 100),
   }))
 }
 
@@ -384,7 +385,7 @@ const dealTypes = computed(() => [
 const stepLabels = computed<Record<number, string>>(() => ({
   1: t('results.step1'),
   2: t('results.step2'),
-  3: t('results.step3')
+  3: t('results.step3'),
 }))
 
 // Fetch payout structure
@@ -400,43 +401,45 @@ const fetchPayoutData = async () => {
 }
 
 const getPayoutForPosition = (position: number) => {
-  return payoutPositions.value.find(p => p.position === position)
+  return payoutPositions.value.find((p) => p.position === position)
 }
 
 // Fetch remaining players when modal opens
-watch(() => props.isOpen, async (isOpen) => {
-  if (isOpen) {
-    currentStep.value = 1
-    includeDeal.value = false
-    deal.value = { dealType: 'EVEN_SPLIT', affectedPositions: [], notes: '' }
-    customPayoutAmounts.value = {}
-    selectedPayoutTemplateId.value = ''
-    availablePayoutTemplates.value = []
-    await fetchPlayersAndPayouts()
-    await fetchPayoutTemplates()
-  }
-})
+watch(
+  () => props.isOpen,
+  async (isOpen) => {
+    if (isOpen) {
+      currentStep.value = 1
+      includeDeal.value = false
+      deal.value = { dealType: 'EVEN_SPLIT', affectedPositions: [], notes: '' }
+      customPayoutAmounts.value = {}
+      selectedPayoutTemplateId.value = ''
+      availablePayoutTemplates.value = []
+      await fetchPlayersAndPayouts()
+      await fetchPayoutTemplates()
+    }
+  },
+)
 
 const fetchPlayersAndPayouts = async () => {
   try {
     const [playersResult] = await Promise.all([
       GqlGetTournamentPlayers({ tournamentId: props.tournamentId }),
-      fetchPayoutData()
+      fetchPayoutData(),
     ])
 
     // Get remaining players (SEATED + CHECKED_IN)
-    const remainingStatuses = ['SEATED', 'CHECKED_IN']
+    const remainingStatuses = new Set(['SEATED', 'CHECKED_IN'])
     const players = (playersResult?.tournamentPlayers?.items || [])
-      .filter((tp: any) => remainingStatuses.includes(tp.registration.status))
+      .filter((tp: any) => remainingStatuses.has(tp.registration.status))
       .map((tp: any) => {
         const firstName = tp.user.firstName || ''
         const lastName = tp.user.lastName || ''
-        const displayName = lastName && firstName
-          ? `${lastName} ${firstName}`
-          : `${firstName} ${lastName}`.trim()
+        const displayName =
+          lastName && firstName ? `${lastName} ${firstName}` : `${firstName} ${lastName}`.trim()
         return {
           userId: tp.user.id,
-          name: displayName || tp.user.username || tp.user.email
+          name: displayName || tp.user.username || tp.user.email,
         }
       })
 
@@ -465,28 +468,28 @@ const submitResults = async () => {
   try {
     const playerPositions = orderedPlayers.value.map((player, index) => ({
       userId: player.userId,
-      finalPosition: index + 1
+      finalPosition: index + 1,
     }))
 
     const input: any = {
       tournamentId: props.tournamentId,
       playerPositions,
-      ...(selectedPayoutTemplateId.value && { payoutTemplateId: selectedPayoutTemplateId.value })
+      ...(selectedPayoutTemplateId.value && { payoutTemplateId: selectedPayoutTemplateId.value }),
     }
 
     if (includeDeal.value && deal.value.affectedPositions.length > 0) {
       const dealInput: any = {
         dealType: deal.value.dealType,
         affectedPositions: deal.value.affectedPositions,
-        notes: deal.value.notes || undefined
+        notes: deal.value.notes || undefined,
       }
 
       if (deal.value.dealType === 'CUSTOM') {
         dealInput.customPayouts = deal.value.affectedPositions
-          .filter(pos => customPayoutAmounts.value[pos] && orderedPlayers.value[pos - 1])
-          .map(pos => ({
+          .filter((pos) => customPayoutAmounts.value[pos] && orderedPlayers.value[pos - 1])
+          .map((pos) => ({
             userId: orderedPlayers.value[pos - 1]!.userId,
-            amountCents: Math.round((customPayoutAmounts.value[pos] || 0) * 100)
+            amountCents: Math.round((customPayoutAmounts.value[pos] || 0) * 100),
           }))
       }
 
@@ -499,8 +502,8 @@ const submitResults = async () => {
     await GqlUpdateTournamentStatus({
       input: {
         tournamentId: props.tournamentId,
-        liveStatus: TournamentLiveStatus.FINISHED
-      }
+        liveStatus: TournamentLiveStatus.FINISHED,
+      },
     })
 
     errorMessage.value = ''
@@ -643,7 +646,9 @@ const closeModal = () => {
 .move-button {
   padding: 0.375rem;
   border-radius: 0.5rem;
-  transition: color 0.15s ease, background-color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
 }

@@ -6,7 +6,11 @@
       <!-- Header -->
       <div class="pp-modal-header">
         <h2 class="modal-title">
-          {{ mode === 'create' ? t('templates.createBlindStructure') : t('templates.editBlindStructure') }}
+          {{
+            mode === 'create'
+              ? t('templates.createBlindStructure')
+              : t('templates.editBlindStructure')
+          }}
         </h2>
         <button @click="closeModal" class="pp-close-button">
           <IonIcon :icon="closeOutline" class="close-icon" />
@@ -18,13 +22,24 @@
         <!-- Name -->
         <div class="form-field">
           <label class="pp-label">{{ t('templates.name') }} <span class="required">*</span></label>
-          <input v-model="form.name" type="text" required class="pp-input" :placeholder="t('templates.namePlaceholder')" />
+          <input
+            v-model="form.name"
+            type="text"
+            required
+            class="pp-input"
+            :placeholder="t('templates.namePlaceholder')"
+          />
         </div>
 
         <!-- Description -->
         <div class="form-field">
           <label class="pp-label">{{ t('templates.description') }}</label>
-          <input v-model="form.description" type="text" class="pp-input" :placeholder="t('templates.descriptionPlaceholder')" />
+          <input
+            v-model="form.description"
+            type="text"
+            class="pp-input"
+            :placeholder="t('templates.descriptionPlaceholder')"
+          />
         </div>
 
         <!-- Levels -->
@@ -50,12 +65,17 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(level, index) in form.levels" :key="index" :class="{ 'break-row': level.isBreak }">
+                <tr
+                  v-for="(level, index) in form.levels"
+                  :key="index"
+                  :class="{ 'break-row': level.isBreak }"
+                >
                   <td class="level-num">{{ level.levelNumber }}</td>
                   <td>
                     <input
                       v-model.number="level.smallBlind"
-                      type="number" min="0"
+                      type="number"
+                      min="0"
                       class="pp-input level-input"
                       :disabled="level.isBreak"
                     />
@@ -63,7 +83,8 @@
                   <td>
                     <input
                       v-model.number="level.bigBlind"
-                      type="number" min="0"
+                      type="number"
+                      min="0"
                       class="pp-input level-input"
                       :disabled="level.isBreak"
                     />
@@ -71,7 +92,8 @@
                   <td>
                     <input
                       v-model.number="level.ante"
-                      type="number" min="0"
+                      type="number"
+                      min="0"
                       class="pp-input level-input"
                       :disabled="level.isBreak"
                     />
@@ -79,7 +101,8 @@
                   <td>
                     <input
                       v-model.number="level.durationMinutes"
-                      type="number" min="1"
+                      type="number"
+                      min="1"
                       class="pp-input level-input"
                     />
                   </td>
@@ -108,11 +131,19 @@
           </div>
 
           <div class="level-actions">
-            <button type="button" @click="addLevel(false)" class="pp-action-button pp-action-button--secondary add-btn">
+            <button
+              type="button"
+              @click="addLevel(false)"
+              class="pp-action-button pp-action-button--secondary add-btn"
+            >
               <IonIcon :icon="addCircleOutline" class="add-icon" />
               {{ t('templates.addLevel') }}
             </button>
-            <button type="button" @click="addLevel(true)" class="pp-action-button pp-action-button--secondary add-btn">
+            <button
+              type="button"
+              @click="addLevel(true)"
+              class="pp-action-button pp-action-button--secondary add-btn"
+            >
               <IonIcon :icon="cafeOutline" class="add-icon" />
               {{ t('templates.addBreak') }}
             </button>
@@ -121,7 +152,11 @@
 
         <!-- Actions -->
         <div class="form-actions">
-          <button type="button" @click="closeModal" class="pp-action-button pp-action-button--secondary">
+          <button
+            type="button"
+            @click="closeModal"
+            class="pp-action-button pp-action-button--secondary"
+          >
             {{ t('common.cancel') }}
           </button>
           <button
@@ -130,7 +165,13 @@
             class="pp-action-button pp-action-button--primary"
           >
             <IonIcon v-if="saving" :icon="refreshOutline" class="spinner" />
-            {{ saving ? t('status.saving') : (mode === 'create' ? t('templates.create') : t('templates.save')) }}
+            {{
+              saving
+                ? t('status.saving')
+                : mode === 'create'
+                  ? t('templates.create')
+                  : t('templates.save')
+            }}
           </button>
         </div>
       </form>
@@ -140,7 +181,13 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { closeOutline, refreshOutline, addCircleOutline, removeCircleOutline, cafeOutline } from 'ionicons/icons'
+import {
+  closeOutline,
+  refreshOutline,
+  addCircleOutline,
+  removeCircleOutline,
+  cafeOutline,
+} from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 import type { BlindStructureTemplate } from '~/types/tournament'
 
@@ -173,8 +220,8 @@ const form = ref({
   name: '',
   description: '',
   levels: [
-    { levelNumber: 1, smallBlind: 25, bigBlind: 50, ante: 0, durationMinutes: 20, isBreak: false }
-  ] as LevelEntry[]
+    { levelNumber: 1, smallBlind: 25, bigBlind: 50, ante: 0, durationMinutes: 20, isBreak: false },
+  ] as LevelEntry[],
 })
 
 const totalDurationFormatted = computed(() => {
@@ -191,18 +238,20 @@ const isFormValid = computed(() => {
 })
 
 const renumberLevels = () => {
-  form.value.levels.forEach((l, i) => { l.levelNumber = i + 1 })
+  form.value.levels.forEach((l, i) => {
+    l.levelNumber = i + 1
+  })
 }
 
 const addLevel = (isBreak: boolean) => {
   const lastLevel = form.value.levels[form.value.levels.length - 1]
   form.value.levels.push({
     levelNumber: form.value.levels.length + 1,
-    smallBlind: isBreak ? 0 : (lastLevel ? lastLevel.smallBlind * 2 : 25),
-    bigBlind: isBreak ? 0 : (lastLevel ? lastLevel.bigBlind * 2 : 50),
-    ante: isBreak ? 0 : (lastLevel?.ante || 0),
-    durationMinutes: isBreak ? 10 : (lastLevel?.durationMinutes || 20),
-    isBreak
+    smallBlind: isBreak ? 0 : lastLevel ? lastLevel.smallBlind * 2 : 25,
+    bigBlind: isBreak ? 0 : lastLevel ? lastLevel.bigBlind * 2 : 50,
+    ante: isBreak ? 0 : lastLevel?.ante || 0,
+    durationMinutes: isBreak ? 10 : lastLevel?.durationMinutes || 20,
+    isBreak,
   })
 }
 
@@ -211,30 +260,40 @@ const removeLevel = (index: number) => {
   renumberLevels()
 }
 
-watch(() => props.isOpen, (isOpen) => {
-  if (isOpen && props.template && props.mode === 'edit') {
-    form.value = {
-      name: props.template.name,
-      description: props.template.description || '',
-      levels: props.template.levels.map(l => ({
-        levelNumber: l.levelNumber,
-        smallBlind: l.smallBlind,
-        bigBlind: l.bigBlind,
-        ante: l.ante,
-        durationMinutes: l.isBreak ? (l.breakDurationMinutes || 10) : l.durationMinutes,
-        isBreak: l.isBreak
-      }))
+watch(
+  () => props.isOpen,
+  (isOpen) => {
+    if (isOpen && props.template && props.mode === 'edit') {
+      form.value = {
+        name: props.template.name,
+        description: props.template.description || '',
+        levels: props.template.levels.map((l) => ({
+          levelNumber: l.levelNumber,
+          smallBlind: l.smallBlind,
+          bigBlind: l.bigBlind,
+          ante: l.ante,
+          durationMinutes: l.isBreak ? l.breakDurationMinutes || 10 : l.durationMinutes,
+          isBreak: l.isBreak,
+        })),
+      }
+    } else if (isOpen && props.mode === 'create') {
+      form.value = {
+        name: '',
+        description: '',
+        levels: [
+          {
+            levelNumber: 1,
+            smallBlind: 25,
+            bigBlind: 50,
+            ante: 0,
+            durationMinutes: 20,
+            isBreak: false,
+          },
+        ],
+      }
     }
-  } else if (isOpen && props.mode === 'create') {
-    form.value = {
-      name: '',
-      description: '',
-      levels: [
-        { levelNumber: 1, smallBlind: 25, bigBlind: 50, ante: 0, durationMinutes: 20, isBreak: false }
-      ]
-    }
-  }
-})
+  },
+)
 
 const handleSubmit = async () => {
   if (!isFormValid.value) return
@@ -244,15 +303,15 @@ const handleSubmit = async () => {
     const input = {
       name: form.value.name,
       description: form.value.description || undefined,
-      levels: form.value.levels.map(l => ({
+      levels: form.value.levels.map((l) => ({
         levelNumber: l.levelNumber,
         smallBlind: l.isBreak ? 0 : l.smallBlind,
         bigBlind: l.isBreak ? 0 : l.bigBlind,
         ante: l.isBreak ? 0 : l.ante,
         durationMinutes: l.isBreak ? 0 : l.durationMinutes,
         isBreak: l.isBreak,
-        breakDurationMinutes: l.isBreak ? l.durationMinutes : undefined
-      }))
+        breakDurationMinutes: l.isBreak ? l.durationMinutes : undefined,
+      })),
     }
 
     if (props.mode === 'create') {

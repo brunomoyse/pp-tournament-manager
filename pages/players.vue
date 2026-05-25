@@ -54,7 +54,10 @@
             <IonIcon :icon="peopleOutline" class="empty-icon" />
             <h4 class="empty-title">{{ t('players.noPlayersFound') }}</h4>
             <p class="empty-text">{{ t('players.createFirstPlayer') }}</p>
-            <button @click="openCreateModal" class="pp-action-button pp-action-button--primary empty-action">
+            <button
+              @click="openCreateModal"
+              class="pp-action-button pp-action-button--primary empty-action"
+            >
               <IonIcon :icon="personAddOutline" class="icon-md" />
               {{ t('players.addPlayer') }}
             </button>
@@ -64,15 +67,21 @@
           <div v-if="filteredPlayers.length > 0" class="column-headers">
             <button class="sort-button" @click="toggleSort('name')">
               {{ t('labels.name') }}
-              <span v-if="sortField === 'name'" class="sort-indicator">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+              <span v-if="sortField === 'name'" class="sort-indicator">{{
+                sortDirection === 'asc' ? '↑' : '↓'
+              }}</span>
             </button>
             <button class="sort-button" @click="toggleSort('email')">
               {{ t('labels.email') }}
-              <span v-if="sortField === 'email'" class="sort-indicator">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+              <span v-if="sortField === 'email'" class="sort-indicator">{{
+                sortDirection === 'asc' ? '↑' : '↓'
+              }}</span>
             </button>
             <button class="sort-button" @click="toggleSort('status')">
               {{ t('labels.status') }}
-              <span v-if="sortField === 'status'" class="sort-indicator">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+              <span v-if="sortField === 'status'" class="sort-indicator">{{
+                sortDirection === 'asc' ? '↑' : '↓'
+              }}</span>
             </button>
             <div>{{ t('labels.actions') }}</div>
           </div>
@@ -98,14 +107,19 @@
 
               <!-- Status -->
               <div>
-                <span :class="['status-pill', player.isActive ? 'status-active' : 'status-inactive']">
+                <span
+                  :class="['status-pill', player.isActive ? 'status-active' : 'status-inactive']"
+                >
                   {{ player.isActive ? t('players.active') : t('players.inactive') }}
                 </span>
               </div>
 
               <!-- Actions -->
               <div class="actions-cell">
-                <button @click="openEditModal(player)" class="pp-action-button pp-action-button--secondary action-btn-sm">
+                <button
+                  @click="openEditModal(player)"
+                  class="pp-action-button pp-action-button--secondary action-btn-sm"
+                >
                   <IonIcon :icon="createOutline" class="icon-sm" />
                   {{ t('common.edit') }}
                 </button>
@@ -153,21 +167,17 @@
 
 <script setup lang="ts">
 definePageMeta({
-  middleware: 'auth'
+  middleware: 'auth',
 })
 
-import {
-  IonPage,
-  IonContent,
-  IonIcon
-} from '@ionic/vue'
+import { IonPage, IonContent, IonIcon } from '@ionic/vue'
 import {
   personAddOutline,
   searchOutline,
   peopleOutline,
   createOutline,
   banOutline,
-  checkmarkOutline
+  checkmarkOutline,
 } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 import type { User } from '~/types/user'
@@ -202,13 +212,13 @@ const toggleSort = (field: 'name' | 'email' | 'status') => {
 
 // Computed
 const filteredPlayers = computed(() => {
-  return players.value.filter(player => {
+  return players.value.filter((player) => {
     const searchLower = searchQuery.value.toLowerCase()
     const matchesSearch =
       player.firstName.toLowerCase().includes(searchLower) ||
-      (player.lastName?.toLowerCase().includes(searchLower)) ||
+      player.lastName?.toLowerCase().includes(searchLower) ||
       player.email.toLowerCase().includes(searchLower) ||
-      (player.username?.toLowerCase().includes(searchLower))
+      player.username?.toLowerCase().includes(searchLower)
 
     const matchesStatus =
       statusFilter.value === 'all' ||
@@ -259,7 +269,7 @@ const fetchPlayers = async () => {
     loading.value = true
     const result = await GqlGetUsers({
       search: searchQuery.value || undefined,
-      isActive: statusFilter.value === 'all' ? undefined : statusFilter.value === 'active'
+      isActive: statusFilter.value === 'all' ? undefined : statusFilter.value === 'active',
     })
     players.value = (result?.users?.items || []) as User[]
   } catch (error) {
@@ -378,7 +388,6 @@ watch(statusFilter, fetchPlayers)
     align-items: center;
   }
 }
-
 
 .eyebrow {
   font-family: var(--font-mono);

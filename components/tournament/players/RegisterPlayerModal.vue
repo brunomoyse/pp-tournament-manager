@@ -18,20 +18,14 @@
         <div class="tabs-container">
           <button
             @click="activeTab = 'search'"
-            :class="[
-              'tab-button',
-              activeTab === 'search' ? 'tab-button--active' : ''
-            ]"
+            :class="['tab-button', activeTab === 'search' ? 'tab-button--active' : '']"
           >
             <IonIcon :icon="searchOutline" class="icon-sm" />
             {{ t('registerModal.searchExisting') }}
           </button>
           <button
             @click="activeTab = 'create'"
-            :class="[
-              'tab-button',
-              activeTab === 'create' ? 'tab-button--active' : ''
-            ]"
+            :class="['tab-button', activeTab === 'create' ? 'tab-button--active' : '']"
           >
             <IonIcon :icon="personAddOutline" class="icon-sm" />
             {{ t('registerModal.createNew') }}
@@ -63,12 +57,10 @@
 
           <!-- Search Results -->
           <div v-else-if="searchResults.length > 0" class="search-results">
-            <p class="results-count">{{ t('registerModal.playersFound', { count: searchResults.length }) }}</p>
-            <div
-              v-for="player in searchResults"
-              :key="player.id"
-              class="result-card"
-            >
+            <p class="results-count">
+              {{ t('registerModal.playersFound', { count: searchResults.length }) }}
+            </p>
+            <div v-for="player in searchResults" :key="player.id" class="result-card">
               <div class="result-player">
                 <div class="result-avatar">
                   {{ getInitials(player.firstName, player.lastName) }}
@@ -87,7 +79,9 @@
                   :icon="registering === player.id ? refreshOutline : personAddOutline"
                   :class="['icon-sm', registering === player.id && 'pp-animate-spin']"
                 />
-                {{ registering === player.id ? t('registerModal.registering') : t('buttons.register') }}
+                {{
+                  registering === player.id ? t('registerModal.registering') : t('buttons.register')
+                }}
               </button>
             </div>
           </div>
@@ -95,11 +89,10 @@
           <!-- Empty State -->
           <div v-else-if="searchQuery && !searching" class="search-empty">
             <IonIcon :icon="searchOutline" class="empty-icon" />
-            <p class="empty-text">{{ t('registerModal.noPlayersMatching', { query: searchQuery }) }}</p>
-            <button
-              @click="activeTab = 'create'"
-              class="create-instead-link"
-            >
+            <p class="empty-text">
+              {{ t('registerModal.noPlayersMatching', { query: searchQuery }) }}
+            </p>
+            <button @click="activeTab = 'create'" class="create-instead-link">
               {{ t('registerModal.createInstead') }}
             </button>
           </div>
@@ -172,7 +165,11 @@
                 :icon="creating ? refreshOutline : personAddOutline"
                 :class="['icon-md', creating && 'pp-animate-spin']"
               />
-              {{ creating ? t('registerModal.creatingAndRegistering') : t('registerModal.createAndRegister') }}
+              {{
+                creating
+                  ? t('registerModal.creatingAndRegistering')
+                  : t('registerModal.createAndRegister')
+              }}
             </button>
           </form>
         </div>
@@ -183,7 +180,13 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { closeOutline, searchOutline, personAddOutline, personOutline, refreshOutline } from 'ionicons/icons'
+import {
+  closeOutline,
+  searchOutline,
+  personAddOutline,
+  personOutline,
+  refreshOutline,
+} from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 
 const { t } = useI18n()
@@ -196,8 +199,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  'close': []
-  'registered': [data: { playerId: string }]
+  close: []
+  registered: [data: { playerId: string }]
 }>()
 
 // State
@@ -213,7 +216,7 @@ const newPlayer = reactive({
   firstName: '',
   lastName: '',
   email: '',
-  phone: ''
+  phone: '',
 })
 
 // Debounced search
@@ -239,12 +242,12 @@ const performSearch = async () => {
     const result = await GqlGetUsers({
       search: searchQuery.value,
       isActive: true,
-      pagination: { limit: 20 }
+      pagination: { limit: 20 },
     })
 
     // Filter out already registered players
     searchResults.value = (result?.users?.items || []).filter(
-      (user: any) => !props.registeredPlayerIds.includes(user.id)
+      (user: any) => !props.registeredPlayerIds.includes(user.id),
     )
   } catch (e: any) {
     console.error('Search failed:', e)
@@ -263,8 +266,8 @@ const registerExistingPlayer = async (playerId: string) => {
     await GqlRegisterTournament({
       input: {
         tournamentId: props.tournamentId,
-        userId: playerId
-      }
+        userId: playerId,
+      },
     })
 
     emit('registered', { playerId })
@@ -290,8 +293,8 @@ const createAndRegister = async () => {
         firstName: newPlayer.firstName,
         lastName: newPlayer.lastName,
         email: newPlayer.email,
-        phone: newPlayer.phone || undefined
-      }
+        phone: newPlayer.phone || undefined,
+      },
     })
 
     if (!createResult?.createPlayer?.id) {
@@ -304,8 +307,8 @@ const createAndRegister = async () => {
     await GqlRegisterTournament({
       input: {
         tournamentId: props.tournamentId,
-        userId: playerId
-      }
+        userId: playerId,
+      },
     })
 
     emit('registered', { playerId })
@@ -344,13 +347,16 @@ const close = () => {
 }
 
 // Clear search when modal opens
-watch(() => props.isOpen, (isOpen) => {
-  if (isOpen) {
-    searchQuery.value = ''
-    searchResults.value = []
-    error.value = null
-  }
-})
+watch(
+  () => props.isOpen,
+  (isOpen) => {
+    if (isOpen) {
+      searchQuery.value = ''
+      searchResults.value = []
+      error.value = null
+    }
+  },
+)
 </script>
 
 <style scoped>

@@ -136,7 +136,7 @@ describe('useAuthStore', () => {
         store.login({
           email: 'wrong@example.com',
           password: 'wrongpassword',
-        })
+        }),
       ).rejects.toThrow('Invalid credentials')
 
       expect(store.error).toEqual(error)
@@ -216,14 +216,14 @@ describe('useAuthStore', () => {
       }
 
       // Wait for persistence to complete
-      await new Promise(resolve => setTimeout(resolve, 10))
+      await new Promise((resolve) => setTimeout(resolve, 10))
 
       global.fetch = vi.fn().mockResolvedValue({ ok: true })
 
       await store.logout()
 
       // Wait for localStorage clear to complete
-      await new Promise(resolve => setTimeout(resolve, 10))
+      await new Promise((resolve) => setTimeout(resolve, 10))
 
       expect(localStorage.getItem('auth-backup')).toBeNull()
     })

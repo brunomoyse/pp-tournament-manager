@@ -1,8 +1,5 @@
 <template>
-  <div :class="[
-    'clock-card',
-    currentStructure?.isBreak ? 'clock-card--break' : '',
-  ]">
+  <div :class="['clock-card', currentStructure?.isBreak ? 'clock-card--break' : '']">
     <!-- Header -->
     <div class="clock-card__header">
       <div class="clock-card__header-left">
@@ -23,10 +20,19 @@
       <div class="clock-card__ring">
         <svg class="clock-card__ring-svg" viewBox="0 0 200 200">
           <!-- Background track -->
-          <circle cx="100" cy="100" r="92" stroke-width="4" fill="none" class="clock-card__ring-track" />
+          <circle
+            cx="100"
+            cy="100"
+            r="92"
+            stroke-width="4"
+            fill="none"
+            class="clock-card__ring-track"
+          />
           <!-- Progress arc -->
           <circle
-            cx="100" cy="100" r="92"
+            cx="100"
+            cy="100"
+            r="92"
             :stroke="timerColor"
             stroke-width="4"
             fill="none"
@@ -40,18 +46,21 @@
         <!-- Timer content centered inside the ring -->
         <div class="clock-card__ring-content">
           <!-- Level label -->
-          <div :class="[
-            'clock-card__level-label',
-            currentStructure?.isBreak ? 'clock-card__level-label--break' : ''
-          ]">
-            {{ currentStructure?.isBreak ? t('labels.breakTime') : `${t('labels.level')} ${clock?.currentLevel || 1}` }}
+          <div
+            :class="[
+              'clock-card__level-label',
+              currentStructure?.isBreak ? 'clock-card__level-label--break' : '',
+            ]"
+          >
+            {{
+              currentStructure?.isBreak
+                ? t('labels.breakTime')
+                : `${t('labels.level')} ${clock?.currentLevel || 1}`
+            }}
           </div>
 
           <!-- Timer -->
-          <div :class="[
-            'clock-card__timer-display',
-            timerColorClass
-          ]">
+          <div :class="['clock-card__timer-display', timerColorClass]">
             {{ formatDuration(timeRemaining) || '00:00' }}
           </div>
         </div>
@@ -62,21 +71,31 @@
       <!-- Blinds Information -->
       <div class="clock-card__blinds-grid">
         <!-- Current Blinds -->
-        <div :class="[
-          'clock-card__blinds-current',
-          currentStructure?.isBreak ? 'clock-card__blinds-current--break' : ''
-        ]">
-          <div :class="[
-            'clock-card__blinds-label',
-            currentStructure?.isBreak ? 'clock-card__blinds-label--break' : ''
-          ]">
+        <div
+          :class="[
+            'clock-card__blinds-current',
+            currentStructure?.isBreak ? 'clock-card__blinds-current--break' : '',
+          ]"
+        >
+          <div
+            :class="[
+              'clock-card__blinds-label',
+              currentStructure?.isBreak ? 'clock-card__blinds-label--break' : '',
+            ]"
+          >
             {{ t('labels.current') }}
           </div>
-          <div :class="[
-            'clock-card__blinds-value',
-            currentStructure?.isBreak ? 'clock-card__blinds-value--break' : ''
-          ]">
-            {{ currentStructure?.isBreak ? t('labels.break') : formatBlinds(currentStructure) || '0/0' }}
+          <div
+            :class="[
+              'clock-card__blinds-value',
+              currentStructure?.isBreak ? 'clock-card__blinds-value--break' : '',
+            ]"
+          >
+            {{
+              currentStructure?.isBreak
+                ? t('labels.break')
+                : formatBlinds(currentStructure) || '0/0'
+            }}
           </div>
           <div v-if="currentStructure?.ante && !currentStructure?.isBreak" class="clock-card__ante">
             {{ t('labels.ante') }}: {{ currentStructure.ante }}
@@ -85,11 +104,16 @@
 
         <!-- Next Blinds -->
         <div class="clock-card__blinds-next">
-          <div class="clock-card__blinds-label clock-card__blinds-label--next">{{ t('labels.next') }}</div>
+          <div class="clock-card__blinds-label clock-card__blinds-label--next">
+            {{ t('labels.next') }}
+          </div>
           <div class="clock-card__blinds-value clock-card__blinds-value--next">
             {{ nextStructure?.isBreak ? t('labels.break') : formatBlinds(nextStructure) || '0/0' }}
           </div>
-          <div v-if="nextStructure?.ante && !nextStructure?.isBreak" class="clock-card__ante clock-card__ante--next">
+          <div
+            v-if="nextStructure?.ante && !nextStructure?.isBreak"
+            class="clock-card__ante clock-card__ante--next"
+          >
             {{ t('labels.ante') }}: {{ nextStructure.ante }}
           </div>
         </div>
@@ -104,7 +128,7 @@
             'clock-card__main-button',
             clock?.status === 'RUNNING'
               ? 'clock-card__main-button--running'
-              : 'clock-card__main-button--stopped'
+              : 'clock-card__main-button--stopped',
           ]"
         >
           <IonIcon :icon="getClockButtonIcon()" class="clock-card__main-button-icon" />
@@ -118,7 +142,10 @@
             :disabled="isReverting"
             class="pp-action-button pp-action-button--secondary clock-card__secondary-button"
           >
-            <IonIcon :icon="isReverting ? refreshOutline : playSkipBackOutline" :class="['clock-card__secondary-icon', isReverting && 'pp-animate-spin']" />
+            <IonIcon
+              :icon="isReverting ? refreshOutline : playSkipBackOutline"
+              :class="['clock-card__secondary-icon', isReverting && 'pp-animate-spin']"
+            />
             <span class="clock-card__secondary-label">{{ t('buttons.previous') }}</span>
           </button>
 
@@ -135,7 +162,10 @@
             :disabled="isAdvancing"
             class="pp-action-button pp-action-button--secondary clock-card__secondary-button"
           >
-            <IonIcon :icon="isAdvancing ? refreshOutline : playSkipForwardOutline" :class="['clock-card__secondary-icon', isAdvancing && 'pp-animate-spin']" />
+            <IonIcon
+              :icon="isAdvancing ? refreshOutline : playSkipForwardOutline"
+              :class="['clock-card__secondary-icon', isAdvancing && 'pp-animate-spin']"
+            />
             <span class="clock-card__secondary-label">{{ t('buttons.next') }}</span>
           </button>
         </div>
@@ -157,11 +187,22 @@
         <h3 class="clock-card__confirm-title">{{ t('clock.startConfirmTitle') }}</h3>
         <p class="clock-card__confirm-message">{{ t('clock.startConfirmMessage') }}</p>
         <div class="clock-card__confirm-actions">
-          <button @click="showStartConfirm = false" class="pp-action-button pp-action-button--secondary">
+          <button
+            @click="showStartConfirm = false"
+            class="pp-action-button pp-action-button--secondary"
+          >
             {{ t('buttons.cancel') }}
           </button>
-          <button @click="confirmStartTournament" :disabled="isStarting" class="pp-action-button pp-action-button--primary">
-            <IonIcon v-if="isStarting" :icon="refreshOutline" class="clock-card__secondary-icon pp-animate-spin" />
+          <button
+            @click="confirmStartTournament"
+            :disabled="isStarting"
+            class="pp-action-button pp-action-button--primary"
+          >
+            <IonIcon
+              v-if="isStarting"
+              :icon="refreshOutline"
+              class="clock-card__secondary-icon pp-animate-spin"
+            />
             {{ t('clock.startConfirm') }}
           </button>
         </div>
@@ -172,8 +213,14 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { playOutline, pauseOutline, playSkipForwardOutline, playSkipBackOutline, refreshOutline } from 'ionicons/icons'
-import {formatBlinds, formatDuration} from "~/utils";
+import {
+  playOutline,
+  pauseOutline,
+  playSkipForwardOutline,
+  playSkipBackOutline,
+  refreshOutline,
+} from 'ionicons/icons'
+import { formatBlinds, formatDuration } from '~/utils'
 import { useI18n } from '~/composables/useI18n'
 import { TournamentLiveStatus } from '~/types/enums'
 import type { TournamentClock } from '~/types/clock'
@@ -181,142 +228,158 @@ import type { TournamentClock } from '~/types/clock'
 const { t } = useI18n()
 const toast = useToast()
 const route = useRoute()
-const tournamentStore = useTournamentStore();
-const clock = computed(() => tournamentStore.clock);
-const structure = computed(() => tournamentStore.structure);
+const tournamentStore = useTournamentStore()
+const clock = computed(() => tournamentStore.clock)
+const structure = computed(() => tournamentStore.structure)
 
 // Local timer state for countdown
-const localTimeRemaining = ref<number | null>(null);
-let timerInterval: ReturnType<typeof setInterval> | null = null;
+const localTimeRemaining = ref<number | null>(null)
+let timerInterval: ReturnType<typeof setInterval> | null = null
 
 // Get current structure with fallback to first level when clock hasn't started
 const currentStructure = computed(() => {
-  if (clock.value?.currentStructure) return clock.value.currentStructure;
+  if (clock.value?.currentStructure) return clock.value.currentStructure
   // Fallback to first level from structure
   if (structure.value?.length) {
-    const level1 = structure.value.find(s => s.levelNumber === 1);
-    return level1 || structure.value[0];
+    const level1 = structure.value.find((s) => s.levelNumber === 1)
+    return level1 || structure.value[0]
   }
-  return null;
-});
+  return null
+})
 
 // Get next structure with fallback to second level when clock hasn't started
 const nextStructure = computed(() => {
-  if (clock.value?.nextStructure) return clock.value.nextStructure;
+  if (clock.value?.nextStructure) return clock.value.nextStructure
   // Fallback to second level from structure
   if (structure.value?.length) {
-    const level2 = structure.value.find(s => s.levelNumber === 2);
-    return level2 || structure.value[1];
+    const level2 = structure.value.find((s) => s.levelNumber === 2)
+    return level2 || structure.value[1]
   }
-  return null;
-});
+  return null
+})
 
 // Calculate remaining time from levelEndTime
 const calculateRemainingTime = (): number => {
-  if (!clock.value?.levelEndTime) return 0;
+  if (!clock.value?.levelEndTime) return 0
 
   if (clock.value?.status === 'RUNNING') {
     // When running: remaining = levelEndTime - now
-    const endTime = new Date(clock.value.levelEndTime).getTime();
-    const now = Date.now();
-    return Math.max(0, Math.floor((endTime - now) / 1000));
+    const endTime = new Date(clock.value.levelEndTime).getTime()
+    const now = Date.now()
+    return Math.max(0, Math.floor((endTime - now) / 1000))
   }
 
-  return 0;
-};
+  return 0
+}
 
 // Calculate remaining time when paused (using levelEndTime and pause time from server)
 const calculatePausedTime = (): number | null => {
   // When paused, server should provide timeRemainingSeconds
   // But if not, we can't calculate locally since we don't have pauseStartedAt
-  if (clock.value?.timeRemainingSeconds !== undefined && clock.value?.timeRemainingSeconds !== null) {
-    return clock.value.timeRemainingSeconds;
+  if (
+    clock.value?.timeRemainingSeconds !== undefined &&
+    clock.value?.timeRemainingSeconds !== null
+  ) {
+    return clock.value.timeRemainingSeconds
   }
-  return null;
-};
+  return null
+}
 
 // Start local countdown timer
 const startLocalTimer = () => {
-  stopLocalTimer();
+  stopLocalTimer()
   // Initial calculation
-  localTimeRemaining.value = calculateRemainingTime();
+  localTimeRemaining.value = calculateRemainingTime()
   // Update every second
   timerInterval = setInterval(() => {
-    localTimeRemaining.value = calculateRemainingTime();
-  }, 1000);
-};
+    localTimeRemaining.value = calculateRemainingTime()
+  }, 1000)
+}
 
 // Stop local countdown timer
 const stopLocalTimer = () => {
   if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
+    clearInterval(timerInterval)
+    timerInterval = null
   }
-};
+}
 
 // Watch clock status to start/stop local timer
-watch(() => clock.value?.status, (newStatus, oldStatus) => {
-  console.log('[ClockCard] Status changed:', oldStatus, '->', newStatus)
-  console.log('[ClockCard] Clock data:', clock.value)
-  if (newStatus === 'RUNNING') {
-    startLocalTimer();
-  } else if (newStatus === 'PAUSED') {
-    // When paused, stop timer but preserve last known value as fallback
-    stopLocalTimer();
-    // Don't set localTimeRemaining to null - preserve it as fallback
-    console.log('[ClockCard] Paused - timeRemainingSeconds from server:', clock.value?.timeRemainingSeconds)
-  } else {
-    // When stopped, reset everything
-    stopLocalTimer();
-    localTimeRemaining.value = null;
-  }
-}, { immediate: true });
+watch(
+  () => clock.value?.status,
+  (newStatus, oldStatus) => {
+    console.log('[ClockCard] Status changed:', oldStatus, '->', newStatus)
+    console.log('[ClockCard] Clock data:', clock.value)
+    if (newStatus === 'RUNNING') {
+      startLocalTimer()
+    } else if (newStatus === 'PAUSED') {
+      // When paused, stop timer but preserve last known value as fallback
+      stopLocalTimer()
+      // Don't set localTimeRemaining to null - preserve it as fallback
+      console.log(
+        '[ClockCard] Paused - timeRemainingSeconds from server:',
+        clock.value?.timeRemainingSeconds,
+      )
+    } else {
+      // When stopped, reset everything
+      stopLocalTimer()
+      localTimeRemaining.value = null
+    }
+  },
+  { immediate: true },
+)
 
 // Resync timer when levelEndTime changes (server update)
-watch(() => clock.value?.levelEndTime, () => {
-  if (clock.value?.status === 'RUNNING') {
-    localTimeRemaining.value = calculateRemainingTime();
-  }
-});
+watch(
+  () => clock.value?.levelEndTime,
+  () => {
+    if (clock.value?.status === 'RUNNING') {
+      localTimeRemaining.value = calculateRemainingTime()
+    }
+  },
+)
 
 // Cleanup on unmount
 onUnmounted(() => {
-  stopLocalTimer();
-});
+  stopLocalTimer()
+})
 
 // Get time remaining: use local timer when running, otherwise fall back to server value or structure
 const timeRemaining = computed(() => {
-  const status = clock.value?.status;
+  const status = clock.value?.status
 
   // When running, use local countdown for smooth updates
   if (status === 'RUNNING' && localTimeRemaining.value !== null) {
-    return localTimeRemaining.value;
+    return localTimeRemaining.value
   }
 
   // When paused, use server-provided remaining time
   if (status === 'PAUSED') {
-    const pausedTime = calculatePausedTime();
+    const pausedTime = calculatePausedTime()
     if (pausedTime !== null) {
-      return pausedTime;
+      return pausedTime
     }
     // If server didn't provide time, try to preserve last known local time
     if (localTimeRemaining.value !== null) {
-      return localTimeRemaining.value;
+      return localTimeRemaining.value
     }
   }
 
   // For any status, try server-provided time first
-  if (clock.value?.timeRemainingSeconds !== undefined && clock.value?.timeRemainingSeconds !== null) {
-    return clock.value.timeRemainingSeconds;
+  if (
+    clock.value?.timeRemainingSeconds !== undefined &&
+    clock.value?.timeRemainingSeconds !== null
+  ) {
+    return clock.value.timeRemainingSeconds
   }
 
   // Fallback to current level duration when stopped or no data
   if (currentStructure.value?.durationMinutes) {
-    return currentStructure.value.durationMinutes * 60;
+    return currentStructure.value.durationMinutes * 60
   }
 
-  return 0;
-});
+  return 0
+})
 
 // Progress ring computed properties
 const circumference = computed(() => {
@@ -334,7 +397,7 @@ const progressOffset = computed(() => {
 const timerColor = computed(() => {
   if (currentStructure.value?.isBreak) return '#c084fc' // purple-400
   const remaining = timeRemaining.value
-  if (remaining <= 30) return '#ef4444'  // red-500
+  if (remaining <= 30) return '#ef4444' // red-500
   if (remaining <= 120) return '#eab308' // yellow-500
   return '#fee78a' // accent gold
 })
@@ -458,8 +521,8 @@ const confirmStartTournament = async () => {
     await GqlUpdateTournamentStatus({
       input: {
         tournamentId: tournament.value.id,
-        liveStatus: TournamentLiveStatus.LATE_REGISTRATION
-      }
+        liveStatus: TournamentLiveStatus.LATE_REGISTRATION,
+      },
     })
     // Refresh tournament data
     const response = await GqlGetTournament({ id: tournament.value.id })
@@ -489,53 +552,52 @@ const checkTablesAssigned = async (): Promise<boolean> => {
 
 // Helper functions for template
 const handleClockToggle = async () => {
-    if (!clock.value) return
+  if (!clock.value) return
 
-    if (clock.value.status === 'RUNNING') {
-        await pauseClock()
-    } else if (clock.value.status === 'PAUSED') {
-        await resumeClock()
+  if (clock.value.status === 'RUNNING') {
+    await pauseClock()
+  } else if (clock.value.status === 'PAUSED') {
+    await resumeClock()
+  } else {
+    // If tournament hasn't started yet, check tables and show confirmation
+    if (tournamentNeedsStart.value) {
+      const hasTables = await checkTablesAssigned()
+      if (!hasTables) {
+        toast.error(t('toast.noTablesAssigned'))
+        return
+      }
+      showStartConfirm.value = true
     } else {
-        // If tournament hasn't started yet, check tables and show confirmation
-        if (tournamentNeedsStart.value) {
-            const hasTables = await checkTablesAssigned()
-            if (!hasTables) {
-                toast.error(t('toast.noTablesAssigned'))
-                return
-            }
-            showStartConfirm.value = true
-        } else {
-            await startClock()
-        }
+      await startClock()
     }
+  }
 }
 
 const getClockButtonIcon = () => {
-    if (!clock.value) return playOutline
+  if (!clock.value) return playOutline
 
-    switch (clock.value.status) {
-        case 'RUNNING':
-            return pauseOutline
-        case 'PAUSED':
-            return playOutline
-        default:
-            return playOutline
-    }
+  switch (clock.value.status) {
+    case 'RUNNING':
+      return pauseOutline
+    case 'PAUSED':
+      return playOutline
+    default:
+      return playOutline
+  }
 }
 
 const getClockButtonText = () => {
-    if (!clock.value) return t('buttons.start')
+  if (!clock.value) return t('buttons.start')
 
-    switch (clock.value.status) {
-        case 'RUNNING':
-            return t('buttons.pause')
-        case 'PAUSED':
-            return t('buttons.resume')
-        default:
-            return t('buttons.start')
-    }
+  switch (clock.value.status) {
+    case 'RUNNING':
+      return t('buttons.pause')
+    case 'PAUSED':
+      return t('buttons.resume')
+    default:
+      return t('buttons.start')
+  }
 }
-
 </script>
 
 <style scoped>
@@ -738,7 +800,11 @@ const getClockButtonText = () => {
   border-radius: 0.75rem;
   padding: 0.75rem;
   border: 2px solid rgba(254, 231, 138, 0.4);
-  background: linear-gradient(to bottom right, rgba(254, 231, 138, 0.15), rgba(254, 231, 138, 0.05));
+  background: linear-gradient(
+    to bottom right,
+    rgba(254, 231, 138, 0.15),
+    rgba(254, 231, 138, 0.05)
+  );
   transition: all 0.5s ease;
 }
 

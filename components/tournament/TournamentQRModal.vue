@@ -31,11 +31,7 @@
         <div v-if="qrCodeDataUrl" class="qr-display">
           <!-- QR Code Image -->
           <div class="qr-code-wrapper">
-            <img
-              :src="qrCodeDataUrl"
-              :alt="t('qr.tournament.qrCodeAlt')"
-              class="qr-code-image"
-            />
+            <img :src="qrCodeDataUrl" :alt="t('qr.tournament.qrCodeAlt')" class="qr-code-image" />
           </div>
 
           <!-- Manual Code (Fallback) -->
@@ -96,7 +92,7 @@ import {
   copyOutline,
   checkmarkOutline,
   alertCircleOutline,
-  printOutline
+  printOutline,
 } from 'ionicons/icons'
 import QRCode from 'qrcode'
 
@@ -108,7 +104,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  'close': []
+  close: []
 }>()
 
 const { t, locale } = useI18n()
@@ -131,21 +127,25 @@ const formattedDate = computed(() => {
     month: 'long',
     year: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   })
 })
 
 // Generate QR code when modal opens or props change
-watch([() => props.isOpen, () => props.tournamentId], async ([isOpen, tournamentId]) => {
-  if (isOpen && tournamentId) {
-    await generateTournamentCode()
-  } else {
-    qrCodeDataUrl.value = ''
-    manualCode.value = ''
-    errorMessage.value = ''
-    copied.value = false
-  }
-}, { immediate: true })
+watch(
+  [() => props.isOpen, () => props.tournamentId],
+  async ([isOpen, tournamentId]) => {
+    if (isOpen && tournamentId) {
+      await generateTournamentCode()
+    } else {
+      qrCodeDataUrl.value = ''
+      manualCode.value = ''
+      errorMessage.value = ''
+      copied.value = false
+    }
+  },
+  { immediate: true },
+)
 
 const generateTournamentCode = async () => {
   try {
@@ -158,8 +158,8 @@ const generateTournamentCode = async () => {
       margin: 2,
       color: {
         dark: '#18181a',
-        light: '#ffffff'
-      }
+        light: '#ffffff',
+      },
     })
   } catch (err: any) {
     console.error('Failed to generate QR code:', err)

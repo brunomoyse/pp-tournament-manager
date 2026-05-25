@@ -102,7 +102,7 @@ The `tests/setup.ts` file automatically mocks:
 - **GraphQL client**: `useGqlToken`, `GqlLoginUser`, `GqlGetMe`, etc.
 - **localStorage**: Full implementation with get/set/remove/clear
 - **window.matchMedia**: For responsive design tests
-- **Ionic Vue components**: All ion-* components are stubbed
+- **Ionic Vue components**: All ion-\* components are stubbed
 
 ## Coverage
 
@@ -112,6 +112,7 @@ Coverage reports are generated in the `coverage/` directory:
 - `coverage/coverage-final.json` - JSON report
 
 Coverage excludes:
+
 - node_modules
 - .nuxt directory
 - dist directory
@@ -152,13 +153,9 @@ it('should fetch user data', async () => {
 it('should handle errors', async () => {
   const store = useAuthStore()
 
-  vi.mocked(GqlLoginUser).mockRejectedValue(
-    new Error('Network error')
-  )
+  vi.mocked(GqlLoginUser).mockRejectedValue(new Error('Network error'))
 
-  await expect(
-    store.login({ email: 'test', password: 'test' })
-  ).rejects.toThrow('Network error')
+  await expect(store.login({ email: 'test', password: 'test' })).rejects.toThrow('Network error')
 })
 ```
 

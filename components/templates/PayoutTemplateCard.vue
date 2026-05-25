@@ -7,16 +7,24 @@
         <div class="card-meta">
           <span class="meta-badge">{{ playerRange }}</span>
           <span class="meta-separator">·</span>
-          <span class="meta-text">{{ t('templates.paysTop', { count: template.payoutStructure.length }) }}</span>
+          <span class="meta-text">{{
+            t('templates.paysTop', { count: template.payoutStructure.length })
+          }}</span>
         </div>
         <p v-if="template.description" class="card-description">{{ template.description }}</p>
       </div>
       <div class="card-header-right">
         <svg
           :class="['expand-icon', expanded ? 'expand-icon--open' : '']"
-          xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
         >
-          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+          <path
+            fill-rule="evenodd"
+            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+            clip-rule="evenodd"
+          />
         </svg>
       </div>
     </div>
@@ -41,11 +49,17 @@
 
     <!-- Card Actions -->
     <div v-if="isAdmin" class="card-actions">
-      <button @click="$emit('edit', template)" class="pp-action-button pp-action-button--secondary action-btn">
+      <button
+        @click="$emit('edit', template)"
+        class="pp-action-button pp-action-button--secondary action-btn"
+      >
         <IonIcon :icon="createOutline" class="icon-sm" />
         {{ t('common.edit') }}
       </button>
-      <button @click="$emit('delete', template)" class="pp-action-button pp-action-button--danger action-btn">
+      <button
+        @click="$emit('delete', template)"
+        class="pp-action-button pp-action-button--danger action-btn"
+      >
         <IonIcon :icon="trashOutline" class="icon-sm" />
       </button>
     </div>
@@ -73,7 +87,10 @@ const expanded = ref(false)
 
 const playerRange = computed(() => {
   if (props.template.maxPlayers) {
-    return t('templates.playerRange', { min: props.template.minPlayers, max: props.template.maxPlayers })
+    return t('templates.playerRange', {
+      min: props.template.minPlayers,
+      max: props.template.maxPlayers,
+    })
   }
   return t('templates.playerRangeNoMax', { min: props.template.minPlayers })
 })

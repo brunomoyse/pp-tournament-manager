@@ -29,7 +29,7 @@
               @click="form.entryType = type.value"
               :class="[
                 'entry-type-button',
-                form.entryType === type.value ? 'entry-type-button--active' : ''
+                form.entryType === type.value ? 'entry-type-button--active' : '',
               ]"
             >
               {{ type.label }}
@@ -55,12 +55,7 @@
         <!-- Chips Received -->
         <div class="form-group">
           <label class="pp-label">{{ t('entries.chipsReceived') }}</label>
-          <input
-            v-model.number="form.chipsReceived"
-            type="number"
-            min="0"
-            class="pp-input"
-          />
+          <input v-model.number="form.chipsReceived" type="number" min="0" class="pp-input" />
         </div>
 
         <!-- Notes -->
@@ -76,10 +71,18 @@
 
         <!-- Actions -->
         <div class="pp-modal-footer form-actions">
-          <button type="button" @click="closeModal" class="pp-action-button pp-action-button--secondary">
+          <button
+            type="button"
+            @click="closeModal"
+            class="pp-action-button pp-action-button--secondary"
+          >
             {{ t('buttons.cancel') }}
           </button>
-          <button type="submit" :disabled="submitting" class="pp-action-button pp-action-button--primary">
+          <button
+            type="submit"
+            :disabled="submitting"
+            class="pp-action-button pp-action-button--primary"
+          >
             <IonIcon v-if="submitting" :icon="refreshOutline" class="icon-sm pp-animate-spin" />
             {{ submitting ? t('entries.submitting') : t('entries.submit') }}
           </button>
@@ -105,7 +108,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   defaultAmountCents: 0,
-  defaultEntryType: EntryType.INITIAL
+  defaultEntryType: EntryType.INITIAL,
 })
 
 const emit = defineEmits<{
@@ -129,26 +132,31 @@ const form = ref({
   entryType: props.defaultEntryType as EntryType,
   amountCents: props.defaultAmountCents,
   chipsReceived: 0 as number | undefined,
-  notes: ''
+  notes: '',
 })
 
 // Euro display for amount
 const amountEuros = computed({
   get: () => form.value.amountCents / 100,
-  set: (val: number) => { form.value.amountCents = Math.round(val * 100) }
+  set: (val: number) => {
+    form.value.amountCents = Math.round(val * 100)
+  },
 })
 
 // Reset form when modal opens
-watch(() => props.isOpen, (isOpen) => {
-  if (isOpen) {
-    form.value = {
-      entryType: props.defaultEntryType,
-      amountCents: props.defaultAmountCents,
-      chipsReceived: undefined,
-      notes: ''
+watch(
+  () => props.isOpen,
+  (isOpen) => {
+    if (isOpen) {
+      form.value = {
+        entryType: props.defaultEntryType,
+        amountCents: props.defaultAmountCents,
+        chipsReceived: undefined,
+        notes: '',
+      }
     }
-  }
-})
+  },
+)
 
 const handleSubmit = async () => {
   if (!props.player || submitting.value) return
@@ -162,8 +170,8 @@ const handleSubmit = async () => {
         entryType: form.value.entryType,
         amountCents: form.value.amountCents || undefined,
         chipsReceived: form.value.chipsReceived || undefined,
-        notes: form.value.notes || undefined
-      }
+        notes: form.value.notes || undefined,
+      },
     })
 
     toast.success(t('toast.entryAddedSuccess'))

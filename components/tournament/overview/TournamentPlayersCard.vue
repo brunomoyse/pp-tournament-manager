@@ -60,10 +60,7 @@
         <span class="players-progress-label">{{ eliminationPercent }}%</span>
       </div>
       <div class="players-progress-track">
-        <div
-          class="players-progress-fill"
-          :style="{ width: `${eliminationPercent}%` }"
-        ></div>
+        <div class="players-progress-fill" :style="{ width: `${eliminationPercent}%` }"></div>
       </div>
     </div>
   </div>
@@ -81,15 +78,27 @@ const tournamentStore = useTournamentStore()
 
 // Store data
 const seatCap = computed(() => tournamentStore.tournament?.seatCap || null)
-const registeredCount = computed(() => tournamentStore.registrations?.filter(r => r.status === 'REGISTERED').length || 0)
-const checkedInCount = computed(() => tournamentStore.registrations?.filter(r => r.status === 'CHECKED_IN').length || 0)
-const seatedCount = computed(() => tournamentStore.registrations?.filter(r => r.status === 'SEATED').length || 0)
-const bustedCount = computed(() => tournamentStore.registrations?.filter(r => r.status === 'BUSTED').length || 0)
-const confirmedCount = computed(() => registeredCount.value + checkedInCount.value + seatedCount.value + bustedCount.value)
-const waitlistedCount = computed(() => tournamentStore.registrations?.filter(r => r.status === 'WAITLISTED').length || 0)
+const registeredCount = computed(
+  () => tournamentStore.registrations?.filter((r) => r.status === 'REGISTERED').length || 0,
+)
+const checkedInCount = computed(
+  () => tournamentStore.registrations?.filter((r) => r.status === 'CHECKED_IN').length || 0,
+)
+const seatedCount = computed(
+  () => tournamentStore.registrations?.filter((r) => r.status === 'SEATED').length || 0,
+)
+const bustedCount = computed(
+  () => tournamentStore.registrations?.filter((r) => r.status === 'BUSTED').length || 0,
+)
+const confirmedCount = computed(
+  () => registeredCount.value + checkedInCount.value + seatedCount.value + bustedCount.value,
+)
+const waitlistedCount = computed(
+  () => tournamentStore.registrations?.filter((r) => r.status === 'WAITLISTED').length || 0,
+)
 const eliminationPercent = computed(() => {
   if (confirmedCount.value === 0) return 0
-  return Math.round(bustedCount.value / confirmedCount.value * 100)
+  return Math.round((bustedCount.value / confirmedCount.value) * 100)
 })
 </script>
 

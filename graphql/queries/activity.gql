@@ -1,4 +1,9 @@
-query GetTournamentActivityLog($tournamentId: UUID!, $category: ActivityEventCategory, $limit: Int, $offset: Int) {
+query GetTournamentActivityLog(
+  $tournamentId: UUID!
+  $category: ActivityEventCategory
+  $limit: Int
+  $offset: Int
+) {
   tournamentActivityLog(
     tournamentId: $tournamentId
     category: $category

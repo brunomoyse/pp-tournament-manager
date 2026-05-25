@@ -9,14 +9,18 @@
     <div ref="stepperContainer" class="status-stepper">
       <template v-for="(status, index) in statusFlow" :key="status">
         <div
-          :ref="el => { if (currentStatusIndex === index) currentStatusEl = el as HTMLElement }"
+          :ref="
+            (el) => {
+              if (currentStatusIndex === index) currentStatusEl = el as HTMLElement
+            }
+          "
           :class="[
             'status-stepper__step',
             currentStatusIndex === index
               ? getTournamentStatusClass(status)
               : currentStatusIndex > index
                 ? 'status-stepper__step--completed'
-                : 'status-stepper__step--upcoming'
+                : 'status-stepper__step--upcoming',
           ]"
         >
           {{ getTournamentStatusLabel(status, t) }}
@@ -26,7 +30,7 @@
           :icon="chevronForwardOutline"
           :class="[
             'status-stepper__chevron',
-            currentStatusIndex > index ? 'status-stepper__chevron--completed' : ''
+            currentStatusIndex > index ? 'status-stepper__chevron--completed' : '',
           ]"
         />
       </template>
@@ -35,7 +39,9 @@
     <!-- Late Registration Info -->
     <div v-if="tournament?.lateRegistrationLevel" class="late-reg-info">
       <IonIcon :icon="timeOutline" class="late-reg-info__icon" />
-      <span class="late-reg-info__text">{{ t('labels.lateRegThroughLevel', { level: tournament.lateRegistrationLevel }) }}</span>
+      <span class="late-reg-info__text">{{
+        t('labels.lateRegThroughLevel', { level: tournament.lateRegistrationLevel })
+      }}</span>
     </div>
 
     <!-- Action Buttons -->
@@ -47,14 +53,22 @@
         :disabled="isUpdating"
         :class="[
           'status-actions__button pp-action-button',
-          action.variant === 'primary' ? 'pp-action-button--primary' :
-          action.variant === 'success' ? 'pp-action-button--success' :
-          action.variant === 'warning' ? 'pp-action-button--warning' :
-          action.variant === 'danger' ? 'pp-action-button--danger' :
-          'pp-action-button--secondary'
+          action.variant === 'primary'
+            ? 'pp-action-button--primary'
+            : action.variant === 'success'
+              ? 'pp-action-button--success'
+              : action.variant === 'warning'
+                ? 'pp-action-button--warning'
+                : action.variant === 'danger'
+                  ? 'pp-action-button--danger'
+                  : 'pp-action-button--secondary',
         ]"
       >
-        <IonIcon v-if="isUpdating && action.targetStatus" :icon="refreshOutline" class="status-actions__spinner pp-animate-spin" />
+        <IonIcon
+          v-if="isUpdating && action.targetStatus"
+          :icon="refreshOutline"
+          class="status-actions__spinner pp-animate-spin"
+        />
         {{ action.label }}
       </button>
     </div>
@@ -68,11 +82,22 @@
           {{ t('statusWorkflow.confirmMessage', { status: pendingAction?.label || '' }) }}
         </p>
         <div class="confirm-dialog__actions">
-          <button @click="showConfirmDialog = false" class="pp-action-button pp-action-button--secondary">
+          <button
+            @click="showConfirmDialog = false"
+            class="pp-action-button pp-action-button--secondary"
+          >
             {{ t('buttons.cancel') }}
           </button>
-          <button @click="executeStatusChange" :disabled="isUpdating" class="pp-action-button pp-action-button--primary">
-            <IonIcon v-if="isUpdating" :icon="refreshOutline" class="status-actions__spinner pp-animate-spin" />
+          <button
+            @click="executeStatusChange"
+            :disabled="isUpdating"
+            class="pp-action-button pp-action-button--primary"
+          >
+            <IonIcon
+              v-if="isUpdating"
+              :icon="refreshOutline"
+              class="status-actions__spinner pp-animate-spin"
+            />
             {{ t('statusWorkflow.confirm') }}
           </button>
         </div>
@@ -131,7 +156,8 @@ const scrollToCurrentStatus = () => {
       const containerRect = container.getBoundingClientRect()
       const elRect = el.getBoundingClientRect()
       // Scroll so the current status is centered in the container
-      const scrollLeft = el.offsetLeft - container.offsetLeft - (containerRect.width / 2) + (elRect.width / 2)
+      const scrollLeft =
+        el.offsetLeft - container.offsetLeft - containerRect.width / 2 + elRect.width / 2
       container.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' })
     }
   })
@@ -161,29 +187,63 @@ const availableActions = computed<StatusAction[]>(() => {
 
   switch (status) {
     case TournamentLiveStatus.NOT_STARTED:
-      pushAction({ label: t('statusWorkflow.actions.openRegistration'), targetStatus: TournamentLiveStatus.REGISTRATION_OPEN, variant: 'primary', handler: () => {} })
+      pushAction({
+        label: t('statusWorkflow.actions.openRegistration'),
+        targetStatus: TournamentLiveStatus.REGISTRATION_OPEN,
+        variant: 'primary',
+        handler: () => {},
+      })
       break
     case TournamentLiveStatus.REGISTRATION_OPEN:
-      pushAction({ label: t('statusWorkflow.actions.startTournament'), targetStatus: TournamentLiveStatus.LATE_REGISTRATION, variant: 'primary', handler: () => {} })
+      pushAction({
+        label: t('statusWorkflow.actions.startTournament'),
+        targetStatus: TournamentLiveStatus.LATE_REGISTRATION,
+        variant: 'primary',
+        handler: () => {},
+      })
       break
     case TournamentLiveStatus.LATE_REGISTRATION:
-      pushAction({ label: t('statusWorkflow.actions.closeLateRegAndStart'), targetStatus: TournamentLiveStatus.IN_PROGRESS, variant: 'warning', handler: () => {} })
+      pushAction({
+        label: t('statusWorkflow.actions.closeLateRegAndStart'),
+        targetStatus: TournamentLiveStatus.IN_PROGRESS,
+        variant: 'warning',
+        handler: () => {},
+      })
       break
     case TournamentLiveStatus.IN_PROGRESS:
-      pushAction({ label: t('statusWorkflow.actions.callBreak'), targetStatus: TournamentLiveStatus.BREAK, variant: 'warning', handler: () => {} })
+      pushAction({
+        label: t('statusWorkflow.actions.callBreak'),
+        targetStatus: TournamentLiveStatus.BREAK,
+        variant: 'warning',
+        handler: () => {},
+      })
       break
     case TournamentLiveStatus.BREAK:
-      pushAction({ label: t('statusWorkflow.actions.resumePlay'), targetStatus: TournamentLiveStatus.IN_PROGRESS, variant: 'success', handler: () => {} })
+      pushAction({
+        label: t('statusWorkflow.actions.resumePlay'),
+        targetStatus: TournamentLiveStatus.IN_PROGRESS,
+        variant: 'success',
+        handler: () => {},
+      })
       break
     case TournamentLiveStatus.FINAL_TABLE:
       {
-        const seatedCount = tournamentStore.registrations?.filter(r => r.status === 'SEATED').length || 0
+        const seatedCount =
+          tournamentStore.registrations?.filter((r) => r.status === 'SEATED').length || 0
         if (seatedCount > 1) {
-          actions.push(
-            { label: t('statusWorkflow.actions.endTournament'), key: 'end-tournament', variant: 'danger', handler: () => emit('enter-results') }
-          )
+          actions.push({
+            label: t('statusWorkflow.actions.endTournament'),
+            key: 'end-tournament',
+            variant: 'danger',
+            handler: () => emit('enter-results'),
+          })
         } else {
-          pushAction({ label: t('statusWorkflow.actions.endTournament'), targetStatus: TournamentLiveStatus.FINISHED, variant: 'danger', handler: () => {} })
+          pushAction({
+            label: t('statusWorkflow.actions.endTournament'),
+            targetStatus: TournamentLiveStatus.FINISHED,
+            variant: 'danger',
+            handler: () => {},
+          })
         }
       }
       break
@@ -233,8 +293,8 @@ const executeStatusChange = async () => {
     await GqlUpdateTournamentStatus({
       input: {
         tournamentId: tournament.value.id,
-        liveStatus: pendingAction.value.targetStatus
-      }
+        liveStatus: pendingAction.value.targetStatus,
+      },
     })
 
     // Refresh tournament data

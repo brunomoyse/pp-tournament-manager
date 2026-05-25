@@ -44,7 +44,11 @@
             :icon="checkingInAll ? refreshOutline : checkmarkDoneOutline"
             :class="['icon-sm', checkingInAll && 'pp-animate-spin']"
           />
-          {{ checkingInAll ? `${checkInProgress}/${registeredPlayers.length}` : t('buttons.checkInAll') }}
+          {{
+            checkingInAll
+              ? `${checkInProgress}/${registeredPlayers.length}`
+              : t('buttons.checkInAll')
+          }}
         </button>
         <button
           v-if="canRegisterPlayers"
@@ -81,11 +85,7 @@
 
       <!-- Player Rows -->
       <div class="player-rows">
-        <div
-          v-for="player in filteredPlayers"
-          :key="player.id"
-          class="player-row"
-        >
+        <div v-for="player in filteredPlayers" :key="player.id" class="player-row">
           <!-- Name Column -->
           <div class="player-name-col">
             <div class="player-avatar">
@@ -96,10 +96,7 @@
 
           <!-- Table / Seat Column -->
           <div class="table-seat-col">
-            <span
-              v-if="player.tableNumber !== null"
-              class="table-seat-badge"
-            >
+            <span v-if="player.tableNumber !== null" class="table-seat-badge">
               T{{ player.tableNumber }} / S{{ player.seatNumber }}
             </span>
             <button
@@ -156,10 +153,7 @@
               >
                 <IonIcon :icon="ellipsisVerticalOutline" class="icon-md" />
               </button>
-              <div
-                v-if="openMenuId === player.id"
-                class="dropdown-menu"
-              >
+              <div v-if="openMenuId === player.id" class="dropdown-menu">
                 <button
                   @click="cancelRegistration(player)"
                   :disabled="cancelling === player.id"
@@ -177,13 +171,22 @@
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { searchOutline, personAddOutline, checkmarkCircleOutline, checkmarkDoneOutline, refreshOutline, locationOutline, ellipsisVerticalOutline, trashOutline, swapVerticalOutline } from 'ionicons/icons'
+import {
+  searchOutline,
+  personAddOutline,
+  checkmarkCircleOutline,
+  checkmarkDoneOutline,
+  refreshOutline,
+  locationOutline,
+  ellipsisVerticalOutline,
+  trashOutline,
+  swapVerticalOutline,
+} from 'ionicons/icons'
 import { AssignmentStrategy } from '@/types/seating'
 import { useI18n } from '~/composables/useI18n'
 import { getRegistrationStatusLabel, getRegistrationStatusClass } from '~/utils/registrationStatus'
@@ -197,8 +200,8 @@ const route = useRoute()
 
 // Define emits
 const $emit = defineEmits<{
-  'player-checked-in': [data: { playerId: string, result: any }]
-  'registerPlayer': []
+  'player-checked-in': [data: { playerId: string; result: any }]
+  registerPlayer: []
   'entry-added': []
 }>()
 
@@ -234,18 +237,18 @@ onMounted(() => {
 const selectedTournamentId = route.params.id as string
 const { data: playersData, refresh: refreshPlayersData } = await useLazyAsyncData(
   `players-${selectedTournamentId}`,
-  () => GqlGetTournamentPlayers({ tournamentId: selectedTournamentId })
+  () => GqlGetTournamentPlayers({ tournamentId: selectedTournamentId }),
 )
 
 // Fetch seating chart to build userId -> seat lookup
 const { data: seatingData, refresh: refreshSeating } = await useLazyAsyncData(
   `players-seating-${selectedTournamentId}`,
-  () => GqlGetTournamentSeatingChart({ tournamentId: selectedTournamentId })
+  () => GqlGetTournamentSeatingChart({ tournamentId: selectedTournamentId }),
 )
 
 // Build lookup map: userId -> { tableNumber, seatNumber }
 const seatLookup = computed(() => {
-  const map = new Map<string, { tableNumber: number, seatNumber: number }>()
+  const map = new Map<string, { tableNumber: number; seatNumber: number }>()
   const tables = seatingData.value?.tournamentSeatingChart?.tables || []
   for (const tableData of tables) {
     for (const seat of tableData.seats) {
@@ -267,13 +270,11 @@ const refreshPlayers = async () => {
 }
 
 // Get tournament players from the GraphQL response
-const tournamentPlayers = computed(() =>
-  playersData.value?.tournamentPlayers?.items || []
-)
+const tournamentPlayers = computed(() => playersData.value?.tournamentPlayers?.items || [])
 
 // Get registered players for "Check In All" button
 const registeredPlayers = computed(() =>
-  tournamentPlayers.value.filter((tp: any) => tp.registration.status === 'REGISTERED')
+  tournamentPlayers.value.filter((tp: any) => tp.registration.status === 'REGISTERED'),
 )
 
 // Filters and sorting
@@ -282,69 +283,80 @@ const playerFilter = ref('all')
 const sortBy = ref<'status' | 'table' | 'name'>('status')
 
 const statusPriority: Record<string, number> = {
-  'SEATED': 0,
-  'CHECKED_IN': 1,
-  'REGISTERED': 2,
+  SEATED: 0,
+  CHECKED_IN: 1,
+  REGISTERED: 2,
 }
 
 const filteredPlayers = computed(() => {
-  return tournamentPlayers.value.filter(tp => {
-    const firstName = tp.user.firstName || ''
-    const lastName = tp.user.lastName || ''
-    const username = tp.user.username || ''
-    const displayName = lastName && firstName ? `${lastName} ${firstName}` : `${firstName} ${lastName}`.trim()
+  return tournamentPlayers.value
+    .filter((tp) => {
+      const firstName = tp.user.firstName || ''
+      const lastName = tp.user.lastName || ''
+      const username = tp.user.username || ''
+      const displayName =
+        lastName && firstName ? `${lastName} ${firstName}` : `${firstName} ${lastName}`.trim()
 
-    const matchesSearch =
-      (displayName || username).toLowerCase().includes(playerSearch.value.toLowerCase()) ||
-      tp.user.email.toLowerCase().includes(playerSearch.value.toLowerCase())
-    const matchesFilter = playerFilter.value === 'all' || tp.registration.status === playerFilter.value
-    return matchesSearch && matchesFilter
-  }).map(tp => {
-    const firstName = tp.user.firstName || ''
-    const lastName = tp.user.lastName || ''
-    const username = tp.user.username || ''
-    const displayName = lastName && firstName ? `${lastName} ${firstName}` : `${firstName} ${lastName}`.trim()
-    const seat = seatLookup.value.get(tp.user.id)
-    return {
-      id: tp.user.id,
-      registrationId: tp.registration.id,
-      lastName,
-      firstName,
-      name: displayName || username || 'Unknown',
-      email: tp.user.email,
-      status: tp.registration.status,
-      registrationTime: tp.registration.registrationTime,
-      notes: tp.registration.notes,
-      waitlistPosition: tp.registration.waitlistPosition,
-      tableNumber: seat?.tableNumber ?? null,
-      seatNumber: seat?.seatNumber ?? null,
-    }
-  }).sort((a, b) => {
-    if (sortBy.value === 'name') {
+      const matchesSearch =
+        (displayName || username).toLowerCase().includes(playerSearch.value.toLowerCase()) ||
+        tp.user.email.toLowerCase().includes(playerSearch.value.toLowerCase())
+      const matchesFilter =
+        playerFilter.value === 'all' || tp.registration.status === playerFilter.value
+      return matchesSearch && matchesFilter
+    })
+    .map((tp) => {
+      const firstName = tp.user.firstName || ''
+      const lastName = tp.user.lastName || ''
+      const username = tp.user.username || ''
+      const displayName =
+        lastName && firstName ? `${lastName} ${firstName}` : `${firstName} ${lastName}`.trim()
+      const seat = seatLookup.value.get(tp.user.id)
+      return {
+        id: tp.user.id,
+        registrationId: tp.registration.id,
+        lastName,
+        firstName,
+        name: displayName || username || 'Unknown',
+        email: tp.user.email,
+        status: tp.registration.status,
+        registrationTime: tp.registration.registrationTime,
+        notes: tp.registration.notes,
+        waitlistPosition: tp.registration.waitlistPosition,
+        tableNumber: seat?.tableNumber ?? null,
+        seatNumber: seat?.seatNumber ?? null,
+      }
+    })
+    .toSorted((a, b) => {
+      if (sortBy.value === 'name') {
+        const lastNameCmp = a.lastName.localeCompare(b.lastName)
+        if (lastNameCmp !== 0) return lastNameCmp
+        return a.firstName.localeCompare(b.firstName)
+      }
+      if (sortBy.value === 'table') {
+        const aSeated = a.tableNumber !== null ? 0 : 1
+        const bSeated = b.tableNumber !== null ? 0 : 1
+        if (aSeated !== bSeated) return aSeated - bSeated
+        if (a.tableNumber !== b.tableNumber) return (a.tableNumber ?? 99) - (b.tableNumber ?? 99)
+        if (a.seatNumber !== b.seatNumber) return (a.seatNumber ?? 99) - (b.seatNumber ?? 99)
+        return a.lastName.localeCompare(b.lastName)
+      }
+      const statusDiff = (statusPriority[a.status] ?? 3) - (statusPriority[b.status] ?? 3)
+      if (statusDiff !== 0) return statusDiff
       const lastNameCmp = a.lastName.localeCompare(b.lastName)
       if (lastNameCmp !== 0) return lastNameCmp
       return a.firstName.localeCompare(b.firstName)
-    }
-    if (sortBy.value === 'table') {
-      const aSeated = a.tableNumber !== null ? 0 : 1
-      const bSeated = b.tableNumber !== null ? 0 : 1
-      if (aSeated !== bSeated) return aSeated - bSeated
-      if (a.tableNumber !== b.tableNumber) return (a.tableNumber ?? 99) - (b.tableNumber ?? 99)
-      if (a.seatNumber !== b.seatNumber) return (a.seatNumber ?? 99) - (b.seatNumber ?? 99)
-      return a.lastName.localeCompare(b.lastName)
-    }
-    const statusDiff = (statusPriority[a.status] ?? 3) - (statusPriority[b.status] ?? 3)
-    if (statusDiff !== 0) return statusDiff
-    const lastNameCmp = a.lastName.localeCompare(b.lastName)
-    if (lastNameCmp !== 0) return lastNameCmp
-    return a.firstName.localeCompare(b.firstName)
-  })
+    })
 })
 
 // Helper functions
 const getInitials = (name: string | null | undefined) => {
   if (!name) return '?'
-  return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
 }
 
 // Check in player function
@@ -357,8 +369,8 @@ const checkInPlayer = async (playerId: string) => {
         tournamentId: selectedTournamentId,
         userId: playerId,
         autoAssign: true,
-        assignmentStrategy: AssignmentStrategy.BALANCED
-      }
+        assignmentStrategy: AssignmentStrategy.BALANCED,
+      },
     })
 
     if (result?.checkInPlayer) {
@@ -374,8 +386,8 @@ const checkInPlayer = async (playerId: string) => {
           input: {
             tournamentId: selectedTournamentId,
             userId: playerId,
-            entryType: EntryType.INITIAL
-          }
+            entryType: EntryType.INITIAL,
+          },
         })
       } catch {
         entrySuccess = false
@@ -397,7 +409,6 @@ const checkInPlayer = async (playerId: string) => {
       // Emit event to notify parent components that players data has changed
       $emit('player-checked-in', { playerId, result: result.checkInPlayer })
     }
-
   } catch (error) {
     console.error('Failed to check in player:', error)
     toast.error(t('toast.checkInFailed'))
@@ -458,16 +469,18 @@ const handleSeatPlayer = async (player: any) => {
         clubTableId: bestTable.table.id,
         userId: player.id,
         seatNumber,
-      }
+      },
     })
 
     await refreshPlayers()
 
-    toast.success(t('toast.seatPlayerSuccess', {
-      name: player.name,
-      table: bestTable.table.tableNumber,
-      seat: seatNumber
-    }))
+    toast.success(
+      t('toast.seatPlayerSuccess', {
+        name: player.name,
+        table: bestTable.table.tableNumber,
+        seat: seatNumber,
+      }),
+    )
 
     // Notify parent to refresh tournament data (updates overview card counts)
     $emit('player-checked-in', { playerId: player.id, result: null })
@@ -487,8 +500,8 @@ const cancelRegistration = async (player: any) => {
     await GqlCancelRegistration({
       input: {
         tournamentId: selectedTournamentId,
-        userId: player.id
-      }
+        userId: player.id,
+      },
     })
     await refreshPlayers()
     toast.success(t('toast.cancelSuccess'))
@@ -524,8 +537,8 @@ const checkInAllPlayers = async () => {
           tournamentId: selectedTournamentId,
           userId: tp.user.id,
           autoAssign: true,
-          assignmentStrategy: AssignmentStrategy.BALANCED
-        }
+          assignmentStrategy: AssignmentStrategy.BALANCED,
+        },
       })
 
       if (result?.checkInPlayer?.seatAssignment) {
@@ -538,8 +551,8 @@ const checkInAllPlayers = async () => {
           input: {
             tournamentId: selectedTournamentId,
             userId: tp.user.id,
-            entryType: EntryType.INITIAL
-          }
+            entryType: EntryType.INITIAL,
+          },
         })
       } catch {
         // Entry failure is non-blocking
@@ -555,10 +568,18 @@ const checkInAllPlayers = async () => {
   await refreshPlayers()
 
   if (failCount > 0) {
-    toast.warning(t('toast.checkInAllPartial', { success: successCount, total: players.length, failed: failCount }))
+    toast.warning(
+      t('toast.checkInAllPartial', {
+        success: successCount,
+        total: players.length,
+        failed: failCount,
+      }),
+    )
   } else if (seatedCount < successCount) {
     const unseated = successCount - seatedCount
-    toast.warning(t('toast.checkInAllSomeUnseated', { seated: seatedCount, count: successCount, unseated }))
+    toast.warning(
+      t('toast.checkInAllSomeUnseated', { seated: seatedCount, count: successCount, unseated }),
+    )
   } else {
     toast.success(t('toast.checkInAllSuccess', { count: successCount }))
   }
@@ -567,7 +588,6 @@ const checkInAllPlayers = async () => {
   $emit('entry-added')
   checkingInAll.value = false
 }
-
 </script>
 
 <style scoped>

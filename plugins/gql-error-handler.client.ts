@@ -34,7 +34,7 @@ export default defineNuxtPlugin(() => {
 
           router.push({
             path: '/login',
-            query: currentPath !== '/login' ? { redirect: currentPath } : undefined
+            query: currentPath !== '/login' ? { redirect: currentPath } : undefined,
           })
         }
         // If refresh succeeded, the token is updated.

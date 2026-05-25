@@ -5,12 +5,14 @@ A professional poker tournament management application built with Nuxt 4, Ionic 
 ## Features
 
 ### **Dashboard & Home**
+
 - **Tournament overview** with active tournaments display
 - **Recent tournaments list** with compact, sorted view (by start time)
 - **Statistics dashboard** with player and tournament metrics
 - **Quick actions** for creating tournaments and managing players
 
 ### **Tournament Management**
+
 - **Live tournament display** with detailed tournament information
 - **Real-time tournament status** tracking (UPCOMING, IN_PROGRESS, COMPLETED)
 - **Tournament structure** with blind levels and timing
@@ -18,13 +20,15 @@ A professional poker tournament management application built with Nuxt 4, Ionic 
 - **Multi-tournament support** with easy navigation
 
 ### **Clock & Blinds**
+
 - **Tournament clock** with real-time countdown
 - **Blind structure progression** with current and next levels
 - **Clock controls** (start, pause, resume, advance level)
 - **Break management** with automatic timing
 - **Level progression** with ante support
 
-### **Player Management**  
+### **Player Management**
+
 - **Player registration** with comprehensive player data
 - **Tournament players list** with search and filtering
 - **Seating chart management** with table assignments
@@ -32,6 +36,7 @@ A professional poker tournament management application built with Nuxt 4, Ionic 
 - **Seating history** and player movement tracking
 
 ### **Seating System**
+
 - **Visual poker table layout** with seat assignments
 - **Table management** with assignment and balancing
 - **Seat assignment tracking** with stack sizes
@@ -39,6 +44,7 @@ A professional poker tournament management application built with Nuxt 4, Ionic 
 - **Real-time seating updates**
 
 ### **Authentication & Clubs**
+
 - **JWT-based authentication** with secure login
 - **Club management** with automatic club selection from login
 - **User profile management** with role-based access
@@ -67,6 +73,7 @@ The application uses a fully-typed GraphQL client with:
 - **Error handling** and loading states
 
 ### Key GraphQL Operations
+
 - `GetTournaments` - Fetch tournaments with filtering
 - `GetTournament` - Single tournament with full details
 - `GetTournamentPlayers` - Player registration data
@@ -85,22 +92,26 @@ The application uses a fully-typed GraphQL client with:
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd pp-tournament-manager
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Configure GraphQL endpoint**
+
    ```bash
    # Update nuxt.config.ts with your GraphQL endpoint
    ```
 
 4. **Start development server**
+
    ```bash
    npm run dev
    ```
@@ -115,7 +126,7 @@ The application uses a fully-typed GraphQL client with:
 ```bash
 # Development
 npm run dev          # Start development server
-npm run build        # Build for production  
+npm run build        # Build for production
 npm run preview      # Preview production build
 npm run generate     # Generate static site
 
@@ -184,25 +195,29 @@ pp-tournament-manager/
 ## Design System
 
 ### Color Scheme
+
 - **Primary Background**: `#18181a` (Dark theme)
-- **Secondary Background**: `#24242a` 
+- **Secondary Background**: `#24242a`
 - **Accent Gold**: Custom gold color for highlights
 - **Border Colors**: Subtle borders with opacity
 - **Text Colors**: Primary white with opacity variants
 
 ### Target Devices
+
 - **Primary**: iPad in landscape mode (1024x768)
 - **Secondary**: iPhone in portrait mode (375x812)
 - **Desktop**: Full responsive support
 
 ### Component Architecture
+
 - **Ion-page**: Full-screen containers
-- **Ion-content**: Scrollable content areas  
+- **Ion-content**: Scrollable content areas
 - **Custom cards**: Tournament and player information
 - **Ion-buttons**: Action buttons with consistent styling
 - **Ion-icons**: Ionicons throughout the interface
 
 ### Key UI Patterns
+
 - **Dashboard cards**: 3-column grid layout for statistics
 - **Compact lists**: Tournament and player listings
 - **Status badges**: Color-coded tournament status
@@ -211,6 +226,7 @@ pp-tournament-manager/
 ## Data Models
 
 ### Tournament (GraphQL)
+
 ```typescript
 interface Tournament {
   id: string
@@ -229,12 +245,13 @@ interface Tournament {
 
 enum TournamentStatus {
   UPCOMING = 'UPCOMING'
-  IN_PROGRESS = 'IN_PROGRESS' 
+  IN_PROGRESS = 'IN_PROGRESS'
   COMPLETED = 'COMPLETED'
 }
 ```
 
 ### User & Club
+
 ```typescript
 interface User {
   id: string
@@ -256,18 +273,21 @@ interface Club {
 ## Development Guidelines
 
 ### Code Style
+
 - **Vue 3 Composition API** for all components
 - **TypeScript strict mode** enabled
 - **Tailwind CSS** for styling with custom PP theme
 - **Ionic components** with custom styling integration
 
 ### State Management
+
 - **Pinia stores** with persistence for auth, club, and tournament data
 - **GraphQL client** with auto-generated types
 - **Composables** for reusable business logic
 - **Local component state** for UI-specific data
 
 ### Localization
+
 - **Belgian-French locale** (fr-BE) for number and date formatting
 - **Euro currency formatting** with proper locale support
 - **Vue I18n** ready for multi-language expansion
@@ -284,16 +304,19 @@ interface Club {
 ## GraphQL Features
 
 ### Type Safety
+
 - Fully generated TypeScript types from schema
 - Type-safe query and mutation functions
 - Automatic client generation with proper typing
 
 ### Real-time Features
+
 - Tournament clock subscriptions
 - Player registration updates
 - Live tournament status changes
 
 ### Error Handling
+
 - GraphQL error parsing and display
 - Network status monitoring
 - Optimistic updates with rollback
@@ -301,12 +324,14 @@ interface Club {
 ## Deployment
 
 ### Web Deployment
+
 ```bash
 npm run build
 npm run preview
 ```
 
 ### Mobile Deployment
+
 ```bash
 npm run build
 npx cap copy
@@ -330,4 +355,4 @@ Private project for poker tournament management.
 
 ---
 
-*Built for professional poker tournament management* 🃏
+_Built for professional poker tournament management_ 🃏

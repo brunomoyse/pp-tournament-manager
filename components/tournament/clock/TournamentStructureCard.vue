@@ -10,17 +10,24 @@
     </div>
 
     <div ref="scrollContainer" class="structure-levels">
-      <div v-for="(level, index) in tournamentLevels" :key="index"
-           :ref="el => setCurrentLevelElement(el, index)"
-           :class="[
-             'structure-level',
-             index === currentLevelIndex ? 'structure-level--active' : 'structure-level--inactive'
-           ]">
+      <div
+        v-for="(level, index) in tournamentLevels"
+        :key="index"
+        :ref="(el) => setCurrentLevelElement(el, index)"
+        :class="[
+          'structure-level',
+          index === currentLevelIndex ? 'structure-level--active' : 'structure-level--inactive',
+        ]"
+      >
         <div class="structure-level-left">
-          <div :class="[
-            'structure-level-number',
-            index === currentLevelIndex ? 'structure-level-number--active' : 'structure-level-number--inactive'
-          ]">
+          <div
+            :class="[
+              'structure-level-number',
+              index === currentLevelIndex
+                ? 'structure-level-number--active'
+                : 'structure-level-number--inactive',
+            ]"
+          >
             {{ index + 1 }}
           </div>
           <div>
@@ -28,16 +35,17 @@
               {{ level.isBreak ? t('labels.break') : `${level.smallBlind}/${level.bigBlind}` }}
             </div>
             <div class="structure-level-duration">
-              {{ level.isBreak ? `${level.breakDurationMinutes || level.durationMinutes} ${t('labels.minutes')}` : `${level.durationMinutes} ${t('labels.minutes')}` }}
+              {{
+                level.isBreak
+                  ? `${level.breakDurationMinutes || level.durationMinutes} ${t('labels.minutes')}`
+                  : `${level.durationMinutes} ${t('labels.minutes')}`
+              }}
             </div>
           </div>
         </div>
 
         <div class="structure-level-right">
-          <span
-            v-if="lateRegLevel && (index + 1) === lateRegLevel"
-            class="structure-late-reg-badge"
-          >
+          <span v-if="lateRegLevel && index + 1 === lateRegLevel" class="structure-late-reg-badge">
             {{ t('labels.lateRegCutoff') }}
           </span>
           <div v-if="level.ante" class="structure-ante">
@@ -71,49 +79,53 @@ const scrollContainer = ref<HTMLElement>()
 const currentLevelElement = ref<HTMLElement>()
 
 const currentLevelIndex = computed(() => {
-    if (tournamentStore.clock?.currentLevel) {
-        return tournamentStore.clock.currentLevel - 1
-    }
-    return 0
+  if (tournamentStore.clock?.currentLevel) {
+    return tournamentStore.clock.currentLevel - 1
+  }
+  return 0
 })
 
 // Function to set the current level element ref
 const setCurrentLevelElement = (el: Element | ComponentPublicInstance | null, index: number) => {
-    if (el && index === currentLevelIndex.value) {
-        currentLevelElement.value = el as HTMLElement
-    }
+  if (el && index === currentLevelIndex.value) {
+    currentLevelElement.value = el as HTMLElement
+  }
 }
 
 // Auto-scroll to current level when it changes
 const scrollToCurrentLevel = () => {
-    if (scrollContainer.value && currentLevelElement.value) {
-        const container = scrollContainer.value
-        const element = currentLevelElement.value
+  if (scrollContainer.value && currentLevelElement.value) {
+    const container = scrollContainer.value
+    const element = currentLevelElement.value
 
-        // Calculate the optimal scroll position to keep current level near the top
-        const elementTop = element.offsetTop - container.offsetTop
+    // Calculate the optimal scroll position to keep current level near the top
+    const elementTop = element.offsetTop - container.offsetTop
 
-        // Smooth scroll to position the current level near the top with some padding
-        container.scrollTo({
-            top: Math.max(0, elementTop - 20), // 20px offset from top, never negative
-            behavior: 'smooth'
-        })
-    }
+    // Smooth scroll to position the current level near the top with some padding
+    container.scrollTo({
+      top: Math.max(0, elementTop - 20), // 20px offset from top, never negative
+      behavior: 'smooth',
+    })
+  }
 }
 
 // Watch for changes in current level and scroll accordingly
-watch(currentLevelIndex, () => {
+watch(
+  currentLevelIndex,
+  () => {
     // Use nextTick to ensure DOM has updated before scrolling
     nextTick(() => {
-        scrollToCurrentLevel()
+      scrollToCurrentLevel()
     })
-}, { flush: 'post' })
+  },
+  { flush: 'post' },
+)
 
 // Also scroll on mount if there's already a current level
 onMounted(() => {
-    nextTick(() => {
-        scrollToCurrentLevel()
-    })
+  nextTick(() => {
+    scrollToCurrentLevel()
+  })
 })
 </script>
 

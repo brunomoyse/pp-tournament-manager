@@ -13,7 +13,9 @@
 
       <!-- Body -->
       <div class="pp-modal-body">
-        <p class="confirm-message">{{ t('templates.deleteConfirmMessage', { name: templateName }) }}</p>
+        <p class="confirm-message">
+          {{ t('templates.deleteConfirmMessage', { name: templateName }) }}
+        </p>
         <p v-if="isPayout" class="warning-message">{{ t('templates.deleteInUseWarning') }}</p>
       </div>
 

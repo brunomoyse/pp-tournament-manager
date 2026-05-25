@@ -1,6 +1,6 @@
 import { useAuthStore } from '~/stores/useAuthStore'
 
-export default defineNuxtRouteMiddleware((to) => {
+export default defineNuxtRouteMiddleware(() => {
   const authStore = useAuthStore()
 
   // If not authenticated, redirect to login
