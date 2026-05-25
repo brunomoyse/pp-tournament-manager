@@ -1,0 +1,119 @@
+/*
+ * PocketPair design tokens & shared utilities — synced copy.
+ *
+ * CANONICAL SOURCE: pp-landing/src/design-tokens.css
+ *
+ * SYNC RULE: edits should be made in the landing copy first, then copied
+ * here. Each repo deploys independently (separate Docker contexts), so
+ * the file is duplicated rather than linked.
+ *
+ * Anything app-specific (Ionic CSS-variable bindings, manager-only
+ * utilities) stays in this app's main.css, not here.
+ */
+
+@theme {
+  --color-pp-bg: #18181a;
+  --color-pp-surface: #1f1f22;
+  --color-pp-surface-2: #26262a;
+  --color-pp-border: #2a2a2e;
+  --color-pp-border-strong: #3a3a40;
+  --color-pp-text: #fafaf9;
+  --color-pp-text-muted: #a1a1aa;
+  --color-pp-text-dim: #71717a;
+  --color-pp-gold: #fee78a;
+  --color-pp-gold-strong: #fcd34d;
+  --color-pp-gold-deep: #b8860b;
+  --color-pp-danger: #ef4444;
+  --color-pp-success: #10b981;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+
+  --shadow-glow: 0 0 0 1px rgba(254, 231, 138, 0.12), 0 8px 40px -8px rgba(254, 231, 138, 0.18);
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 20px 40px -20px rgba(0, 0, 0, 0.6);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-pp-bg);
+    color: var(--color-pp-text);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01", "ss03";
+  }
+
+  ::selection {
+    background-color: var(--color-pp-gold);
+    color: var(--color-pp-bg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-pp-gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    color: var(--color-pp-text);
+  }
+
+  .font-mono, code, kbd {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .pp-grain {
+    background-image:
+      radial-gradient(at 0% 0%, rgba(254, 231, 138, 0.06) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(254, 231, 138, 0.04) 0px, transparent 50%);
+  }
+
+  .pp-card {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+    border: 1px solid var(--color-pp-border);
+    box-shadow: var(--shadow-card);
+  }
+
+  .pp-glass {
+    background: rgba(24, 24, 26, 0.6);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid var(--color-pp-border);
+  }
+
+  .pp-gradient-text {
+    background: linear-gradient(180deg, #fafaf9 0%, #a1a1aa 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .pp-gold-text {
+    background: linear-gradient(180deg, #fee78a 0%, #b8860b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
