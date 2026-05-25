@@ -2,10 +2,12 @@
   <IonPage class="page-bg">
     <IonContent class="content-bg">
       <div class="page-container">
-        <!-- Page Header -->
-        <div class="page-header">
-          <h1 class="page-title">{{ t('templates.title') }}</h1>
-        </div>
+        <PpFadeUp>
+          <div class="page-header">
+            <p class="eyebrow">{{ t('nav.templates') }}</p>
+            <h1 class="page-title">{{ t('templates.title') }}</h1>
+          </div>
+        </PpFadeUp>
 
         <!-- Tabs -->
         <div class="tabs">
@@ -374,10 +376,22 @@ onMounted(fetchAll)
   margin-bottom: 1.25rem;
 }
 
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--color-pp-gold-deep);
+}
+
 .page-title {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
-  font-weight: 700;
+  margin-top: 0.65rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3vw + 0.5rem, 2.5rem);
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   color: var(--color-pp-text);
 }
 
