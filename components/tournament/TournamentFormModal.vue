@@ -381,13 +381,13 @@ const closeModal = () => {
   position: sticky;
   top: 0;
   z-index: 10;
-  background-color: var(--pp-bg-secondary);
+  background-color: var(--color-pp-surface-2);
 }
 
 .tournament-form-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .tournament-form-close-icon {
@@ -406,7 +406,7 @@ const closeModal = () => {
 .tournament-form-section-title {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .tournament-form-field {
@@ -441,9 +441,9 @@ const closeModal = () => {
 
 .tournament-form-template-preview {
   padding: 0.75rem;
-  background-color: var(--pp-bg-primary);
+  background-color: var(--color-pp-bg);
   border-radius: 0.5rem;
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
 }
 
 .tournament-form-template-preview-label {
@@ -474,7 +474,7 @@ const closeModal = () => {
   justify-content: flex-end;
   gap: 0.75rem;
   padding-top: 1rem;
-  border-top: 1px solid var(--pp-border);
+  border-top: 1px solid var(--color-pp-border-strong);
 }
 
 .tournament-form-spinner {

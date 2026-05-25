@@ -186,7 +186,7 @@ const closeModal = () => {
 .modal-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .modal-subtitle {
@@ -215,21 +215,21 @@ const closeModal = () => {
   border-radius: 0.5rem;
   font-size: 0.875rem;
   font-weight: 500;
-  border: 1px solid var(--pp-border);
-  background-color: var(--pp-bg-primary);
+  border: 1px solid var(--color-pp-border-strong);
+  background-color: var(--color-pp-bg);
   color: rgba(255, 255, 255, 0.7);
   transition: all 0.2s ease;
   cursor: pointer;
 }
 
 .entry-type-button:hover {
-  border-color: var(--pp-border);
+  border-color: var(--color-pp-border-strong);
   color: #ffffff;
 }
 
 .entry-type-button--active {
   background-color: rgba(254, 231, 138, 0.2);
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   border-color: rgba(254, 231, 138, 0.4);
 }
 

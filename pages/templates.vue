@@ -344,11 +344,11 @@ onMounted(fetchAll)
 
 <style scoped>
 .page-bg {
-  background-color: var(--pp-bg-primary);
+  background-color: var(--color-pp-bg);
 }
 
 .content-bg {
-  background-color: var(--pp-bg-primary);
+  background-color: var(--color-pp-bg);
 }
 
 .page-container {
@@ -378,7 +378,7 @@ onMounted(fetchAll)
   font-size: 1.875rem;
   line-height: 2.25rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 /* Tabs */
@@ -386,10 +386,10 @@ onMounted(fetchAll)
   display: flex;
   gap: 0.25rem;
   margin-bottom: 1.5rem;
-  background-color: var(--pp-bg-secondary);
+  background-color: var(--color-pp-surface-2);
   border-radius: 0.75rem;
   padding: 0.25rem;
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
 }
 
 .tab {
@@ -405,7 +405,7 @@ onMounted(fetchAll)
 
 .tab--active {
   background-color: rgba(254, 231, 138, 0.15);
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .tab--inactive {
@@ -449,8 +449,8 @@ onMounted(fetchAll)
 
 .search-input {
   padding: 0.5rem 1rem 0.5rem 2.5rem;
-  background-color: var(--pp-bg-primary);
-  border: 1px solid var(--pp-border);
+  background-color: var(--color-pp-bg);
+  border: 1px solid var(--color-pp-border-strong);
   border-radius: 0.5rem;
   color: #ffffff;
   width: 100%;
@@ -464,7 +464,7 @@ onMounted(fetchAll)
 
 .search-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px var(--pp-accent-gold);
+  box-shadow: 0 0 0 2px var(--color-pp-gold);
 }
 
 .icon-md {

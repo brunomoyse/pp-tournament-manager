@@ -95,11 +95,11 @@ const eliminationPercent = computed(() => {
 
 <style scoped>
 .players-card {
-  background-color: var(--pp-bg-secondary);
+  background-color: var(--color-pp-surface-2);
   border-radius: 1rem;
   padding: 1.5rem;
   box-shadow: var(--pp-shadow-sm);
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
 }
 
 .players-header {
@@ -112,7 +112,7 @@ const eliminationPercent = computed(() => {
 .players-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .players-header-icon {
@@ -128,7 +128,7 @@ const eliminationPercent = computed(() => {
 .players-hero-count {
   font-size: 2.25rem;
   font-weight: 700;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .players-hero-cap {
@@ -224,13 +224,13 @@ const eliminationPercent = computed(() => {
 
 .players-progress-track {
   width: 100%;
-  background-color: var(--pp-bg-primary);
+  background-color: var(--color-pp-bg);
   border-radius: 9999px;
   height: 0.5rem;
 }
 
 .players-progress-fill {
-  background-color: var(--pp-accent-gold);
+  background-color: var(--color-pp-gold);
   height: 0.5rem;
   border-radius: 9999px;
   transition: all 300ms;

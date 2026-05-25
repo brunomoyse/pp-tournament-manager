@@ -257,11 +257,11 @@ const executeStatusChange = async () => {
 
 <style scoped>
 .status-card {
-  background-color: var(--pp-bg-secondary);
+  background-color: var(--color-pp-surface-2);
   border-radius: 1rem;
   padding: 1.5rem;
   box-shadow: var(--pp-shadow-sm);
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
 }
 
 .status-card__header {
@@ -274,7 +274,7 @@ const executeStatusChange = async () => {
 .status-card__title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .status-card__icon {
@@ -376,7 +376,7 @@ const executeStatusChange = async () => {
 .confirm-dialog__title {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
   margin-bottom: 0.75rem;
 }
 

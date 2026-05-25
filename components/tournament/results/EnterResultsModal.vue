@@ -536,7 +536,7 @@ const closeModal = () => {
 .modal-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .modal-subtitle {
@@ -562,7 +562,7 @@ const closeModal = () => {
 }
 
 .step-bar--active {
-  background-color: var(--pp-accent-gold);
+  background-color: var(--color-pp-gold);
 }
 
 .step-bar--inactive {
@@ -611,7 +611,7 @@ const closeModal = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   font-weight: 700;
   font-size: 0.875rem;
   flex-shrink: 0;
@@ -650,7 +650,7 @@ const closeModal = () => {
 
 .move-button:hover:not(:disabled) {
   color: #ffffff;
-  background-color: var(--pp-bg-primary);
+  background-color: var(--color-pp-bg);
 }
 
 .move-button--disabled,
@@ -706,7 +706,7 @@ const closeModal = () => {
 
 .payout-amount {
   font-weight: 600;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   font-size: 0.875rem;
 }
 
@@ -728,9 +728,9 @@ const closeModal = () => {
   width: 1rem;
   height: 1rem;
   border-radius: 0.25rem;
-  border: 1px solid var(--pp-border);
-  background-color: var(--pp-bg-primary);
-  accent-color: var(--pp-accent-gold);
+  border: 1px solid var(--color-pp-border-strong);
+  background-color: var(--color-pp-bg);
+  accent-color: var(--color-pp-gold);
 }
 
 .deal-toggle-label {
@@ -756,8 +756,8 @@ const closeModal = () => {
   border-radius: 0.5rem;
   font-size: 0.75rem;
   font-weight: 500;
-  border: 1px solid var(--pp-border);
-  background-color: var(--pp-bg-primary);
+  border: 1px solid var(--color-pp-border-strong);
+  background-color: var(--color-pp-bg);
   color: rgba(255, 255, 255, 0.7);
   transition: all 0.2s ease;
   cursor: pointer;
@@ -765,7 +765,7 @@ const closeModal = () => {
 
 .deal-type-button--active {
   background-color: rgba(254, 231, 138, 0.2);
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   border-color: rgba(254, 231, 138, 0.4);
 }
 
@@ -780,9 +780,9 @@ const closeModal = () => {
   align-items: center;
   gap: 0.5rem;
   padding: 0.375rem 0.75rem;
-  background-color: var(--pp-bg-primary);
+  background-color: var(--color-pp-bg);
   border-radius: 0.5rem;
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
   cursor: pointer;
   font-size: 0.875rem;
 }
@@ -795,9 +795,9 @@ const closeModal = () => {
   width: 0.75rem;
   height: 0.75rem;
   border-radius: 0.25rem;
-  border: 1px solid var(--pp-border);
-  background-color: var(--pp-bg-primary);
-  accent-color: var(--pp-accent-gold);
+  border: 1px solid var(--color-pp-border-strong);
+  background-color: var(--color-pp-bg);
+  accent-color: var(--color-pp-gold);
 }
 
 .affected-position-label {
@@ -855,7 +855,7 @@ const closeModal = () => {
 
 .summary-title {
   font-weight: 600;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .summary-row {
@@ -873,7 +873,7 @@ const closeModal = () => {
 }
 
 .summary-position {
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   font-weight: 700;
 }
 
@@ -882,7 +882,7 @@ const closeModal = () => {
 }
 
 .summary-amount {
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   font-weight: 500;
 }
 

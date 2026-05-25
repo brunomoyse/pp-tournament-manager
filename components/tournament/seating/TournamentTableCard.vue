@@ -261,11 +261,11 @@ const handleMovePlayer = (data: { playerId: string, fromTable: number, fromSeat:
 
 <style scoped>
 .table-card {
-  background-color: var(--pp-bg-secondary);
+  background-color: var(--color-pp-surface-2);
   border-radius: 1rem;
   padding: 1.5rem;
   box-shadow: var(--pp-shadow-sm);
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
 }
 
 /* Header */
@@ -285,7 +285,7 @@ const handleMovePlayer = (data: { playerId: string, fromTable: number, fromSeat:
 .table-card__title {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .table-card__active-badge {
@@ -407,9 +407,9 @@ const handleMovePlayer = (data: { playerId: string, fromTable: number, fromSeat:
 }
 
 .table-card__seat--occupied {
-  background-color: var(--pp-accent-gold);
-  color: var(--pp-bg-primary);
-  border-color: var(--pp-accent-gold);
+  background-color: var(--color-pp-gold);
+  color: var(--color-pp-bg);
+  border-color: var(--color-pp-gold);
   box-shadow: 0 0 12px rgba(254, 231, 138, 0.4);
   transform: scale(1.05);
 }
@@ -433,7 +433,7 @@ const handleMovePlayer = (data: { playerId: string, fromTable: number, fromSeat:
   position: absolute;
   font-size: 10px;
   font-weight: 600;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
   white-space: nowrap;
   left: 50%;
   transform: translateX(-50%);
@@ -491,7 +491,7 @@ const handleMovePlayer = (data: { playerId: string, fromTable: number, fromSeat:
 }
 
 .table-card__player-seat {
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   font-weight: 500;
 }
 

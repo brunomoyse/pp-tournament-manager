@@ -212,11 +212,11 @@ onMounted(() => {
 
 <style scoped>
 .page-bg {
-  background-color: var(--pp-bg-primary);
+  background-color: var(--color-pp-bg);
 }
 
 .content-bg {
-  background-color: var(--pp-bg-primary);
+  background-color: var(--color-pp-bg);
 }
 
 .page-container {
@@ -248,7 +248,7 @@ onMounted(() => {
   font-size: 1.875rem;
   line-height: 2.25rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .icon-md {
@@ -288,8 +288,8 @@ onMounted(() => {
 .search-input {
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 2.5rem;
-  background-color: var(--pp-bg-secondary);
-  border: 1px solid var(--pp-border);
+  background-color: var(--color-pp-surface-2);
+  border: 1px solid var(--color-pp-border-strong);
   border-radius: 0.5rem;
   color: #ffffff;
 }
@@ -300,14 +300,14 @@ onMounted(() => {
 
 .search-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px var(--pp-accent-gold);
-  border-color: var(--pp-accent-gold);
+  box-shadow: 0 0 0 2px var(--color-pp-gold);
+  border-color: var(--color-pp-gold);
 }
 
 .status-filter {
   padding: 0.75rem 1rem;
-  background-color: var(--pp-bg-secondary);
-  border: 1px solid var(--pp-border);
+  background-color: var(--color-pp-surface-2);
+  border: 1px solid var(--color-pp-border-strong);
   border-radius: 0.5rem;
   color: #ffffff;
   min-width: 160px;
@@ -315,12 +315,12 @@ onMounted(() => {
 
 .status-filter:focus {
   outline: none;
-  box-shadow: 0 0 0 2px var(--pp-accent-gold);
-  border-color: var(--pp-accent-gold);
+  box-shadow: 0 0 0 2px var(--color-pp-gold);
+  border-color: var(--color-pp-gold);
 }
 
 select option {
-  background-color: var(--pp-bg-secondary);
+  background-color: var(--color-pp-surface-2);
   color: white;
 }
 
@@ -335,7 +335,7 @@ select option {
 .spinner {
   width: 2rem;
   height: 2rem;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 /* Tournaments Grid */
@@ -352,10 +352,10 @@ select option {
 }
 
 .tournament-card {
-  background-color: var(--pp-bg-secondary);
+  background-color: var(--color-pp-surface-2);
   border-radius: 0.75rem;
   padding: 1rem;
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
 }
 
 .card-header {
@@ -373,13 +373,13 @@ select option {
 .card-title {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
   margin-bottom: 0.25rem;
   transition: color 0.2s ease;
 }
 
 .tournament-card:hover .card-title {
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .card-description {
@@ -399,7 +399,7 @@ select option {
 }
 
 .card-buyin {
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   font-weight: 600;
 }
 
@@ -415,7 +415,7 @@ select option {
 }
 
 .tournament-card:hover .card-chevron {
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 /* Empty State */
@@ -427,13 +427,13 @@ select option {
 .empty-icon-wrapper {
   width: 5rem;
   height: 5rem;
-  background-color: var(--pp-bg-secondary);
+  background-color: var(--color-pp-surface-2);
   border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1.5rem;
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
 }
 
 .empty-icon {

@@ -276,7 +276,7 @@ const closeModal = () => emit('close')
 .modal-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .close-icon {
@@ -371,7 +371,7 @@ const closeModal = () => emit('close')
 
 .break-toggle--active {
   background-color: rgba(254, 231, 138, 0.15);
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .remove-btn {
@@ -410,7 +410,7 @@ const closeModal = () => emit('close')
   justify-content: flex-end;
   gap: 0.75rem;
   padding-top: 1rem;
-  border-top: 1px solid var(--pp-border);
+  border-top: 1px solid var(--color-pp-border-strong);
 }
 
 .spinner {

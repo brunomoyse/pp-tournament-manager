@@ -14,21 +14,11 @@
  */
 
 /* ============================================
-   Compatibility aliases (legacy --pp-* names)
-   Each migrated component should switch to the shared names; this block
-   shrinks as the migration progresses.
+   Legacy palette + shadows still consumed by .pp-status-badge variants,
+   form/button hover effects, etc. Token aliases for the old --pp-bg-primary
+   family have been removed now that every consumer migrated to --color-pp-*.
    ============================================ */
 :root {
-  --pp-bg-primary: var(--color-pp-bg);
-  --pp-bg-secondary: var(--color-pp-surface-2);
-  --pp-accent-gold: var(--color-pp-gold);
-  --pp-text-primary: var(--color-pp-text);
-  --pp-text-secondary: var(--color-pp-text-muted);
-  --pp-border: var(--color-pp-border-strong);
-
-  --pp-font-sans: var(--font-sans);
-  --pp-font-mono: var(--font-mono);
-
   /* Status palette (still consumed by .pp-status-badge variants) */
   --pp-green-400: #4ade80;
   --pp-green-500: #22c55e;

@@ -77,11 +77,11 @@ defineExpose({ refreshStats })
 
 <style scoped>
 .stats-card {
-  background-color: var(--pp-bg-secondary);
+  background-color: var(--color-pp-surface-2);
   border-radius: 1rem;
   padding: 2rem;
   box-shadow: var(--pp-shadow-sm);
-  border: 1px solid var(--pp-border);
+  border: 1px solid var(--color-pp-border-strong);
 }
 
 .stats-header {
@@ -94,7 +94,7 @@ defineExpose({ refreshStats })
 .stats-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .stats-header-icon {
@@ -110,7 +110,7 @@ defineExpose({ refreshStats })
 .stats-total-amount {
   font-size: 1.875rem;
   font-weight: 700;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   margin-bottom: 1rem;
 }
 

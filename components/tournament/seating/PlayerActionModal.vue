@@ -195,7 +195,7 @@ watch(() => props.isOpen, (isOpen) => {
 .modal-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .player-info-card {
@@ -227,7 +227,7 @@ watch(() => props.isOpen, (isOpen) => {
 .player-avatar-text {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
 }
 
 .player-details {
@@ -237,7 +237,7 @@ watch(() => props.isOpen, (isOpen) => {
 .player-name {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .player-location {
@@ -273,7 +273,7 @@ watch(() => props.isOpen, (isOpen) => {
 .actions-title {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
   margin-bottom: 1rem;
 }
 

@@ -265,8 +265,8 @@ const closeModal = () => {
   font-size: 0.875rem;
   font-weight: 500;
   transition: all 0.2s ease;
-  border: 1px solid var(--pp-border);
-  background-color: var(--pp-bg-primary);
+  border: 1px solid var(--color-pp-border-strong);
+  background-color: var(--color-pp-bg);
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
 }
@@ -277,7 +277,7 @@ const closeModal = () => {
 
 .format-button--active {
   background-color: rgba(254, 231, 138, 0.2);
-  color: var(--pp-accent-gold);
+  color: var(--color-pp-gold);
   border-color: rgba(254, 231, 138, 0.4);
 }
 
@@ -324,9 +324,9 @@ const closeModal = () => {
 .table-checkbox {
   width: 1rem;
   height: 1rem;
-  accent-color: var(--pp-accent-gold);
-  background-color: var(--pp-bg-primary);
-  border: 1px solid var(--pp-border);
+  accent-color: var(--color-pp-gold);
+  background-color: var(--color-pp-bg);
+  border: 1px solid var(--color-pp-border-strong);
   border-radius: 0.25rem;
 }
 

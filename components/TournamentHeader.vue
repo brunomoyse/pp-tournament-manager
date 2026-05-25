@@ -51,7 +51,7 @@ const selectedId = computed({
 .header-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--pp-text-primary);
+  color: var(--color-pp-text);
 }
 
 .header-subtitle-row {
@@ -63,7 +63,7 @@ const selectedId = computed({
 .header-club-name {
   font-size: 0.875rem;
   opacity: 0.7;
-  color: var(--pp-text-secondary);
+  color: var(--color-pp-text-muted);
 }
 
 .header-status {
@@ -79,11 +79,11 @@ const selectedId = computed({
 }
 
 .status-dot--connected {
-  background-color: var(--pp-accent-gold);
+  background-color: var(--color-pp-gold);
 }
 
 .status-dot--reconnecting {
-  background-color: var(--pp-text-secondary);
+  background-color: var(--color-pp-text-muted);
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
@@ -104,7 +104,7 @@ const selectedId = computed({
   font-size: 0.75rem;
   opacity: 0.7;
   text-transform: capitalize;
-  color: var(--pp-text-secondary);
+  color: var(--color-pp-text-muted);
 }
 
 .header-last-update {
