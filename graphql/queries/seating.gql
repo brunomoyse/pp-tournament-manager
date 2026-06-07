@@ -13,9 +13,11 @@ query GetTournamentSeatingChart($tournamentId: UUID!) {
       seats {
         assignment {
           userId
+          registeredPlayerId
           seatNumber
           stackSize
         }
+        displayName
         player {
           id
           firstName
@@ -24,9 +26,13 @@ query GetTournamentSeatingChart($tournamentId: UUID!) {
       }
     }
     unassignedPlayers {
-      id
-      firstName
-      lastName
+      registeredPlayerId
+      displayName
+      user {
+        id
+        firstName
+        lastName
+      }
     }
   }
 }
@@ -39,6 +45,7 @@ query GetTableSeatAssignments($clubTableId: UUID!) {
       stackSize
       assignedAt
     }
+    displayName
     player {
       id
       firstName

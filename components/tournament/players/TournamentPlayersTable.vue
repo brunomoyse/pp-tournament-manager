@@ -246,15 +246,16 @@ const { data: seatingData, refresh: refreshSeating } = await useLazyAsyncData(
   () => GqlGetTournamentSeatingChart({ tournamentId: selectedTournamentId }),
 )
 
-// Build lookup map: userId -> { tableNumber, seatNumber }
+// Build lookup map: userId or registeredPlayerId -> { tableNumber, seatNumber }
 const seatLookup = computed(() => {
   const map = new Map<string, { tableNumber: number; seatNumber: number }>()
   const tables = seatingData.value?.tournamentSeatingChart?.tables || []
   for (const tableData of tables) {
     for (const seat of tableData.seats) {
-      const userId = seat.assignment?.userId || seat.player?.id
-      if (userId) {
-        map.set(userId, {
+      // Try userId first, fall back to registeredPlayerId (always present)
+      const key = seat.assignment?.userId || seat.assignment?.registeredPlayerId
+      if (key) {
+        map.set(key, {
           tableNumber: tableData.table.tableNumber,
           seatNumber: seat.assignment.seatNumber,
         })
@@ -291,33 +292,49 @@ const statusPriority: Record<string, number> = {
 const filteredPlayers = computed(() => {
   return tournamentPlayers.value
     .filter((tp) => {
-      const firstName = tp.user.firstName || ''
-      const lastName = tp.user.lastName || ''
-      const username = tp.user.username || ''
+      // Prefer displayName, fall back to user fields if available
       const displayName =
-        lastName && firstName ? `${lastName} ${firstName}` : `${firstName} ${lastName}`.trim()
+        tp.displayName ||
+        (tp.user
+          ? tp.user.lastName && tp.user.firstName
+            ? `${tp.user.lastName} ${tp.user.firstName}`
+            : `${tp.user.firstName || ''} ${tp.user.lastName || ''}`.trim()
+          : '')
+      const username = tp.user?.username || ''
+      const email = tp.user?.email || ''
 
       const matchesSearch =
         (displayName || username).toLowerCase().includes(playerSearch.value.toLowerCase()) ||
-        tp.user.email.toLowerCase().includes(playerSearch.value.toLowerCase())
+        email.toLowerCase().includes(playerSearch.value.toLowerCase())
       const matchesFilter =
         playerFilter.value === 'all' || tp.registration.status === playerFilter.value
       return matchesSearch && matchesFilter
     })
     .map((tp) => {
-      const firstName = tp.user.firstName || ''
-      const lastName = tp.user.lastName || ''
-      const username = tp.user.username || ''
-      const displayName =
-        lastName && firstName ? `${lastName} ${firstName}` : `${firstName} ${lastName}`.trim()
-      const seat = seatLookup.value.get(tp.user.id)
+      // Use displayName directly, fall back to building from user fields
+      const displayNameFinal =
+        tp.displayName ||
+        (tp.user
+          ? tp.user.lastName && tp.user.firstName
+            ? `${tp.user.lastName} ${tp.user.firstName}`
+            : `${tp.user.firstName || ''} ${tp.user.lastName || ''}`.trim()
+          : '')
+      const firstName = tp.user?.firstName || ''
+      const lastName = tp.user?.lastName || ''
+      const username = tp.user?.username || ''
+      const email = tp.user?.email || ''
+
+      // Use userId if available, otherwise use registeredPlayerId (always present)
+      const playerId = tp.user?.id || tp.registration.registeredPlayerId
+      const seat = seatLookup.value.get(playerId)
+
       return {
-        id: tp.user.id,
+        id: playerId,
         registrationId: tp.registration.id,
         lastName,
         firstName,
-        name: displayName || username || 'Unknown',
-        email: tp.user.email,
+        name: displayNameFinal || username || email || 'Unknown',
+        email,
         status: tp.registration.status,
         registrationTime: tp.registration.registrationTime,
         notes: tp.registration.notes,
@@ -364,6 +381,7 @@ const checkInPlayer = async (playerId: string) => {
   try {
     checkingIn.value = playerId
 
+    // playerId here is either userId or registeredPlayerId; pass it as userId for the mutation
     const result = await GqlCheckInPlayer({
       input: {
         tournamentId: selectedTournamentId,
@@ -532,10 +550,12 @@ const checkInAllPlayers = async () => {
 
   for (const tp of players) {
     try {
+      // Use userId if available, otherwise use registeredPlayerId
+      const playerId = tp.user?.id || tp.registration.registeredPlayerId
       const result = await GqlCheckInPlayer({
         input: {
           tournamentId: selectedTournamentId,
-          userId: tp.user.id,
+          userId: playerId,
           autoAssign: true,
           assignmentStrategy: AssignmentStrategy.BALANCED,
         },
@@ -550,7 +570,7 @@ const checkInAllPlayers = async () => {
         await GqlAddTournamentEntry({
           input: {
             tournamentId: selectedTournamentId,
-            userId: tp.user.id,
+            userId: playerId,
             entryType: EntryType.INITIAL,
           },
         })

@@ -17,6 +17,13 @@ export interface Tournament {
   title: string
   updatedAt?: string
 
+  earlyBirdBonusChips?: number | null
+  levelTwoBonusChips?: number | null
+  voucherValueCents?: number
+  rebuyMax?: number | null
+  addonChips?: number | null
+  addonPriceCents?: number | null
+
   clock?: TournamentClock | null
   club?: Club
   registrations: TournamentRegistration[]
@@ -36,7 +43,9 @@ export type TournamentLiveStatus =
 export interface TournamentRegistration {
   id: string
   tournamentId?: string
-  userId: string
+  userId?: string | null
+  registeredPlayerId?: string
+  displayName?: string
   notes?: string | null
   registrationTime: string
   status: RegistrationStatus
@@ -54,7 +63,9 @@ export type RegistrationStatus =
 export interface TournamentResult {
   id: string
   tournamentId: string
-  userId: string
+  userId?: string | null
+  registeredPlayerId?: string
+  displayName?: string
   finalPosition: number
   prizeCents: number
   points: number
@@ -117,12 +128,13 @@ export interface BlindStructureTemplate {
 }
 
 // Tournament Entry types (buy-ins, rebuys, add-ons)
-export type EntryType = 'INITIAL' | 'REBUY' | 'RE_ENTRY' | 'ADDON'
+export type EntryType = 'INITIAL' | 'REBUY' | 'RE_ENTRY' | 'ADDON' | 'VOUCHER' | 'BONUS'
 
 export interface TournamentEntry {
   id: string
   tournamentId: string
-  userId: string
+  userId?: string | null
+  registeredPlayerId?: string
   entryType: EntryType
   amountCents: number
   chipsReceived?: number | null
@@ -206,7 +218,9 @@ export type LeaderboardPeriod =
   | 'LAST_7_DAYS'
 
 export interface LeaderboardEntry {
-  user: User
+  registeredPlayerId?: string
+  displayName?: string
+  user?: User | null
   rank: number
   totalTournaments: number
   totalBuyIns: number
@@ -227,10 +241,11 @@ export interface LeaderboardResponse {
   period: LeaderboardPeriod
 }
 
-// Tournament Player (registration + user)
+// Tournament Player (registration + roster display name + optional app user)
 export interface TournamentPlayer {
   registration: TournamentRegistration
-  user: User
+  displayName: string
+  user?: User | null
 }
 
 // Input types for mutations
@@ -299,6 +314,11 @@ export interface CreateTournamentInput {
   rakeCents?: number
   seatCap?: number
   earlyBirdBonusChips?: number
+  levelTwoBonusChips?: number
+  voucherValueCents?: number
+  rebuyMax?: number
+  addonChips?: number
+  addonPriceCents?: number
   lateRegistrationLevel?: number
   templateId?: string
   structure?: TournamentStructureInput[]
@@ -314,6 +334,11 @@ export interface UpdateTournamentInput {
   rakeCents?: number
   seatCap?: number
   earlyBirdBonusChips?: number
+  levelTwoBonusChips?: number
+  voucherValueCents?: number
+  rebuyMax?: number
+  addonChips?: number
+  addonPriceCents?: number
   lateRegistrationLevel?: number
   templateId?: string
   structure?: TournamentStructureInput[]
@@ -329,6 +354,11 @@ export interface TournamentFormData {
   rakeCents: number
   seatCap: number | null
   earlyBirdBonusChips: number | null
+  levelTwoBonusChips: number | null
+  voucherValueCents: number | null
+  rebuyMax: number | null
+  addonChips: number | null
+  addonPriceCents: number | null
   lateRegistrationLevel: number | null
   templateId: string
 }

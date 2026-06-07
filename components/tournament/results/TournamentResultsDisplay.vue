@@ -107,13 +107,18 @@ const finishedPlayers = computed<FinishedPlayer[]>(() => {
         tp.registration.status === 'CHECKED_IN',
     )
     .map((tp: any) => {
-      const firstName = tp.user.firstName || ''
-      const lastName = tp.user.lastName || ''
+      // Prefer displayName, fall back to building from user fields
       const displayName =
-        lastName && firstName ? `${lastName} ${firstName}` : `${firstName} ${lastName}`.trim()
+        tp.displayName ||
+        (tp.user
+          ? tp.user.lastName && tp.user.firstName
+            ? `${tp.user.lastName} ${tp.user.firstName}`
+            : `${tp.user.firstName || ''} ${tp.user.lastName || ''}`.trim()
+          : '')
+      const playerId = tp.user?.id || tp.registration.registeredPlayerId
       return {
-        id: tp.user.id,
-        name: displayName || tp.user.username || tp.user.email,
+        id: playerId,
+        name: displayName || tp.user?.username || tp.user?.email || 'Unknown',
         registrationStatus: tp.registration.status,
       }
     })

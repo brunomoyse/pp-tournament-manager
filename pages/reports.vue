@@ -109,9 +109,11 @@
               <!-- 2nd Place -->
               <div class="podium-entry podium-entry--second">
                 <div class="podium-avatar podium-avatar--second">
-                  {{ getInitials(leaderboard[1]?.user) }}
+                  {{ getInitials(leaderboard[1]?.user, leaderboard[1]?.displayName) }}
                 </div>
-                <div class="podium-name">{{ getFullName(leaderboard[1]?.user) }}</div>
+                <div class="podium-name">
+                  {{ getFullName(leaderboard[1]?.user, leaderboard[1]?.displayName) }}
+                </div>
                 <div class="podium-points">{{ leaderboard[1]?.points }} pts</div>
                 <div class="podium-bar podium-bar--second">
                   <span class="podium-rank podium-rank--second">2</span>
@@ -121,9 +123,11 @@
               <!-- 1st Place -->
               <div class="podium-entry podium-entry--first">
                 <div class="podium-avatar podium-avatar--first">
-                  {{ getInitials(leaderboard[0]?.user) }}
+                  {{ getInitials(leaderboard[0]?.user, leaderboard[0]?.displayName) }}
                 </div>
-                <div class="podium-name-first">{{ getFullName(leaderboard[0]?.user) }}</div>
+                <div class="podium-name-first">
+                  {{ getFullName(leaderboard[0]?.user, leaderboard[0]?.displayName) }}
+                </div>
                 <div class="podium-points-first">{{ leaderboard[0]?.points }} pts</div>
                 <div class="podium-bar podium-bar--first">
                   <span class="podium-rank podium-rank--first">1</span>
@@ -133,9 +137,11 @@
               <!-- 3rd Place -->
               <div class="podium-entry podium-entry--third">
                 <div class="podium-avatar podium-avatar--third">
-                  {{ getInitials(leaderboard[2]?.user) }}
+                  {{ getInitials(leaderboard[2]?.user, leaderboard[2]?.displayName) }}
                 </div>
-                <div class="podium-name">{{ getFullName(leaderboard[2]?.user) }}</div>
+                <div class="podium-name">
+                  {{ getFullName(leaderboard[2]?.user, leaderboard[2]?.displayName) }}
+                </div>
                 <div class="podium-points">{{ leaderboard[2]?.points }} pts</div>
                 <div class="podium-bar podium-bar--third">
                   <span class="podium-rank podium-rank--third">3</span>
@@ -160,7 +166,7 @@
                 <tbody>
                   <tr
                     v-for="(entry, index) in leaderboard"
-                    :key="entry.user.id"
+                    :key="entry.registeredPlayerId || entry.user?.id || index"
                     :class="[
                       'pp-stagger-item',
                       'table-row',
@@ -181,7 +187,7 @@
                     <td class="td-cell">
                       <div class="player-cell">
                         <div class="player-cell-avatar">
-                          {{ getInitials(entry.user) }}
+                          {{ getInitials(entry.user, entry.displayName) }}
                         </div>
                         <div>
                           <div
@@ -190,9 +196,11 @@
                               entry.rank === 1 ? 'player-cell-name--gold' : '',
                             ]"
                           >
-                            {{ getFullName(entry.user) }}
+                            {{ getFullName(entry.user, entry.displayName) }}
                           </div>
-                          <div class="player-cell-username">@{{ entry.user.username }}</div>
+                          <div v-if="entry.user?.username" class="player-cell-username">
+                            @{{ entry.user.username }}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -312,13 +320,13 @@ const stats = computed(() => {
     avgBuyIn,
     topWinner: topWinnerEntry
       ? {
-          name: getFullName(topWinnerEntry.user),
+          name: getFullName(topWinnerEntry.user, topWinnerEntry.displayName),
           winnings: topWinnerEntry.totalWinnings,
         }
       : null,
     mostGames: mostGamesEntry
       ? {
-          name: getFullName(mostGamesEntry.user),
+          name: getFullName(mostGamesEntry.user, mostGamesEntry.displayName),
           count: mostGamesEntry.totalTournaments,
         }
       : null,
@@ -329,25 +337,35 @@ const stats = computed(() => {
 const getInitials = (
   user:
     | { firstName?: string | null; lastName?: string | null; username?: string | null }
+    | null
     | undefined,
+  displayName?: string | null,
 ) => {
-  if (!user) return '?'
-  if (user.firstName && user.lastName) {
+  if (user?.firstName && user?.lastName) {
     return `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
   }
-  return user.username?.[0]?.toUpperCase() || '?'
+  if (user?.username) return user.username[0].toUpperCase()
+  if (displayName) {
+    const parts = displayName.trim().split(/\s+/)
+    return (
+      parts.length > 1 ? `${parts[0][0]}${parts[parts.length - 1][0]}` : displayName.slice(0, 2)
+    ).toUpperCase()
+  }
+  return '?'
 }
 
 const getFullName = (
   user:
     | { firstName?: string | null; lastName?: string | null; username?: string | null }
+    | null
     | undefined,
+  displayName?: string | null,
 ) => {
-  if (!user) return 'Unknown'
-  if (user.firstName && user.lastName) {
+  if (user?.firstName && user?.lastName) {
     return `${user.firstName} ${user.lastName}`
   }
-  return user.username || 'Unknown'
+  if (user?.username) return user.username
+  return displayName || 'Unknown'
 }
 
 // Fetch leaderboard data

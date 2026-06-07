@@ -41,6 +41,12 @@ query GetTournament($id: UUID!) {
     status
     liveStatus
     lateRegistrationLevel
+    earlyBirdBonusChips
+    levelTwoBonusChips
+    voucherValueCents
+    rebuyMax
+    addonChips
+    addonPriceCents
     structure {
       id
       tournamentId
@@ -88,6 +94,8 @@ query GetTournament($id: UUID!) {
     registrations {
       id
       userId
+      registeredPlayerId
+      displayName
       registrationTime
       status
       notes
@@ -125,11 +133,14 @@ query GetTournamentPlayers($tournamentId: UUID!, $pagination: PaginationInput) {
     items {
       registration {
         id
+        userId
+        registeredPlayerId
         registrationTime
         status
         notes
         waitlistPosition
       }
+      displayName
       user {
         id
         firstName
@@ -168,6 +179,7 @@ query GetTournamentEntries($tournamentId: ID!) {
     id
     tournamentId
     userId
+    registeredPlayerId
     entryType
     amountCents
     chipsReceived
@@ -195,6 +207,8 @@ query GetTournamentEntryStats($tournamentId: ID!) {
 query GetLeaderboard($period: LeaderboardPeriod, $pagination: PaginationInput, $clubId: UUID) {
   leaderboard(period: $period, pagination: $pagination, clubId: $clubId) {
     items {
+      registeredPlayerId
+      displayName
       user {
         id
         firstName

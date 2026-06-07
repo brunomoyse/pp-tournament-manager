@@ -131,6 +131,12 @@
             class="results-section"
           />
 
+          <!-- Prediction resolution (FINISHED; self-gates on the predictions feature flag) -->
+          <TournamentPredictionsCard
+            v-if="tournament?.liveStatus === 'FINISHED'"
+            class="results-section"
+          />
+
           <!-- Recent Activity -->
           <TournamentActivityFeed :tournament-id="selectedTournamentId" />
         </div>
@@ -287,6 +293,7 @@ import RegisterPlayerModal from '~/components/tournament/players/RegisterPlayerM
 import TournamentQRModal from '~/components/tournament/TournamentQRModal.vue'
 import EnterResultsModal from '~/components/tournament/results/EnterResultsModal.vue'
 import TournamentResultsDisplay from '~/components/tournament/results/TournamentResultsDisplay.vue'
+import TournamentPredictionsCard from '~/components/tournament/overview/TournamentPredictionsCard.vue'
 import TournamentActivityFeed from '~/components/tournament/overview/TournamentActivityFeed.vue'
 import { useGqlSubscription } from '~/composables/useGqlSubscription'
 import type { TournamentClock } from '~/types/clock'
@@ -360,7 +367,9 @@ const { data: playersData, refresh: refreshPlayers } = await useLazyAsyncData(
 
 // Get registered player IDs to filter them out in search
 const registeredPlayerIds = computed(() => {
-  return (playersData.value?.tournamentPlayers?.items || []).map((tp: any) => tp.user.id)
+  return (playersData.value?.tournamentPlayers?.items || [])
+    .map((tp: any) => tp.user?.id || tp.registration.registeredPlayerId)
+    .filter(Boolean)
 })
 
 // Check if tournament can be edited (not FINISHED)

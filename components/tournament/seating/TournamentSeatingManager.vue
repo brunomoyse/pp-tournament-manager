@@ -147,17 +147,17 @@
         >
           <button
             v-for="player in unassignedPlayers"
-            :key="player.id"
-            @click="selectPlayerForSeat(player.id)"
+            :key="player.registeredPlayerId"
+            @click="selectPlayerForSeat(player.registeredPlayerId)"
             class="seating-manager__player-option"
           >
             <div class="seating-manager__player-avatar">
-              {{ (player.firstName?.[0] || '') + (player.lastName?.[0] || '') }}
+              {{ getInitialsFromDisplayName(player.displayName) }}
             </div>
             <div>
-              <div class="seating-manager__player-name">{{ getPlayerDisplayName(player) }}</div>
+              <div class="seating-manager__player-name">{{ player.displayName }}</div>
               <div class="seating-manager__player-full-name">
-                {{ player.firstName }} {{ player.lastName || '' }}
+                {{ player.user?.firstName || '' }} {{ player.user?.lastName || '' }}
               </div>
             </div>
           </button>
@@ -510,10 +510,23 @@ const closePlayerSelectionModal = () => {
 
 const getPlayerDisplayName = (player: any) => {
   if (!player) return 'Unknown'
-  const firstName = player.firstName || ''
-  const lastName = player.lastName || ''
+  // Prefer displayName (for new roster format)
+  if (player.displayName) return player.displayName
+  // Fall back to building from user fields (old format)
+  const firstName = player.user?.firstName || player.firstName || ''
+  const lastName = player.user?.lastName || player.lastName || ''
+  const username = player.user?.username || player.username || ''
   if (firstName && lastName) return `${firstName} ${lastName}`
-  return firstName || lastName || player.username || 'Unknown'
+  return firstName || lastName || username || 'Unknown'
+}
+
+const getInitialsFromDisplayName = (displayName: string): string => {
+  if (!displayName) return '?'
+  const parts = displayName.split(' ')
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+  }
+  return displayName.substring(0, 2).toUpperCase()
 }
 
 defineExpose({ refreshSeatingData })
