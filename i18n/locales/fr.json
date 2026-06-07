@@ -259,6 +259,14 @@
     "unlimited": "Illimité",
     "earlyBirdBonus": "Bonus d'inscription anticipée (jetons)",
     "earlyBirdBonusPlaceholder": "Jetons bonus pour inscription anticipée",
+    "levelTwoBonus": "Bonus niveau 2 (jetons)",
+    "levelTwoBonusPlaceholder": "Jetons bonus pour les joueurs assis en fin de niveau 2",
+    "voucherValue": "Bon boisson (€)",
+    "voucherValuePlaceholder": "0,00",
+    "voucherValueHelp": "Obligatoire ; exclu du prize pool.",
+    "rebuyMax": "Recaves max",
+    "addonChips": "Add-on (jetons)",
+    "addonPrice": "Prix de l'add-on (€)",
     "lateRegistrationLevel": "Niveau inscr. tardive",
     "lateRegistrationLevelPlaceholder": "ex. 6",
     "lateRegistrationLevelHelp": "L'inscription reste ouverte jusqu'à la fin de ce niveau. Laissez vide pour contrôle manuel.",
@@ -652,6 +660,14 @@
     "save": "Enregistrer",
     "create": "Créer",
     "search": "Rechercher des modèles..."
+  },
+  "predictions": {
+    "title": "Pronostics",
+    "description": "Réglez tous les pronostics ouverts de ce tournoi. Les gagnants sont payés depuis la cagnotte de points de pronostic.",
+    "resolve": "Régler les pronostics",
+    "resolving": "Règlement...",
+    "resolved": "{count} pronostics réglés",
+    "resolveFailed": "Échec du règlement des pronostics. Veuillez réessayer."
   },
   "activity": {
     "clock": {

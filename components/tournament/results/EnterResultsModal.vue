@@ -433,14 +433,19 @@ const fetchPlayersAndPayouts = async () => {
     ])
 
     // Get remaining players (SEATED + CHECKED_IN)
+    // Filter out account-less players (no userId) since they cannot be scored via this modal
     const remainingStatuses = new Set(['SEATED', 'CHECKED_IN'])
     const players = (playersResult?.tournamentPlayers?.items || [])
-      .filter((tp: any) => remainingStatuses.has(tp.registration.status))
+      .filter((tp: any) => remainingStatuses.has(tp.registration.status) && tp.user?.id)
       .map((tp: any) => {
-        const firstName = tp.user.firstName || ''
-        const lastName = tp.user.lastName || ''
+        // Prefer displayName, fall back to building from user fields
         const displayName =
-          lastName && firstName ? `${lastName} ${firstName}` : `${firstName} ${lastName}`.trim()
+          tp.displayName ||
+          (tp.user
+            ? tp.user.lastName && tp.user.firstName
+              ? `${tp.user.lastName} ${tp.user.firstName}`
+              : `${tp.user.firstName || ''} ${tp.user.lastName || ''}`.trim()
+            : '')
         return {
           userId: tp.user.id,
           name: displayName || tp.user.username || tp.user.email,

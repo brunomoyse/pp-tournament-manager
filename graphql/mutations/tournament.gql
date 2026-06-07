@@ -25,6 +25,7 @@ mutation AddTournamentEntry($input: AddTournamentEntryInput!) {
     id
     tournamentId
     userId
+    registeredPlayerId
     entryType
     amountCents
     chipsReceived
@@ -46,6 +47,8 @@ mutation EnterTournamentResults($input: EnterTournamentResultsInput!) {
       id
       tournamentId
       userId
+      registeredPlayerId
+      displayName
       finalPosition
       prizeCents
       points
@@ -91,6 +94,11 @@ mutation CreateTournament($input: CreateTournamentInput!) {
     status
     liveStatus
     earlyBirdBonusChips
+    levelTwoBonusChips
+    voucherValueCents
+    rebuyMax
+    addonChips
+    addonPriceCents
     lateRegistrationLevel
     createdAt
     updatedAt
@@ -119,6 +127,7 @@ mutation CancelRegistration($input: CancelRegistrationInput!) {
         id
         status
       }
+      displayName
       user {
         id
         firstName
@@ -142,6 +151,11 @@ mutation UpdateTournament($input: UpdateTournamentInput!) {
     status
     liveStatus
     earlyBirdBonusChips
+    levelTwoBonusChips
+    voucherValueCents
+    rebuyMax
+    addonChips
+    addonPriceCents
     lateRegistrationLevel
     createdAt
     updatedAt

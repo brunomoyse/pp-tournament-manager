@@ -111,6 +111,79 @@
             />
           </div>
 
+          <!-- Level-2 Bonus -->
+          <div class="tournament-form-field">
+            <label class="pp-label">
+              {{ t('tournament.levelTwoBonus') }}
+            </label>
+            <input
+              v-model.number="form.levelTwoBonusChips"
+              type="number"
+              min="0"
+              class="pp-input"
+              :placeholder="t('tournament.levelTwoBonusPlaceholder')"
+            />
+          </div>
+
+          <!-- Mandatory Drink Voucher (euros) -->
+          <div class="tournament-form-field">
+            <label class="pp-label">
+              {{ t('tournament.voucherValue') }}
+            </label>
+            <input
+              v-model.number="voucherValueEuros"
+              type="number"
+              min="0"
+              step="0.5"
+              class="pp-input"
+              :placeholder="t('tournament.voucherValuePlaceholder')"
+            />
+            <p class="tournament-form-help">{{ t('tournament.voucherValueHelp') }}</p>
+          </div>
+
+          <!-- Rebuy max -->
+          <div class="tournament-form-field">
+            <label class="pp-label">
+              {{ t('tournament.rebuyMax') }}
+            </label>
+            <input
+              v-model.number="form.rebuyMax"
+              type="number"
+              min="0"
+              class="pp-input"
+              :placeholder="t('tournament.unlimited')"
+            />
+          </div>
+
+          <!-- Add-on chips -->
+          <div class="tournament-form-field">
+            <label class="pp-label">
+              {{ t('tournament.addonChips') }}
+            </label>
+            <input
+              v-model.number="form.addonChips"
+              type="number"
+              min="0"
+              class="pp-input"
+              :placeholder="t('tournament.earlyBirdBonusPlaceholder')"
+            />
+          </div>
+
+          <!-- Add-on price (euros) -->
+          <div class="tournament-form-field">
+            <label class="pp-label">
+              {{ t('tournament.addonPrice') }}
+            </label>
+            <input
+              v-model.number="addonPriceEuros"
+              type="number"
+              min="0"
+              step="0.5"
+              class="pp-input"
+              :placeholder="t('tournament.voucherValuePlaceholder')"
+            />
+          </div>
+
           <!-- Late Registration Level -->
           <div class="tournament-form-field">
             <label class="pp-label">
@@ -259,11 +332,32 @@ const form = ref<TournamentFormData>({
   rakeCents: 0,
   seatCap: null,
   earlyBirdBonusChips: null,
+  levelTwoBonusChips: null,
+  voucherValueCents: null,
+  rebuyMax: null,
+  addonChips: null,
+  addonPriceCents: null,
   lateRegistrationLevel: null,
   templateId: '',
 })
 
 const saving = ref(false)
+
+// Computed for voucher value in euros (display; stored as cents)
+const voucherValueEuros = computed({
+  get: () => (form.value.voucherValueCents ?? 0) / 100,
+  set: (val: number) => {
+    form.value.voucherValueCents = val ? Math.round(val * 100) : null
+  },
+})
+
+// Computed for add-on price in euros (display; stored as cents)
+const addonPriceEuros = computed({
+  get: () => (form.value.addonPriceCents ?? 0) / 100,
+  set: (val: number) => {
+    form.value.addonPriceCents = val ? Math.round(val * 100) : null
+  },
+})
 
 // Computed for buy-in in euros (display)
 const buyInEuros = computed({
@@ -316,7 +410,12 @@ watch(
         buyInCents: props.tournament.buyInCents,
         rakeCents: props.tournament.rakeCents || 0,
         seatCap: props.tournament.seatCap || null,
-        earlyBirdBonusChips: null,
+        earlyBirdBonusChips: props.tournament.earlyBirdBonusChips ?? null,
+        levelTwoBonusChips: props.tournament.levelTwoBonusChips ?? null,
+        voucherValueCents: props.tournament.voucherValueCents ?? null,
+        rebuyMax: props.tournament.rebuyMax ?? null,
+        addonChips: props.tournament.addonChips ?? null,
+        addonPriceCents: props.tournament.addonPriceCents ?? null,
         lateRegistrationLevel: props.tournament.lateRegistrationLevel ?? null,
         templateId: templates.value[0]?.id ?? '',
       }
@@ -330,6 +429,11 @@ watch(
         rakeCents: 0,
         seatCap: null,
         earlyBirdBonusChips: null,
+        levelTwoBonusChips: null,
+        voucherValueCents: null,
+        rebuyMax: null,
+        addonChips: null,
+        addonPriceCents: null,
         lateRegistrationLevel: null,
         templateId: templates.value[0]?.id ?? '',
       }
@@ -355,6 +459,11 @@ const handleSubmit = async () => {
           rakeCents: form.value.rakeCents || undefined,
           seatCap: form.value.seatCap || undefined,
           earlyBirdBonusChips: form.value.earlyBirdBonusChips || undefined,
+          levelTwoBonusChips: form.value.levelTwoBonusChips || undefined,
+          voucherValueCents: form.value.voucherValueCents ?? undefined,
+          rebuyMax: form.value.rebuyMax ?? undefined,
+          addonChips: form.value.addonChips || undefined,
+          addonPriceCents: form.value.addonPriceCents ?? undefined,
           lateRegistrationLevel: form.value.lateRegistrationLevel || undefined,
           templateId: form.value.templateId,
         },
@@ -371,6 +480,11 @@ const handleSubmit = async () => {
           rakeCents: form.value.rakeCents || undefined,
           seatCap: form.value.seatCap || undefined,
           earlyBirdBonusChips: form.value.earlyBirdBonusChips || undefined,
+          levelTwoBonusChips: form.value.levelTwoBonusChips || undefined,
+          voucherValueCents: form.value.voucherValueCents ?? undefined,
+          rebuyMax: form.value.rebuyMax ?? undefined,
+          addonChips: form.value.addonChips || undefined,
+          addonPriceCents: form.value.addonPriceCents ?? undefined,
           lateRegistrationLevel: form.value.lateRegistrationLevel || undefined,
           templateId: form.value.templateId,
         },

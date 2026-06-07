@@ -119,7 +119,12 @@ const { t } = useI18n()
 const tournamentStore = useTournamentStore()
 
 const lookupPlayerStatus = (playerId: string): string => {
-  return tournamentStore.registrations?.find((r) => r.userId === playerId)?.status || 'SEATED'
+  // Match on userId or registeredPlayerId
+  return (
+    tournamentStore.registrations?.find(
+      (r) => r.userId === playerId || r.registeredPlayerId === playerId,
+    )?.status || 'SEATED'
+  )
 }
 
 interface Table {
@@ -217,6 +222,15 @@ const getSeatPlayer = (seatNumber: number) => {
 
 const getPlayerDisplayName = (player: any) => {
   if (!player) return ''
+  // Use displayName if available (from seat data)
+  if (player.displayName) {
+    const parts = player.displayName.split(' ')
+    if (parts.length > 1) {
+      return `${parts[0]} ${parts[parts.length - 1].charAt(0)}.`
+    }
+    return player.displayName
+  }
+  // Fall back to user fields
   const firstName = player.firstName || ''
   const lastName = player.lastName || ''
   if (firstName && lastName) return `${firstName} ${lastName.charAt(0)}.`
@@ -225,6 +239,9 @@ const getPlayerDisplayName = (player: any) => {
 
 const getPlayerFullName = (player: any) => {
   if (!player) return ''
+  // Use displayName if available (from seat data)
+  if (player.displayName) return player.displayName
+  // Fall back to user fields
   const firstName = player.firstName || ''
   const lastName = player.lastName || ''
   if (firstName && lastName) return `${firstName} ${lastName}`
@@ -239,7 +256,9 @@ const openPlayerModal = (seatNumber: number) => {
 
   selectedPlayer.value = player
   selectedSeatNumber.value = seatNumber
-  selectedPlayerStatus.value = lookupPlayerStatus(player.id)
+  // Use userId if available, otherwise use registeredPlayerId
+  const playerId = player.id || seatData?.assignment?.registeredPlayerId
+  selectedPlayerStatus.value = lookupPlayerStatus(playerId)
   showPlayerModal.value = true
 }
 

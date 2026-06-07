@@ -259,6 +259,14 @@
     "unlimited": "Unlimited",
     "earlyBirdBonus": "Early Bird Bonus (chips)",
     "earlyBirdBonusPlaceholder": "Bonus chips for early registration",
+    "levelTwoBonus": "Level-2 Bonus (chips)",
+    "levelTwoBonusPlaceholder": "Bonus chips for players seated at end of L2",
+    "voucherValue": "Drink Voucher (€)",
+    "voucherValuePlaceholder": "0.00",
+    "voucherValueHelp": "Mandatory; excluded from the prize pool.",
+    "rebuyMax": "Max Rebuys",
+    "addonChips": "Add-on (chips)",
+    "addonPrice": "Add-on Price (€)",
     "lateRegistrationLevel": "Late Reg. Level",
     "lateRegistrationLevelPlaceholder": "e.g. 6",
     "lateRegistrationLevelHelp": "Registration stays open through the end of this level. Leave empty for manual control.",
@@ -652,6 +660,14 @@
     "save": "Save",
     "create": "Create",
     "search": "Search templates..."
+  },
+  "predictions": {
+    "title": "Predictions",
+    "description": "Settle every open prediction for this tournament. Winners are paid from the prediction-points pool.",
+    "resolve": "Resolve predictions",
+    "resolving": "Resolving...",
+    "resolved": "{count} predictions resolved",
+    "resolveFailed": "Failed to resolve predictions. Please try again."
   },
   "activity": {
     "clock": {

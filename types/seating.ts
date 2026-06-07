@@ -24,7 +24,8 @@ export interface SeatAssignment {
   id: string
   tournamentId: string
   clubTableId: string
-  userId: string
+  userId?: string | null
+  registeredPlayerId: string
   seatNumber: number
   stackSize?: number | null
   isCurrent: boolean
@@ -36,12 +37,22 @@ export interface SeatAssignment {
 
 export interface SeatWithPlayer {
   assignment: SeatAssignment
-  player: User
+  /** Roster display name — works for account-less players. */
+  displayName: string
+  /** App user, when the seated player has an account. */
+  player?: User | null
 }
 
 export interface TableWithSeats {
   table: TournamentTable
   seats: SeatWithPlayer[]
+}
+
+/** A registered/checked-in player not currently seated. */
+export interface UnseatedPlayer {
+  registeredPlayerId: string
+  displayName: string
+  user?: User | null
 }
 
 export interface TournamentSeatingChart {
@@ -50,7 +61,7 @@ export interface TournamentSeatingChart {
     title: string
   }
   tables: TableWithSeats[]
-  unassignedPlayers: User[]
+  unassignedPlayers: UnseatedPlayer[]
 }
 
 export interface CheckInResponse {

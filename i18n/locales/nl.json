@@ -259,6 +259,14 @@
     "unlimited": "Onbeperkt",
     "earlyBirdBonus": "Early Bird Bonus (fiches)",
     "earlyBirdBonusPlaceholder": "Bonusfiches voor vroege registratie",
+    "levelTwoBonus": "Niveau-2 bonus (fiches)",
+    "levelTwoBonusPlaceholder": "Bonusfiches voor spelers die zitten aan het einde van niveau 2",
+    "voucherValue": "Drankbon (€)",
+    "voucherValuePlaceholder": "0,00",
+    "voucherValueHelp": "Verplicht; uitgesloten van de prijzenpot.",
+    "rebuyMax": "Max. rebuys",
+    "addonChips": "Add-on (fiches)",
+    "addonPrice": "Add-on prijs (€)",
     "lateRegistrationLevel": "Late reg. niveau",
     "lateRegistrationLevelPlaceholder": "bijv. 6",
     "lateRegistrationLevelHelp": "Inschrijving blijft open tot het einde van dit niveau. Laat leeg voor handmatige controle.",
@@ -652,6 +660,14 @@
     "save": "Opslaan",
     "create": "Maken",
     "search": "Sjablonen zoeken..."
+  },
+  "predictions": {
+    "title": "Voorspellingen",
+    "description": "Reken alle openstaande voorspellingen voor dit toernooi af. Winnaars worden uitbetaald uit de voorspellingspuntenpot.",
+    "resolve": "Voorspellingen afrekenen",
+    "resolving": "Afrekenen...",
+    "resolved": "{count} voorspellingen afgerekend",
+    "resolveFailed": "Afrekenen van voorspellingen mislukt. Probeer het opnieuw."
   },
   "activity": {
     "clock": {

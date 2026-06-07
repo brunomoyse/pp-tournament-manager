@@ -38,6 +38,7 @@ subscription TournamentRegistrations($tournamentId: ID!) {
   tournamentRegistrations(tournamentId: $tournamentId) {
     tournamentId
     player {
+      displayName
       user {
         id
         firstName
@@ -47,6 +48,8 @@ subscription TournamentRegistrations($tournamentId: ID!) {
       }
       registration {
         id
+        userId
+        registeredPlayerId
         registrationTime
         status
         notes
