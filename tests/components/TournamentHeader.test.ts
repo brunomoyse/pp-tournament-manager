@@ -55,7 +55,7 @@ describe('TournamentHeader', () => {
     expect(wrapper.props('modelValue')).toBe('1')
   })
 
-  it('should compute statusDot correctly for connected state', () => {
+  it('should render the status dot modifier for connected state', () => {
     const wrapper = mount(TournamentHeader, {
       props: {
         tournaments: mockTournaments,
@@ -65,10 +65,10 @@ describe('TournamentHeader', () => {
       },
     })
 
-    expect((wrapper.vm as any).statusDot).toBe('bg-pp-accent-gold')
+    expect(wrapper.find('.status-dot').classes()).toContain('status-dot--connected')
   })
 
-  it('should compute statusDot correctly for disconnected state', () => {
+  it('should render the status dot modifier for disconnected state', () => {
     const wrapper = mount(TournamentHeader, {
       props: {
         tournaments: mockTournaments,
@@ -78,10 +78,10 @@ describe('TournamentHeader', () => {
       },
     })
 
-    expect((wrapper.vm as any).statusDot).toBe('bg-red-500')
+    expect(wrapper.find('.status-dot').classes()).toContain('status-dot--disconnected')
   })
 
-  it('should compute statusDot correctly for reconnecting state', () => {
+  it('should render the status dot modifier for reconnecting state', () => {
     const wrapper = mount(TournamentHeader, {
       props: {
         tournaments: mockTournaments,
@@ -91,7 +91,7 @@ describe('TournamentHeader', () => {
       },
     })
 
-    expect((wrapper.vm as any).statusDot).toBe('bg-pp-text-secondary animate-pulse')
+    expect(wrapper.find('.status-dot').classes()).toContain('status-dot--reconnecting')
   })
 
   it('should have selectedId computed property in sync with modelValue', () => {
