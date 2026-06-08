@@ -54,14 +54,14 @@ For each: swap bespoke buttons/cards/rows/badges for the Phase-1 primitives, loc
 
 > **Legacy class status:** `.pp-action-button` / `.pp-status-badge` / hand-rolled `.pp-modal-*` are gone from the app **except** the deliberately-bespoke clock control cluster (`TournamentClockCard` 3 secondary buttons) and the status **stepper** (uses `getTournamentStatusClass` → `.pp-status--*` for coloured nodes, not a badge). Phase 4 can prune the now-dead `main.css` rules.
 
-## Phase 3 — Motion & navigation polish — DEFERRED (needs the app running to verify)
+## Phase 3 — Motion & navigation polish — DONE ✅ (⚠️ needs a visual pass in the running app)
 
-- [ ] Apply `PpMagneticButton` to primary CTAs (create tournament, start clock, etc.).
-- [ ] Spotlight-hover on interactive `PpCard`s; confirm unified easing `[0.16,1,0.3,1]` and `prefers-reduced-motion` fallbacks.
-- [ ] **Persistent desktop rail** (≥1024px) instead of hamburger-drawer-everywhere.
-  - ⚠️ **Gotcha:** the current drawer works as an overlay because Ionic renders `<ion-page>` as `position: absolute; inset: 0`. A `margin-left` push won't offset the content (it sits under the fixed rail). Needs the content region made a positioned containing context (or the ion-router-outlet offset) AND visual testing. Do with `npm run dev` + backend up.
+- [x] **Magnetic CTAs** — added an opt-in `magnetic` prop to `PpButton` (separate `<Motion>` branch, button-only, gated on `prefers-reduced-motion`, ~6px pull); applied to the dashboard + tournaments-list create-tournament CTAs. Offset drives Motion's `animate` (no reactive layout thrash).
+- [x] **Card spotlight** — interactive `PpCard`s brighten their border and paint a faint gold radial that follows the cursor (CSS vars set directly, no per-frame re-render, gated `::before`, no translateY lift). Easing/spring pulled from `useMotionTokens` (`[0.16,1,0.3,1]` / `spring.default`).
+- [x] **Persistent desktop rail** (≥1024px) — sidebar pinned, hamburger + backdrop hidden, both drawer states resolved to visible. Solved the Ionic gotcha below by making `.pp-main` a positioned, full-height containing block + reserving the 15rem rail width, so the absolutely-positioned `<ion-page>` (inset: 0) honors the offset instead of anchoring to the viewport. Mobile/tablet drawer unchanged.
+  - ⚠️ Was flagged risky: Ionic renders `<ion-page>` as `position: absolute; inset: 0`, so a plain `margin-left` push wouldn't offset it. Fixed via `position: relative; height: 100dvh; margin-left: 15rem` on `.pp-main`.
 
-> Held back deliberately: motion tuning and a layout change to the Ionic shell should be done with eyes on the running app, not blind. Everything above (structure/components/CSS) was safe to do statically and is verified by lint + format + grep.
+> ⚠️ **Still needs a visual pass with `npm run dev` + backend up.** These motion + layout changes were verified by lint + format + grep + reasoning only — I cannot run the dev server here (no backend → GraphQL codegen fails). Each Phase 3 change is its own revertible commit. Watch for: desktop content clearing the rail (no overlap / no double scrollbar), `--padding-top: 0` not leaving pages flush against the top, and the magnetic pull feeling subtle (not jumpy).
 
 ## Phase 4 — Cleanup — DONE ✅ (`252b11f`)
 
