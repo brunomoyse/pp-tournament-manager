@@ -15,10 +15,10 @@
                 >
               </h1>
             </div>
-            <button @click="createTournament" class="pp-action-button pp-action-button--primary">
+            <PpButton @click="createTournament">
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('buttons.createTournament') }}
-            </button>
+            </PpButton>
           </div>
         </PpFadeUp>
 
@@ -47,10 +47,10 @@
                 </div>
               </div>
               <div class="live-hero-right">
-                <span class="pp-action-button pp-action-button--primary">
+                <PpButton tag="span" tabindex="-1" class="pointer-events-none">
                   {{ t('buttons.viewTournament') }}
                   <IonIcon :icon="chevronForwardOutline" class="icon-sm" />
-                </span>
+                </PpButton>
               </div>
             </div>
           </div>
@@ -58,7 +58,7 @@
 
         <PpStagger class="stats-grid" :stagger-children="0.05">
           <PpStaggerItem>
-            <div class="pp-card pp-poker-watermark stat-card" data-suit="&#9824;">
+            <PpCard padding="sm" class="pp-poker-watermark" data-suit="&#9824;">
               <div class="stat-header">
                 <span class="stat-label">{{ t('headings.activeTournaments') }}</span>
                 <IonIcon :icon="trophyOutline" class="stat-icon" />
@@ -66,11 +66,11 @@
               <div class="stat-value">
                 <PpAnimatedNumber :value="activeTournaments.length" />
               </div>
-            </div>
+            </PpCard>
           </PpStaggerItem>
 
           <PpStaggerItem>
-            <div class="pp-card pp-poker-watermark stat-card" data-suit="&#9829;">
+            <PpCard padding="sm" class="pp-poker-watermark" data-suit="&#9829;">
               <div class="stat-header">
                 <span class="stat-label">{{ t('reports.players') }}</span>
                 <IonIcon :icon="peopleOutline" class="stat-icon" />
@@ -81,21 +81,21 @@
               <div v-if="playerStats.thisWeek > 0" class="stat-trend">
                 {{ playerStats.thisWeek }} {{ t('reports.period.last7Days').toLowerCase() }}
               </div>
-            </div>
+            </PpCard>
           </PpStaggerItem>
 
           <PpStaggerItem>
-            <div class="pp-card pp-poker-watermark stat-card" data-suit="&#9830;">
+            <PpCard padding="sm" class="pp-poker-watermark" data-suit="&#9830;">
               <div class="stat-header">
                 <span class="stat-label">{{ t('reports.avgBuyIn') }}</span>
                 <IonIcon :icon="cashOutline" class="stat-icon" />
               </div>
               <div class="stat-value">{{ formatPrice(playerStats.avgBuyIn, locale) }}</div>
-            </div>
+            </PpCard>
           </PpStaggerItem>
 
           <PpStaggerItem>
-            <div class="pp-card pp-poker-watermark stat-card" data-suit="&#9827;">
+            <PpCard padding="sm" class="pp-poker-watermark" data-suit="&#9827;">
               <div class="stat-header">
                 <span class="stat-label">{{ t('headings.regularPlayers') }}</span>
                 <IonIcon :icon="peopleOutline" class="stat-icon" />
@@ -103,24 +103,24 @@
               <div class="stat-value">
                 <PpAnimatedNumber :value="playerStats.regularPlayers" />
               </div>
-            </div>
+            </PpCard>
           </PpStaggerItem>
         </PpStagger>
 
         <PpFadeUp :delay="0.16">
-          <div class="pp-card recent-section">
+          <PpCard padding="lg">
             <div class="recent-header">
               <div>
                 <p class="section-eyebrow">{{ t('labels.tournaments') }}</p>
                 <h3 class="recent-title">{{ t('headings.recentTournaments') }}</h3>
               </div>
               <div class="recent-header-actions">
-                <span class="tournament-count-badge">
+                <PpBadge variant="neutral">
                   {{ recentTournaments.length }} {{ t('labels.tournaments') }}
-                </span>
-                <button @click="viewAllTournaments" class="view-all-button">
+                </PpBadge>
+                <PpButton variant="secondary" @click="viewAllTournaments">
                   {{ t('buttons.viewAll') }}
-                </button>
+                </PpButton>
               </div>
             </div>
 
@@ -167,9 +167,9 @@
                     </div>
                   </div>
                   <div class="tournament-row-right">
-                    <span :class="['pp-status-badge', getTournamentSmartStatus(tournament).badge]">
+                    <PpBadge :variant="getTournamentSmartStatus(tournament).variant">
                       {{ getTournamentSmartStatus(tournament).label }}
-                    </span>
+                    </PpBadge>
                     <IonIcon
                       v-if="getTournamentSmartStatus(tournament).needsAttention"
                       :icon="warningOutline"
@@ -187,15 +187,12 @@
               </div>
               <h4 class="empty-title">{{ t('messages.noTournamentsYet') }}</h4>
               <p class="empty-description">{{ t('messages.createFirstTournament') }}</p>
-              <button
-                @click="createTournament"
-                class="pp-action-button pp-action-button--primary empty-cta"
-              >
+              <PpButton class="empty-cta" @click="createTournament">
                 <IonIcon :icon="addOutline" class="icon-md" />
                 {{ t('buttons.createTournament') }}
-              </button>
+              </PpButton>
             </div>
-          </div>
+          </PpCard>
         </PpFadeUp>
       </div>
     </IonContent>
@@ -230,7 +227,7 @@ import {
 import { useAuthStore } from '~/stores/useAuthStore'
 import { formatPrice } from '~/utils'
 import { useI18n } from '~/composables/useI18n'
-import { getTournamentStatusLabel, getTournamentStatusClass } from '~/utils/tournamentStatus'
+import { getTournamentStatusLabel, getTournamentStatusVariant } from '~/utils/tournamentStatus'
 import TournamentFormModal from '~/components/tournament/TournamentFormModal.vue'
 
 const router = useRouter()
@@ -280,7 +277,7 @@ const getTournamentSmartStatus = (tournament: any) => {
     return {
       needsAttention: true,
       suggestedStatus: 'LATE_START',
-      badge: 'pp-status--orange',
+      variant: 'warning' as const,
       label: t('status.lateStart') || 'Demarrage en retard',
     }
   }
@@ -289,14 +286,14 @@ const getTournamentSmartStatus = (tournament: any) => {
     return {
       needsAttention: true,
       suggestedStatus: 'SHOULD_BE_COMPLETED',
-      badge: 'pp-status--red',
+      variant: 'danger' as const,
       label: t('status.shouldBeCompleted') || 'Devrait etre termine',
     }
   }
 
   return {
     needsAttention: false,
-    badge: getTournamentStatusClass(tournament.status),
+    variant: getTournamentStatusVariant(tournament.status),
     label: getTournamentStatusLabel(tournament.status, t),
   }
 }
@@ -546,11 +543,6 @@ onMounted(async () => {
   }
 }
 
-.stat-card {
-  border-radius: var(--radius-xl);
-  padding: 1rem 1.1rem;
-}
-
 .stat-header {
   display: flex;
   align-items: center;
@@ -589,11 +581,6 @@ onMounted(async () => {
   font-family: var(--font-mono);
 }
 
-.recent-section {
-  border-radius: var(--radius-2xl);
-  padding: 1.5rem;
-}
-
 .recent-header {
   display: flex;
   align-items: flex-end;
@@ -615,36 +602,6 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-}
-
-.tournament-count-badge {
-  padding: 0.25rem 0.75rem;
-  background-color: rgba(255, 255, 255, 0.04);
-  color: var(--color-pp-text-muted);
-  border-radius: 9999px;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  border: 1px solid var(--color-pp-border-strong);
-}
-
-.view-all-button {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--color-pp-border-strong);
-  color: var(--color-pp-text);
-  background: transparent;
-  border-radius: 9999px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease;
-}
-
-.view-all-button:hover {
-  background-color: rgba(255, 255, 255, 0.04);
-  border-color: var(--color-pp-gold);
-  color: var(--color-pp-gold);
 }
 
 .skeleton-list > * + * {
