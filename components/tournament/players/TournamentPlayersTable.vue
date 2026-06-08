@@ -34,30 +34,24 @@
 
       <!-- Action Buttons -->
       <div class="toolbar-right">
-        <button
+        <PpButton
           v-if="registeredPlayers.length > 0"
-          @click="checkInAllPlayers"
+          variant="secondary"
           :disabled="checkingInAll"
-          class="pp-action-button pp-action-button--secondary"
+          :loading="checkingInAll"
+          @click="checkInAllPlayers"
         >
-          <IonIcon
-            :icon="checkingInAll ? refreshOutline : checkmarkDoneOutline"
-            :class="['icon-sm', checkingInAll && 'pp-animate-spin']"
-          />
+          <IonIcon v-if="!checkingInAll" :icon="checkmarkDoneOutline" class="icon-sm" />
           {{
             checkingInAll
               ? `${checkInProgress}/${registeredPlayers.length}`
               : t('buttons.checkInAll')
           }}
-        </button>
-        <button
-          v-if="canRegisterPlayers"
-          @click="$emit('registerPlayer')"
-          class="pp-action-button pp-action-button--primary"
-        >
+        </PpButton>
+        <PpButton v-if="canRegisterPlayers" @click="$emit('registerPlayer')">
           <IonIcon :icon="personAddOutline" class="icon-sm" />
           {{ t('buttons.registerPlayer') }}
-        </button>
+        </PpButton>
       </div>
     </div>
 
@@ -96,46 +90,47 @@
 
           <!-- Table / Seat Column -->
           <div class="table-seat-col">
-            <span v-if="player.tableNumber !== null" class="table-seat-badge">
+            <PpBadge v-if="player.tableNumber !== null" variant="gold">
               T{{ player.tableNumber }} / S{{ player.seatNumber }}
-            </span>
-            <button
+            </PpBadge>
+            <PpButton
               v-else-if="player.status === 'CHECKED_IN'"
-              @click="handleSeatPlayer(player)"
+              size="sm"
               :disabled="seatingPlayer === player.id"
-              class="pp-action-button pp-action-button--primary seat-button"
+              :loading="seatingPlayer === player.id"
+              @click="handleSeatPlayer(player)"
             >
-              <IonIcon
-                :icon="seatingPlayer === player.id ? refreshOutline : locationOutline"
-                :class="['icon-xs', seatingPlayer === player.id && 'pp-animate-spin']"
-              />
+              <IonIcon v-if="seatingPlayer !== player.id" :icon="locationOutline" class="icon-xs" />
               {{ t('buttons.seat') }}
-            </button>
+            </PpButton>
             <span v-else class="table-seat-empty">&mdash;</span>
           </div>
 
           <!-- Status Column -->
           <div class="status-col">
-            <span :class="['pp-status-badge', getRegistrationStatusClass(player.status)]">
+            <PpBadge :variant="getRegistrationStatusVariant(player.status)">
               {{ getRegistrationStatusLabel(player.status, t) }}
-            </span>
+            </PpBadge>
           </div>
 
           <!-- Actions Column -->
           <div class="actions-col">
             <!-- Check In Button -->
-            <button
+            <PpButton
               v-if="player.status === 'REGISTERED'"
-              @click="checkInPlayer(player.id)"
+              variant="secondary"
+              size="sm"
               :disabled="checkingIn === player.id"
-              class="pp-action-button pp-action-button--secondary checkin-button"
+              :loading="checkingIn === player.id"
+              @click="checkInPlayer(player.id)"
             >
               <IonIcon
-                :icon="checkingIn === player.id ? refreshOutline : checkmarkCircleOutline"
-                :class="['icon-xs', checkingIn === player.id && 'pp-animate-spin']"
+                v-if="checkingIn !== player.id"
+                :icon="checkmarkCircleOutline"
+                class="icon-xs"
               />
               {{ checkingIn === player.id ? t('status.checkingIn') : t('buttons.checkIn') }}
-            </button>
+            </PpButton>
 
             <!-- Waitlist Position Badge -->
             <span
@@ -147,10 +142,7 @@
 
             <!-- More Actions Dropdown -->
             <div class="dropdown-wrapper">
-              <button
-                @click="toggleMenu(player.id)"
-                class="pp-action-button pp-action-button--ghost menu-button"
-              >
+              <button @click="toggleMenu(player.id)" class="menu-button">
                 <IonIcon :icon="ellipsisVerticalOutline" class="icon-md" />
               </button>
               <div v-if="openMenuId === player.id" class="dropdown-menu">
@@ -189,7 +181,10 @@ import {
 } from 'ionicons/icons'
 import { AssignmentStrategy } from '@/types/seating'
 import { useI18n } from '~/composables/useI18n'
-import { getRegistrationStatusLabel, getRegistrationStatusClass } from '~/utils/registrationStatus'
+import {
+  getRegistrationStatusLabel,
+  getRegistrationStatusVariant,
+} from '~/utils/registrationStatus'
 import { EntryType } from '~/types/enums'
 
 const { t } = useI18n()
@@ -677,8 +672,8 @@ const checkInAllPlayers = async () => {
 
 .search-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(254, 231, 138, 0.5);
-  border-color: rgba(254, 231, 138, 0.5);
+  box-shadow: 0 0 0 2px rgba(254, 231, 138, 0.4);
+  border-color: var(--color-pp-gold);
 }
 
 @media (min-width: 640px) {
@@ -798,21 +793,6 @@ const checkInAllPlayers = async () => {
   justify-content: center;
 }
 
-.table-seat-badge {
-  padding: 0.125rem 0.5rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  border: 1px solid rgba(254, 231, 138, 0.3);
-  background-color: rgba(254, 231, 138, 0.1);
-  color: var(--color-pp-gold);
-}
-
-.seat-button {
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
-}
-
 .table-seat-empty {
   font-size: 0.75rem;
   color: var(--color-pp-text-muted);
@@ -832,11 +812,6 @@ const checkInAllPlayers = async () => {
   gap: 0.25rem;
 }
 
-.checkin-button {
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
-}
-
 .waitlist-position {
   font-size: 0.75rem;
   color: var(--pp-amber-400);
@@ -848,8 +823,21 @@ const checkInAllPlayers = async () => {
 }
 
 .menu-button {
-  padding: 0.75rem;
-  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+  border-radius: 9999px;
+  color: var(--color-pp-text-muted);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.menu-button:hover {
+  color: var(--color-pp-text);
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .dropdown-menu {

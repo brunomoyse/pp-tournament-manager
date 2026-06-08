@@ -10,10 +10,10 @@
             </h1>
           </PpFadeUp>
           <PpFadeUp :delay="0.08">
-            <button @click="createTournament" class="pp-action-button pp-action-button--primary">
+            <PpButton @click="createTournament">
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('buttons.createTournament') }}
-            </button>
+            </PpButton>
           </PpFadeUp>
         </div>
 
@@ -51,15 +51,17 @@
           :stagger-children="0.04"
         >
           <PpStaggerItem v-for="tournament in filteredTournaments" :key="tournament.id">
-            <div
-              class="pp-card pp-card-interactive pp-shimmer-hover tournament-card"
+            <PpCard
+              interactive
+              padding="sm"
+              class="pp-shimmer-hover tournament-card"
               @click="goToTournament(tournament.id)"
             >
               <!-- Header: status badge + date -->
               <div class="card-header">
-                <span :class="['pp-status-badge', getTournamentStatusClass(tournament.status)]">
+                <PpBadge :variant="getTournamentStatusVariant(tournament.status)">
                   {{ getTournamentStatusLabel(tournament.status, t) }}
-                </span>
+                </PpBadge>
                 <span class="card-date">{{ formatDate(tournament.startTime) }}</span>
               </div>
 
@@ -79,7 +81,7 @@
                 >
                 <IonIcon :icon="chevronForwardOutline" class="card-chevron" />
               </div>
-            </div>
+            </PpCard>
           </PpStaggerItem>
         </PpStagger>
 
@@ -124,7 +126,7 @@ import { searchOutline, trophyOutline, chevronForwardOutline, addOutline } from 
 import TournamentFormModal from '~/components/tournament/TournamentFormModal.vue'
 import { useI18n } from '~/composables/useI18n'
 import { formatPrice } from '~/utils'
-import { getTournamentStatusLabel, getTournamentStatusClass } from '~/utils/tournamentStatus'
+import { getTournamentStatusLabel, getTournamentStatusVariant } from '~/utils/tournamentStatus'
 
 const router = useRouter()
 const clubStore = useClubStore()
@@ -313,7 +315,7 @@ onMounted(() => {
 
 .search-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px var(--color-pp-gold);
+  box-shadow: 0 0 0 2px rgba(254, 231, 138, 0.4);
   border-color: var(--color-pp-gold);
 }
 
@@ -328,7 +330,7 @@ onMounted(() => {
 
 .status-filter:focus {
   outline: none;
-  box-shadow: 0 0 0 2px var(--color-pp-gold);
+  box-shadow: 0 0 0 2px rgba(254, 231, 138, 0.4);
   border-color: var(--color-pp-gold);
 }
 
@@ -364,11 +366,13 @@ select option {
   }
 }
 
+/* Box styling (bg/border/radius/padding) comes from <PpCard>. This only adds
+   the flex column so .card-footer's `margin-top: auto` pins it to the bottom
+   and footers align across the grid row. */
 .tournament-card {
-  background-color: var(--color-pp-surface-2);
-  border-radius: 0.75rem;
-  padding: 1rem;
-  border: 1px solid var(--color-pp-border-strong);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .card-header {

@@ -187,24 +187,12 @@
         <h3 class="clock-card__confirm-title">{{ t('clock.startConfirmTitle') }}</h3>
         <p class="clock-card__confirm-message">{{ t('clock.startConfirmMessage') }}</p>
         <div class="clock-card__confirm-actions">
-          <button
-            @click="showStartConfirm = false"
-            class="pp-action-button pp-action-button--secondary"
-          >
+          <PpButton variant="secondary" @click="showStartConfirm = false">
             {{ t('buttons.cancel') }}
-          </button>
-          <button
-            @click="confirmStartTournament"
-            :disabled="isStarting"
-            class="pp-action-button pp-action-button--primary"
-          >
-            <IonIcon
-              v-if="isStarting"
-              :icon="refreshOutline"
-              class="clock-card__secondary-icon pp-animate-spin"
-            />
+          </PpButton>
+          <PpButton :disabled="isStarting" :loading="isStarting" @click="confirmStartTournament">
             {{ t('clock.startConfirm') }}
-          </button>
+          </PpButton>
         </div>
       </div>
     </div>

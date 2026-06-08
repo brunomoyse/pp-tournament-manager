@@ -46,31 +46,17 @@
 
     <!-- Action Buttons -->
     <div v-if="availableActions.length > 0" class="status-actions">
-      <button
+      <PpButton
         v-for="action in availableActions"
         :key="action.targetStatus || action.key"
-        @click="action.handler()"
+        :variant="action.variant"
+        block
         :disabled="isUpdating"
-        :class="[
-          'status-actions__button pp-action-button',
-          action.variant === 'primary'
-            ? 'pp-action-button--primary'
-            : action.variant === 'success'
-              ? 'pp-action-button--success'
-              : action.variant === 'warning'
-                ? 'pp-action-button--warning'
-                : action.variant === 'danger'
-                  ? 'pp-action-button--danger'
-                  : 'pp-action-button--secondary',
-        ]"
+        :loading="isUpdating && !!action.targetStatus"
+        @click="action.handler()"
       >
-        <IonIcon
-          v-if="isUpdating && action.targetStatus"
-          :icon="refreshOutline"
-          class="status-actions__spinner pp-animate-spin"
-        />
         {{ action.label }}
-      </button>
+      </PpButton>
     </div>
 
     <!-- Confirmation Dialog -->
@@ -82,24 +68,12 @@
           {{ t('statusWorkflow.confirmMessage', { status: pendingAction?.label || '' }) }}
         </p>
         <div class="confirm-dialog__actions">
-          <button
-            @click="showConfirmDialog = false"
-            class="pp-action-button pp-action-button--secondary"
-          >
+          <PpButton variant="secondary" @click="showConfirmDialog = false">
             {{ t('buttons.cancel') }}
-          </button>
-          <button
-            @click="executeStatusChange"
-            :disabled="isUpdating"
-            class="pp-action-button pp-action-button--primary"
-          >
-            <IonIcon
-              v-if="isUpdating"
-              :icon="refreshOutline"
-              class="status-actions__spinner pp-animate-spin"
-            />
+          </PpButton>
+          <PpButton :disabled="isUpdating" :loading="isUpdating" @click="executeStatusChange">
             {{ t('statusWorkflow.confirm') }}
-          </button>
+          </PpButton>
         </div>
       </div>
     </div>
@@ -108,7 +82,7 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { trophyOutline, chevronForwardOutline, refreshOutline, timeOutline } from 'ionicons/icons'
+import { trophyOutline, chevronForwardOutline, timeOutline } from 'ionicons/icons'
 import { useTournamentStore } from '~/stores/useTournamentStore'
 import { useI18n } from '~/composables/useI18n'
 import { getTournamentStatusLabel, getTournamentStatusClass } from '~/utils/tournamentStatus'
@@ -416,16 +390,6 @@ const executeStatusChange = async () => {
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 1rem;
-}
-
-.status-actions__button {
-  width: 100%;
-  font-size: 0.875rem;
-}
-
-.status-actions__spinner {
-  width: 1rem;
-  height: 1rem;
 }
 
 /* Confirmation Dialog */

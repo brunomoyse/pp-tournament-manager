@@ -77,12 +77,9 @@
                 {{ t('warnings.noTablesLinkedDesc') }}
               </p>
             </div>
-            <button
-              @click="activeTab = 'seating'"
-              class="pp-action-button pp-action-button--warning warning-action"
-            >
+            <PpButton variant="warning" class="warning-action" @click="activeTab = 'seating'">
               {{ t('warnings.goToSeating') }}
-            </button>
+            </PpButton>
           </div>
 
           <!-- Warning: Unseated checked-in players -->
@@ -96,12 +93,9 @@
                 {{ t('warnings.unseatedPlayersDesc') }}
               </p>
             </div>
-            <button
-              @click="activeTab = 'players'"
-              class="pp-action-button pp-action-button--warning warning-action"
-            >
+            <PpButton variant="warning" class="warning-action" @click="activeTab = 'players'">
               {{ t('warnings.goToPlayers') }}
-            </button>
+            </PpButton>
           </div>
 
           <!-- Grid Layout -->
@@ -116,13 +110,10 @@
 
           <!-- Check-in QR Code Button -->
           <div class="qr-section">
-            <button
-              @click="showTournamentQRModal = true"
-              class="pp-action-button pp-action-button--secondary qr-button"
-            >
+            <PpButton variant="secondary" @click="showTournamentQRModal = true">
               <ion-icon :icon="qrCodeOutline" class="icon-md" />
               {{ t('qr.tournament.button') }}
-            </button>
+            </PpButton>
           </div>
 
           <!-- Results Display (FINISHED) -->
@@ -208,14 +199,10 @@
                   <ion-icon :icon="settingsOutline" class="settings-icon"></ion-icon>
                   <h3 class="settings-title">{{ t('headings.tournamentSettings') }}</h3>
                 </div>
-                <button
-                  v-if="canEditTournament"
-                  @click="openEditModal"
-                  class="pp-action-button pp-action-button--primary"
-                >
+                <PpButton v-if="canEditTournament" @click="openEditModal">
                   <ion-icon :icon="createOutline" class="icon-md" />
                   {{ t('tournament.edit') }}
-                </button>
+                </PpButton>
               </div>
 
               <!-- Tournament Info Display -->
@@ -240,14 +227,11 @@
                   <div>
                     <label class="info-label">{{ t('tournament.status') }}</label>
                     <p class="info-value-status">
-                      <span
-                        :class="[
-                          'pp-status-badge',
-                          getTournamentStatusClass(tournament.liveStatus || 'UNKNOWN'),
-                        ]"
+                      <PpBadge
+                        :variant="getTournamentStatusVariant(tournament.liveStatus || 'UNKNOWN')"
                       >
                         {{ getTournamentStatusLabel(tournament.liveStatus || 'UNKNOWN', t) }}
-                      </span>
+                      </PpBadge>
                     </p>
                   </div>
                   <div v-if="tournament.description">
@@ -298,7 +282,7 @@ import TournamentActivityFeed from '~/components/tournament/overview/TournamentA
 import { useGqlSubscription } from '~/composables/useGqlSubscription'
 import type { TournamentClock } from '~/types/clock'
 import { formatPrice } from '~/utils'
-import { getTournamentStatusLabel, getTournamentStatusClass } from '~/utils/tournamentStatus'
+import { getTournamentStatusLabel, getTournamentStatusVariant } from '~/utils/tournamentStatus'
 
 const { connectionStatus } = useNetworkStatus()
 const route = useRoute()
@@ -887,9 +871,9 @@ onMounted(async () => {
   color: rgba(251, 191, 36, 0.7);
 }
 
+/* Keep the action button from shrinking inside the flex banner; size/colour
+   come from <PpButton variant="warning">. */
 .warning-action {
-  font-size: 0.75rem;
-  padding: 0.375rem 0.75rem;
   flex-shrink: 0;
 }
 
@@ -918,12 +902,6 @@ onMounted(async () => {
   margin-bottom: 1.5rem;
   display: flex;
   justify-content: center;
-}
-
-.qr-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
 }
 
 /* Results Section */
