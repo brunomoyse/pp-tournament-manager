@@ -1,9 +1,28 @@
 import { vi } from 'vitest'
 import { config } from '@vue/test-utils'
+import { createI18n } from 'vue-i18n'
 import * as vueExports from 'vue'
+import en from '~/i18n/locales/en.json'
+import fr from '~/i18n/locales/fr.json'
+import nl from '~/i18n/locales/nl.json'
 
 // Re-export Vue composables as globals
 Object.assign(global, vueExports)
+
+// Install a Composition-API i18n instance for every mounted component.
+// Mirrors plugins/i18n.client.ts so `useI18n()` resolves real translations
+// instead of throwing "Need to install with `app.use` function".
+const i18n = createI18n({
+  legacy: false,
+  locale: 'fr',
+  fallbackLocale: 'fr',
+  messages: { en, fr, nl },
+})
+config.global.plugins = [i18n]
+
+// Render the default slot of stubbed components (e.g. the Ionic layout
+// wrappers below) so component tests can assert on the real inner markup.
+config.global.renderStubDefaultSlot = true
 
 // Mock Nuxt auto-imports
 ;(global as any).defineNuxtRouteMiddleware = vi.fn((fn: any) => fn)

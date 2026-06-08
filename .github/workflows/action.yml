@@ -24,6 +24,11 @@ jobs:
     if: github.event_name == 'push'
     name: Lint + Format Check
     runs-on: ubuntu-latest
+    # GraphQL codegen (run by `nuxt prepare` in postinstall) introspects the
+    # backend, which is unavailable in CI. Disable it so install/prepare work
+    # offline — same flag the Dockerfile uses.
+    env:
+      DISABLE_CODEGEN: 'true'
 
     steps:
       - name: Checkout Code
@@ -44,12 +49,39 @@ jobs:
       - name: Format check (oxfmt)
         run: npm run format:check
 
-  # ── Test (auto on push to main) ──────────────────────────────────────────────
+  # ── Unit tests (auto on every push) ──────────────────────────────────────────
+
+  test:
+    if: github.event_name == 'push'
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    # `nuxt prepare` (postinstall) generates the `.nuxt/tsconfig.*` files vitest
+    # needs; DISABLE_CODEGEN lets it run without the backend.
+    env:
+      DISABLE_CODEGEN: 'true'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm test -- run
+
+  # ── Build & deploy (auto on push to main) ────────────────────────────────────
 
   build_amd64:
     if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
     name: Build AMD64 Image
-    needs: check
+    needs: [check, test]
     runs-on: ubuntu-latest
 
     steps:
@@ -73,7 +105,7 @@ jobs:
   build_arm64:
     if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
     name: Build ARM64 Image
-    needs: check
+    needs: [check, test]
     runs-on: self-hosted
 
     steps:
@@ -129,7 +161,7 @@ jobs:
   build_production:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     name: Build Production Image
-    needs: check
+    needs: [check, test]
     runs-on: ubuntu-latest
     environment: production
 
