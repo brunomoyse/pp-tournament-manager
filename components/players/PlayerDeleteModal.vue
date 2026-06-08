@@ -1,40 +1,26 @@
 <template>
-  <div v-if="isOpen" class="pp-modal-overlay">
-    <!-- Backdrop -->
-    <div class="pp-modal-backdrop" @click="$emit('close')"></div>
-
-    <!-- Modal Content -->
-    <div class="pp-modal-content pp-modal-content--sm">
-      <!-- Header -->
-      <div class="delete-modal-header">
-        <div class="delete-modal-icon-wrapper">
-          <IonIcon :icon="warningOutline" class="delete-modal-icon" />
-        </div>
-        <h2 class="delete-modal-title">
-          {{ t('players.deactivateConfirmTitle') }}
-        </h2>
-        <p class="delete-modal-message">
-          {{ t('players.deactivateConfirmMessage', { name: playerName }) }}
-        </p>
+  <PpModal :open="isOpen" size="sm" @close="$emit('close')">
+    <div class="delete-modal-header">
+      <div class="delete-modal-icon-wrapper">
+        <IonIcon :icon="warningOutline" class="delete-modal-icon" />
       </div>
-
-      <!-- Actions -->
-      <div class="pp-modal-footer">
-        <button
-          @click="$emit('close')"
-          class="delete-modal-action-btn pp-action-button pp-action-button--secondary"
-        >
-          {{ t('common.cancel') }}
-        </button>
-        <button
-          @click="$emit('confirmed')"
-          class="delete-modal-action-btn pp-action-button pp-action-button--danger"
-        >
-          {{ t('players.deactivate') }}
-        </button>
-      </div>
+      <h2 class="delete-modal-title">
+        {{ t('players.deactivateConfirmTitle') }}
+      </h2>
+      <p class="delete-modal-message">
+        {{ t('players.deactivateConfirmMessage', { name: playerName }) }}
+      </p>
     </div>
-  </div>
+
+    <template #footer>
+      <PpButton variant="secondary" class="delete-modal-action-btn" @click="$emit('close')">
+        {{ t('common.cancel') }}
+      </PpButton>
+      <PpButton variant="danger" class="delete-modal-action-btn" @click="$emit('confirmed')">
+        {{ t('players.deactivate') }}
+      </PpButton>
+    </template>
+  </PpModal>
 </template>
 
 <script setup lang="ts">
@@ -67,7 +53,6 @@ const playerName = computed(() => {
 
 <style scoped>
 .delete-modal-header {
-  padding: 1.5rem;
   text-align: center;
 }
 
