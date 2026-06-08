@@ -1,100 +1,85 @@
 <template>
-  <div v-if="isOpen" class="pp-modal-overlay">
-    <!-- Backdrop -->
-    <div class="pp-modal-backdrop" @click="closeModal"></div>
+  <PpModal :open="isOpen" size="md" @close="closeModal">
+    <template #header>
+      <div>
+        <h3 class="modal-title">{{ t('entries.addEntry') }}</h3>
+        <p v-if="player" class="modal-subtitle">{{ player.name }}</p>
+      </div>
+    </template>
 
-    <!-- Modal Content -->
-    <div class="pp-modal-content pp-modal-content--md">
-      <!-- Header -->
-      <div class="pp-modal-header">
-        <div>
-          <h3 class="modal-title">{{ t('entries.addEntry') }}</h3>
-          <p v-if="player" class="modal-subtitle">{{ player.name }}</p>
+    <!-- Form -->
+    <form @submit.prevent="handleSubmit" class="form-body">
+      <!-- Entry Type -->
+      <div class="form-group">
+        <label class="pp-label">{{ t('entries.entryType') }}</label>
+        <div class="entry-type-grid">
+          <button
+            v-for="type in entryTypes"
+            :key="type.value"
+            type="button"
+            @click="form.entryType = type.value"
+            :class="[
+              'entry-type-button',
+              form.entryType === type.value ? 'entry-type-button--active' : '',
+            ]"
+          >
+            {{ type.label }}
+          </button>
         </div>
-        <button @click="closeModal" class="pp-close-button">
-          <IonIcon :icon="closeOutline" class="icon-md" />
-        </button>
       </div>
 
-      <!-- Form -->
-      <form @submit.prevent="handleSubmit" class="pp-modal-body form-body">
-        <!-- Entry Type -->
-        <div class="form-group">
-          <label class="pp-label">{{ t('entries.entryType') }}</label>
-          <div class="entry-type-grid">
-            <button
-              v-for="type in entryTypes"
-              :key="type.value"
-              type="button"
-              @click="form.entryType = type.value"
-              :class="[
-                'entry-type-button',
-                form.entryType === type.value ? 'entry-type-button--active' : '',
-              ]"
-            >
-              {{ type.label }}
-            </button>
-          </div>
-        </div>
-
-        <!-- Amount -->
-        <div class="form-group">
-          <label class="pp-label">{{ t('entries.amount') }}</label>
-          <div class="input-with-prefix">
-            <span class="input-prefix">&euro;</span>
-            <input
-              v-model.number="amountEuros"
-              type="number"
-              step="0.01"
-              min="0"
-              class="pp-input input-with-left-pad"
-            />
-          </div>
-        </div>
-
-        <!-- Chips Received -->
-        <div class="form-group">
-          <label class="pp-label">{{ t('entries.chipsReceived') }}</label>
-          <input v-model.number="form.chipsReceived" type="number" min="0" class="pp-input" />
-        </div>
-
-        <!-- Notes -->
-        <div class="form-group">
-          <label class="pp-label">{{ t('entries.notes') }}</label>
+      <!-- Amount -->
+      <div class="form-group">
+        <label class="pp-label">{{ t('entries.amount') }}</label>
+        <div class="input-with-prefix">
+          <span class="input-prefix">&euro;</span>
           <input
-            v-model="form.notes"
-            type="text"
-            :placeholder="t('entries.notesPlaceholder')"
-            class="pp-input"
+            v-model.number="amountEuros"
+            type="number"
+            step="0.01"
+            min="0"
+            class="pp-input input-with-left-pad"
           />
         </div>
+      </div>
 
-        <!-- Actions -->
-        <div class="pp-modal-footer form-actions">
-          <button
-            type="button"
-            @click="closeModal"
-            class="pp-action-button pp-action-button--secondary"
-          >
-            {{ t('buttons.cancel') }}
-          </button>
-          <button
-            type="submit"
-            :disabled="submitting"
-            class="pp-action-button pp-action-button--primary"
-          >
-            <IonIcon v-if="submitting" :icon="refreshOutline" class="icon-sm pp-animate-spin" />
-            {{ submitting ? t('entries.submitting') : t('entries.submit') }}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+      <!-- Chips Received -->
+      <div class="form-group">
+        <label class="pp-label">{{ t('entries.chipsReceived') }}</label>
+        <input v-model.number="form.chipsReceived" type="number" min="0" class="pp-input" />
+      </div>
+
+      <!-- Notes -->
+      <div class="form-group">
+        <label class="pp-label">{{ t('entries.notes') }}</label>
+        <input
+          v-model="form.notes"
+          type="text"
+          :placeholder="t('entries.notesPlaceholder')"
+          class="pp-input"
+        />
+      </div>
+    </form>
+
+    <!-- Actions Footer -->
+    <template #footer>
+      <PpButton variant="secondary" @click="closeModal">
+        {{ t('buttons.cancel') }}
+      </PpButton>
+      <PpButton
+        variant="primary"
+        type="submit"
+        :disabled="submitting"
+        :loading="submitting"
+        @click="handleSubmit"
+      >
+        {{ submitting ? t('entries.submitting') : t('entries.submit') }}
+      </PpButton>
+    </template>
+  </PpModal>
 </template>
 
 <script setup lang="ts">
-import { IonIcon } from '@ionic/vue'
-import { closeOutline, refreshOutline } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 import { EntryType } from '~/types/enums'
 
@@ -256,20 +241,5 @@ const closeModal = () => {
 
 .input-with-left-pad {
   padding-left: 2rem;
-}
-
-.form-actions {
-  padding: 1rem 0 0 0;
-  border-top: 1px solid rgba(84, 84, 95, 0.5);
-}
-
-.icon-md {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-.icon-sm {
-  width: 1rem;
-  height: 1rem;
 }
 </style>

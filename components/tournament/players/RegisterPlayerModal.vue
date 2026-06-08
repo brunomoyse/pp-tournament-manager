@@ -1,192 +1,164 @@
 <template>
-  <div v-if="isOpen" class="pp-modal-overlay">
-    <!-- Backdrop -->
-    <div class="pp-modal-backdrop" @click="close"></div>
-
-    <!-- Modal Content -->
-    <div class="pp-modal-content pp-modal-content--lg modal-flex-container">
-      <!-- Header -->
-      <div class="pp-modal-header">
-        <h3>{{ t('buttons.registerPlayer') }}</h3>
-        <button @click="close" class="pp-close-button">
-          <IonIcon :icon="closeOutline" class="icon-lg" />
+  <PpModal :open="isOpen" size="lg" :title="t('buttons.registerPlayer')" @close="close">
+    <!-- Tabs -->
+    <div class="tabs-wrapper">
+      <div class="tabs-container">
+        <button
+          @click="activeTab = 'search'"
+          :class="['tab-button', activeTab === 'search' ? 'tab-button--active' : '']"
+        >
+          <IonIcon :icon="searchOutline" class="icon-sm" />
+          {{ t('registerModal.searchExisting') }}
+        </button>
+        <button
+          @click="activeTab = 'create'"
+          :class="['tab-button', activeTab === 'create' ? 'tab-button--active' : '']"
+        >
+          <IonIcon :icon="personAddOutline" class="icon-sm" />
+          {{ t('registerModal.createNew') }}
         </button>
       </div>
+    </div>
 
-      <!-- Tabs -->
-      <div class="tabs-wrapper">
-        <div class="tabs-container">
-          <button
-            @click="activeTab = 'search'"
-            :class="['tab-button', activeTab === 'search' ? 'tab-button--active' : '']"
-          >
-            <IonIcon :icon="searchOutline" class="icon-sm" />
-            {{ t('registerModal.searchExisting') }}
+    <!-- Content -->
+    <div class="tab-content">
+      <!-- Search Tab -->
+      <div v-if="activeTab === 'search'" class="search-tab">
+        <!-- Search Input -->
+        <div class="search-input-wrapper">
+          <IonIcon :icon="searchOutline" class="search-input-icon" />
+          <input
+            v-model="searchQuery"
+            type="text"
+            :placeholder="t('registerModal.searchPlaceholder')"
+            class="pp-input search-input"
+            @input="debouncedSearch"
+          />
+        </div>
+
+        <!-- Loading State -->
+        <div v-if="searching" class="search-loading">
+          <IonIcon :icon="refreshOutline" class="search-spinner pp-animate-spin" />
+          <span class="search-loading-text">{{ t('registerModal.searching') }}</span>
+        </div>
+
+        <!-- Search Results -->
+        <div v-else-if="searchResults.length > 0" class="search-results">
+          <p class="results-count">
+            {{ t('registerModal.playersFound', { count: searchResults.length }) }}
+          </p>
+          <div v-for="player in searchResults" :key="player.id" class="result-card">
+            <div class="result-player">
+              <div class="result-avatar">
+                {{ getInitials(player.firstName, player.lastName) }}
+              </div>
+              <div>
+                <h4 class="result-name">{{ getPlayerName(player) }}</h4>
+                <p class="result-email">{{ player.email }}</p>
+              </div>
+            </div>
+            <PpButton
+              size="sm"
+              variant="primary"
+              @click="registerExistingPlayer(player.id)"
+              :disabled="registering === player.id"
+              :loading="registering === player.id"
+            >
+              <IonIcon v-if="registering !== player.id" :icon="personAddOutline" class="icon-sm" />
+              {{
+                registering === player.id ? t('registerModal.registering') : t('buttons.register')
+              }}
+            </PpButton>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div v-else-if="searchQuery && !searching" class="search-empty">
+          <IonIcon :icon="searchOutline" class="empty-icon" />
+          <p class="empty-text">
+            {{ t('registerModal.noPlayersMatching', { query: searchQuery }) }}
+          </p>
+          <button @click="activeTab = 'create'" class="create-instead-link">
+            {{ t('registerModal.createInstead') }}
           </button>
-          <button
-            @click="activeTab = 'create'"
-            :class="['tab-button', activeTab === 'create' ? 'tab-button--active' : '']"
-          >
-            <IonIcon :icon="personAddOutline" class="icon-sm" />
-            {{ t('registerModal.createNew') }}
-          </button>
+        </div>
+
+        <!-- Initial State -->
+        <div v-else class="search-empty">
+          <IonIcon :icon="personOutline" class="empty-icon" />
+          <p class="empty-text">{{ t('registerModal.searchPrompt') }}</p>
         </div>
       </div>
 
-      <!-- Content -->
-      <div class="tab-content">
-        <!-- Search Tab -->
-        <div v-if="activeTab === 'search'" class="search-tab">
-          <!-- Search Input -->
-          <div class="search-input-wrapper">
-            <IonIcon :icon="searchOutline" class="search-input-icon" />
+      <!-- Create Tab -->
+      <div v-if="activeTab === 'create'" class="create-tab">
+        <form @submit.prevent="createAndRegister" class="create-form">
+          <div class="name-grid">
+            <div>
+              <label class="pp-label">{{ t('players.firstName') }} *</label>
+              <input
+                v-model="newPlayer.firstName"
+                type="text"
+                required
+                class="pp-input"
+                placeholder="John"
+              />
+            </div>
+            <div>
+              <label class="pp-label">{{ t('players.lastName') }} *</label>
+              <input
+                v-model="newPlayer.lastName"
+                type="text"
+                required
+                class="pp-input"
+                placeholder="Doe"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="pp-label">{{ t('auth.email') }} *</label>
             <input
-              v-model="searchQuery"
-              type="text"
-              :placeholder="t('registerModal.searchPlaceholder')"
-              class="pp-input search-input"
-              @input="debouncedSearch"
+              v-model="newPlayer.email"
+              type="email"
+              required
+              class="pp-input"
+              placeholder="john@example.com"
             />
           </div>
 
-          <!-- Loading State -->
-          <div v-if="searching" class="search-loading">
-            <IonIcon :icon="refreshOutline" class="search-spinner pp-animate-spin" />
-            <span class="search-loading-text">{{ t('registerModal.searching') }}</span>
+          <div>
+            <label class="pp-label">{{ t('registerModal.phoneOptional') }}</label>
+            <input
+              v-model="newPlayer.phone"
+              type="tel"
+              class="pp-input"
+              placeholder="+1 234 567 890"
+            />
           </div>
 
-          <!-- Search Results -->
-          <div v-else-if="searchResults.length > 0" class="search-results">
-            <p class="results-count">
-              {{ t('registerModal.playersFound', { count: searchResults.length }) }}
-            </p>
-            <div v-for="player in searchResults" :key="player.id" class="result-card">
-              <div class="result-player">
-                <div class="result-avatar">
-                  {{ getInitials(player.firstName, player.lastName) }}
-                </div>
-                <div>
-                  <h4 class="result-name">{{ getPlayerName(player) }}</h4>
-                  <p class="result-email">{{ player.email }}</p>
-                </div>
-              </div>
-              <button
-                @click="registerExistingPlayer(player.id)"
-                :disabled="registering === player.id"
-                class="pp-action-button pp-action-button--primary result-register-btn"
-              >
-                <IonIcon
-                  :icon="registering === player.id ? refreshOutline : personAddOutline"
-                  :class="['icon-sm', registering === player.id && 'pp-animate-spin']"
-                />
-                {{
-                  registering === player.id ? t('registerModal.registering') : t('buttons.register')
-                }}
-              </button>
-            </div>
+          <!-- Error Message -->
+          <div v-if="error" class="form-error">
+            <p class="form-error-text">{{ error }}</p>
           </div>
 
-          <!-- Empty State -->
-          <div v-else-if="searchQuery && !searching" class="search-empty">
-            <IonIcon :icon="searchOutline" class="empty-icon" />
-            <p class="empty-text">
-              {{ t('registerModal.noPlayersMatching', { query: searchQuery }) }}
-            </p>
-            <button @click="activeTab = 'create'" class="create-instead-link">
-              {{ t('registerModal.createInstead') }}
-            </button>
-          </div>
-
-          <!-- Initial State -->
-          <div v-else class="search-empty">
-            <IonIcon :icon="personOutline" class="empty-icon" />
-            <p class="empty-text">{{ t('registerModal.searchPrompt') }}</p>
-          </div>
-        </div>
-
-        <!-- Create Tab -->
-        <div v-if="activeTab === 'create'" class="create-tab">
-          <form @submit.prevent="createAndRegister" class="create-form">
-            <div class="name-grid">
-              <div>
-                <label class="pp-label">{{ t('players.firstName') }} *</label>
-                <input
-                  v-model="newPlayer.firstName"
-                  type="text"
-                  required
-                  class="pp-input"
-                  placeholder="John"
-                />
-              </div>
-              <div>
-                <label class="pp-label">{{ t('players.lastName') }} *</label>
-                <input
-                  v-model="newPlayer.lastName"
-                  type="text"
-                  required
-                  class="pp-input"
-                  placeholder="Doe"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label class="pp-label">{{ t('auth.email') }} *</label>
-              <input
-                v-model="newPlayer.email"
-                type="email"
-                required
-                class="pp-input"
-                placeholder="john@example.com"
-              />
-            </div>
-
-            <div>
-              <label class="pp-label">{{ t('registerModal.phoneOptional') }}</label>
-              <input
-                v-model="newPlayer.phone"
-                type="tel"
-                class="pp-input"
-                placeholder="+1 234 567 890"
-              />
-            </div>
-
-            <!-- Error Message -->
-            <div v-if="error" class="form-error">
-              <p class="form-error-text">{{ error }}</p>
-            </div>
-
-            <button
-              type="submit"
-              :disabled="creating"
-              class="pp-action-button pp-action-button--primary submit-button"
-            >
-              <IonIcon
-                :icon="creating ? refreshOutline : personAddOutline"
-                :class="['icon-md', creating && 'pp-animate-spin']"
-              />
-              {{
-                creating
-                  ? t('registerModal.creatingAndRegistering')
-                  : t('registerModal.createAndRegister')
-              }}
-            </button>
-          </form>
-        </div>
+          <PpButton type="submit" variant="primary" block :loading="creating" class="submit-button">
+            <IonIcon v-if="!creating" :icon="personAddOutline" class="icon-md" />
+            {{
+              creating
+                ? t('registerModal.creatingAndRegistering')
+                : t('registerModal.createAndRegister')
+            }}
+          </PpButton>
+        </form>
       </div>
     </div>
-  </div>
+  </PpModal>
 </template>
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import {
-  closeOutline,
-  searchOutline,
-  personAddOutline,
-  personOutline,
-  refreshOutline,
-} from 'ionicons/icons'
+import { searchOutline, personAddOutline, personOutline } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 
 const { t } = useI18n()
@@ -360,15 +332,11 @@ watch(
 </script>
 
 <style scoped>
-.modal-flex-container {
-  display: flex;
-  flex-direction: column;
-  max-height: 80vh;
-}
-
 /* Tabs */
 .tabs-wrapper {
+  margin: 0 -1.5rem 0 -1.5rem;
   padding: 0.75rem 1rem 0;
+  border-bottom: 1px solid var(--color-pp-border);
 }
 
 .tabs-container {
@@ -512,11 +480,6 @@ watch(
   color: rgba(255, 255, 255, 0.5);
 }
 
-.result-register-btn {
-  font-size: 0.875rem;
-  padding: 0.375rem 0.75rem;
-}
-
 /* Empty / Initial State */
 .search-empty {
   text-align: center;
@@ -568,13 +531,6 @@ watch(
 .form-error-text {
   color: var(--pp-red-400);
   font-size: 0.875rem;
-}
-
-.submit-button {
-  width: 100%;
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-  justify-content: center;
 }
 
 /* Icon sizes */

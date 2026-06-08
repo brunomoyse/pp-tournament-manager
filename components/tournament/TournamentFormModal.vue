@@ -1,286 +1,267 @@
 <template>
-  <div v-if="isOpen" class="pp-modal-overlay">
-    <!-- Backdrop -->
-    <div class="pp-modal-backdrop" @click="closeModal"></div>
-
-    <!-- Modal Content -->
-    <div class="pp-modal-content pp-modal-content--2xl">
-      <!-- Header -->
-      <div class="pp-modal-header tournament-form-header-sticky">
+  <PpModal :open="isOpen" size="2xl" @close="closeModal">
+    <!-- Form -->
+    <template #header>
+      <div class="tournament-form-header-sticky">
         <h2 class="tournament-form-title">
           {{
             mode === 'create' ? t('tournament.createTournament') : t('tournament.editTournament')
           }}
         </h2>
-        <button @click="closeModal" class="pp-close-button">
-          <IonIcon :icon="closeOutline" class="tournament-form-close-icon" />
-        </button>
       </div>
+    </template>
 
-      <!-- Form -->
-      <form @submit.prevent="handleSubmit" class="pp-modal-body tournament-form">
-        <!-- Basic Info Section -->
-        <div class="tournament-form-section">
-          <h3 class="tournament-form-section-title">{{ t('tournament.basicInfo') }}</h3>
+    <form @submit.prevent="handleSubmit" class="tournament-form">
+      <!-- Basic Info Section -->
+      <div class="tournament-form-section">
+        <h3 class="tournament-form-section-title">{{ t('tournament.basicInfo') }}</h3>
 
-          <!-- Name -->
+        <!-- Name -->
+        <div class="tournament-form-field">
+          <label class="pp-label">
+            {{ t('tournament.name') }} <span class="tournament-form-required">*</span>
+          </label>
+          <input
+            v-model="form.name"
+            type="text"
+            required
+            class="pp-input"
+            :placeholder="t('tournament.namePlaceholder')"
+          />
+        </div>
+
+        <!-- Description -->
+        <div class="tournament-form-field">
+          <label class="pp-label">
+            {{ t('tournament.description') }}
+          </label>
+          <textarea
+            v-model="form.description"
+            rows="3"
+            class="pp-input"
+            :placeholder="t('tournament.descriptionPlaceholder')"
+          />
+        </div>
+
+        <!-- Start Time -->
+        <div class="tournament-form-field">
+          <label class="pp-label">
+            {{ t('tournament.startTime') }} <span class="tournament-form-required">*</span>
+          </label>
+          <input v-model="form.startTime" type="datetime-local" required class="pp-input" />
+        </div>
+
+        <!-- Buy-in / Rake / Seat Cap row -->
+        <div class="tournament-form-row tournament-form-row--3col">
           <div class="tournament-form-field">
             <label class="pp-label">
-              {{ t('tournament.name') }} <span class="tournament-form-required">*</span>
+              {{ t('tournament.buyIn') }} (EUR) <span class="tournament-form-required">*</span>
             </label>
             <input
-              v-model="form.name"
-              type="text"
+              v-model.number="buyInEuros"
+              type="number"
+              min="0"
+              step="0.01"
               required
               class="pp-input"
-              :placeholder="t('tournament.namePlaceholder')"
             />
           </div>
-
-          <!-- Description -->
+          <div class="tournament-form-field">
+            <label class="pp-label"> {{ t('tournament.rake') }} (EUR) </label>
+            <input v-model.number="rakeEuros" type="number" min="0" step="0.01" class="pp-input" />
+          </div>
           <div class="tournament-form-field">
             <label class="pp-label">
-              {{ t('tournament.description') }}
-            </label>
-            <textarea
-              v-model="form.description"
-              rows="3"
-              class="pp-input"
-              :placeholder="t('tournament.descriptionPlaceholder')"
-            />
-          </div>
-
-          <!-- Start Time -->
-          <div class="tournament-form-field">
-            <label class="pp-label">
-              {{ t('tournament.startTime') }} <span class="tournament-form-required">*</span>
-            </label>
-            <input v-model="form.startTime" type="datetime-local" required class="pp-input" />
-          </div>
-
-          <!-- Buy-in / Rake / Seat Cap row -->
-          <div class="tournament-form-row tournament-form-row--3col">
-            <div class="tournament-form-field">
-              <label class="pp-label">
-                {{ t('tournament.buyIn') }} (EUR) <span class="tournament-form-required">*</span>
-              </label>
-              <input
-                v-model.number="buyInEuros"
-                type="number"
-                min="0"
-                step="0.01"
-                required
-                class="pp-input"
-              />
-            </div>
-            <div class="tournament-form-field">
-              <label class="pp-label"> {{ t('tournament.rake') }} (EUR) </label>
-              <input
-                v-model.number="rakeEuros"
-                type="number"
-                min="0"
-                step="0.01"
-                class="pp-input"
-              />
-            </div>
-            <div class="tournament-form-field">
-              <label class="pp-label">
-                {{ t('tournament.seatCap') }}
-              </label>
-              <input
-                v-model.number="form.seatCap"
-                type="number"
-                min="2"
-                class="pp-input"
-                :placeholder="t('tournament.unlimited')"
-              />
-            </div>
-          </div>
-
-          <!-- Early Bird Bonus -->
-          <div class="tournament-form-field">
-            <label class="pp-label">
-              {{ t('tournament.earlyBirdBonus') }}
+              {{ t('tournament.seatCap') }}
             </label>
             <input
-              v-model.number="form.earlyBirdBonusChips"
+              v-model.number="form.seatCap"
               type="number"
-              min="0"
-              class="pp-input"
-              :placeholder="t('tournament.earlyBirdBonusPlaceholder')"
-            />
-          </div>
-
-          <!-- Level-2 Bonus -->
-          <div class="tournament-form-field">
-            <label class="pp-label">
-              {{ t('tournament.levelTwoBonus') }}
-            </label>
-            <input
-              v-model.number="form.levelTwoBonusChips"
-              type="number"
-              min="0"
-              class="pp-input"
-              :placeholder="t('tournament.levelTwoBonusPlaceholder')"
-            />
-          </div>
-
-          <!-- Mandatory Drink Voucher (euros) -->
-          <div class="tournament-form-field">
-            <label class="pp-label">
-              {{ t('tournament.voucherValue') }}
-            </label>
-            <input
-              v-model.number="voucherValueEuros"
-              type="number"
-              min="0"
-              step="0.5"
-              class="pp-input"
-              :placeholder="t('tournament.voucherValuePlaceholder')"
-            />
-            <p class="tournament-form-help">{{ t('tournament.voucherValueHelp') }}</p>
-          </div>
-
-          <!-- Rebuy max -->
-          <div class="tournament-form-field">
-            <label class="pp-label">
-              {{ t('tournament.rebuyMax') }}
-            </label>
-            <input
-              v-model.number="form.rebuyMax"
-              type="number"
-              min="0"
+              min="2"
               class="pp-input"
               :placeholder="t('tournament.unlimited')"
             />
           </div>
-
-          <!-- Add-on chips -->
-          <div class="tournament-form-field">
-            <label class="pp-label">
-              {{ t('tournament.addonChips') }}
-            </label>
-            <input
-              v-model.number="form.addonChips"
-              type="number"
-              min="0"
-              class="pp-input"
-              :placeholder="t('tournament.earlyBirdBonusPlaceholder')"
-            />
-          </div>
-
-          <!-- Add-on price (euros) -->
-          <div class="tournament-form-field">
-            <label class="pp-label">
-              {{ t('tournament.addonPrice') }}
-            </label>
-            <input
-              v-model.number="addonPriceEuros"
-              type="number"
-              min="0"
-              step="0.5"
-              class="pp-input"
-              :placeholder="t('tournament.voucherValuePlaceholder')"
-            />
-          </div>
-
-          <!-- Late Registration Level -->
-          <div class="tournament-form-field">
-            <label class="pp-label">
-              {{ t('tournament.lateRegistrationLevel') }}
-            </label>
-            <input
-              v-model.number="form.lateRegistrationLevel"
-              type="number"
-              min="1"
-              class="pp-input"
-              :placeholder="t('tournament.lateRegistrationLevelPlaceholder')"
-            />
-            <p class="tournament-form-help">{{ t('tournament.lateRegistrationLevelHelp') }}</p>
-          </div>
         </div>
 
-        <!-- Blind Structure Template Section -->
-        <div class="tournament-form-section">
-          <h3 class="tournament-form-section-title">{{ t('tournament.blindStructure') }}</h3>
+        <!-- Early Bird Bonus -->
+        <div class="tournament-form-field">
+          <label class="pp-label">
+            {{ t('tournament.earlyBirdBonus') }}
+          </label>
+          <input
+            v-model.number="form.earlyBirdBonusChips"
+            type="number"
+            min="0"
+            class="pp-input"
+            :placeholder="t('tournament.earlyBirdBonusPlaceholder')"
+          />
+        </div>
 
-          <!-- Template Dropdown -->
-          <div class="tournament-form-field">
-            <label class="pp-label">
-              {{ t('tournament.selectTemplate') }} <span class="tournament-form-required">*</span>
-            </label>
-            <select v-model="form.templateId" required class="pp-select">
-              <option value="" disabled>{{ t('tournament.selectTemplatePlaceholder') }}</option>
-              <option v-for="template in templates" :key="template.id" :value="template.id">
-                {{ template.name }}
-              </option>
-            </select>
-          </div>
+        <!-- Level-2 Bonus -->
+        <div class="tournament-form-field">
+          <label class="pp-label">
+            {{ t('tournament.levelTwoBonus') }}
+          </label>
+          <input
+            v-model.number="form.levelTwoBonusChips"
+            type="number"
+            min="0"
+            class="pp-input"
+            :placeholder="t('tournament.levelTwoBonusPlaceholder')"
+          />
+        </div>
 
-          <!-- Template Description -->
-          <p v-if="selectedTemplate?.description" class="tournament-form-template-description">
-            {{ selectedTemplate.description }}
+        <!-- Mandatory Drink Voucher (euros) -->
+        <div class="tournament-form-field">
+          <label class="pp-label">
+            {{ t('tournament.voucherValue') }}
+          </label>
+          <input
+            v-model.number="voucherValueEuros"
+            type="number"
+            min="0"
+            step="0.5"
+            class="pp-input"
+            :placeholder="t('tournament.voucherValuePlaceholder')"
+          />
+          <p class="tournament-form-help">{{ t('tournament.voucherValueHelp') }}</p>
+        </div>
+
+        <!-- Rebuy max -->
+        <div class="tournament-form-field">
+          <label class="pp-label">
+            {{ t('tournament.rebuyMax') }}
+          </label>
+          <input
+            v-model.number="form.rebuyMax"
+            type="number"
+            min="0"
+            class="pp-input"
+            :placeholder="t('tournament.unlimited')"
+          />
+        </div>
+
+        <!-- Add-on chips -->
+        <div class="tournament-form-field">
+          <label class="pp-label">
+            {{ t('tournament.addonChips') }}
+          </label>
+          <input
+            v-model.number="form.addonChips"
+            type="number"
+            min="0"
+            class="pp-input"
+            :placeholder="t('tournament.earlyBirdBonusPlaceholder')"
+          />
+        </div>
+
+        <!-- Add-on price (euros) -->
+        <div class="tournament-form-field">
+          <label class="pp-label">
+            {{ t('tournament.addonPrice') }}
+          </label>
+          <input
+            v-model.number="addonPriceEuros"
+            type="number"
+            min="0"
+            step="0.5"
+            class="pp-input"
+            :placeholder="t('tournament.voucherValuePlaceholder')"
+          />
+        </div>
+
+        <!-- Late Registration Level -->
+        <div class="tournament-form-field">
+          <label class="pp-label">
+            {{ t('tournament.lateRegistrationLevel') }}
+          </label>
+          <input
+            v-model.number="form.lateRegistrationLevel"
+            type="number"
+            min="1"
+            class="pp-input"
+            :placeholder="t('tournament.lateRegistrationLevelPlaceholder')"
+          />
+          <p class="tournament-form-help">{{ t('tournament.lateRegistrationLevelHelp') }}</p>
+        </div>
+      </div>
+
+      <!-- Blind Structure Template Section -->
+      <div class="tournament-form-section">
+        <h3 class="tournament-form-section-title">{{ t('tournament.blindStructure') }}</h3>
+
+        <!-- Template Dropdown -->
+        <div class="tournament-form-field">
+          <label class="pp-label">
+            {{ t('tournament.selectTemplate') }} <span class="tournament-form-required">*</span>
+          </label>
+          <select v-model="form.templateId" required class="pp-select">
+            <option value="" disabled>{{ t('tournament.selectTemplatePlaceholder') }}</option>
+            <option v-for="template in templates" :key="template.id" :value="template.id">
+              {{ template.name }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Template Description -->
+        <p v-if="selectedTemplate?.description" class="tournament-form-template-description">
+          {{ selectedTemplate.description }}
+        </p>
+
+        <!-- Template Preview -->
+        <div v-if="selectedTemplate" class="tournament-form-template-preview">
+          <p class="tournament-form-template-preview-label">
+            {{ t('tournament.templatePreview') }}
           </p>
-
-          <!-- Template Preview -->
-          <div v-if="selectedTemplate" class="tournament-form-template-preview">
-            <p class="tournament-form-template-preview-label">
-              {{ t('tournament.templatePreview') }}
-            </p>
-            <div class="tournament-form-template-levels">
-              <div
-                v-for="level in selectedTemplate.levels"
-                :key="level.levelNumber"
-                class="tournament-form-template-level-row"
+          <div class="tournament-form-template-levels">
+            <div
+              v-for="level in selectedTemplate.levels"
+              :key="level.levelNumber"
+              class="tournament-form-template-level-row"
+            >
+              <span>{{
+                level.isBreak
+                  ? t('tournament.break')
+                  : t('tournament.level') + ' ' + level.levelNumber
+              }}</span>
+              <span v-if="!level.isBreak"
+                >{{ level.smallBlind }}/{{ level.bigBlind }} ({{
+                  level.ante > 0 ? 'Ante ' + level.ante : 'No Ante'
+                }}) - {{ level.durationMinutes }}min</span
               >
-                <span>{{
-                  level.isBreak
-                    ? t('tournament.break')
-                    : t('tournament.level') + ' ' + level.levelNumber
-                }}</span>
-                <span v-if="!level.isBreak"
-                  >{{ level.smallBlind }}/{{ level.bigBlind }} ({{
-                    level.ante > 0 ? 'Ante ' + level.ante : 'No Ante'
-                  }}) - {{ level.durationMinutes }}min</span
-                >
-                <span v-else>{{ level.durationMinutes }}min</span>
-              </div>
+              <span v-else>{{ level.durationMinutes }}min</span>
             </div>
           </div>
         </div>
+      </div>
+    </form>
 
-        <!-- Actions -->
-        <div class="tournament-form-actions">
-          <button
-            type="button"
-            @click="closeModal"
-            class="pp-action-button pp-action-button--secondary"
-          >
-            {{ t('common.cancel') }}
-          </button>
-          <button
-            type="submit"
-            :disabled="!isFormValid || saving"
-            class="pp-action-button pp-action-button--primary"
-          >
-            <IonIcon v-if="saving" :icon="refreshOutline" class="tournament-form-spinner" />
-            {{
-              saving
-                ? t('status.saving')
-                : mode === 'create'
-                  ? t('tournament.create')
-                  : t('tournament.save')
-            }}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+    <!-- Actions Footer -->
+    <template #footer>
+      <PpButton variant="secondary" @click="closeModal">
+        {{ t('common.cancel') }}
+      </PpButton>
+      <PpButton
+        variant="primary"
+        type="submit"
+        :disabled="!isFormValid || saving"
+        :loading="saving"
+        @click="handleSubmit"
+      >
+        {{
+          saving
+            ? t('status.saving')
+            : mode === 'create'
+              ? t('tournament.create')
+              : t('tournament.save')
+        }}
+      </PpButton>
+    </template>
+  </PpModal>
 </template>
 
 <script setup lang="ts">
-import { IonIcon } from '@ionic/vue'
-import { closeOutline, refreshOutline } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 import type { Tournament, TournamentFormData, BlindStructureTemplate } from '~/types/tournament'
 
@@ -509,18 +490,12 @@ const closeModal = () => {
   position: sticky;
   top: 0;
   z-index: 10;
-  background-color: var(--color-pp-surface-2);
 }
 
 .tournament-form-title {
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-pp-text);
-}
-
-.tournament-form-close-icon {
-  width: 1.25rem;
-  height: 1.25rem;
 }
 
 .tournament-form > * + * {
@@ -594,20 +569,5 @@ const closeModal = () => {
 .tournament-form-template-level-row {
   display: flex;
   justify-content: space-between;
-}
-
-.tournament-form-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-pp-border-strong);
-}
-
-.tournament-form-spinner {
-  width: 1rem;
-  height: 1rem;
-  animation: pp-spin 1s linear infinite;
 }
 </style>

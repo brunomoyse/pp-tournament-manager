@@ -1,275 +1,261 @@
 <template>
-  <div v-if="isOpen" class="pp-modal-overlay">
-    <!-- Backdrop -->
-    <div class="pp-modal-backdrop" @click="closeModal"></div>
-
-    <!-- Modal Content -->
-    <div class="pp-modal-content pp-modal-content--2xl modal-flex-container">
-      <!-- Header -->
-      <div class="pp-modal-header modal-header-shrink">
+  <PpModal :open="isOpen" size="2xl" @close="closeModal" :closeOnBackdrop="false">
+    <template #header>
+      <div class="modal-header-content">
         <div>
           <h3 class="modal-title">{{ t('results.title') }}</h3>
           <p class="modal-subtitle">{{ stepLabels[currentStep] }}</p>
         </div>
-        <button @click="closeModal" class="pp-close-button">
-          <IonIcon :icon="closeOutline" class="icon-md" />
-        </button>
       </div>
+    </template>
 
-      <!-- Step Indicator -->
-      <div class="step-indicator modal-header-shrink">
-        <div
-          v-for="step in 3"
-          :key="step"
-          :class="['step-bar', step <= currentStep ? 'step-bar--active' : 'step-bar--inactive']"
-        ></div>
-      </div>
+    <!-- Step Indicator -->
+    <div class="step-indicator modal-header-shrink">
+      <div
+        v-for="step in 3"
+        :key="step"
+        :class="['step-bar', step <= currentStep ? 'step-bar--active' : 'step-bar--inactive']"
+      ></div>
+    </div>
 
-      <!-- Scrollable Content -->
-      <div class="scrollable-content">
-        <!-- Step 1: Player Ordering -->
-        <div v-if="currentStep === 1">
-          <p class="step-description">{{ t('results.step1Desc') }}</p>
+    <!-- Scrollable Content -->
+    <div class="scrollable-content">
+      <!-- Step 1: Player Ordering -->
+      <div v-if="currentStep === 1">
+        <p class="step-description">{{ t('results.step1Desc') }}</p>
 
-          <div v-if="orderedPlayers.length === 0" class="empty-message">
-            {{ t('results.noRemainingPlayers') }}
+        <div v-if="orderedPlayers.length === 0" class="empty-message">
+          {{ t('results.noRemainingPlayers') }}
+        </div>
+
+        <div v-else class="player-order-list">
+          <div
+            v-for="(player, index) in orderedPlayers"
+            :key="player.userId"
+            class="player-order-row"
+          >
+            <!-- Position Number -->
+            <div class="position-badge">
+              {{ index + 1 }}
+            </div>
+
+            <!-- Player Info -->
+            <div class="player-order-info">
+              <div class="player-order-name pp-truncate">{{ player.name }}</div>
+            </div>
+
+            <!-- Move Buttons -->
+            <div class="move-buttons">
+              <button
+                @click="movePlayer(index, -1)"
+                :disabled="index === 0"
+                :class="['move-button', index === 0 ? 'move-button--disabled' : '']"
+              >
+                <IonIcon :icon="chevronUpOutline" class="icon-sm" />
+              </button>
+              <button
+                @click="movePlayer(index, 1)"
+                :disabled="index === orderedPlayers.length - 1"
+                :class="[
+                  'move-button',
+                  index === orderedPlayers.length - 1 ? 'move-button--disabled' : '',
+                ]"
+              >
+                <IonIcon :icon="chevronDownOutline" class="icon-sm" />
+              </button>
+            </div>
           </div>
+        </div>
+      </div>
 
-          <div v-else class="player-order-list">
-            <div
-              v-for="(player, index) in orderedPlayers"
-              :key="player.userId"
-              class="player-order-row"
-            >
-              <!-- Position Number -->
-              <div class="position-badge">
+      <!-- Step 2: Payout Preview -->
+      <div v-if="currentStep === 2">
+        <p class="step-description">{{ t('results.step2Desc') }}</p>
+
+        <!-- Payout Template Selector -->
+        <div class="template-selector">
+          <label class="pp-label">{{ t('results.payoutTemplate') }}</label>
+          <select
+            v-model="selectedPayoutTemplateId"
+            @change="applyPayoutTemplate"
+            class="pp-select"
+          >
+            <option value="">{{ t('results.useExistingPayout') }}</option>
+            <option v-for="tmpl in availablePayoutTemplates" :key="tmpl.id" :value="tmpl.id">
+              {{ tmpl.name }} ({{ tmpl.minPlayers }}-{{ tmpl.maxPlayers || '&#x221e;' }}
+              {{ t('headings.players').toLowerCase() }})
+            </option>
+          </select>
+        </div>
+
+        <!-- Payout Table -->
+        <div class="payout-list">
+          <div v-for="(player, index) in orderedPlayers" :key="player.userId" class="payout-row">
+            <div class="payout-row-left">
+              <div class="position-badge position-badge--sm">
                 {{ index + 1 }}
               </div>
+              <span class="payout-player-name">{{ player.name }}</span>
+            </div>
+            <div class="payout-row-right">
+              <span v-if="getPayoutForPosition(index + 1)?.percentage" class="payout-percentage">
+                {{ getPayoutForPosition(index + 1)?.percentage?.toFixed(1) }}%
+              </span>
+              <span class="payout-amount">
+                {{ formatPrice(getPayoutForPosition(index + 1)?.amountCents || 0, locale) }}
+              </span>
+            </div>
+          </div>
+        </div>
 
-              <!-- Player Info -->
-              <div class="player-order-info">
-                <div class="player-order-name pp-truncate">{{ player.name }}</div>
-              </div>
+        <!-- Deal Section -->
+        <div class="deal-section">
+          <label class="deal-toggle">
+            <input v-model="includeDeal" type="checkbox" class="deal-checkbox" />
+            <span class="deal-toggle-label">{{ t('results.includeDeal') }}</span>
+          </label>
 
-              <!-- Move Buttons -->
-              <div class="move-buttons">
+          <div v-if="includeDeal" class="deal-options">
+            <!-- Deal Type -->
+            <div>
+              <label class="pp-label">{{ t('results.dealType') }}</label>
+              <div class="deal-type-options">
                 <button
-                  @click="movePlayer(index, -1)"
-                  :disabled="index === 0"
-                  :class="['move-button', index === 0 ? 'move-button--disabled' : '']"
-                >
-                  <IonIcon :icon="chevronUpOutline" class="icon-sm" />
-                </button>
-                <button
-                  @click="movePlayer(index, 1)"
-                  :disabled="index === orderedPlayers.length - 1"
+                  v-for="type in dealTypes"
+                  :key="type.value"
+                  type="button"
+                  @click="deal.dealType = type.value"
                   :class="[
-                    'move-button',
-                    index === orderedPlayers.length - 1 ? 'move-button--disabled' : '',
+                    'deal-type-button',
+                    deal.dealType === type.value ? 'deal-type-button--active' : '',
                   ]"
                 >
-                  <IonIcon :icon="chevronDownOutline" class="icon-sm" />
+                  {{ type.label }}
                 </button>
               </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Step 2: Payout Preview -->
-        <div v-if="currentStep === 2">
-          <p class="step-description">{{ t('results.step2Desc') }}</p>
-
-          <!-- Payout Template Selector -->
-          <div class="template-selector">
-            <label class="pp-label">{{ t('results.payoutTemplate') }}</label>
-            <select
-              v-model="selectedPayoutTemplateId"
-              @change="applyPayoutTemplate"
-              class="pp-select"
-            >
-              <option value="">{{ t('results.useExistingPayout') }}</option>
-              <option v-for="tmpl in availablePayoutTemplates" :key="tmpl.id" :value="tmpl.id">
-                {{ tmpl.name }} ({{ tmpl.minPlayers }}-{{ tmpl.maxPlayers || '&#x221e;' }}
-                {{ t('headings.players').toLowerCase() }})
-              </option>
-            </select>
-          </div>
-
-          <!-- Payout Table -->
-          <div class="payout-list">
-            <div v-for="(player, index) in orderedPlayers" :key="player.userId" class="payout-row">
-              <div class="payout-row-left">
-                <div class="position-badge position-badge--sm">
-                  {{ index + 1 }}
-                </div>
-                <span class="payout-player-name">{{ player.name }}</span>
-              </div>
-              <div class="payout-row-right">
-                <span v-if="getPayoutForPosition(index + 1)?.percentage" class="payout-percentage">
-                  {{ getPayoutForPosition(index + 1)?.percentage?.toFixed(1) }}%
-                </span>
-                <span class="payout-amount">
-                  {{ formatPrice(getPayoutForPosition(index + 1)?.amountCents || 0, locale) }}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Deal Section -->
-          <div class="deal-section">
-            <label class="deal-toggle">
-              <input v-model="includeDeal" type="checkbox" class="deal-checkbox" />
-              <span class="deal-toggle-label">{{ t('results.includeDeal') }}</span>
-            </label>
-
-            <div v-if="includeDeal" class="deal-options">
-              <!-- Deal Type -->
-              <div>
-                <label class="pp-label">{{ t('results.dealType') }}</label>
-                <div class="deal-type-options">
-                  <button
-                    v-for="type in dealTypes"
-                    :key="type.value"
-                    type="button"
-                    @click="deal.dealType = type.value"
-                    :class="[
-                      'deal-type-button',
-                      deal.dealType === type.value ? 'deal-type-button--active' : '',
-                    ]"
-                  >
-                    {{ type.label }}
-                  </button>
-                </div>
-              </div>
-
-              <!-- Affected Positions -->
-              <div>
-                <label class="pp-label">{{ t('results.affectedPositions') }}</label>
-                <div class="affected-positions">
-                  <label
-                    v-for="(player, index) in orderedPlayers"
-                    :key="player.userId"
-                    class="affected-position-item"
-                  >
-                    <input
-                      v-model="deal.affectedPositions"
-                      :value="index + 1"
-                      type="checkbox"
-                      class="affected-position-checkbox"
-                    />
-                    <span class="affected-position-label">#{{ index + 1 }} {{ player.name }}</span>
-                  </label>
-                </div>
-              </div>
-
-              <!-- Custom Payouts (for CUSTOM deal type) -->
-              <div v-if="deal.dealType === 'CUSTOM'" class="custom-payouts">
-                <label class="pp-label">{{ t('results.customAmount') }}</label>
-                <div v-for="pos in deal.affectedPositions" :key="pos" class="custom-payout-row">
-                  <span class="custom-payout-label"
-                    >#{{ pos }} {{ orderedPlayers[pos - 1]?.name }}</span
-                  >
-                  <div class="custom-payout-input-wrapper">
-                    <span class="custom-payout-prefix">&euro;</span>
-                    <input
-                      v-model.number="customPayoutAmounts[pos]"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      class="pp-input custom-payout-input"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <!-- Deal Notes -->
-              <div>
-                <label class="pp-label">{{ t('results.dealNotes') }}</label>
-                <input
-                  v-model="deal.notes"
-                  type="text"
-                  :placeholder="t('results.dealNotesPlaceholder')"
-                  class="pp-input"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 3: Confirmation -->
-        <div v-if="currentStep === 3">
-          <p class="step-description">{{ t('results.step3Desc') }}</p>
-
-          <div class="summary-card">
-            <h4 class="summary-title">{{ t('results.summaryTitle') }}</h4>
-
-            <div class="summary-list">
-              <div
-                v-for="(player, index) in orderedPlayers"
-                :key="player.userId"
-                class="summary-row"
-              >
-                <div class="summary-row-left">
-                  <span class="summary-position">{{ index + 1 }}.</span>
-                  <span class="summary-name">{{ player.name }}</span>
-                </div>
-                <span class="summary-amount">
-                  {{ formatPrice(getPayoutForPosition(index + 1)?.amountCents || 0, locale) }}
-                </span>
+            <!-- Affected Positions -->
+            <div>
+              <label class="pp-label">{{ t('results.affectedPositions') }}</label>
+              <div class="affected-positions">
+                <label
+                  v-for="(player, index) in orderedPlayers"
+                  :key="player.userId"
+                  class="affected-position-item"
+                >
+                  <input
+                    v-model="deal.affectedPositions"
+                    :value="index + 1"
+                    type="checkbox"
+                    class="affected-position-checkbox"
+                  />
+                  <span class="affected-position-label">#{{ index + 1 }} {{ player.name }}</span>
+                </label>
               </div>
             </div>
 
-            <div v-if="includeDeal" class="summary-deal">
-              <div class="summary-deal-text">
-                {{ t('results.deal') }}:
-                {{ dealTypes.find((d) => d.value === deal.dealType)?.label }} ({{
-                  deal.affectedPositions.length
-                }}
-                {{ t('results.affectedPositions').toLowerCase() }})
+            <!-- Custom Payouts (for CUSTOM deal type) -->
+            <div v-if="deal.dealType === 'CUSTOM'" class="custom-payouts">
+              <label class="pp-label">{{ t('results.customAmount') }}</label>
+              <div v-for="pos in deal.affectedPositions" :key="pos" class="custom-payout-row">
+                <span class="custom-payout-label"
+                  >#{{ pos }} {{ orderedPlayers[pos - 1]?.name }}</span
+                >
+                <div class="custom-payout-input-wrapper">
+                  <span class="custom-payout-prefix">&euro;</span>
+                  <input
+                    v-model.number="customPayoutAmounts[pos]"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    class="pp-input custom-payout-input"
+                  />
+                </div>
               </div>
+            </div>
+
+            <!-- Deal Notes -->
+            <div>
+              <label class="pp-label">{{ t('results.dealNotes') }}</label>
+              <input
+                v-model="deal.notes"
+                type="text"
+                :placeholder="t('results.dealNotesPlaceholder')"
+                class="pp-input"
+              />
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Error Banner -->
-      <div v-if="errorMessage" class="error-banner">
-        <IonIcon :icon="alertCircleOutline" class="error-icon" />
-        <div class="error-content">
-          <p class="error-title">{{ t('results.submitErrorTitle') }}</p>
-          <p class="error-detail">{{ errorMessage }}</p>
-        </div>
-        <button @click="errorMessage = ''" class="error-dismiss">
-          <IonIcon :icon="closeOutline" class="icon-sm" />
-        </button>
-      </div>
+      <!-- Step 3: Confirmation -->
+      <div v-if="currentStep === 3">
+        <p class="step-description">{{ t('results.step3Desc') }}</p>
 
-      <!-- Footer Navigation -->
-      <div class="pp-modal-footer modal-footer-nav modal-header-shrink">
-        <button
-          v-if="currentStep > 1"
-          @click="goToPreviousStep"
-          class="pp-action-button pp-action-button--secondary"
-        >
+        <div class="summary-card">
+          <h4 class="summary-title">{{ t('results.summaryTitle') }}</h4>
+
+          <div class="summary-list">
+            <div v-for="(player, index) in orderedPlayers" :key="player.userId" class="summary-row">
+              <div class="summary-row-left">
+                <span class="summary-position">{{ index + 1 }}.</span>
+                <span class="summary-name">{{ player.name }}</span>
+              </div>
+              <span class="summary-amount">
+                {{ formatPrice(getPayoutForPosition(index + 1)?.amountCents || 0, locale) }}
+              </span>
+            </div>
+          </div>
+
+          <div v-if="includeDeal" class="summary-deal">
+            <div class="summary-deal-text">
+              {{ t('results.deal') }}:
+              {{ dealTypes.find((d) => d.value === deal.dealType)?.label }} ({{
+                deal.affectedPositions.length
+              }}
+              {{ t('results.affectedPositions').toLowerCase() }})
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Banner -->
+    <div v-if="errorMessage" class="error-banner">
+      <IonIcon :icon="alertCircleOutline" class="error-icon" />
+      <div class="error-content">
+        <p class="error-title">{{ t('results.submitErrorTitle') }}</p>
+        <p class="error-detail">{{ errorMessage }}</p>
+      </div>
+      <button @click="errorMessage = ''" class="error-dismiss">
+        <IonIcon :icon="closeOutline" class="icon-sm" />
+      </button>
+    </div>
+
+    <!-- Footer Navigation -->
+    <template #footer>
+      <div class="modal-footer-nav">
+        <PpButton v-if="currentStep > 1" variant="secondary" @click="goToPreviousStep">
           {{ t('results.back') }}
-        </button>
+        </PpButton>
         <div v-else></div>
 
-        <button
+        <PpButton
           v-if="currentStep < 3"
+          variant="primary"
           @click="goToNextStep"
           :disabled="currentStep === 1 && orderedPlayers.length === 0"
-          class="pp-action-button pp-action-button--primary"
         >
           {{ t('results.next') }}
-        </button>
-        <button
+        </PpButton>
+        <PpButton
           v-else
+          variant="primary"
           @click="submitResults"
           :disabled="submitting"
-          class="pp-action-button pp-action-button--primary"
+          :loading="submitting"
         >
-          <IonIcon v-if="submitting" :icon="refreshOutline" class="icon-sm pp-animate-spin" />
           {{
             submitting
               ? t('results.submitting')
@@ -277,10 +263,10 @@
                 ? t('results.retry')
                 : t('results.confirmSubmit')
           }}
-        </button>
+        </PpButton>
       </div>
-    </div>
-  </div>
+    </template>
+  </PpModal>
 </template>
 
 <script setup lang="ts">
@@ -289,7 +275,6 @@ import {
   closeOutline,
   chevronUpOutline,
   chevronDownOutline,
-  refreshOutline,
   alertCircleOutline,
 } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
@@ -534,15 +519,11 @@ const closeModal = () => {
 </script>
 
 <style scoped>
-.modal-flex-container {
+.modal-header-content {
   display: flex;
-  flex-direction: column;
-  max-height: 90vh;
-  overflow-y: hidden;
-}
-
-.modal-header-shrink {
-  flex-shrink: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .modal-title {
@@ -957,15 +938,13 @@ const closeModal = () => {
 
 /* Footer */
 .modal-footer-nav {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: 0.75rem;
 }
 
 /* Shared icon sizes */
-.icon-md {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
 .icon-sm {
   width: 1rem;
   height: 1rem;

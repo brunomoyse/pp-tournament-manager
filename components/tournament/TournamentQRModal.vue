@@ -1,93 +1,70 @@
 <template>
-  <div v-if="isOpen" class="pp-modal-overlay">
-    <!-- Backdrop -->
-    <div class="pp-modal-backdrop qr-backdrop-dark print-hidden" @click="close"></div>
+  <PpModal :open="isOpen" size="lg" :title="t('qr.tournament.title')" @close="close">
+    <!-- Tournament Info -->
+    <div class="qr-tournament-info">
+      <p class="qr-tournament-name">{{ tournamentName }}</p>
+      <p class="qr-tournament-date">{{ formattedDate }}</p>
+      <p v-if="clubName" class="qr-tournament-date">{{ clubName }}</p>
+    </div>
 
-    <!-- Modal Content -->
-    <div class="pp-modal-content pp-modal-content--lg qr-modal-content">
-      <!-- Header -->
-      <div class="pp-modal-header print-hidden">
-        <h2 class="qr-modal-title">{{ t('qr.tournament.title') }}</h2>
-        <button @click="close" class="pp-close-button">
-          <IonIcon :icon="closeOutline" class="qr-modal-close-icon" />
-        </button>
+    <!-- Instructions -->
+    <p class="qr-instructions">
+      {{ t('qr.tournament.instructions') }}
+    </p>
+
+    <!-- QR Code Display -->
+    <div v-if="qrCodeDataUrl" class="qr-display">
+      <!-- QR Code Image -->
+      <div class="qr-code-wrapper">
+        <img :src="qrCodeDataUrl" :alt="t('qr.tournament.qrCodeAlt')" class="qr-code-image" />
       </div>
 
-      <!-- Content -->
-      <div class="pp-modal-body">
-        <!-- Tournament Info -->
-        <div class="qr-tournament-info">
-          <p class="qr-tournament-name">{{ tournamentName }}</p>
-          <p class="qr-tournament-date">{{ formattedDate }}</p>
-          <p v-if="clubName" class="qr-tournament-date">{{ clubName }}</p>
+      <!-- Manual Code (Fallback) -->
+      <div class="qr-manual-code print-hidden">
+        <p class="qr-manual-code-label">{{ t('qr.tournament.manualCode') }}</p>
+        <div class="qr-manual-code-row">
+          <code class="qr-manual-code-value">
+            {{ manualCode }}
+          </code>
+          <button @click="copyToClipboard" class="qr-copy-button" :title="t('qr.tournament.copy')">
+            <IonIcon
+              :icon="copied ? checkmarkOutline : copyOutline"
+              :class="['qr-copy-icon', copied ? 'qr-copy-icon--success' : 'qr-copy-icon--gold']"
+            />
+          </button>
         </div>
-
-        <!-- Instructions -->
-        <p class="qr-instructions">
-          {{ t('qr.tournament.instructions') }}
-        </p>
-
-        <!-- QR Code Display -->
-        <div v-if="qrCodeDataUrl" class="qr-display">
-          <!-- QR Code Image -->
-          <div class="qr-code-wrapper">
-            <img :src="qrCodeDataUrl" :alt="t('qr.tournament.qrCodeAlt')" class="qr-code-image" />
-          </div>
-
-          <!-- Manual Code (Fallback) -->
-          <div class="qr-manual-code print-hidden">
-            <p class="qr-manual-code-label">{{ t('qr.tournament.manualCode') }}</p>
-            <div class="qr-manual-code-row">
-              <code class="qr-manual-code-value">
-                {{ manualCode }}
-              </code>
-              <button
-                @click="copyToClipboard"
-                class="qr-copy-button"
-                :title="t('qr.tournament.copy')"
-              >
-                <IonIcon
-                  :icon="copied ? checkmarkOutline : copyOutline"
-                  :class="['qr-copy-icon', copied ? 'qr-copy-icon--success' : 'qr-copy-icon--gold']"
-                />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Loading State -->
-        <div v-else class="qr-loading">
-          <IonIcon :icon="qrCodeOutline" class="qr-loading-icon pp-animate-pulse" />
-          <p class="qr-loading-text">{{ t('qr.tournament.generating') }}</p>
-        </div>
-
-        <!-- Error State -->
-        <div v-if="errorMessage" class="qr-error">
-          <div class="qr-error-content">
-            <IonIcon :icon="alertCircleOutline" class="qr-error-icon" />
-            <span class="qr-error-text">{{ errorMessage }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="pp-modal-footer print-hidden">
-        <button @click="printQR" class="qr-footer-btn pp-action-button pp-action-button--primary">
-          <IonIcon :icon="printOutline" class="qr-footer-btn-icon" />
-          {{ t('qr.tournament.print') }}
-        </button>
-        <button @click="close" class="qr-footer-btn pp-action-button pp-action-button--secondary">
-          {{ t('common.close') }}
-        </button>
       </div>
     </div>
-  </div>
+
+    <!-- Loading State -->
+    <div v-else class="qr-loading">
+      <IonIcon :icon="qrCodeOutline" class="qr-loading-icon pp-animate-pulse" />
+      <p class="qr-loading-text">{{ t('qr.tournament.generating') }}</p>
+    </div>
+
+    <!-- Error State -->
+    <div v-if="errorMessage" class="qr-error">
+      <div class="qr-error-content">
+        <IonIcon :icon="alertCircleOutline" class="qr-error-icon" />
+        <span class="qr-error-text">{{ errorMessage }}</span>
+      </div>
+    </div>
+
+    <template #footer>
+      <PpButton variant="primary" @click="printQR">
+        <IonIcon :icon="printOutline" class="qr-footer-btn-icon" />
+        {{ t('qr.tournament.print') }}
+      </PpButton>
+      <PpButton variant="secondary" @click="close">
+        {{ t('common.close') }}
+      </PpButton>
+    </template>
+  </PpModal>
 </template>
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
 import {
-  closeOutline,
   qrCodeOutline,
   copyOutline,
   checkmarkOutline,
@@ -189,25 +166,6 @@ const close = () => {
 </script>
 
 <style scoped>
-.qr-backdrop-dark {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-.qr-modal-content {
-  box-shadow: var(--pp-shadow-xl);
-}
-
-.qr-modal-title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--color-pp-text);
-}
-
-.qr-modal-close-icon {
-  width: 1.5rem;
-  height: 1.5rem;
-}
-
 .qr-tournament-info {
   margin-bottom: 1rem;
   text-align: center;
@@ -349,18 +307,10 @@ const close = () => {
   font-size: 0.875rem;
 }
 
-.qr-footer-btn {
-  flex: 1;
-}
-
 .qr-footer-btn-icon {
   width: 1.25rem;
   height: 1.25rem;
   margin-right: 0.5rem;
-}
-
-.print-hidden {
-  /* Visible by default, hidden in print */
 }
 
 @media print {

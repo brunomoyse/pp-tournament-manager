@@ -8,14 +8,16 @@
 
     <p class="predictions-desc">{{ t('predictions.description') }}</p>
 
-    <button
-      class="pp-action-button pp-action-button--primary predictions-button"
+    <PpButton
+      variant="primary"
+      block
       :disabled="isResolving || !tournamentId"
+      :loading="isResolving"
       @click="resolvePredictions"
     >
       <IonIcon :icon="trophyOutline" class="icon-md" />
       {{ isResolving ? t('predictions.resolving') : t('predictions.resolve') }}
-    </button>
+    </PpButton>
   </div>
 </template>
 
@@ -93,7 +95,8 @@ const resolvePredictions = async () => {
   margin-bottom: 1.25rem;
 }
 
-.predictions-button {
-  width: 100%;
+.icon-md {
+  width: 1rem;
+  height: 1rem;
 }
 </style>

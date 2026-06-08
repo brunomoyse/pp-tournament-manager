@@ -1,193 +1,177 @@
 <template>
-  <div v-if="isOpen" class="pp-modal-overlay">
-    <div class="pp-modal-backdrop" @click="closeModal"></div>
-
-    <div class="pp-modal-content pp-modal-content--2xl">
-      <!-- Header -->
-      <div class="pp-modal-header">
-        <h2 class="modal-title">
-          {{
-            mode === 'create'
-              ? t('templates.createBlindStructure')
-              : t('templates.editBlindStructure')
-          }}
-        </h2>
-        <button @click="closeModal" class="pp-close-button">
-          <IonIcon :icon="closeOutline" class="close-icon" />
-        </button>
+  <PpModal
+    :open="isOpen"
+    :title="
+      mode === 'create' ? t('templates.createBlindStructure') : t('templates.editBlindStructure')
+    "
+    size="2xl"
+    @close="closeModal"
+  >
+    <!-- Form -->
+    <form @submit.prevent="handleSubmit" class="form-body">
+      <!-- Name -->
+      <div class="form-field">
+        <label class="pp-label">{{ t('templates.name') }} <span class="required">*</span></label>
+        <input
+          v-model="form.name"
+          type="text"
+          required
+          class="pp-input"
+          :placeholder="t('templates.namePlaceholder')"
+        />
       </div>
 
-      <!-- Form -->
-      <form @submit.prevent="handleSubmit" class="pp-modal-body form-body">
-        <!-- Name -->
-        <div class="form-field">
-          <label class="pp-label">{{ t('templates.name') }} <span class="required">*</span></label>
-          <input
-            v-model="form.name"
-            type="text"
-            required
-            class="pp-input"
-            :placeholder="t('templates.namePlaceholder')"
-          />
+      <!-- Description -->
+      <div class="form-field">
+        <label class="pp-label">{{ t('templates.description') }}</label>
+        <input
+          v-model="form.description"
+          type="text"
+          class="pp-input"
+          :placeholder="t('templates.descriptionPlaceholder')"
+        />
+      </div>
+
+      <!-- Levels -->
+      <div class="form-field">
+        <div class="levels-header">
+          <label class="pp-label">{{ t('templates.levels') }}</label>
+          <span class="total-duration">
+            {{ t('templates.totalDuration') }}: {{ totalDurationFormatted }}
+          </span>
         </div>
 
-        <!-- Description -->
-        <div class="form-field">
-          <label class="pp-label">{{ t('templates.description') }}</label>
-          <input
-            v-model="form.description"
-            type="text"
-            class="pp-input"
-            :placeholder="t('templates.descriptionPlaceholder')"
-          />
+        <div class="levels-scroll">
+          <table class="levels-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>{{ t('templates.smallBlind') }}</th>
+                <th>{{ t('templates.bigBlind') }}</th>
+                <th>{{ t('templates.ante') }}</th>
+                <th>{{ t('templates.duration') }}</th>
+                <th>{{ t('templates.isBreak') }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="(level, index) in form.levels"
+                :key="index"
+                :class="{ 'break-row': level.isBreak }"
+              >
+                <td class="level-num">{{ level.levelNumber }}</td>
+                <td>
+                  <input
+                    v-model.number="level.smallBlind"
+                    type="number"
+                    min="0"
+                    class="pp-input level-input"
+                    :disabled="level.isBreak"
+                  />
+                </td>
+                <td>
+                  <input
+                    v-model.number="level.bigBlind"
+                    type="number"
+                    min="0"
+                    class="pp-input level-input"
+                    :disabled="level.isBreak"
+                  />
+                </td>
+                <td>
+                  <input
+                    v-model.number="level.ante"
+                    type="number"
+                    min="0"
+                    class="pp-input level-input"
+                    :disabled="level.isBreak"
+                  />
+                </td>
+                <td>
+                  <input
+                    v-model.number="level.durationMinutes"
+                    type="number"
+                    min="1"
+                    class="pp-input level-input"
+                  />
+                </td>
+                <td class="break-cell">
+                  <button
+                    type="button"
+                    @click="level.isBreak = !level.isBreak"
+                    :class="['break-toggle', level.isBreak ? 'break-toggle--active' : '']"
+                  >
+                    {{ level.isBreak ? t('labels.break') : '-' }}
+                  </button>
+                </td>
+                <td>
+                  <button
+                    v-if="form.levels.length > 1"
+                    type="button"
+                    @click="removeLevel(index)"
+                    class="remove-btn"
+                  >
+                    <IonIcon :icon="removeCircleOutline" class="remove-icon" />
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
-        <!-- Levels -->
-        <div class="form-field">
-          <div class="levels-header">
-            <label class="pp-label">{{ t('templates.levels') }}</label>
-            <span class="total-duration">
-              {{ t('templates.totalDuration') }}: {{ totalDurationFormatted }}
-            </span>
-          </div>
-
-          <div class="levels-scroll">
-            <table class="levels-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>{{ t('templates.smallBlind') }}</th>
-                  <th>{{ t('templates.bigBlind') }}</th>
-                  <th>{{ t('templates.ante') }}</th>
-                  <th>{{ t('templates.duration') }}</th>
-                  <th>{{ t('templates.isBreak') }}</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="(level, index) in form.levels"
-                  :key="index"
-                  :class="{ 'break-row': level.isBreak }"
-                >
-                  <td class="level-num">{{ level.levelNumber }}</td>
-                  <td>
-                    <input
-                      v-model.number="level.smallBlind"
-                      type="number"
-                      min="0"
-                      class="pp-input level-input"
-                      :disabled="level.isBreak"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      v-model.number="level.bigBlind"
-                      type="number"
-                      min="0"
-                      class="pp-input level-input"
-                      :disabled="level.isBreak"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      v-model.number="level.ante"
-                      type="number"
-                      min="0"
-                      class="pp-input level-input"
-                      :disabled="level.isBreak"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      v-model.number="level.durationMinutes"
-                      type="number"
-                      min="1"
-                      class="pp-input level-input"
-                    />
-                  </td>
-                  <td class="break-cell">
-                    <button
-                      type="button"
-                      @click="level.isBreak = !level.isBreak"
-                      :class="['break-toggle', level.isBreak ? 'break-toggle--active' : '']"
-                    >
-                      {{ level.isBreak ? t('labels.break') : '-' }}
-                    </button>
-                  </td>
-                  <td>
-                    <button
-                      v-if="form.levels.length > 1"
-                      type="button"
-                      @click="removeLevel(index)"
-                      class="remove-btn"
-                    >
-                      <IonIcon :icon="removeCircleOutline" class="remove-icon" />
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="level-actions">
-            <button
-              type="button"
-              @click="addLevel(false)"
-              class="pp-action-button pp-action-button--secondary add-btn"
-            >
-              <IonIcon :icon="addCircleOutline" class="add-icon" />
-              {{ t('templates.addLevel') }}
-            </button>
-            <button
-              type="button"
-              @click="addLevel(true)"
-              class="pp-action-button pp-action-button--secondary add-btn"
-            >
-              <IonIcon :icon="cafeOutline" class="add-icon" />
-              {{ t('templates.addBreak') }}
-            </button>
-          </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="form-actions">
-          <button
+        <div class="level-actions">
+          <PpButton
             type="button"
-            @click="closeModal"
-            class="pp-action-button pp-action-button--secondary"
+            variant="secondary"
+            size="sm"
+            @click="addLevel(false)"
+            class="add-btn"
           >
-            {{ t('common.cancel') }}
-          </button>
-          <button
-            type="submit"
-            :disabled="!isFormValid || saving"
-            class="pp-action-button pp-action-button--primary"
+            <IonIcon :icon="addCircleOutline" class="add-icon" />
+            {{ t('templates.addLevel') }}
+          </PpButton>
+          <PpButton
+            type="button"
+            variant="secondary"
+            size="sm"
+            @click="addLevel(true)"
+            class="add-btn"
           >
-            <IonIcon v-if="saving" :icon="refreshOutline" class="spinner" />
-            {{
-              saving
-                ? t('status.saving')
-                : mode === 'create'
-                  ? t('templates.create')
-                  : t('templates.save')
-            }}
-          </button>
+            <IonIcon :icon="cafeOutline" class="add-icon" />
+            {{ t('templates.addBreak') }}
+          </PpButton>
         </div>
-      </form>
-    </div>
-  </div>
+      </div>
+    </form>
+
+    <!-- Actions -->
+    <template #footer>
+      <PpButton variant="secondary" @click="closeModal">
+        {{ t('common.cancel') }}
+      </PpButton>
+      <PpButton
+        type="submit"
+        variant="primary"
+        :disabled="!isFormValid || saving"
+        :loading="saving"
+        @click="handleSubmit"
+      >
+        {{
+          saving
+            ? t('status.saving')
+            : mode === 'create'
+              ? t('templates.create')
+              : t('templates.save')
+        }}
+      </PpButton>
+    </template>
+  </PpModal>
 </template>
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import {
-  closeOutline,
-  refreshOutline,
-  addCircleOutline,
-  removeCircleOutline,
-  cafeOutline,
-} from 'ionicons/icons'
+import { addCircleOutline, removeCircleOutline, cafeOutline } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 import type { BlindStructureTemplate } from '~/types/tournament'
 
@@ -332,19 +316,10 @@ const closeModal = () => emit('close')
 </script>
 
 <style scoped>
-.modal-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-pp-text);
-}
-
-.close-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-.form-body > * + * {
-  margin-top: 1rem;
+.form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .form-field {
@@ -454,27 +429,13 @@ const closeModal = () => emit('close')
 }
 
 .add-btn {
-  font-size: 0.8125rem;
-  padding: 0.375rem 0.75rem;
+  display: flex;
+  gap: 0.375rem;
+  align-items: center;
 }
 
 .add-icon {
   width: 1rem;
   height: 1rem;
-}
-
-.form-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-pp-border-strong);
-}
-
-.spinner {
-  width: 1rem;
-  height: 1rem;
-  animation: pp-spin 1s linear infinite;
 }
 </style>

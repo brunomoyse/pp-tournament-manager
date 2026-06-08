@@ -181,21 +181,22 @@
     </div>
 
     <!-- Start Tournament Confirmation Dialog -->
-    <div v-if="showStartConfirm" class="pp-modal-overlay">
-      <div class="pp-modal-backdrop" @click="showStartConfirm = false"></div>
-      <div class="pp-modal-content pp-modal-content--sm clock-card__confirm-dialog">
-        <h3 class="clock-card__confirm-title">{{ t('clock.startConfirmTitle') }}</h3>
-        <p class="clock-card__confirm-message">{{ t('clock.startConfirmMessage') }}</p>
-        <div class="clock-card__confirm-actions">
-          <PpButton variant="secondary" @click="showStartConfirm = false">
-            {{ t('buttons.cancel') }}
-          </PpButton>
-          <PpButton :disabled="isStarting" :loading="isStarting" @click="confirmStartTournament">
-            {{ t('clock.startConfirm') }}
-          </PpButton>
-        </div>
-      </div>
-    </div>
+    <PpModal
+      :open="showStartConfirm"
+      size="sm"
+      :title="t('clock.startConfirmTitle')"
+      @close="showStartConfirm = false"
+    >
+      <p class="clock-card__confirm-message">{{ t('clock.startConfirmMessage') }}</p>
+      <template #footer>
+        <PpButton variant="secondary" @click="showStartConfirm = false">
+          {{ t('buttons.cancel') }}
+        </PpButton>
+        <PpButton :disabled="isStarting" :loading="isStarting" @click="confirmStartTournament">
+          {{ t('clock.startConfirm') }}
+        </PpButton>
+      </template>
+    </PpModal>
   </div>
 </template>
 
@@ -964,26 +965,7 @@ const getClockButtonText = () => {
 }
 
 /* Confirmation Dialog */
-.clock-card__confirm-dialog {
-  padding: 1.5rem;
-}
-
-.clock-card__confirm-title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--color-pp-text);
-  margin-bottom: 0.75rem;
-}
-
 .clock-card__confirm-message {
   color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 1.5rem;
-}
-
-.clock-card__confirm-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
 }
 </style>

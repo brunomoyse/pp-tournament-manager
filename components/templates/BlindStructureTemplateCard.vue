@@ -66,19 +66,13 @@
 
     <!-- Card Actions -->
     <div v-if="isAdmin" class="card-actions">
-      <button
-        @click="$emit('edit', template)"
-        class="pp-action-button pp-action-button--secondary action-btn"
-      >
+      <PpButton variant="secondary" size="sm" @click="$emit('edit', template)" class="action-btn">
         <IonIcon :icon="createOutline" class="icon-sm" />
         {{ t('common.edit') }}
-      </button>
-      <button
-        @click="$emit('delete', template)"
-        class="pp-action-button pp-action-button--danger action-btn"
-      >
+      </PpButton>
+      <PpButton variant="danger" size="sm" @click="$emit('delete', template)" class="action-btn">
         <IonIcon :icon="trashOutline" class="icon-sm" />
-      </button>
+      </PpButton>
     </div>
   </div>
 </template>
@@ -265,8 +259,9 @@ const formatChips = (value: number): string => {
 }
 
 .action-btn {
-  font-size: 0.75rem;
-  padding: 0.25rem 0.75rem;
+  display: flex;
+  gap: 0.375rem;
+  align-items: center;
 }
 
 .icon-sm {

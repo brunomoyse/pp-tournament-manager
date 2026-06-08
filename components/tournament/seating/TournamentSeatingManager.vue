@@ -8,28 +8,23 @@
 
       <!-- Action Buttons -->
       <div class="seating-manager__actions">
-        <button
-          @click="showAssignTableModal = true"
-          class="pp-action-button pp-action-button--primary"
-        >
+        <PpButton variant="primary" @click="showAssignTableModal = true">
           <IonIcon :icon="linkOutline" class="seating-manager__action-icon" />
           {{ t('buttons.linkTables') }}
-        </button>
-        <button
-          @click="balanceTables"
+        </PpButton>
+        <PpButton
+          variant="secondary"
           :disabled="isBalancing"
-          class="pp-action-button pp-action-button--secondary"
+          :loading="isBalancing"
+          @click="balanceTables"
         >
-          <IonIcon
-            :icon="scaleOutline"
-            :class="['seating-manager__action-icon', isBalancing && 'pp-animate-spin']"
-          />
+          <IonIcon :icon="scaleOutline" class="seating-manager__action-icon" />
           {{ isBalancing ? t('status.balancing') : t('buttons.balanceTables') }}
-        </button>
-        <button @click="openBreakTableModal" class="pp-action-button pp-action-button--danger">
+        </PpButton>
+        <PpButton variant="danger" @click="openBreakTableModal">
           <IonIcon :icon="unlinkOutline" class="seating-manager__action-icon" />
           {{ t('buttons.breakTable') }}
-        </button>
+        </PpButton>
       </div>
     </div>
 
@@ -63,13 +58,14 @@
         <IonIcon :icon="gridOutline" class="seating-manager__empty-icon" />
       </div>
       <div class="seating-manager__empty-text">{{ t('messages.noTablesLinked') }}</div>
-      <button
+      <PpButton
+        variant="primary"
+        class="seating-manager__empty-button"
         @click="showAssignTableModal = true"
-        class="pp-action-button pp-action-button--primary seating-manager__empty-button"
       >
         <IonIcon :icon="linkOutline" class="seating-manager__action-icon" />
         {{ t('buttons.linkTables') }}
-      </button>
+      </PpButton>
     </div>
 
     <!-- Assign Table Modal -->
@@ -83,190 +79,187 @@
     />
 
     <!-- Move Player Modal -->
-    <div v-if="showMoveModal" class="pp-modal-overlay">
-      <div class="pp-modal-backdrop" @click="closeMoveModal"></div>
-      <div class="pp-modal-content pp-modal-content--md seating-manager__modal-body">
-        <h2 class="seating-manager__modal-title">{{ t('seating.movePlayer') }}</h2>
-        <p class="seating-manager__modal-description">{{ t('seating.selectDestination') }}</p>
+    <PpModal
+      :open="showMoveModal"
+      size="md"
+      :title="t('seating.movePlayer')"
+      @close="closeMoveModal"
+    >
+      <p class="seating-manager__modal-description">{{ t('seating.selectDestination') }}</p>
 
-        <div class="seating-manager__modal-scroll">
-          <div
-            v-for="tableData in availableTables"
-            :key="tableData.table.id"
-            class="seating-manager__move-table"
-          >
-            <h3 class="seating-manager__move-table-title">
-              {{ t('labels.table') }} {{ tableData.table.tableNumber }}
-            </h3>
-            <div class="seating-manager__move-seats">
-              <button
-                v-for="seatNum in tableData.table.maxSeats"
-                :key="seatNum"
-                :disabled="isSeatOccupied(tableData, seatNum)"
-                :title="
-                  isCurrentSeat(tableData.table.tableNumber, seatNum)
-                    ? t('seating.currentSeat')
-                    : undefined
-                "
-                @click="executePlayerMove(tableData.table.id, seatNum)"
-                :class="[
-                  'seating-manager__move-seat',
-                  isCurrentSeat(tableData.table.tableNumber, seatNum)
-                    ? 'seating-manager__move-seat--current'
-                    : isSeatOccupied(tableData, seatNum)
-                      ? 'seating-manager__move-seat--occupied'
-                      : 'seating-manager__move-seat--available',
-                ]"
-              >
-                {{ seatNum }}
-              </button>
-            </div>
+      <div class="seating-manager__modal-scroll">
+        <div
+          v-for="tableData in availableTables"
+          :key="tableData.table.id"
+          class="seating-manager__move-table"
+        >
+          <h3 class="seating-manager__move-table-title">
+            {{ t('labels.table') }} {{ tableData.table.tableNumber }}
+          </h3>
+          <div class="seating-manager__move-seats">
+            <button
+              v-for="seatNum in tableData.table.maxSeats"
+              :key="seatNum"
+              :disabled="isSeatOccupied(tableData, seatNum)"
+              :title="
+                isCurrentSeat(tableData.table.tableNumber, seatNum)
+                  ? t('seating.currentSeat')
+                  : undefined
+              "
+              @click="executePlayerMove(tableData.table.id, seatNum)"
+              :class="[
+                'seating-manager__move-seat',
+                isCurrentSeat(tableData.table.tableNumber, seatNum)
+                  ? 'seating-manager__move-seat--current'
+                  : isSeatOccupied(tableData, seatNum)
+                    ? 'seating-manager__move-seat--occupied'
+                    : 'seating-manager__move-seat--available',
+              ]"
+            >
+              {{ seatNum }}
+            </button>
           </div>
         </div>
-
-        <div class="seating-manager__modal-footer">
-          <button @click="closeMoveModal" class="pp-action-button pp-action-button--secondary">
-            {{ t('buttons.cancel') }}
-          </button>
-        </div>
       </div>
-    </div>
+
+      <template #footer>
+        <PpButton variant="secondary" @click="closeMoveModal">
+          {{ t('buttons.cancel') }}
+        </PpButton>
+      </template>
+    </PpModal>
 
     <!-- Player Selection Modal -->
-    <div v-if="showPlayerSelectionModal" class="pp-modal-overlay">
-      <div class="pp-modal-backdrop" @click="closePlayerSelectionModal"></div>
-      <div class="pp-modal-content pp-modal-content--md seating-manager__modal-body">
-        <h2 class="seating-manager__modal-title">{{ t('seating.selectPlayer') }}</h2>
-        <p class="seating-manager__modal-description">
-          {{ t('seating.choosePlayerForSeat', { seat: targetSeat?.seatNumber }) }}
-        </p>
+    <PpModal
+      :open="showPlayerSelectionModal"
+      size="md"
+      :title="t('seating.selectPlayer')"
+      @close="closePlayerSelectionModal"
+    >
+      <p class="seating-manager__modal-description">
+        {{ t('seating.choosePlayerForSeat', { seat: targetSeat?.seatNumber }) }}
+      </p>
 
-        <div
-          v-if="unassignedPlayers.length > 0"
-          class="seating-manager__modal-scroll seating-manager__player-list"
+      <div
+        v-if="unassignedPlayers.length > 0"
+        class="seating-manager__modal-scroll seating-manager__player-list"
+      >
+        <button
+          v-for="player in unassignedPlayers"
+          :key="player.registeredPlayerId"
+          @click="selectPlayerForSeat(player.registeredPlayerId)"
+          class="seating-manager__player-option"
         >
-          <button
-            v-for="player in unassignedPlayers"
-            :key="player.registeredPlayerId"
-            @click="selectPlayerForSeat(player.registeredPlayerId)"
-            class="seating-manager__player-option"
-          >
-            <div class="seating-manager__player-avatar">
-              {{ getInitialsFromDisplayName(player.displayName) }}
-            </div>
-            <div>
-              <div class="seating-manager__player-name">{{ player.displayName }}</div>
-              <div class="seating-manager__player-full-name">
-                {{ player.user?.firstName || '' }} {{ player.user?.lastName || '' }}
-              </div>
-            </div>
-          </button>
-        </div>
-
-        <div v-else class="seating-manager__no-players">
-          {{ t('seating.noUnassignedPlayers') }}
-          <br />
-          <span class="seating-manager__no-players-hint">{{ t('seating.mustBeCheckedIn') }}</span>
-          <div class="seating-manager__no-players-cta">
-            <button @click="goToPlayers" class="pp-action-button pp-action-button--secondary">
-              {{ t('seating.goToPlayers') }}
-            </button>
+          <div class="seating-manager__player-avatar">
+            {{ getInitialsFromDisplayName(player.displayName) }}
           </div>
-        </div>
+          <div>
+            <div class="seating-manager__player-name">{{ player.displayName }}</div>
+            <div class="seating-manager__player-full-name">
+              {{ player.user?.firstName || '' }} {{ player.user?.lastName || '' }}
+            </div>
+          </div>
+        </button>
+      </div>
 
-        <div class="seating-manager__modal-footer">
-          <button
-            @click="closePlayerSelectionModal"
-            class="pp-action-button pp-action-button--secondary"
-          >
-            {{ t('buttons.cancel') }}
-          </button>
+      <div v-else class="seating-manager__no-players">
+        {{ t('seating.noUnassignedPlayers') }}
+        <br />
+        <span class="seating-manager__no-players-hint">{{ t('seating.mustBeCheckedIn') }}</span>
+        <div class="seating-manager__no-players-cta">
+          <PpButton variant="secondary" @click="goToPlayers">
+            {{ t('seating.goToPlayers') }}
+          </PpButton>
         </div>
       </div>
-    </div>
+
+      <template #footer>
+        <PpButton variant="secondary" @click="closePlayerSelectionModal">
+          {{ t('buttons.cancel') }}
+        </PpButton>
+      </template>
+    </PpModal>
 
     <!-- Break Table Modal -->
-    <div v-if="showBreakTableModal" class="pp-modal-overlay">
-      <div class="pp-modal-backdrop" @click="closeBreakTableModal"></div>
-      <div class="pp-modal-content pp-modal-content--md seating-manager__modal-body">
-        <h2 class="seating-manager__modal-title">{{ t('buttons.breakTable') }}</h2>
-        <p class="seating-manager__modal-description">{{ t('seating.selectTableToRemove') }}</p>
+    <PpModal
+      :open="showBreakTableModal"
+      size="md"
+      :title="t('buttons.breakTable')"
+      @close="closeBreakTableModal"
+    >
+      <p class="seating-manager__modal-description">{{ t('seating.selectTableToRemove') }}</p>
 
+      <div
+        v-if="tablesWithStatus.length > 0"
+        class="seating-manager__modal-scroll seating-manager__break-list"
+      >
         <div
-          v-if="tablesWithStatus.length > 0"
-          class="seating-manager__modal-scroll seating-manager__break-list"
+          v-for="tableData in tablesWithStatus"
+          :key="tableData.table.id"
+          :class="[
+            'seating-manager__break-table',
+            tableData.isEmpty
+              ? 'seating-manager__break-table--empty'
+              : 'seating-manager__break-table--occupied',
+          ]"
         >
-          <div
-            v-for="tableData in tablesWithStatus"
-            :key="tableData.table.id"
-            :class="[
-              'seating-manager__break-table',
-              tableData.isEmpty
-                ? 'seating-manager__break-table--empty'
-                : 'seating-manager__break-table--occupied',
-            ]"
-          >
-            <div class="seating-manager__break-table-left">
-              <div
-                :class="[
-                  'seating-manager__break-table-number',
-                  tableData.isEmpty
-                    ? 'seating-manager__break-table-number--empty'
-                    : 'seating-manager__break-table-number--occupied',
-                ]"
-              >
-                {{ tableData.table.tableNumber }}
+          <div class="seating-manager__break-table-left">
+            <div
+              :class="[
+                'seating-manager__break-table-number',
+                tableData.isEmpty
+                  ? 'seating-manager__break-table-number--empty'
+                  : 'seating-manager__break-table-number--occupied',
+              ]"
+            >
+              {{ tableData.table.tableNumber }}
+            </div>
+            <div>
+              <div class="seating-manager__break-table-label">
+                {{ t('labels.table') }} {{ tableData.table.tableNumber }}
               </div>
-              <div>
-                <div class="seating-manager__break-table-label">
-                  {{ t('labels.table') }} {{ tableData.table.tableNumber }}
-                </div>
-                <div class="seating-manager__break-table-status">
-                  {{
-                    tableData.isEmpty
-                      ? t('seating.emptyCanBeRemoved')
-                      : t('seating.playersSeated', { count: tableData.seats?.length || 0 })
-                  }}
-                </div>
+              <div class="seating-manager__break-table-status">
+                {{
+                  tableData.isEmpty
+                    ? t('seating.emptyCanBeRemoved')
+                    : t('seating.playersSeated', { count: tableData.seats?.length || 0 })
+                }}
               </div>
             </div>
-            <button
-              v-if="tableData.isEmpty"
-              @click="breakTable(tableData.table.id)"
-              :disabled="isBreakingTable"
-              class="seating-manager__break-remove-button"
-            >
-              {{ isBreakingTable ? t('status.removing') : t('buttons.remove') }}
-            </button>
-            <span v-else class="seating-manager__break-has-players">
-              {{ t('seating.hasPlayers') }}
-            </span>
           </div>
-        </div>
-
-        <div v-else class="seating-manager__no-players">
-          {{ t('messages.noTablesLinked') }}
-        </div>
-
-        <div
-          v-if="tablesWithStatus.length > 0 && !hasEmptyTables"
-          class="seating-manager__break-warning"
-        >
-          <p class="seating-manager__break-warning-text">
-            {{ t('seating.allTablesHavePlayers') }}
-          </p>
-        </div>
-
-        <div class="seating-manager__modal-footer">
           <button
-            @click="closeBreakTableModal"
-            class="pp-action-button pp-action-button--secondary"
+            v-if="tableData.isEmpty"
+            @click="breakTable(tableData.table.id)"
+            :disabled="isBreakingTable"
+            class="seating-manager__break-remove-button"
           >
-            {{ t('common.close') }}
+            {{ isBreakingTable ? t('status.removing') : t('buttons.remove') }}
           </button>
+          <span v-else class="seating-manager__break-has-players">
+            {{ t('seating.hasPlayers') }}
+          </span>
         </div>
       </div>
-    </div>
+
+      <div v-else class="seating-manager__no-players">
+        {{ t('messages.noTablesLinked') }}
+      </div>
+
+      <div
+        v-if="tablesWithStatus.length > 0 && !hasEmptyTables"
+        class="seating-manager__break-warning"
+      >
+        <p class="seating-manager__break-warning-text">
+          {{ t('seating.allTablesHavePlayers') }}
+        </p>
+      </div>
+
+      <template #footer>
+        <PpButton variant="secondary" @click="closeBreakTableModal">
+          {{ t('common.close') }}
+        </PpButton>
+      </template>
+    </PpModal>
   </div>
 </template>
 

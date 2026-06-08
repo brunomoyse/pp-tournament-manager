@@ -1,132 +1,109 @@
 <template>
-  <div v-if="isOpen" class="pp-modal-overlay">
-    <!-- Backdrop -->
-    <div class="pp-modal-backdrop" @click="closeModal"></div>
+  <PpModal :open="isOpen" size="md" :title="t('modals.linkClubTables.title')" @close="closeModal">
+    <!-- Loading State -->
+    <div v-if="loading" class="loading-state">
+      <div class="loading-text">{{ t('messages.loadingClubTables') }}</div>
+    </div>
 
-    <!-- Modal Content -->
-    <div class="pp-modal-content pp-modal-content--md">
-      <!-- Header -->
-      <div class="pp-modal-header">
-        <h3>{{ t('modals.linkClubTables.title') }}</h3>
-        <button @click="closeModal" class="pp-close-button">
-          <IonIcon :icon="closeOutline" class="icon-md" />
-        </button>
-      </div>
+    <!-- Table Selection -->
+    <div v-else-if="clubTables && clubTables.length > 0" class="table-selection-body">
+      <p class="selection-description">
+        {{ t('messages.selectTablesToAssign', { clubName }) }}
+      </p>
 
-      <!-- Loading State -->
-      <div v-if="loading" class="loading-state">
-        <div class="loading-text">{{ t('messages.loadingClubTables') }}</div>
-      </div>
-
-      <!-- Table Selection -->
-      <div
-        v-else-if="clubTables && clubTables.length > 0"
-        class="pp-modal-body table-selection-body"
-      >
-        <p class="selection-description">
-          {{ t('messages.selectTablesToAssign', { clubName }) }}
-        </p>
-
-        <div class="table-list">
-          <div
-            v-for="table in clubTables"
-            :key="table.id"
-            :class="[
-              'table-row',
-              table.isAssigned ? 'table-row--disabled' : 'table-row--selectable',
-            ]"
-          >
-            <div class="table-row-left">
-              <input
-                :id="`table-${table.id}`"
-                :checked="isSelected(table.id)"
-                :disabled="table.isAssigned"
-                type="checkbox"
-                :class="['table-checkbox', table.isAssigned ? 'table-checkbox--disabled' : '']"
-                @change="toggleTable(table)"
-              />
-              <label
-                :for="`table-${table.id}`"
-                :class="['table-label', table.isAssigned ? 'table-label--disabled' : '']"
-              >
-                <div :class="['table-name', table.isAssigned ? 'table-name--disabled' : '']">
-                  {{ `${t('labels.table')} ${table.tableNumber}` }}
-                  {{ table.isAssigned ? ` (${t('seating.alreadyAssigned')})` : '' }}
-                </div>
-                <div :class="['table-seats', table.isAssigned ? 'table-seats--disabled' : '']">
-                  {{ table.maxSeats }} {{ t('labels.seats') }} {{ t('seating.naturalCapacity') }}
-                </div>
-              </label>
-            </div>
-
-            <!-- Per-table seat count override -->
-            <div class="table-row-right">
-              <select
-                v-if="!table.isAssigned && isSelected(table.id)"
-                :value="selectedTables[table.id]"
-                class="seat-count-select"
-                :aria-label="t('seating.tableFormat')"
-                @change="setSeatCount(table.id, ($event.target as HTMLSelectElement).value)"
-              >
-                <option v-for="format in tableFormats" :key="format" :value="format">
-                  {{ format }}-max
-                </option>
-              </select>
-              <div
-                v-else
-                :class="[
-                  'table-status-badge',
-                  table.isAssigned
-                    ? 'table-status-badge--assigned'
-                    : table.isActive
-                      ? 'table-status-badge--active'
-                      : 'table-status-badge--inactive',
-                ]"
-              >
-                {{
-                  table.isAssigned
-                    ? t('status.assigned')
-                    : table.isActive
-                      ? t('status.active')
-                      : t('status.inactive')
-                }}
+      <div class="table-list">
+        <div
+          v-for="table in clubTables"
+          :key="table.id"
+          :class="['table-row', table.isAssigned ? 'table-row--disabled' : 'table-row--selectable']"
+        >
+          <div class="table-row-left">
+            <input
+              :id="`table-${table.id}`"
+              :checked="isSelected(table.id)"
+              :disabled="table.isAssigned"
+              type="checkbox"
+              :class="['table-checkbox', table.isAssigned ? 'table-checkbox--disabled' : '']"
+              @change="toggleTable(table)"
+            />
+            <label
+              :for="`table-${table.id}`"
+              :class="['table-label', table.isAssigned ? 'table-label--disabled' : '']"
+            >
+              <div :class="['table-name', table.isAssigned ? 'table-name--disabled' : '']">
+                {{ `${t('labels.table')} ${table.tableNumber}` }}
+                {{ table.isAssigned ? ` (${t('seating.alreadyAssigned')})` : '' }}
               </div>
+              <div :class="['table-seats', table.isAssigned ? 'table-seats--disabled' : '']">
+                {{ table.maxSeats }} {{ t('labels.seats') }} {{ t('seating.naturalCapacity') }}
+              </div>
+            </label>
+          </div>
+
+          <!-- Per-table seat count override -->
+          <div class="table-row-right">
+            <select
+              v-if="!table.isAssigned && isSelected(table.id)"
+              :value="selectedTables[table.id]"
+              class="seat-count-select"
+              :aria-label="t('seating.tableFormat')"
+              @change="setSeatCount(table.id, ($event.target as HTMLSelectElement).value)"
+            >
+              <option v-for="format in tableFormats" :key="format" :value="format">
+                {{ format }}-max
+              </option>
+            </select>
+            <div
+              v-else
+              :class="[
+                'table-status-badge',
+                table.isAssigned
+                  ? 'table-status-badge--assigned'
+                  : table.isActive
+                    ? 'table-status-badge--active'
+                    : 'table-status-badge--inactive',
+              ]"
+            >
+              {{
+                table.isAssigned
+                  ? t('status.assigned')
+                  : table.isActive
+                    ? t('status.active')
+                    : t('status.inactive')
+              }}
             </div>
           </div>
         </div>
-
-        <!-- Actions -->
-        <div class="pp-modal-footer table-actions">
-          <button @click="closeModal" class="pp-action-button pp-action-button--secondary">
-            {{ t('buttons.cancel') }}
-          </button>
-          <button
-            @click="assignSelectedTables"
-            :disabled="selectedCount === 0 || assigning"
-            class="pp-action-button pp-action-button--primary"
-          >
-            <IonIcon v-if="assigning" :icon="refreshOutline" class="icon-sm pp-animate-spin" />
-            {{
-              assigning
-                ? t('status.linking')
-                : `${t('buttons.link')} ${selectedCount} ${t('labels.tables')}`
-            }}
-          </button>
-        </div>
-      </div>
-
-      <!-- No Tables State -->
-      <div v-else-if="!loading" class="empty-state">
-        <div class="empty-state-title">{{ t('messages.noTablesFound') }}</div>
-        <div class="empty-state-subtitle">{{ t('messages.contactClubAdmin') }}</div>
       </div>
     </div>
-  </div>
+
+    <!-- No Tables State -->
+    <div v-else-if="!loading" class="empty-state">
+      <div class="empty-state-title">{{ t('messages.noTablesFound') }}</div>
+      <div class="empty-state-subtitle">{{ t('messages.contactClubAdmin') }}</div>
+    </div>
+
+    <template #footer>
+      <PpButton variant="secondary" @click="closeModal">
+        {{ t('buttons.cancel') }}
+      </PpButton>
+      <PpButton
+        variant="primary"
+        :disabled="selectedCount === 0 || assigning"
+        :loading="assigning"
+        @click="assignSelectedTables"
+      >
+        {{
+          assigning
+            ? t('status.linking')
+            : `${t('buttons.link')} ${selectedCount} ${t('labels.tables')}`
+        }}
+      </PpButton>
+    </template>
+  </PpModal>
 </template>
 
 <script setup lang="ts">
-import { IonIcon } from '@ionic/vue'
-import { closeOutline, refreshOutline } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 
 const { t } = useI18n()
@@ -403,11 +380,6 @@ const closeModal = () => {
   color: var(--pp-red-400);
 }
 
-.table-actions {
-  padding: 1rem 0 0 0;
-  border-top: 1px solid rgba(84, 84, 95, 0.5);
-}
-
 .empty-state {
   text-align: center;
   padding: 2rem 0;
@@ -421,15 +393,5 @@ const closeModal = () => {
 .empty-state-subtitle {
   color: rgba(255, 255, 255, 0.5);
   font-size: 0.875rem;
-}
-
-.icon-md {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-.icon-sm {
-  width: 1rem;
-  height: 1rem;
 }
 </style>

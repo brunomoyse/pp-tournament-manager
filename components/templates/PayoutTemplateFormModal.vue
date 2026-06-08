@@ -1,151 +1,127 @@
 <template>
-  <div v-if="isOpen" class="pp-modal-overlay">
-    <div class="pp-modal-backdrop" @click="closeModal"></div>
-
-    <div class="pp-modal-content pp-modal-content--lg">
-      <!-- Header -->
-      <div class="pp-modal-header">
-        <h2 class="modal-title">
-          {{
-            mode === 'create'
-              ? t('templates.createPayoutTemplate')
-              : t('templates.editPayoutTemplate')
-          }}
-        </h2>
-        <button @click="closeModal" class="pp-close-button">
-          <IonIcon :icon="closeOutline" class="close-icon" />
-        </button>
+  <PpModal
+    :open="isOpen"
+    :title="
+      mode === 'create' ? t('templates.createPayoutTemplate') : t('templates.editPayoutTemplate')
+    "
+    size="lg"
+    @close="closeModal"
+  >
+    <!-- Form -->
+    <form @submit.prevent="handleSubmit" class="form-body">
+      <!-- Name -->
+      <div class="form-field">
+        <label class="pp-label">{{ t('templates.name') }} <span class="required">*</span></label>
+        <input
+          v-model="form.name"
+          type="text"
+          required
+          class="pp-input"
+          :placeholder="t('templates.namePlaceholder')"
+        />
       </div>
 
-      <!-- Form -->
-      <form @submit.prevent="handleSubmit" class="pp-modal-body form-body">
-        <!-- Name -->
+      <!-- Description -->
+      <div class="form-field">
+        <label class="pp-label">{{ t('templates.description') }}</label>
+        <input
+          v-model="form.description"
+          type="text"
+          class="pp-input"
+          :placeholder="t('templates.descriptionPlaceholder')"
+        />
+      </div>
+
+      <!-- Player Range -->
+      <div class="form-row">
         <div class="form-field">
-          <label class="pp-label">{{ t('templates.name') }} <span class="required">*</span></label>
+          <label class="pp-label"
+            >{{ t('templates.minPlayers') }} <span class="required">*</span></label
+          >
+          <input v-model.number="form.minPlayers" type="number" min="2" required class="pp-input" />
+        </div>
+        <div class="form-field">
+          <label class="pp-label">{{ t('templates.maxPlayers') }}</label>
           <input
-            v-model="form.name"
-            type="text"
-            required
+            v-model.number="form.maxPlayers"
+            type="number"
+            :min="form.minPlayers"
             class="pp-input"
-            :placeholder="t('templates.namePlaceholder')"
+            :placeholder="t('templates.maxPlayersPlaceholder')"
           />
         </div>
+      </div>
 
-        <!-- Description -->
-        <div class="form-field">
-          <label class="pp-label">{{ t('templates.description') }}</label>
-          <input
-            v-model="form.description"
-            type="text"
-            class="pp-input"
-            :placeholder="t('templates.descriptionPlaceholder')"
-          />
+      <!-- Payout Structure -->
+      <div class="form-field">
+        <div class="structure-header">
+          <label class="pp-label">{{ t('templates.payoutStructure') }}</label>
+          <span :class="['total-badge', isPercentageValid ? 'total-valid' : 'total-invalid']">
+            {{ t('templates.totalPercentage') }}: {{ totalPercentage.toFixed(1) }}%
+            <span v-if="isPercentageValid" class="check-mark">&#10003;</span>
+          </span>
         </div>
 
-        <!-- Player Range -->
-        <div class="form-row">
-          <div class="form-field">
-            <label class="pp-label"
-              >{{ t('templates.minPlayers') }} <span class="required">*</span></label
-            >
-            <input
-              v-model.number="form.minPlayers"
-              type="number"
-              min="2"
-              required
-              class="pp-input"
-            />
-          </div>
-          <div class="form-field">
-            <label class="pp-label">{{ t('templates.maxPlayers') }}</label>
-            <input
-              v-model.number="form.maxPlayers"
-              type="number"
-              :min="form.minPlayers"
-              class="pp-input"
-              :placeholder="t('templates.maxPlayersPlaceholder')"
-            />
-          </div>
-        </div>
-
-        <!-- Payout Structure -->
-        <div class="form-field">
-          <div class="structure-header">
-            <label class="pp-label">{{ t('templates.payoutStructure') }}</label>
-            <span :class="['total-badge', isPercentageValid ? 'total-valid' : 'total-invalid']">
-              {{ t('templates.totalPercentage') }}: {{ totalPercentage.toFixed(1) }}%
-              <span v-if="isPercentageValid" class="check-mark">&#10003;</span>
-            </span>
-          </div>
-
-          <div class="structure-rows">
-            <div v-for="(entry, index) in form.payoutStructure" :key="index" class="structure-row">
-              <div class="position-number">{{ entry.position }}</div>
-              <div class="percentage-input-wrapper">
-                <input
-                  v-model.number="entry.percentage"
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  max="100"
-                  class="pp-input percentage-input"
-                  placeholder="0.0"
-                />
-                <span class="percentage-suffix">%</span>
-              </div>
-              <button
-                v-if="form.payoutStructure.length > 1"
-                type="button"
-                @click="removePosition(index)"
-                class="remove-btn"
-              >
-                <IonIcon :icon="removeCircleOutline" class="remove-icon" />
-              </button>
+        <div class="structure-rows">
+          <div v-for="(entry, index) in form.payoutStructure" :key="index" class="structure-row">
+            <div class="position-number">{{ entry.position }}</div>
+            <div class="percentage-input-wrapper">
+              <input
+                v-model.number="entry.percentage"
+                type="number"
+                step="0.1"
+                min="0"
+                max="100"
+                class="pp-input percentage-input"
+                placeholder="0.0"
+              />
+              <span class="percentage-suffix">%</span>
             </div>
+            <button
+              v-if="form.payoutStructure.length > 1"
+              type="button"
+              @click="removePosition(index)"
+              class="remove-btn"
+            >
+              <IonIcon :icon="removeCircleOutline" class="remove-icon" />
+            </button>
           </div>
-
-          <button
-            type="button"
-            @click="addPosition"
-            class="pp-action-button pp-action-button--secondary add-btn"
-          >
-            <IonIcon :icon="addCircleOutline" class="add-icon" />
-            {{ t('templates.addPosition') }}
-          </button>
         </div>
 
-        <!-- Actions -->
-        <div class="form-actions">
-          <button
-            type="button"
-            @click="closeModal"
-            class="pp-action-button pp-action-button--secondary"
-          >
-            {{ t('common.cancel') }}
-          </button>
-          <button
-            type="submit"
-            :disabled="!isFormValid || saving"
-            class="pp-action-button pp-action-button--primary"
-          >
-            <IonIcon v-if="saving" :icon="refreshOutline" class="spinner" />
-            {{
-              saving
-                ? t('status.saving')
-                : mode === 'create'
-                  ? t('templates.create')
-                  : t('templates.save')
-            }}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+        <PpButton type="button" variant="secondary" size="sm" @click="addPosition" class="add-btn">
+          <IonIcon :icon="addCircleOutline" class="add-icon" />
+          {{ t('templates.addPosition') }}
+        </PpButton>
+      </div>
+    </form>
+
+    <!-- Actions -->
+    <template #footer>
+      <PpButton variant="secondary" @click="closeModal">
+        {{ t('common.cancel') }}
+      </PpButton>
+      <PpButton
+        type="submit"
+        variant="primary"
+        :disabled="!isFormValid || saving"
+        :loading="saving"
+        @click="handleSubmit"
+      >
+        {{
+          saving
+            ? t('status.saving')
+            : mode === 'create'
+              ? t('templates.create')
+              : t('templates.save')
+        }}
+      </PpButton>
+    </template>
+  </PpModal>
 </template>
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { closeOutline, refreshOutline, addCircleOutline, removeCircleOutline } from 'ionicons/icons'
+import { addCircleOutline, removeCircleOutline } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 import type { PayoutTemplate } from '~/types/tournament'
 
@@ -260,19 +236,10 @@ const closeModal = () => emit('close')
 </script>
 
 <style scoped>
-.modal-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-pp-text);
-}
-
-.close-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-.form-body > * + * {
-  margin-top: 1rem;
+.form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .form-field {
@@ -375,27 +342,11 @@ const closeModal = () => emit('close')
 }
 
 .add-btn {
-  font-size: 0.8125rem;
-  padding: 0.375rem 0.75rem;
+  align-self: flex-start;
 }
 
 .add-icon {
   width: 1rem;
   height: 1rem;
-}
-
-.form-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-pp-border-strong);
-}
-
-.spinner {
-  width: 1rem;
-  height: 1rem;
-  animation: pp-spin 1s linear infinite;
 }
 </style>

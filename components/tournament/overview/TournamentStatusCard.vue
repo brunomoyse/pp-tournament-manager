@@ -60,23 +60,24 @@
     </div>
 
     <!-- Confirmation Dialog -->
-    <div v-if="showConfirmDialog" class="pp-modal-overlay">
-      <div class="pp-modal-backdrop" @click="showConfirmDialog = false"></div>
-      <div class="pp-modal-content pp-modal-content--sm confirm-dialog">
-        <h3 class="confirm-dialog__title">{{ t('statusWorkflow.confirmTitle') }}</h3>
-        <p class="confirm-dialog__message">
-          {{ t('statusWorkflow.confirmMessage', { status: pendingAction?.label || '' }) }}
-        </p>
-        <div class="confirm-dialog__actions">
-          <PpButton variant="secondary" @click="showConfirmDialog = false">
-            {{ t('buttons.cancel') }}
-          </PpButton>
-          <PpButton :disabled="isUpdating" :loading="isUpdating" @click="executeStatusChange">
-            {{ t('statusWorkflow.confirm') }}
-          </PpButton>
-        </div>
-      </div>
-    </div>
+    <PpModal
+      :open="showConfirmDialog"
+      size="sm"
+      :title="t('statusWorkflow.confirmTitle')"
+      @close="showConfirmDialog = false"
+    >
+      <p class="confirm-dialog__message">
+        {{ t('statusWorkflow.confirmMessage', { status: pendingAction?.label || '' }) }}
+      </p>
+      <template #footer>
+        <PpButton variant="secondary" @click="showConfirmDialog = false">
+          {{ t('buttons.cancel') }}
+        </PpButton>
+        <PpButton :disabled="isUpdating" :loading="isUpdating" @click="executeStatusChange">
+          {{ t('statusWorkflow.confirm') }}
+        </PpButton>
+      </template>
+    </PpModal>
   </div>
 </template>
 
@@ -393,26 +394,7 @@ const executeStatusChange = async () => {
 }
 
 /* Confirmation Dialog */
-.confirm-dialog {
-  padding: 1.5rem;
-}
-
-.confirm-dialog__title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--color-pp-text);
-  margin-bottom: 0.75rem;
-}
-
 .confirm-dialog__message {
   color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 1.5rem;
-}
-
-.confirm-dialog__actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
 }
 </style>

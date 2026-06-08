@@ -34,17 +34,13 @@
       </div>
 
       <div class="pp-error-actions">
-        <button class="pp-action-button pp-action-button--primary" @click="handleRetry">
+        <PpButton variant="primary" @click="handleRetry">
           {{ t('error.boundary.retry') }}
-        </button>
+        </PpButton>
 
-        <button
-          v-if="showReset"
-          class="pp-action-button pp-action-button--secondary"
-          @click="handleReset"
-        >
+        <PpButton v-if="showReset" variant="secondary" @click="handleReset">
           {{ t('error.boundary.reset') }}
-        </button>
+        </PpButton>
       </div>
     </div>
   </div>

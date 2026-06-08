@@ -1,89 +1,80 @@
 <template>
-  <div v-if="isOpen" class="pp-modal-overlay">
-    <!-- Backdrop -->
-    <div class="pp-modal-backdrop" @click="$emit('close')"></div>
-
-    <!-- Modal Content -->
-    <div class="pp-modal-content pp-modal-content--lg">
-      <!-- Header -->
-      <div class="pp-modal-header">
-        <h3 class="modal-title">{{ t('playerAction.title') }}</h3>
-        <button @click="$emit('close')" class="pp-close-button">
-          <IonIcon :icon="closeOutline" class="icon-md" />
-        </button>
-      </div>
-
-      <div class="pp-modal-body">
-        <!-- Player Info Header -->
-        <div v-if="player" class="player-info-card">
-          <div class="player-info-header">
-            <div class="player-avatar">
-              <span class="player-avatar-text">{{
-                getInitials(player.firstName, player.lastName)
-              }}</span>
-            </div>
-            <div class="player-details">
-              <h3 class="player-name">{{ getPlayerDisplayName(player) }}</h3>
-              <div class="player-location">
-                <span class="location-item">
-                  <IonIcon :icon="locationOutline" class="icon-sm" />
-                  {{ t('labels.table') }} {{ tableNumber }}, {{ t('labels.seat') }} {{ seatNumber }}
-                </span>
-              </div>
-            </div>
+  <PpModal :open="isOpen" size="lg" :title="t('playerAction.title')" @close="$emit('close')">
+    <div>
+      <!-- Player Info Header -->
+      <div v-if="player" class="player-info-card">
+        <div class="player-info-header">
+          <div class="player-avatar">
+            <span class="player-avatar-text">{{
+              getInitials(player.firstName, player.lastName)
+            }}</span>
           </div>
-
-          <div class="player-status-row">
-            <span class="status-label">{{ t('labels.status') }}:</span>
-            <span :class="['pp-status-badge', getRegistrationStatusClass(currentStatus)]">
-              {{ getRegistrationStatusLabel(currentStatus, t) }}
-            </span>
+          <div class="player-details">
+            <h3 class="player-name">{{ getPlayerDisplayName(player) }}</h3>
+            <div class="player-location">
+              <span class="location-item">
+                <IonIcon :icon="locationOutline" class="icon-sm" />
+                {{ t('labels.table') }} {{ tableNumber }}, {{ t('labels.seat') }} {{ seatNumber }}
+              </span>
+            </div>
           </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="actions-section">
-          <h4 class="actions-title">{{ t('playerAction.availableActions') }}</h4>
+        <div class="player-status-row">
+          <span class="status-label">{{ t('labels.status') }}:</span>
+          <PpBadge :variant="getRegistrationStatusVariant(currentStatus)">
+            {{ getRegistrationStatusLabel(currentStatus, t) }}
+          </PpBadge>
+        </div>
+      </div>
 
-          <!-- Action Grid -->
-          <div class="actions-grid">
-            <!-- Bust Player -->
-            <button
-              @click="handleStatusChange('ELIMINATED')"
-              :disabled="processing"
-              class="pp-action-button pp-action-button--danger action-button-full"
-            >
-              <IonIcon :icon="skullOutline" class="icon-md" />
-              <div class="action-button-content">
-                <div class="action-button-label">{{ t('playerAction.bustPlayer') }}</div>
-                <div class="action-button-desc">{{ t('playerAction.removeFromTournament') }}</div>
-              </div>
-            </button>
+      <!-- Action Buttons -->
+      <div class="actions-section">
+        <h4 class="actions-title">{{ t('playerAction.availableActions') }}</h4>
 
-            <!-- Move to Different Table -->
-            <button
-              @click="handleTableMove"
-              :disabled="processing"
-              class="pp-action-button pp-action-button--secondary action-button-full"
-            >
-              <IonIcon :icon="swapHorizontalOutline" class="icon-md" />
-              <div class="action-button-content">
-                <div class="action-button-label">{{ t('playerAction.moveTable') }}</div>
-                <div class="action-button-desc">{{ t('playerAction.relocateToAnother') }}</div>
-              </div>
-            </button>
-          </div>
+        <!-- Action Grid -->
+        <div class="actions-grid">
+          <!-- Bust Player -->
+          <PpButton
+            variant="danger"
+            class="action-button-full"
+            :disabled="processing"
+            @click="handleStatusChange('ELIMINATED')"
+          >
+            <IonIcon :icon="skullOutline" class="icon-md" />
+            <div class="action-button-content">
+              <div class="action-button-label">{{ t('playerAction.bustPlayer') }}</div>
+              <div class="action-button-desc">{{ t('playerAction.removeFromTournament') }}</div>
+            </div>
+          </PpButton>
+
+          <!-- Move to Different Table -->
+          <PpButton
+            variant="secondary"
+            class="action-button-full"
+            :disabled="processing"
+            @click="handleTableMove"
+          >
+            <IonIcon :icon="swapHorizontalOutline" class="icon-md" />
+            <div class="action-button-content">
+              <div class="action-button-label">{{ t('playerAction.moveTable') }}</div>
+              <div class="action-button-desc">{{ t('playerAction.relocateToAnother') }}</div>
+            </div>
+          </PpButton>
         </div>
       </div>
     </div>
-  </div>
+  </PpModal>
 </template>
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { skullOutline, swapHorizontalOutline, closeOutline, locationOutline } from 'ionicons/icons'
+import { skullOutline, swapHorizontalOutline, locationOutline } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
-import { getRegistrationStatusLabel, getRegistrationStatusClass } from '~/utils/registrationStatus'
+import {
+  getRegistrationStatusLabel,
+  getRegistrationStatusVariant,
+} from '~/utils/registrationStatus'
 
 const { t } = useI18n()
 
