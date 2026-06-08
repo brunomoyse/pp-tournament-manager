@@ -155,30 +155,15 @@
           </PpFadeUp>
 
           <PpFadeUp :delay="0.32">
-            <button type="submit" :disabled="!isFormValid || isLoading" class="login-button">
-              <svg
-                v-if="isLoading"
-                class="spinner"
-                fill="none"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <circle
-                  class="spinner-track"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  stroke-width="4"
-                />
-                <path
-                  class="spinner-head"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-              <span>{{ isLoading ? t('status.loading') : t('auth.login') }}</span>
-            </button>
+            <PpButton
+              type="submit"
+              block
+              size="lg"
+              :loading="isLoading"
+              :disabled="!isFormValid || isLoading"
+            >
+              {{ isLoading ? t('status.loading') : t('auth.login') }}
+            </PpButton>
           </PpFadeUp>
         </form>
       </div>
@@ -556,61 +541,5 @@ input:-webkit-autofill:focus {
 
 .forgot-link:hover {
   color: var(--color-pp-gold);
-}
-
-.login-button {
-  width: 100%;
-  padding: 0.875rem;
-  border-radius: 9999px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  letter-spacing: -0.005em;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    filter 0.15s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  background-color: var(--color-pp-gold);
-  color: var(--color-pp-bg);
-  cursor: pointer;
-  border: 0;
-  box-shadow: 0 8px 30px -8px rgba(254, 231, 138, 0.5);
-}
-
-.login-button:hover:not(:disabled) {
-  filter: brightness(1.04);
-  transform: translateY(-1px);
-  box-shadow: 0 12px 36px -10px rgba(254, 231, 138, 0.55);
-}
-
-.login-button:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.login-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.spinner {
-  width: 1.25rem;
-  height: 1.25rem;
-  animation: login-spin 1s linear infinite;
-}
-
-.spinner-track {
-  opacity: 0.25;
-}
-.spinner-head {
-  opacity: 0.75;
-}
-
-@keyframes login-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 </style>
