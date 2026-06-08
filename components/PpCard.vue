@@ -7,9 +7,9 @@ import { computed } from 'vue'
  * a small padding scale so every card on the page shares one rhythm.
  *
  * `interactive` cards mirror pp-landing's restraint: border brightens and a
- * faint gold ring appears on hover, no translateY lift. Static info cards
- * stay put (this component neutralizes the legacy global `.pp-card:hover`
- * lift from main.css for its own instances).
+ * faint gold spotlight follows the cursor on hover, no translateY lift.
+ * Static info cards stay put (this component neutralizes the legacy global
+ * `.pp-card:hover` lift from main.css for its own instances).
  */
 const props = withDefaults(
   defineProps<{
@@ -33,6 +33,21 @@ const paddingClass = computed(
       lg: 'p-6 sm:p-7',
     })[props.padding],
 )
+
+// Track the cursor as CSS vars on the element directly (no reactive state ->
+// no per-frame re-render). The spotlight ::before reads --pp-mx / --pp-my.
+function onMove(e: PointerEvent) {
+  if (!props.interactive) return
+  const el = e.currentTarget as HTMLElement
+  const r = el.getBoundingClientRect()
+  el.style.setProperty('--pp-mx', `${((e.clientX - r.left) / r.width) * 100}%`)
+  el.style.setProperty('--pp-my', `${((e.clientY - r.top) / r.height) * 100}%`)
+}
+function onLeave(e: PointerEvent) {
+  const el = e.currentTarget as HTMLElement
+  el.style.removeProperty('--pp-mx')
+  el.style.removeProperty('--pp-my')
+}
 </script>
 
 <template>
@@ -40,6 +55,8 @@ const paddingClass = computed(
     :is="as"
     class="pp-card ppc"
     :class="[paddingClass, { 'is-interactive': interactive }]"
+    @pointermove="onMove"
+    @pointerleave="onLeave"
   >
     <slot />
   </component>
@@ -47,6 +64,8 @@ const paddingClass = computed(
 
 <style scoped>
 .ppc {
+  position: relative;
+  isolation: isolate;
   border-radius: var(--radius-2xl);
   transition:
     border-color 0.2s ease,
@@ -63,12 +82,33 @@ const paddingClass = computed(
   cursor: pointer;
 }
 
+/* Cursor-following gold spotlight, painted above the card background but
+   below content (negative z within the card's own stacking context). */
+.is-interactive::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    220px circle at var(--pp-mx, 50%) var(--pp-my, 0%),
+    rgba(254, 231, 138, 0.1),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
 @media (hover: hover) {
   .is-interactive:hover {
     border-color: var(--color-pp-border-strong);
     box-shadow:
       var(--shadow-card),
       0 0 0 1px rgba(254, 231, 138, 0.1);
+  }
+  .is-interactive:hover::before {
+    opacity: 1;
   }
 }
 </style>
