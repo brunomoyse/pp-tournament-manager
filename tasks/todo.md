@@ -46,9 +46,13 @@ For each: swap bespoke buttons/cards/rows/badges for the Phase-1 primitives, loc
 - [x] **`pages/index.vue` (Dashboard)** — ✅ reference migration. All `.pp-action-button` → `PpButton`; 4 stat cards + recent panel → `PpCard`; count chip + row status → `PpBadge`; smart-status returns `variant` not a CSS class. Removed ~50 lines of dead `<style>` (`.stat-card`, `.recent-section`, `.tournament-count-badge`, `.view-all-button`). lint + format clean.
 - [x] **`pages/tournaments.vue`** — ✅ create button → `PpButton`; `.tournament-card` grid → `PpCard interactive` (flex-column so footers align); status → `PpBadge`; softened search/filter focus ring. (search/filter inputs still bespoke — pending `PpField` in Phase 1 backlog.)
 - [x] **`pages/tournament/[id]/index.vue`** + Overview/Clock/Players tab cards — ✅ (Phase 2a). Warning actions / QR / settings-edit → `PpButton`; settings status → `PpBadge`. `TournamentStatusCard` actions + confirm dialog → `PpButton` (built-in loading); stepper keeps class helper. `TournamentClockCard` confirm dialog → `PpButton`, clock control cluster left bespoke by design. `TournamentPlayersTable` toolbar + in-row pills → `PpButton sm`, badges → `PpBadge`, ellipsis → self-contained icon button.
-  - [ ] _Remaining detail-tab pieces:_ `TournamentSeatingManager` (8 buttons), Seating/Results sub-components + their modals, `TournamentStructureCard`.
-- [ ] **`pages/players.vue`** (5 buttons), **`pages/templates.vue`** (4) + template cards/modals, **`pages/reports.vue`** — same treatment; tables/lists use `PpBadge`.
-- [ ] **Modals** (Tournament/Player/Template/Register/Assign/Results/Entry/QR) → `PpModal` (Phase 1 backlog item) + their buttons → `PpButton`.
+  - [x] _Detail-tab pieces (2c):_ `TournamentSeatingManager` (header/empty buttons + 3 inline modals), `AssignTableModal`, `PlayerActionModal` (+ status → PpBadge); StatusCard/ClockCard confirm dialogs → PpModal.
+- [x] **`pages/players.vue`**, **`pages/templates.vue`** + template cards, **`pages/reports.vue`** — ✅ (2b). Buttons → PpButton, players status pill → PpBadge, reports stat cards → PpCard.
+- [x] **`PpModal.vue`** built (Phase 1 backlog) — slot-based, glass backdrop, Escape/scroll-lock, fade+scale. **All modals migrated (2c):** Player/Register/QRCheckin/TournamentQR/TournamentForm/AddEntry/EnterResults/PayoutTemplateForm/BlindStructureTemplateForm/Assign/PlayerAction/delete-confirms.
+- [ ] **`pages/login.vue`** — still bespoke (custom submit button + inputs). Pending.
+- [ ] _Optional polish:_ remaining bespoke info-cards (`TournamentStructureCard`, `TournamentEntryStatsCard`, `TournamentPlayersCard`, `TournamentPrizePool`, `TournamentResultsDisplay`, `TournamentActivityFeed`) still use local `.card` divs — could move to `PpCard` for full radius/shadow consistency. No legacy buttons/badges remain in them.
+
+> **Legacy class status:** `.pp-action-button` / `.pp-status-badge` / hand-rolled `.pp-modal-*` are gone from the app **except** the deliberately-bespoke clock control cluster (`TournamentClockCard` 3 secondary buttons) and the status **stepper** (uses `getTournamentStatusClass` → `.pp-status--*` for coloured nodes, not a badge). Phase 4 can prune the now-dead `main.css` rules.
 
 ## Phase 3 — Motion & navigation polish
 
