@@ -547,6 +547,34 @@ onMounted(async () => {
   .bottom-tab-bar {
     display: none;
   }
+
+  /* Persistent desktop rail: the sidebar is always pinned, so the mobile
+     overlay chrome (hamburger + backdrop) is dropped and both drawer states
+     resolve to fully visible. */
+  .sidebar--open,
+  .sidebar--closed {
+    transform: translateX(0);
+  }
+
+  .hamburger-button,
+  .backdrop {
+    display: none;
+  }
+
+  /* Reserve the rail's width, then make .pp-main the positioned, full-height
+     containing block for the page's absolutely-positioned <ion-page>
+     (inset: 0). Without position+height here the ion-page would anchor to the
+     viewport and ignore the rail offset. */
+  .pp-main {
+    position: relative;
+    height: 100dvh;
+    margin-left: 15rem;
+  }
+
+  /* No fixed hamburger to clear on desktop. */
+  .pp-main :deep(ion-content) {
+    --padding-top: 0;
+  }
 }
 
 .tab-bar-inner {
