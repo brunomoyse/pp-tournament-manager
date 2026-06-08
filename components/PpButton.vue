@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { Motion } from 'motion-v'
+import { spring } from '~/composables/useMotionTokens'
 
 /**
  * PpButton: shared button primitive, ported from pp-landing's <Button>.
@@ -8,6 +10,9 @@ import { computed } from 'vue'
  * focus-visible ring, and an :active press. Renders as <button> by default,
  * as <NuxtLink> when `to` is set, <a> when `href` is set, or any `tag`
  * (e.g. "span") for a decorative pill inside an already-clickable parent.
+ *
+ * Set `magnetic` on a primary CTA for the landing's cursor-tracking spring
+ * (button-only; auto-disabled under prefers-reduced-motion).
  *
  * Replaces the legacy `.pp-action-button*` CSS classes.
  */
@@ -22,6 +27,7 @@ const props = withDefaults(
     block?: boolean
     loading?: boolean
     disabled?: boolean
+    magnetic?: boolean
   }>(),
   {
     variant: 'primary',
@@ -31,6 +37,7 @@ const props = withDefaults(
     block: false,
     loading: false,
     disabled: false,
+    magnetic: false,
   },
 )
 
@@ -61,24 +68,65 @@ const variants: Record<NonNullable<typeof props.variant>, string> = {
   warning:
     'text-[#fb923c] bg-[#fb923c]/10 border border-[#fb923c]/30 hover:bg-[#fb923c]/20 hover:border-[#fb923c]/50',
 }
+
+const classes = computed(() => [
+  base,
+  sizes[props.size],
+  variants[props.variant],
+  props.block && 'w-full',
+  isDisabled.value && 'opacity-50 pointer-events-none',
+])
+
+// --- Magnetic (opt-in, button-only) ---
+const prefersReduced =
+  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+const useMagnetic = computed(
+  () => props.magnetic && is.value === 'button' && !isDisabled.value && !prefersReduced,
+)
+
+const mx = ref(0)
+const my = ref(0)
+
+function onMagnetMove(e: PointerEvent) {
+  const el = e.currentTarget as HTMLElement
+  const r = el.getBoundingClientRect()
+  mx.value = ((e.clientX - (r.left + r.width / 2)) / (r.width / 2)) * 6
+  my.value = ((e.clientY - (r.top + r.height / 2)) / (r.height / 2)) * 6
+}
+function onMagnetLeave() {
+  mx.value = 0
+  my.value = 0
+}
 </script>
 
 <template>
+  <Motion
+    v-if="useMagnetic"
+    tag="button"
+    :type="type"
+    :disabled="isDisabled"
+    :aria-busy="loading || undefined"
+    :class="classes"
+    :animate="{ x: mx, y: my }"
+    :transition="spring.default"
+    @pointermove="onMagnetMove"
+    @pointerleave="onMagnetLeave"
+  >
+    <span v-if="loading" class="pp-btn-spinner" aria-hidden="true" />
+    <slot />
+  </Motion>
+
   <component
     :is="is"
+    v-else
     :to="to || undefined"
     :href="href || undefined"
     :type="is === 'button' ? type : undefined"
     :disabled="is === 'button' ? isDisabled : undefined"
     :aria-busy="loading || undefined"
     :aria-disabled="is !== 'button' && isDisabled ? 'true' : undefined"
-    :class="[
-      base,
-      sizes[size],
-      variants[variant],
-      block && 'w-full',
-      isDisabled && 'opacity-50 pointer-events-none',
-    ]"
+    :class="classes"
   >
     <span v-if="loading" class="pp-btn-spinner" aria-hidden="true" />
     <slot />
