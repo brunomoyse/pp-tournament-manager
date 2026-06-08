@@ -38,14 +38,10 @@
                 class="search-input"
               />
             </div>
-            <button
-              v-if="isAdmin"
-              @click="openPayoutCreate"
-              class="pp-action-button pp-action-button--primary"
-            >
+            <PpButton v-if="isAdmin" @click="openPayoutCreate">
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('templates.addPayoutTemplate') }}
-            </button>
+            </PpButton>
           </div>
 
           <!-- Loading -->
@@ -57,14 +53,10 @@
           <div v-else-if="filteredPayoutTemplates.length === 0" class="centered-state">
             <h4 class="empty-title">{{ t('templates.noPayoutTemplates') }}</h4>
             <p class="empty-text">{{ t('templates.createFirstPayout') }}</p>
-            <button
-              v-if="isAdmin"
-              @click="openPayoutCreate"
-              class="pp-action-button pp-action-button--primary"
-            >
+            <PpButton v-if="isAdmin" @click="openPayoutCreate">
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('templates.addPayoutTemplate') }}
-            </button>
+            </PpButton>
           </div>
 
           <!-- Card Grid -->
@@ -95,14 +87,10 @@
                 class="search-input"
               />
             </div>
-            <button
-              v-if="isAdmin"
-              @click="openBlindCreate"
-              class="pp-action-button pp-action-button--primary"
-            >
+            <PpButton v-if="isAdmin" @click="openBlindCreate">
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('templates.addBlindStructure') }}
-            </button>
+            </PpButton>
           </div>
 
           <!-- Loading -->
@@ -114,14 +102,10 @@
           <div v-else-if="filteredBlindTemplates.length === 0" class="centered-state">
             <h4 class="empty-title">{{ t('templates.noBlindStructures') }}</h4>
             <p class="empty-text">{{ t('templates.createFirstBlind') }}</p>
-            <button
-              v-if="isAdmin"
-              @click="openBlindCreate"
-              class="pp-action-button pp-action-button--primary"
-            >
+            <PpButton v-if="isAdmin" @click="openBlindCreate">
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('templates.addBlindStructure') }}
-            </button>
+            </PpButton>
           </div>
 
           <!-- Card Grid -->
@@ -484,7 +468,8 @@ onMounted(fetchAll)
 
 .search-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px var(--color-pp-gold);
+  box-shadow: 0 0 0 2px rgba(254, 231, 138, 0.4);
+  border-color: var(--color-pp-gold);
 }
 
 .icon-md {

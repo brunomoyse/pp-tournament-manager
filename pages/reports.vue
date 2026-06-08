@@ -34,43 +34,43 @@
           <!-- Stats Cards -->
           <div class="stats-grid">
             <!-- Total Tournaments -->
-            <div class="pp-card pp-poker-watermark stat-card" data-suit="&#9824;">
+            <PpCard padding="sm" class="pp-poker-watermark" data-suit="&#9824;">
               <div class="stat-header">
                 <span class="stat-label">{{ t('reports.tournaments') }}</span>
                 <IonIcon :icon="trophyOutline" class="stat-icon" />
               </div>
               <div class="stat-value">{{ stats.totalTournaments }}</div>
-            </div>
+            </PpCard>
 
             <!-- Unique Players -->
-            <div class="pp-card pp-poker-watermark stat-card" data-suit="&#9829;">
+            <PpCard padding="sm" class="pp-poker-watermark" data-suit="&#9829;">
               <div class="stat-header">
                 <span class="stat-label">{{ t('reports.players') }}</span>
                 <IonIcon :icon="peopleOutline" class="stat-icon" />
               </div>
               <div class="stat-value">{{ stats.totalPlayers }}</div>
-            </div>
+            </PpCard>
 
             <!-- Total Prize Pool -->
-            <div class="pp-card pp-poker-watermark stat-card" data-suit="&#9830;">
+            <PpCard padding="sm" class="pp-poker-watermark" data-suit="&#9830;">
               <div class="stat-header">
                 <span class="stat-label">{{ t('reports.prizePool') }}</span>
                 <IonIcon :icon="cashOutline" class="stat-icon" />
               </div>
               <div class="stat-value">{{ formatPrice(stats.totalPrizePool, locale) }}</div>
-            </div>
+            </PpCard>
 
             <!-- Average Buy-in -->
-            <div class="pp-card pp-poker-watermark stat-card" data-suit="&#9827;">
+            <PpCard padding="sm" class="pp-poker-watermark" data-suit="&#9827;">
               <div class="stat-header">
                 <span class="stat-label">{{ t('reports.avgBuyIn') }}</span>
                 <IonIcon :icon="walletOutline" class="stat-icon" />
               </div>
               <div class="stat-value">{{ formatPrice(stats.avgBuyIn, locale) }}</div>
-            </div>
+            </PpCard>
 
             <!-- Top Winner -->
-            <div class="pp-card stat-card">
+            <PpCard padding="sm">
               <div class="stat-header">
                 <span class="stat-label">{{ t('reports.topWinner') }}</span>
                 <IonIcon :icon="ribbonOutline" class="stat-icon" />
@@ -79,10 +79,10 @@
               <div v-if="stats.topWinner" class="stat-subtitle-gold">
                 {{ formatPrice(stats.topWinner.winnings, locale) }}
               </div>
-            </div>
+            </PpCard>
 
             <!-- Most Games -->
-            <div class="pp-card stat-card">
+            <PpCard padding="sm">
               <div class="stat-header">
                 <span class="stat-label">{{ t('reports.mostGames') }}</span>
                 <IonIcon :icon="gameControllerOutline" class="stat-icon" />
@@ -91,7 +91,7 @@
               <div v-if="stats.mostGames" class="stat-subtitle-muted">
                 {{ stats.mostGames.count }} {{ t('reports.tournaments').toLowerCase() }}
               </div>
-            </div>
+            </PpCard>
           </div>
 
           <!-- Leaderboard Section -->
@@ -519,13 +519,6 @@ onMounted(() => {
   .stats-grid {
     grid-template-columns: repeat(6, 1fr);
   }
-}
-
-.stat-card {
-  background-color: var(--color-pp-surface-2);
-  border-radius: 0.75rem;
-  padding: 1rem;
-  border: 1px solid var(--color-pp-border-strong);
 }
 
 .stat-header {

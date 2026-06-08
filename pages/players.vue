@@ -8,10 +8,10 @@
             <h1 class="page-title">{{ t('players.title') }}</h1>
           </PpFadeUp>
           <PpFadeUp :delay="0.08">
-            <button @click="openCreateModal" class="pp-action-button pp-action-button--primary">
+            <PpButton @click="openCreateModal">
               <IonIcon :icon="personAddOutline" class="icon-md" />
               {{ t('players.addPlayer') }}
-            </button>
+            </PpButton>
           </PpFadeUp>
         </div>
 
@@ -54,13 +54,10 @@
             <IonIcon :icon="peopleOutline" class="empty-icon" />
             <h4 class="empty-title">{{ t('players.noPlayersFound') }}</h4>
             <p class="empty-text">{{ t('players.createFirstPlayer') }}</p>
-            <button
-              @click="openCreateModal"
-              class="pp-action-button pp-action-button--primary empty-action"
-            >
+            <PpButton class="empty-action" @click="openCreateModal">
               <IonIcon :icon="personAddOutline" class="icon-md" />
               {{ t('players.addPlayer') }}
-            </button>
+            </PpButton>
           </div>
 
           <!-- Column Headers (md+) -->
@@ -107,38 +104,30 @@
 
               <!-- Status -->
               <div>
-                <span
-                  :class="['status-pill', player.isActive ? 'status-active' : 'status-inactive']"
-                >
+                <PpBadge :variant="player.isActive ? 'success' : 'danger'">
                   {{ player.isActive ? t('players.active') : t('players.inactive') }}
-                </span>
+                </PpBadge>
               </div>
 
               <!-- Actions -->
               <div class="actions-cell">
-                <button
-                  @click="openEditModal(player)"
-                  class="pp-action-button pp-action-button--secondary action-btn-sm"
-                >
+                <PpButton variant="secondary" size="sm" @click="openEditModal(player)">
                   <IonIcon :icon="createOutline" class="icon-sm" />
                   {{ t('common.edit') }}
-                </button>
-                <button
+                </PpButton>
+                <PpButton
                   v-if="player.isActive"
+                  variant="danger"
+                  size="sm"
                   @click="confirmDeactivate(player)"
-                  class="pp-action-button pp-action-button--danger action-btn-sm"
                 >
                   <IonIcon :icon="banOutline" class="icon-sm" />
                   {{ t('players.deactivate') }}
-                </button>
-                <button
-                  v-else
-                  @click="reactivatePlayer(player.id)"
-                  class="pp-action-button pp-action-button--success action-btn-sm"
-                >
+                </PpButton>
+                <PpButton v-else variant="success" size="sm" @click="reactivatePlayer(player.id)">
                   <IonIcon :icon="checkmarkOutline" class="icon-sm" />
                   {{ t('players.reactivate') }}
-                </button>
+                </PpButton>
               </div>
             </div>
           </div>
@@ -470,7 +459,8 @@ watch(statusFilter, fetchPlayers)
 
 .search-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px var(--color-pp-gold);
+  box-shadow: 0 0 0 2px rgba(254, 231, 138, 0.4);
+  border-color: var(--color-pp-gold);
 }
 
 .status-filter {
@@ -621,36 +611,10 @@ watch(statusFilter, fetchPlayers)
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* Status Pills */
-.status-pill {
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  border: 1px solid;
-}
-
-.status-active {
-  background-color: rgba(34, 197, 94, 0.2);
-  color: var(--pp-green-400);
-  border-color: rgba(34, 197, 94, 0.3);
-}
-
-.status-inactive {
-  background-color: rgba(239, 68, 68, 0.2);
-  color: var(--pp-red-400);
-  border-color: rgba(239, 68, 68, 0.3);
-}
-
 /* Actions */
 .actions-cell {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-
-.action-btn-sm {
-  font-size: 0.75rem;
-  padding: 0.25rem 0.75rem;
 }
 </style>

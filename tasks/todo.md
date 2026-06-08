@@ -44,10 +44,11 @@ For each: swap bespoke buttons/cards/rows/badges for the Phase-1 primitives, loc
 
 - [ ] **`pages/login.vue`** — already custom full-screen; align inputs/button to primitives, keep as the most "landing-like" screen (add `.pp-grain` orb backdrop).
 - [x] **`pages/index.vue` (Dashboard)** — ✅ reference migration. All `.pp-action-button` → `PpButton`; 4 stat cards + recent panel → `PpCard`; count chip + row status → `PpBadge`; smart-status returns `variant` not a CSS class. Removed ~50 lines of dead `<style>` (`.stat-card`, `.recent-section`, `.tournament-count-badge`, `.view-all-button`). lint + format clean.
-- [ ] **`pages/tournaments.vue`** — `.tournament-card` grid → `PpCard interactive`; search/filter → `PpField`/`PpSelect`.
-- [ ] **`pages/tournament/[id]/index.vue`** — tab bar styling, then each tab's cards (Overview/Clock/Players/Seating/Results) → primitives. The Clock tab is the marquee screen — give it the most polish (mono timer already on-brand).
-- [ ] **`pages/players.vue`**, **`pages/templates.vue`**, **`pages/reports.vue`** — same treatment; tables/lists use the shared row + `PpBadge`.
-- [ ] **Modals** (Tournament/Player/Template/Register/Assign/Results) → `PpModal`.
+- [x] **`pages/tournaments.vue`** — ✅ create button → `PpButton`; `.tournament-card` grid → `PpCard interactive` (flex-column so footers align); status → `PpBadge`; softened search/filter focus ring. (search/filter inputs still bespoke — pending `PpField` in Phase 1 backlog.)
+- [x] **`pages/tournament/[id]/index.vue`** + Overview/Clock/Players tab cards — ✅ (Phase 2a). Warning actions / QR / settings-edit → `PpButton`; settings status → `PpBadge`. `TournamentStatusCard` actions + confirm dialog → `PpButton` (built-in loading); stepper keeps class helper. `TournamentClockCard` confirm dialog → `PpButton`, clock control cluster left bespoke by design. `TournamentPlayersTable` toolbar + in-row pills → `PpButton sm`, badges → `PpBadge`, ellipsis → self-contained icon button.
+  - [ ] _Remaining detail-tab pieces:_ `TournamentSeatingManager` (8 buttons), Seating/Results sub-components + their modals, `TournamentStructureCard`.
+- [ ] **`pages/players.vue`** (5 buttons), **`pages/templates.vue`** (4) + template cards/modals, **`pages/reports.vue`** — same treatment; tables/lists use `PpBadge`.
+- [ ] **Modals** (Tournament/Player/Template/Register/Assign/Results/Entry/QR) → `PpModal` (Phase 1 backlog item) + their buttons → `PpButton`.
 
 ## Phase 3 — Motion & navigation polish
 
