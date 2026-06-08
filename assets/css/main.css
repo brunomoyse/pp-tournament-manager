@@ -14,12 +14,13 @@
  */
 
 /* ============================================
-   Legacy palette + shadows still consumed by .pp-status-badge variants,
-   form/button hover effects, etc. Token aliases for the old --pp-bg-primary
-   family have been removed now that every consumer migrated to --color-pp-*.
+   Legacy palette + shadows still consumed by the .pp-status--* stepper
+   colours and various component styles. Token aliases for the old
+   --pp-bg-primary family were removed once every consumer moved to
+   --color-pp-*.
    ============================================ */
 :root {
-  /* Status palette (still consumed by .pp-status-badge variants) */
+  /* Status palette (consumed by .pp-status--* stepper colours + components) */
   --pp-green-400: #4ade80;
   --pp-green-500: #22c55e;
   --pp-green-600: #16a34a;
@@ -168,144 +169,24 @@ textarea::placeholder {
   transform: none;
 }
 
-.pp-action-button--primary {
-  background-color: var(--color-pp-gold);
-  color: var(--color-pp-bg);
-}
-
+/* Only --secondary survives: the bespoke clock control cluster
+   (TournamentClockCard) still uses it. All other variants moved to <PpButton>. */
 .pp-action-button--secondary {
   background-color: rgba(255, 255, 255, 0.05);
   color: var(--color-pp-text);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.pp-action-button--danger {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: var(--pp-red-400);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-.pp-action-button--success {
-  background-color: rgba(34, 197, 94, 0.1);
-  color: var(--pp-green-400);
-  border: 1px solid rgba(34, 197, 94, 0.3);
-}
-
-.pp-action-button--warning {
-  background-color: rgba(249, 115, 22, 0.1);
-  color: var(--pp-orange-400);
-  border: 1px solid rgba(249, 115, 22, 0.3);
-}
-
 @media (hover: hover) {
-  .pp-action-button--primary:hover {
-    filter: brightness(1.1);
-    box-shadow: 0 0 20px rgba(254, 231, 138, 0.3);
-  }
   .pp-action-button--secondary:hover {
     background-color: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.3);
   }
-  .pp-action-button--danger:hover {
-    background-color: rgba(239, 68, 68, 0.2);
-    border-color: rgba(239, 68, 68, 0.5);
-  }
-  .pp-action-button--success:hover {
-    background-color: rgba(34, 197, 94, 0.2);
-    border-color: rgba(34, 197, 94, 0.5);
-  }
-  .pp-action-button--warning:hover {
-    background-color: rgba(249, 115, 22, 0.2);
-    border-color: rgba(249, 115, 22, 0.5);
-  }
 }
 
-/* ============================================
-   Modal component system
-   ============================================ */
-.pp-modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
-
-.pp-modal-backdrop {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-}
-
-.pp-modal-content {
-  position: relative;
-  background-color: var(--color-pp-surface-2);
-  border-radius: 1rem;
-  box-shadow: var(--pp-shadow-2xl);
-  border: 1px solid var(--color-pp-border-strong);
-  max-height: 90vh;
-  overflow-y: auto;
-  width: 100%;
-}
-
-.pp-modal-content--sm {
-  max-width: 24rem;
-}
-.pp-modal-content--md {
-  max-width: 28rem;
-}
-.pp-modal-content--lg {
-  max-width: 32rem;
-}
-.pp-modal-content--xl {
-  max-width: 36rem;
-}
-.pp-modal-content--2xl {
-  max-width: 42rem;
-}
-
-.pp-modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--color-pp-border-strong);
-}
-
-.pp-modal-header h3 {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-  font-weight: 600;
-  color: var(--color-pp-text);
-}
-
-.pp-modal-body {
-  padding: 1.5rem;
-}
-
-.pp-modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  padding: 1.5rem;
-  border-top: 1px solid var(--color-pp-border-strong);
-}
-
-.pp-close-button {
-  padding: 0.5rem;
-  color: rgba(255, 255, 255, 0.6);
-  border-radius: 0.5rem;
-  transition: all 0.15s ease;
-  cursor: pointer;
-}
-
-.pp-close-button:hover {
-  color: var(--color-pp-text);
-  background-color: rgba(24, 24, 26, 0.5);
-}
+/* The hand-rolled modal system was replaced by the <PpModal> primitive,
+   which carries its own scoped overlay/backdrop/panel/header/body/footer
+   styles. Nothing references .pp-modal-* / .pp-close-button anymore. */
 
 /* ============================================
    Form input component
@@ -368,18 +249,10 @@ textarea::placeholder {
 }
 
 /* ============================================
-   Status badge system
+   Status colours: now consumed only by the tournament status stepper
+   (TournamentStatusCard) via getTournamentStatusClass(). Status chips moved
+   to <PpBadge>; the .pp-status-badge base class is gone.
    ============================================ */
-.pp-status-badge {
-  display: inline-block;
-  padding: 0.25rem 0.625rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  border: 1px solid;
-  white-space: nowrap;
-}
-
 .pp-status--gold {
   background-color: rgba(254, 231, 138, 0.2);
   color: var(--color-pp-gold);
@@ -544,23 +417,7 @@ textarea::placeholder {
   }
 }
 
-.pp-card-interactive {
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
-  cursor: pointer;
-}
-
-@media (hover: hover) {
-  .pp-card-interactive:hover {
-    transform: translateY(-2px);
-    box-shadow:
-      0 8px 30px rgba(0, 0, 0, 0.3),
-      0 0 15px rgba(254, 231, 138, 0.08);
-    border-color: rgba(254, 231, 138, 0.3);
-  }
-}
+/* .pp-card-interactive removed; interactive cards now use <PpCard interactive>. */
 
 /* Staggered entry (legacy; prefer the motion-v <Stagger> for new code) */
 @keyframes pp-fade-in-up {
