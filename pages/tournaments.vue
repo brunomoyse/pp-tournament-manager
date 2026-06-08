@@ -10,7 +10,7 @@
             </h1>
           </PpFadeUp>
           <PpFadeUp :delay="0.08">
-            <PpButton @click="createTournament">
+            <PpButton magnetic @click="createTournament">
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('buttons.createTournament') }}
             </PpButton>

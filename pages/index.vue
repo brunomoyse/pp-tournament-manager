@@ -15,7 +15,7 @@
                 >
               </h1>
             </div>
-            <PpButton @click="createTournament">
+            <PpButton magnetic @click="createTournament">
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('buttons.createTournament') }}
             </PpButton>
