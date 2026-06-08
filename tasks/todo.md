@@ -54,17 +54,30 @@ For each: swap bespoke buttons/cards/rows/badges for the Phase-1 primitives, loc
 
 > **Legacy class status:** `.pp-action-button` / `.pp-status-badge` / hand-rolled `.pp-modal-*` are gone from the app **except** the deliberately-bespoke clock control cluster (`TournamentClockCard` 3 secondary buttons) and the status **stepper** (uses `getTournamentStatusClass` → `.pp-status--*` for coloured nodes, not a badge). Phase 4 can prune the now-dead `main.css` rules.
 
-## Phase 3 — Motion & navigation polish
+## Phase 3 — Motion & navigation polish — DEFERRED (needs the app running to verify)
 
 - [ ] Apply `PpMagneticButton` to primary CTAs (create tournament, start clock, etc.).
 - [ ] Spotlight-hover on interactive `PpCard`s; confirm unified easing `[0.16,1,0.3,1]` and `prefers-reduced-motion` fallbacks.
-- [ ] **Suggestion (UX, optional):** promote the sidebar to a **persistent desktop rail** (≥1024px) instead of hamburger-drawer-everywhere, with the landing's glass treatment + active-underline. Big perceived-quality lift for a manager app; keep the drawer for mobile.
+- [ ] **Persistent desktop rail** (≥1024px) instead of hamburger-drawer-everywhere.
+  - ⚠️ **Gotcha:** the current drawer works as an overlay because Ionic renders `<ion-page>` as `position: absolute; inset: 0`. A `margin-left` push won't offset the content (it sits under the fixed rail). Needs the content region made a positioned containing context (or the ion-router-outlet offset) AND visual testing. Do with `npm run dev` + backend up.
 
-## Phase 4 — Cleanup
+> Held back deliberately: motion tuning and a layout change to the Ionic shell should be done with eyes on the running app, not blind. Everything above (structure/components/CSS) was safe to do statically and is verified by lint + format + grep.
 
-- [ ] Delete legacy `.pp-action-button*`, `.pp-card-interactive` lift, ad-hoc per-page card/row CSS once migrated.
-- [ ] Trim `assets/css/main.css` to genuinely shared rules; prune unused legacy `--pp-{color}-*` palette after badges migrate.
-- [ ] Quick quality sweep against the design skill: shape lock ✓, color lock (one gold accent) ✓, button contrast ✓, **zero em-dashes in UI copy/i18n**, no fake-precise numbers.
+## Phase 4 — Cleanup — DONE ✅ (`252b11f`)
+
+- [x] Deleted legacy `.pp-action-button--primary/danger/success/warning` (+ hover), the whole `.pp-modal-*` system + `.pp-close-button`, `.pp-status-badge` base, `.pp-card-interactive`. Kept `.pp-action-button` base + `--secondary` (clock cluster), `.pp-status--*` (stepper), `.pp-input/.pp-label/.pp-select` (form modals). `main.css` 668 → 524 lines.
+- [x] Legacy `--pp-{color}-*` palette KEPT — still consumed by `.pp-status--*` and component styles (clock, etc.).
+- [x] Quality sweep: shape lock ✓ (pills + 2xl cards), color lock ✓ (one gold accent), button contrast ✓, **zero em-dashes** ✓ (incl. comments), no fabricated numbers.
+
+## Review (2026-06-08)
+
+Shipped on `main` in 9 commits (`e3784e8` → `31aaa1b`):
+
+- **Primitives:** `PpButton`, `PpCard`, `PpBadge`, `PpModal` (flat in `components/`, auto-imported).
+- **Every page + every modal + seating** migrated off the legacy `.pp-action-button` / `.pp-status-badge` / hand-rolled `.pp-modal-*`. Only intentional keeps remain: the bespoke clock control cluster and the status stepper's colour classes.
+- `getTournamentStatusVariant` / `getRegistrationStatusVariant` added next to the legacy `*Class` helpers (stepper still uses the latter).
+- `main.css` pruned of all now-dead rules.
+- Verified throughout with `oxlint` + `oxfmt` (lefthook pre-commit) + grep for stale refs / tag balance / em-dashes. **Not** verified in a running browser (no backend here) — recommend a visual pass before Phase 3.
 
 ---
 
