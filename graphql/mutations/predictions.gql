@@ -1,0 +1,3 @@
+mutation ResolveTournamentPredictions($tournamentId: ID!) {
+  resolveTournamentPredictions(tournamentId: $tournamentId)
+}
