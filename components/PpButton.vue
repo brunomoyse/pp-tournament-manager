@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 
 /**
- * PpButton — shared button primitive, ported from pp-landing's <Button>.
+ * PpButton: shared button primitive, ported from pp-landing's <Button>.
  *
  * Pill shape (rounded-full), gold primary with the landing's signature glow,
  * focus-visible ring, and an :active press. Renders as <button> by default,

@@ -4,7 +4,7 @@ import { IonIcon } from '@ionic/vue'
 import { closeOutline } from 'ionicons/icons'
 
 /**
- * PpModal — slot-based dialog primitive. Replaces the repeated
+ * PpModal: slot-based dialog primitive. Replaces the repeated
  * `.pp-modal-overlay`/`.pp-modal-backdrop`/`.pp-modal-content` markup.
  *
  * Teleports to <body>, locks scroll + closes on Escape while open, dims

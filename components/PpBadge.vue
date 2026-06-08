@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * PpBadge — status chip primitive, styled after pp-landing's mono pill
+ * PpBadge: status chip primitive, styled after pp-landing's mono pill
  * (font-mono, low-alpha tinted fill + matching border, fully rounded).
  *
  * Collapses the legacy 8-colour `.pp-status--*` palette into a semantic set.

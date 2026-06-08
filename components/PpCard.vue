@@ -2,12 +2,12 @@
 import { computed } from 'vue'
 
 /**
- * PpCard — shared panel primitive built on the global `.pp-card` utility
+ * PpCard: shared panel primitive built on the global `.pp-card` utility
  * (gradient + border + shadow). Locks the corner radius to --radius-2xl and
  * a small padding scale so every card on the page shares one rhythm.
  *
  * `interactive` cards mirror pp-landing's restraint: border brightens and a
- * faint gold ring appears on hover — no translateY lift. Static info cards
+ * faint gold ring appears on hover, no translateY lift. Static info cards
  * stay put (this component neutralizes the legacy global `.pp-card:hover`
  * lift from main.css for its own instances).
  */
@@ -53,7 +53,7 @@ const paddingClass = computed(
     box-shadow 0.2s ease;
 }
 
-/* Override the global `.pp-card:hover` lift (main.css) — PpCard owns its hover.
+/* Override the global `.pp-card:hover` lift (main.css); PpCard owns its hover.
    Scoped specificity (attribute selector) wins over the global rule. */
 .ppc:hover {
   transform: none;
