@@ -56,6 +56,13 @@
           </div>
         </PpFadeUp>
 
+        <PpFadeUp :delay="0.12">
+          <TourChecklistCard
+            :tournaments-count="isLoading ? null : tournaments.length"
+            :players-count="allTimeLeaderboard ? playerStats.uniquePlayers : null"
+          />
+        </PpFadeUp>
+
         <PpStagger class="stats-grid" :stagger-children="0.05" data-tour="dashboard-stats">
           <PpStaggerItem>
             <PpCard padding="sm" class="pp-poker-watermark" data-suit="&#9824;">
@@ -229,6 +236,7 @@ import { formatPrice } from '~/utils'
 import { useI18n } from '~/composables/useI18n'
 import { getTournamentStatusLabel, getTournamentStatusVariant } from '~/utils/tournamentStatus'
 import TournamentFormModal from '~/components/tournament/TournamentFormModal.vue'
+import TourChecklistCard from '~/components/tour/TourChecklistCard.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
