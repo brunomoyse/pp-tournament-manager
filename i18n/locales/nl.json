@@ -2,6 +2,68 @@
   "app": {
     "title": "PocketPair"
   },
+  "tour": {
+    "ariaLabel": "Rondleiding",
+    "progress": "Stap {current} van {total}",
+    "next": "Volgende",
+    "back": "Terug",
+    "finish": "Afronden",
+    "skipTour": "Rondleiding overslaan",
+    "finished": "Alles staat klaar. Tijd voor je eerste toernooi.",
+    "welcome": {
+      "eyebrow": "Welkom",
+      "title": "Welkom bij PocketPair",
+      "subtitle": "Jouw pokerclub, professioneel beheerd.",
+      "point1": "Maak en draai toernooien met een live klok",
+      "point2": "Beheer spelers, check-ins en tafelindeling",
+      "point3": "Volg resultaten, uitbetalingen en klassementen",
+      "start": "Start de rondleiding",
+      "skip": "Later misschien"
+    },
+    "steps": {
+      "dashboard-stats": {
+        "title": "Je club in één oogopslag",
+        "desc": "Lopende toernooien, spelersaantallen en gemiddelde buy-ins — het dashboard houdt de essentie in beeld zodra je inlogt."
+      },
+      "nav": {
+        "title": "Alles binnen één klik",
+        "desc": "Dashboard, toernooien, spelers, sjablonen en rapporten — zo navigeer je door PocketPair."
+      },
+      "create-tournament": {
+        "title": "Maak je eerste toernooi",
+        "desc": "Stel de buy-in, blindenstructuur en planning in. PocketPair regelt daarna de klok, de tafelindeling en de uitbetalingen."
+      },
+      "add-players": {
+        "title": "Bouw je spelersbestand op",
+        "desc": "Voeg je vaste spelers één keer toe en gebruik ze overal — inschrijvingen, check-ins en statistieken blijven aan elke speler gekoppeld."
+      },
+      "templates": {
+        "title": "Eén keer instellen, altijd hergebruiken",
+        "desc": "Blindenstructuren en uitbetalingsschema's staan hier als sjablonen, zodat een volgend toernooi in enkele seconden klaarstaat."
+      },
+      "reports": {
+        "title": "Ken je cijfers",
+        "desc": "Opkomst, prijzenpotten en klassementen over elke periode — alles om de groei van je club te volgen."
+      },
+      "setup-guide": {
+        "title": "Je startgids",
+        "desc": "Volg deze stappen om toernooiklaar te zijn. Elk item vinkt zichzelf af — wij houden het voor je bij."
+      }
+    },
+    "checklist": {
+      "title": "Startgids",
+      "subtitle": "Een paar stappen tot je eerste toernooi",
+      "dismiss": "Verbergen",
+      "completed": "Installatie voltooid — je club is klaar.",
+      "items": {
+        "takeTour": "Volg de rondleiding",
+        "createTournament": "Maak je eerste toernooi",
+        "addPlayers": "Voeg je spelers toe",
+        "exploreTemplates": "Verken de sjablonen",
+        "viewReports": "Bekijk je rapporten"
+      }
+    }
+  },
   "auth": {
     "login": "Inloggen",
     "register": "Registreren",

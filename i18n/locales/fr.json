@@ -2,6 +2,68 @@
   "app": {
     "title": "PocketPair"
   },
+  "tour": {
+    "ariaLabel": "Visite guidée",
+    "progress": "Étape {current} sur {total}",
+    "next": "Suivant",
+    "back": "Retour",
+    "finish": "Terminer",
+    "skipTour": "Passer la visite",
+    "finished": "Tout est prêt. À vous de lancer votre premier tournoi.",
+    "welcome": {
+      "eyebrow": "Bienvenue",
+      "title": "Bienvenue sur PocketPair",
+      "subtitle": "Votre club de poker, géré comme un pro.",
+      "point1": "Créez et animez des tournois avec horloge en direct",
+      "point2": "Gérez joueurs, check-ins et placements aux tables",
+      "point3": "Suivez résultats, gains et classements",
+      "start": "Faire la visite",
+      "skip": "Plus tard"
+    },
+    "steps": {
+      "dashboard-stats": {
+        "title": "Votre club en un coup d'œil",
+        "desc": "Tournois en cours, nombre de joueurs et buy-ins moyens — le tableau de bord garde l'essentiel sous les yeux dès la connexion."
+      },
+      "nav": {
+        "title": "Tout à portée de clic",
+        "desc": "Tableau de bord, tournois, joueurs, modèles et rapports — c'est ici que vous naviguez dans PocketPair."
+      },
+      "create-tournament": {
+        "title": "Créez votre premier tournoi",
+        "desc": "Définissez le buy-in, la structure des blinds et l'horaire. PocketPair s'occupe ensuite de l'horloge, des placements et des gains."
+      },
+      "add-players": {
+        "title": "Constituez votre base de joueurs",
+        "desc": "Ajoutez vos habitués une seule fois et retrouvez-les partout — inscriptions, check-ins et statistiques restent liés à chaque joueur."
+      },
+      "templates": {
+        "title": "Configurez une fois, réutilisez toujours",
+        "desc": "Structures de blinds et répartitions des gains vivent ici sous forme de modèles : lancer le prochain tournoi ne prend que quelques secondes."
+      },
+      "reports": {
+        "title": "Maîtrisez vos chiffres",
+        "desc": "Fréquentation, prize pools et classements sur la période de votre choix — tout pour suivre la progression de votre club."
+      },
+      "setup-guide": {
+        "title": "Votre guide de démarrage",
+        "desc": "Suivez ces étapes pour être prêt à lancer un tournoi. Chaque élément se coche tout seul — on s'en occupe pour vous."
+      }
+    },
+    "checklist": {
+      "title": "Guide de démarrage",
+      "subtitle": "Quelques étapes pour être prêt à jouer",
+      "dismiss": "Masquer",
+      "completed": "Configuration terminée — votre club est prêt.",
+      "items": {
+        "takeTour": "Faire la visite guidée",
+        "createTournament": "Créer votre premier tournoi",
+        "addPlayers": "Ajouter vos joueurs",
+        "exploreTemplates": "Explorer les modèles",
+        "viewReports": "Consulter vos rapports"
+      }
+    }
+  },
   "auth": {
     "login": "Connexion",
     "register": "S'inscrire",

@@ -2,6 +2,68 @@
   "app": {
     "title": "Pocket Pair - Tournament Manager"
   },
+  "tour": {
+    "ariaLabel": "Guided tour",
+    "progress": "Step {current} of {total}",
+    "next": "Next",
+    "back": "Back",
+    "finish": "Finish",
+    "skipTour": "Skip tour",
+    "finished": "You're all set. Time to run your first tournament.",
+    "welcome": {
+      "eyebrow": "Welcome",
+      "title": "Welcome to PocketPair",
+      "subtitle": "Your poker club, run like a pro.",
+      "point1": "Create and run tournaments with a live clock",
+      "point2": "Manage players, check-ins and table seating",
+      "point3": "Track results, payouts and leaderboards",
+      "start": "Take the tour",
+      "skip": "Skip for now"
+    },
+    "steps": {
+      "dashboard-stats": {
+        "title": "Your club at a glance",
+        "desc": "Live tournaments, player counts and buy-in trends — the dashboard keeps the essentials in view from the moment you sign in."
+      },
+      "nav": {
+        "title": "Everything one click away",
+        "desc": "Dashboard, tournaments, players, templates and reports — this is how you move around PocketPair."
+      },
+      "create-tournament": {
+        "title": "Create your first tournament",
+        "desc": "Set the buy-in, blind structure and schedule. PocketPair handles the clock, seating and payouts from there."
+      },
+      "add-players": {
+        "title": "Build your player base",
+        "desc": "Add your regulars once and reuse them everywhere — registrations, check-ins and statistics stay linked to each player."
+      },
+      "templates": {
+        "title": "Set up once, reuse forever",
+        "desc": "Blind structures and payout schemes live here as templates, so launching the next tournament takes seconds."
+      },
+      "reports": {
+        "title": "Know your numbers",
+        "desc": "Attendance, prize pools and leaderboards over any period — everything you need to follow your club's progress."
+      },
+      "setup-guide": {
+        "title": "Your setup guide",
+        "desc": "Follow these steps to get tournament-ready. Each item ticks itself off as you go — we keep track for you."
+      }
+    },
+    "checklist": {
+      "title": "Setup guide",
+      "subtitle": "A few steps to get tournament-ready",
+      "dismiss": "Dismiss",
+      "completed": "Setup complete — your club is ready.",
+      "items": {
+        "takeTour": "Take the tour",
+        "createTournament": "Create your first tournament",
+        "addPlayers": "Add your players",
+        "exploreTemplates": "Explore templates",
+        "viewReports": "Check your reports"
+      }
+    }
+  },
   "auth": {
     "login": "Login",
     "register": "Register",
