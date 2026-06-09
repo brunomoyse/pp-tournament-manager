@@ -10,7 +10,7 @@
         </PpFadeUp>
 
         <!-- Period Selector Tabs -->
-        <div class="period-tabs">
+        <div class="period-tabs" data-tour="reports">
           <button
             v-for="period in periods"
             :key="period.value"

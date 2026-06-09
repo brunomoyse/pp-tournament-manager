@@ -15,7 +15,7 @@
       </div>
 
       <!-- Navigation -->
-      <nav class="sidebar-nav pp-hide-scrollbar">
+      <nav class="sidebar-nav pp-hide-scrollbar" data-tour="nav">
         <NuxtLink
           v-for="item in navItems"
           :key="item.to"
@@ -86,7 +86,7 @@
 
     <!-- [D] Bottom Tab Bar (mobile/tablet only) -->
     <div class="bottom-tab-bar">
-      <div class="tab-bar-inner">
+      <div class="tab-bar-inner" data-tour="nav">
         <NuxtLink
           v-for="item in navItems"
           :key="item.to"
@@ -111,11 +111,15 @@
         </button>
       </div>
     </div>
+
+    <!-- Onboarding: welcome modal + guided tour overlay -->
+    <TourHost />
   </div>
 </template>
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
+import TourHost from '~/components/tour/TourHost.vue'
 import {
   homeOutline,
   trophyOutline,

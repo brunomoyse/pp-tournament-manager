@@ -7,7 +7,7 @@
             <p class="eyebrow">{{ t('nav.players') }}</p>
             <h1 class="page-title">{{ t('players.title') }}</h1>
           </PpFadeUp>
-          <PpFadeUp :delay="0.08">
+          <PpFadeUp :delay="0.08" data-tour="add-players">
             <PpButton @click="openCreateModal">
               <IonIcon :icon="personAddOutline" class="icon-md" />
               {{ t('players.addPlayer') }}

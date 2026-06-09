@@ -10,7 +10,7 @@
         </PpFadeUp>
 
         <!-- Tabs -->
-        <div class="tabs">
+        <div class="tabs" data-tour="templates">
           <button
             :class="['tab', activeTab === 'payouts' ? 'tab--active' : 'tab--inactive']"
             @click="activeTab = 'payouts'"

@@ -9,7 +9,7 @@
               <span>{{ t('tournaments.title') }}</span>
             </h1>
           </PpFadeUp>
-          <PpFadeUp :delay="0.08">
+          <PpFadeUp :delay="0.08" data-tour="create-tournament">
             <PpButton magnetic @click="createTournament">
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('buttons.createTournament') }}

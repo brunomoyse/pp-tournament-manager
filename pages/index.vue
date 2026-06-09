@@ -56,7 +56,7 @@
           </div>
         </PpFadeUp>
 
-        <PpStagger class="stats-grid" :stagger-children="0.05">
+        <PpStagger class="stats-grid" :stagger-children="0.05" data-tour="dashboard-stats">
           <PpStaggerItem>
             <PpCard padding="sm" class="pp-poker-watermark" data-suit="&#9824;">
               <div class="stat-header">
