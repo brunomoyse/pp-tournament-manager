@@ -94,11 +94,11 @@
     "passwordNumber": "Un chiffre",
     "passwordRequirementsNotMet": "Le mot de passe ne respecte pas les exigences",
     "agreeToTerms": "J'accepte les",
-    "termsAndConditions": "Conditions Générales",
-    "termsRequired": "Conditions Requises",
+    "termsAndConditions": "Conditions générales",
+    "termsRequired": "Conditions requises",
     "mustAcceptTerms": "Vous devez accepter les conditions générales pour vous inscrire",
     "termsContent": "En créant un compte, vous acceptez nos Conditions de Service et notre Politique de Confidentialité. Nous nous engageons à protéger votre vie privée et à assurer un environnement de jeu sûr.",
-    "registrationSuccess": "Inscription Réussie !",
+    "registrationSuccess": "Inscription réussie !",
     "welcomeMessage": "Bienvenue {username} ! Votre compte a été créé avec succès.",
     "loginFailed": "Connexion échouée. Veuillez vérifier vos identifiants.",
     "registrationFailed": "Inscription échouée. Veuillez réessayer.",
@@ -129,16 +129,16 @@
     "logout": "Déconnexion"
   },
   "headings": {
-    "activeTournaments": "Tournois Actifs",
+    "activeTournaments": "Tournois actifs",
     "players": "Joueurs",
-    "quickActions": "Actions Rapides",
-    "recentTournaments": "Tournois Récents",
-    "recentActivity": "Activité Récente",
-    "tournamentSettings": "Paramètres du Tournoi",
-    "tournamentStatus": "Statut du Tournoi",
+    "quickActions": "Actions rapides",
+    "recentTournaments": "Tournois récents",
+    "recentActivity": "Activité récente",
+    "tournamentSettings": "Paramètres du tournoi",
+    "tournamentStatus": "Statut du tournoi",
     "prizePool": "Cagnotte",
-    "blindStructure": "Structure des Blinds",
-    "tableManagement": "Gestion des Tables",
+    "blindStructure": "Structure des blinds",
+    "tableManagement": "Gestion des tables",
     "tournamentClock": "Clock",
     "regularPlayers": "Joueurs réguliers"
   },
@@ -163,10 +163,10 @@
     "current": "Actuel",
     "next": "Suivant",
     "ante": "Ante",
-    "breakTime": "Temps de Pause",
+    "breakTime": "Temps de pause",
     "break": "PAUSE",
     "status": "Statut",
-    "currentLevel": "Niveau Actuel",
+    "currentLevel": "Niveau actuel",
     "levelDuration": "Durée du niveau",
     "blinds": "Blinds",
     "place": "Place",
@@ -176,11 +176,11 @@
     "seatsOccupied": "places occupées",
     "seatedPlayers": "Joueurs assis :",
     "seat": "Siège",
-    "activeTables": "Tables Actives",
+    "activeTables": "Tables actives",
     "minutes": "minutes",
     "noLocation": "Aucun lieu",
     "name": "Nom",
-    "tableSeat": "Table / Siège",
+    "tableSeat": "Table / siège",
     "actions": "Actions",
     "lateRegThroughLevel": "Inscr. tardive jusqu'au niveau {level}",
     "lateRegCutoff": "Inscr. tardive",
@@ -189,22 +189,22 @@
     "more": "de plus"
   },
   "buttons": {
-    "viewTournament": "Voir le Tournoi",
-    "createTournament": "Créer un Tournoi",
-    "managePlayers": "Gérer les Joueurs",
-    "viewReports": "Voir les Rapports",
-    "viewAll": "Tout Voir",
-    "registerPlayer": "Inscrire un Joueur",
+    "viewTournament": "Voir le tournoi",
+    "createTournament": "Créer un tournoi",
+    "managePlayers": "Gérer les joueurs",
+    "viewReports": "Voir les rapports",
+    "viewAll": "Tout voir",
+    "registerPlayer": "Inscrire un joueur",
     "walkIn": "Inscription sur place",
     "qrCheckIn": "Présence QR",
     "qrCode": "Code QR",
     "checkIn": "Présent",
     "undo": "Annuler",
     "seat": "Asseoir",
-    "linkTables": "Lier Table(s)",
-    "autoSeatNext": "Asseoir le Suivant",
-    "balanceTables": "Équilibrer les Tables",
-    "breakTable": "Supprimer la Table",
+    "linkTables": "Lier table(s)",
+    "autoSeatNext": "Asseoir le suivant",
+    "balanceTables": "Équilibrer les tables",
+    "breakTable": "Supprimer la table",
     "start": "Démarrer",
     "pause": "Pause",
     "resume": "Reprendre",
@@ -222,7 +222,7 @@
     "currentlyRunning": "En cours",
     "loading": "Chargement...",
     "saving": "Enregistrement...",
-    "loadingTournament": "Chargement du Tournoi...",
+    "loadingTournament": "Chargement du tournoi...",
     "connected": "Connecté",
     "reconnecting": "Reconnexion",
     "offline": "Hors ligne",
@@ -262,11 +262,11 @@
   },
   "alerts": {
     "createTournament": {
-      "header": "Créer un Tournoi",
+      "header": "Créer un tournoi",
       "message": "La création de tournoi sera bientôt disponible !"
     },
     "playerManagement": {
-      "header": "Gestion des Joueurs",
+      "header": "Gestion des joueurs",
       "message": "La gestion des joueurs sera bientôt disponible !"
     },
     "reports": {
@@ -274,11 +274,11 @@
       "message": "Les rapports de tournoi seront bientôt disponibles !"
     },
     "allTournaments": {
-      "header": "Tous les Tournois",
+      "header": "Tous les tournois",
       "message": "L'archive des tournois sera bientôt disponible !"
     },
     "noClub": {
-      "header": "Aucun Club Trouvé",
+      "header": "Aucun club trouvé",
       "message": "Veuillez créer ou rejoindre un club pour gérer des tournois."
     }
   },
@@ -290,7 +290,7 @@
     "settings": "Paramètres"
   },
   "filters": {
-    "allPlayers": "Tous les Joueurs",
+    "allPlayers": "Tous les joueurs",
     "registered": "Inscrits",
     "checkedIn": "Présents",
     "seated": "Assis",
@@ -299,26 +299,26 @@
   },
   "placeholders": {
     "searchPlayers": "Rechercher des joueurs...",
-    "selectTournament": "Sélectionner un Tournoi"
+    "selectTournament": "Sélectionner un tournoi"
   },
   "modals": {
     "linkClubTables": {
-      "title": "Lier les Tables du Club"
+      "title": "Lier les tables du club"
     }
   },
   "tournament": {
-    "createTournament": "Créer un Tournoi",
-    "editTournament": "Modifier le Tournoi",
-    "edit": "Modifier le Tournoi",
-    "basicInfo": "Informations de Base",
-    "name": "Nom du Tournoi",
+    "createTournament": "Créer un tournoi",
+    "editTournament": "Modifier le tournoi",
+    "edit": "Modifier le tournoi",
+    "basicInfo": "Informations de base",
+    "name": "Nom du tournoi",
     "namePlaceholder": "Entrez le nom du tournoi",
     "description": "Description",
     "descriptionPlaceholder": "Entrez la description du tournoi (optionnel)",
-    "startTime": "Heure de Début",
-    "endTime": "Heure de Fin",
+    "startTime": "Heure de début",
+    "endTime": "Heure de fin",
     "buyIn": "Buy-in",
-    "seatCap": "Nombre de Places",
+    "seatCap": "Nombre de places",
     "unlimited": "Illimité",
     "earlyBirdBonus": "Bonus d'inscription anticipée (jetons)",
     "earlyBirdBonusPlaceholder": "Jetons bonus pour inscription anticipée",
@@ -333,10 +333,10 @@
     "lateRegistrationLevel": "Niveau inscr. tardive",
     "lateRegistrationLevelPlaceholder": "ex. 6",
     "lateRegistrationLevelHelp": "L'inscription reste ouverte jusqu'à la fin de ce niveau. Laissez vide pour contrôle manuel.",
-    "blindStructure": "Structure des Blinds",
-    "selectTemplate": "Modèle de Structure",
+    "blindStructure": "Structure des blinds",
+    "selectTemplate": "Modèle de structure",
     "selectTemplatePlaceholder": "Sélectionnez un modèle de structure de blinds",
-    "templatePreview": "Aperçu de la Structure",
+    "templatePreview": "Aperçu de la structure",
     "break": "Pause",
     "level": "Niveau",
     "minutes": "Min",
@@ -347,7 +347,7 @@
     "saveFailed": "Échec de l'enregistrement du tournoi. Veuillez réessayer."
   },
   "reports": {
-    "title": "Statistiques du Club",
+    "title": "Statistiques du club",
     "period": {
       "allTime": "Tout le temps",
       "last30Days": "30 derniers jours",
@@ -369,7 +369,7 @@
     "noData": "Aucune donnée de tournoi"
   },
   "tournaments": {
-    "title": "Tous les Tournois",
+    "title": "Tous les tournois",
     "search": "Rechercher des tournois...",
     "all": "Tous",
     "upcoming": "À venir",
@@ -381,8 +381,8 @@
     "seats": "places"
   },
   "players": {
-    "title": "Gestion des Joueurs",
-    "addPlayer": "Ajouter un Joueur",
+    "title": "Gestion des joueurs",
+    "addPlayer": "Ajouter un joueur",
     "searchPlaceholder": "Rechercher des joueurs...",
     "allPlayers": "Tous les joueurs",
     "activePlayers": "Joueurs actifs",
@@ -394,8 +394,8 @@
     "inactive": "Inactif",
     "deactivate": "Désactiver",
     "reactivate": "Réactiver",
-    "createPlayer": "Créer un Joueur",
-    "editPlayer": "Modifier le Joueur",
+    "createPlayer": "Créer un joueur",
+    "editPlayer": "Modifier le joueur",
     "firstName": "Prénom",
     "firstNamePlaceholder": "Entrez le prénom",
     "lastName": "Nom",
@@ -528,9 +528,9 @@
     "createAndRegister": "Créer et inscrire le joueur"
   },
   "seating": {
-    "movePlayer": "Déplacer le Joueur",
+    "movePlayer": "Déplacer le joueur",
     "selectDestination": "Sélectionnez la table et le siège de destination :",
-    "selectPlayer": "Sélectionner un Joueur",
+    "selectPlayer": "Sélectionner un joueur",
     "choosePlayerForSeat": "Choisissez un joueur pour le siège {seat}",
     "noUnassignedPlayers": "Aucun joueur non assigné disponible.",
     "mustBeCheckedIn": "Les joueurs doivent être présents avant d'être assis.",
@@ -548,13 +548,13 @@
     "currentSeat": "Siège actuel"
   },
   "playerAction": {
-    "title": "Actions Joueur",
-    "availableActions": "Actions Disponibles",
+    "title": "Actions joueur",
+    "availableActions": "Actions disponibles",
     "showCheckInQR": "Afficher le QR de présence",
     "generateQRForPlayer": "Générer un code QR pour le joueur",
-    "bustPlayer": "Éliminer le Joueur",
+    "bustPlayer": "Éliminer le joueur",
     "removeFromTournament": "Retirer du tournoi",
-    "moveTable": "Changer de Table",
+    "moveTable": "Changer de table",
     "relocateToAnother": "Déplacer vers une autre table",
     "updateStack": "Modifier le stack",
     "modifyChipCount": "Modifier le nombre de jetons",
@@ -589,12 +589,12 @@
     "noTablesAssigned": "Impossible de démarrer le tournoi : aucune table n'est assignée. Veuillez d'abord assigner des tables.",
     "checkInNoSeat": "Joueur validé mais aucun siège disponible. Veuillez assigner un siège manuellement.",
     "checkInAllSomeUnseated": "{seated} sur {count} joueurs placés. {unseated} validé(s) sans siège.",
-    "seatPlayerSuccess": "{name} assigné à la Table {table}, Siège {seat}.",
+    "seatPlayerSuccess": "{name} assigné à la table {table}, siège {seat}.",
     "noTablesForSeating": "Aucune table liée au tournoi. Liez des tables d'abord.",
     "noSeatsAvailable": "Toutes les places sont occupées. Aucun siège disponible."
   },
   "statusWorkflow": {
-    "title": "Statut du Tournoi",
+    "title": "Statut du tournoi",
     "currentStatus": "Statut actuel",
     "confirmTitle": "Changer le statut",
     "confirmMessage": "Êtes-vous sûr de vouloir passer le statut du tournoi à \"{status}\" ?",
@@ -640,7 +640,7 @@
     "entriesAndPlayers": "{entries} entrées de {players} joueurs",
     "buyIn": "Buy-in",
     "entries": "Entrées",
-    "firstPrize": "1er Prix",
+    "firstPrize": "1er prix",
     "payoutBreakdown": "Répartition des gains",
     "payingPositions": "Places payées",
     "percentage": "Pourcentage",
