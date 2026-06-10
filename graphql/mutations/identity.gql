@@ -1,0 +1,54 @@
+mutation CreateClubPlayer($input: CreateClubPlayerInput!) {
+  createClubPlayer(input: $input) {
+    id
+    clubId
+    displayName
+    appUserId
+    isClaimed
+    isActive
+  }
+}
+
+mutation UpdateClubPlayer($input: UpdateClubPlayerInput!) {
+  updateClubPlayer(input: $input) {
+    id
+    displayName
+    isActive
+  }
+}
+
+mutation ArchiveClubPlayer($input: ArchiveClubPlayerInput!) {
+  archiveClubPlayer(input: $input) {
+    id
+    isActive
+  }
+}
+
+mutation FormatRosterImport($input: FormatRosterImportInput!) {
+  formatRosterImport(input: $input) {
+    sourceRowIndex
+    displayName
+  }
+}
+
+mutation CreateClubPlayersBulk($input: CreateClubPlayersBulkInput!) {
+  createClubPlayersBulk(input: $input) {
+    created {
+      id
+      displayName
+    }
+    skipped {
+      displayName
+      reason
+    }
+  }
+}
+
+mutation RegisterRosterPlayer($input: RegisterRosterPlayerInput!) {
+  registerRosterPlayer(input: $input) {
+    id
+    tournamentId
+    clubPlayerId
+    status
+  }
+}

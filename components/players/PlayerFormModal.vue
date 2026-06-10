@@ -7,72 +7,20 @@
   >
     <!-- Form -->
     <form @submit.prevent="handleSubmit" class="player-form">
-      <!-- First Name -->
+      <!-- Display Name -->
       <div class="player-form-field">
         <label class="pp-label">
-          {{ t('players.firstName') }} <span class="player-form-required">*</span>
+          {{ t('players.displayName') }}
+          <span class="player-form-required">*</span>
         </label>
         <input
-          v-model="form.firstName"
+          v-model="form.displayName"
           type="text"
           required
           class="pp-input"
-          :placeholder="t('players.firstNamePlaceholder')"
+          :placeholder="t('players.displayNamePlaceholder')"
         />
-      </div>
-
-      <!-- Last Name -->
-      <div class="player-form-field">
-        <label class="pp-label">
-          {{ t('players.lastName') }}
-        </label>
-        <input
-          v-model="form.lastName"
-          type="text"
-          class="pp-input"
-          :placeholder="t('players.lastNamePlaceholder')"
-        />
-      </div>
-
-      <!-- Email -->
-      <div class="player-form-field">
-        <label class="pp-label">
-          {{ t('auth.email') }} <span class="player-form-required">*</span>
-        </label>
-        <input
-          v-model="form.email"
-          type="email"
-          required
-          class="pp-input"
-          :placeholder="t('players.emailPlaceholder')"
-        />
-        <p v-if="emailError" class="player-form-error">{{ emailError }}</p>
-      </div>
-
-      <!-- Username -->
-      <div class="player-form-field">
-        <label class="pp-label">
-          {{ t('auth.username') }}
-        </label>
-        <input
-          v-model="form.username"
-          type="text"
-          class="pp-input"
-          :placeholder="t('players.usernamePlaceholder')"
-        />
-      </div>
-
-      <!-- Phone -->
-      <div class="player-form-field">
-        <label class="pp-label">
-          {{ t('players.phone') }}
-        </label>
-        <input
-          v-model="form.phone"
-          type="tel"
-          class="pp-input"
-          :placeholder="t('players.phonePlaceholder')"
-        />
+        <p class="player-form-hint">{{ t('players.displayNameHint') }}</p>
       </div>
 
       <!-- Actions -->
@@ -96,11 +44,11 @@
 
 <script setup lang="ts">
 import { useI18n } from '~/composables/useI18n'
-import type { User, PlayerFormData } from '~/types/user'
+import type { ClubPlayer } from '~/types/user'
 
 interface Props {
   isOpen: boolean
-  player: User | null
+  player: ClubPlayer | null
   mode: 'create' | 'edit'
 }
 
@@ -114,60 +62,21 @@ const { t } = useI18n()
 const toast = useToast()
 const clubStore = useClubStore()
 
-// Form state
-const form = ref<PlayerFormData>({
-  email: '',
-  firstName: '',
-  lastName: '',
-  username: '',
-  phone: '',
-})
-
+// Form state — roster entries carry only a display name; email and account
+// details belong to app users, who self-onboard and claim their entry.
+const form = ref<{ displayName: string }>({ displayName: '' })
 const saving = ref(false)
-const emailError = ref('')
 
-// Validation
-const isFormValid = computed(() => {
-  return form.value.firstName.trim() && form.value.email.trim() && !emailError.value
-})
+const isFormValid = computed(() => !!form.value.displayName.trim())
 
-const validateEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(email)
-}
-
-// Watch for email changes to validate
-watch(
-  () => form.value.email,
-  (email) => {
-    if (email && !validateEmail(email)) {
-      emailError.value = t('auth.emailInvalid')
-    } else {
-      emailError.value = ''
-    }
-  },
-)
-
-// Populate form when editing
+// Populate form when editing / reset on open
 watch(
   () => props.isOpen,
   (isOpen) => {
     if (isOpen && props.player && props.mode === 'edit') {
-      form.value = {
-        email: props.player.email,
-        firstName: props.player.firstName,
-        lastName: props.player.lastName || '',
-        username: props.player.username || '',
-        phone: props.player.phone || '',
-      }
+      form.value = { displayName: props.player.displayName }
     } else if (isOpen && props.mode === 'create') {
-      form.value = {
-        email: '',
-        firstName: '',
-        lastName: '',
-        username: '',
-        phone: '',
-      }
+      form.value = { displayName: '' }
     }
   },
 )
@@ -179,25 +88,17 @@ const handleSubmit = async () => {
   saving.value = true
   try {
     if (props.mode === 'create') {
-      await GqlCreatePlayer({
+      await GqlCreateClubPlayer({
         input: {
-          email: form.value.email,
-          firstName: form.value.firstName,
-          lastName: form.value.lastName || undefined,
-          username: form.value.username || undefined,
-          phone: form.value.phone || undefined,
           clubId: clubStore.club?.id || '',
+          displayName: form.value.displayName.trim(),
         },
       })
     } else if (props.player) {
-      await GqlUpdatePlayer({
+      await GqlUpdateClubPlayer({
         input: {
           id: props.player.id,
-          email: form.value.email,
-          firstName: form.value.firstName,
-          lastName: form.value.lastName || undefined,
-          username: form.value.username || undefined,
-          phone: form.value.phone || undefined,
+          displayName: form.value.displayName.trim(),
         },
       })
     }
@@ -211,7 +112,6 @@ const handleSubmit = async () => {
 }
 
 const closeModal = () => {
-  emailError.value = ''
   emit('close')
 }
 </script>
@@ -230,10 +130,10 @@ const closeModal = () => {
   color: var(--pp-red-400);
 }
 
-.player-form-error {
-  color: var(--pp-red-400);
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
+.player-form-hint {
+  color: var(--color-pp-text-dim);
+  font-size: 0.8rem;
+  margin-top: 0.35rem;
 }
 
 .player-form-actions {
@@ -241,5 +141,6 @@ const closeModal = () => {
   align-items: center;
   justify-content: flex-end;
   gap: 0.75rem;
+  margin-top: 1.5rem;
 }
 </style>

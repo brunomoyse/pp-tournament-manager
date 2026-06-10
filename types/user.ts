@@ -18,6 +18,18 @@ export interface Club {
   city?: string | null
 }
 
+// Club roster entry. The canonical club player identity, distinct from an app
+// `User`: it has no email. `appUserId`/`isClaimed` are set once an app user
+// claims the entry. Account-less players live here with `isClaimed = false`.
+export interface ClubPlayer {
+  id: string
+  clubId: string
+  displayName: string
+  appUserId?: string | null
+  isClaimed: boolean
+  isActive: boolean
+}
+
 // Notification types
 export type NotificationType =
   | 'TOURNAMENT_STARTING_SOON'

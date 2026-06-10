@@ -94,7 +94,7 @@ query GetTournament($id: UUID!) {
     registrations {
       id
       userId
-      registeredPlayerId
+      clubPlayerId
       displayName
       registrationTime
       status
@@ -134,7 +134,7 @@ query GetTournamentPlayers($tournamentId: UUID!, $pagination: PaginationInput) {
       registration {
         id
         userId
-        registeredPlayerId
+        clubPlayerId
         registrationTime
         status
         notes
@@ -179,7 +179,7 @@ query GetTournamentEntries($tournamentId: ID!) {
     id
     tournamentId
     userId
-    registeredPlayerId
+    clubPlayerId
     entryType
     amountCents
     chipsReceived
@@ -207,7 +207,7 @@ query GetTournamentEntryStats($tournamentId: ID!) {
 query GetLeaderboard($period: LeaderboardPeriod, $pagination: PaginationInput, $clubId: UUID) {
   leaderboard(period: $period, pagination: $pagination, clubId: $clubId) {
     items {
-      registeredPlayerId
+      clubPlayerId
       displayName
       user {
         id

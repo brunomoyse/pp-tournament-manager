@@ -7,7 +7,11 @@
             <p class="eyebrow">{{ t('nav.players') }}</p>
             <h1 class="page-title">{{ t('players.title') }}</h1>
           </PpFadeUp>
-          <PpFadeUp :delay="0.08" data-tour="add-players">
+          <PpFadeUp :delay="0.08" data-tour="add-players" class="header-actions">
+            <PpButton variant="secondary" @click="openImportModal">
+              <IonIcon :icon="cloudUploadOutline" class="icon-md" />
+              {{ t('players.import.button') }}
+            </PpButton>
             <PpButton @click="openCreateModal">
               <IonIcon :icon="personAddOutline" class="icon-md" />
               {{ t('players.addPlayer') }}
@@ -29,11 +33,11 @@
               />
             </div>
 
-            <!-- Status Filter -->
-            <select v-model="statusFilter" class="status-filter">
+            <!-- Type Filter -->
+            <select v-model="typeFilter" class="status-filter">
               <option value="all">{{ t('players.allPlayers') }}</option>
-              <option value="active">{{ t('players.activePlayers') }}</option>
-              <option value="inactive">{{ t('players.inactivePlayers') }}</option>
+              <option value="app">{{ t('players.appUsers') }}</option>
+              <option value="roster">{{ t('players.rosterOnly') }}</option>
             </select>
           </div>
 
@@ -68,18 +72,7 @@
                 sortDirection === 'asc' ? '↑' : '↓'
               }}</span>
             </button>
-            <button class="sort-button" @click="toggleSort('email')">
-              {{ t('labels.email') }}
-              <span v-if="sortField === 'email'" class="sort-indicator">{{
-                sortDirection === 'asc' ? '↑' : '↓'
-              }}</span>
-            </button>
-            <button class="sort-button" @click="toggleSort('status')">
-              {{ t('labels.status') }}
-              <span v-if="sortField === 'status'" class="sort-indicator">{{
-                sortDirection === 'asc' ? '↑' : '↓'
-              }}</span>
-            </button>
+            <div>{{ t('players.type') }}</div>
             <div>{{ t('labels.actions') }}</div>
           </div>
 
@@ -96,16 +89,13 @@
                 <div class="player-avatar">
                   {{ getInitials(player) }}
                 </div>
-                <span class="player-name">{{ getDisplayName(player) }}</span>
+                <span class="player-name">{{ player.displayName }}</span>
               </div>
 
-              <!-- Email -->
-              <div class="player-email pp-truncate">{{ player.email }}</div>
-
-              <!-- Status -->
+              <!-- Type -->
               <div>
-                <PpBadge :variant="player.isActive ? 'success' : 'danger'">
-                  {{ player.isActive ? t('players.active') : t('players.inactive') }}
+                <PpBadge :variant="player.isClaimed ? 'success' : 'neutral'">
+                  {{ player.isClaimed ? t('players.appUser') : t('players.rosterOnly') }}
                 </PpBadge>
               </div>
 
@@ -115,18 +105,9 @@
                   <IonIcon :icon="createOutline" class="icon-sm" />
                   {{ t('common.edit') }}
                 </PpButton>
-                <PpButton
-                  v-if="player.isActive"
-                  variant="danger"
-                  size="sm"
-                  @click="confirmDeactivate(player)"
-                >
+                <PpButton variant="danger" size="sm" @click="confirmArchive(player)">
                   <IonIcon :icon="banOutline" class="icon-sm" />
-                  {{ t('players.deactivate') }}
-                </PpButton>
-                <PpButton v-else variant="success" size="sm" @click="reactivatePlayer(player.id)">
-                  <IonIcon :icon="checkmarkOutline" class="icon-sm" />
-                  {{ t('players.reactivate') }}
+                  {{ t('players.archive') }}
                 </PpButton>
               </div>
             </div>
@@ -144,12 +125,19 @@
       @saved="handlePlayerSaved"
     />
 
-    <!-- Delete Confirmation Modal -->
+    <!-- Archive Confirmation Modal -->
     <PlayersPlayerDeleteModal
       :is-open="showDeleteModal"
       :player="playerToDelete"
       @close="closeDeleteModal"
-      @confirmed="handleDeleteConfirmed"
+      @confirmed="handleArchiveConfirmed"
+    />
+
+    <!-- Bulk Import Modal -->
+    <PlayersPlayerImportModal
+      :is-open="showImportModal"
+      @close="showImportModal = false"
+      @imported="handleImported"
     />
   </IonPage>
 </template>
@@ -166,10 +154,10 @@ import {
   peopleOutline,
   createOutline,
   banOutline,
-  checkmarkOutline,
+  cloudUploadOutline,
 } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
-import type { User } from '~/types/user'
+import type { ClubPlayer } from '~/types/user'
 
 const clubStore = useClubStore()
 const { t } = useI18n()
@@ -179,18 +167,19 @@ const club = computed(() => clubStore.club)
 
 // State
 const loading = ref(true)
-const players = ref<User[]>([])
+const players = ref<ClubPlayer[]>([])
 const searchQuery = ref('')
-const statusFilter = ref('all')
+const typeFilter = ref<'all' | 'app' | 'roster'>('all')
 const showFormModal = ref(false)
 const showDeleteModal = ref(false)
-const selectedPlayer = ref<User | null>(null)
-const playerToDelete = ref<User | null>(null)
+const showImportModal = ref(false)
+const selectedPlayer = ref<ClubPlayer | null>(null)
+const playerToDelete = ref<ClubPlayer | null>(null)
 const formMode = ref<'create' | 'edit'>('create')
-const sortField = ref<'name' | 'email' | 'status'>('name')
+const sortField = ref<'name'>('name')
 const sortDirection = ref<'asc' | 'desc'>('asc')
 
-const toggleSort = (field: 'name' | 'email' | 'status') => {
+const toggleSort = (field: 'name') => {
   if (sortField.value === field) {
     sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
   } else {
@@ -199,70 +188,42 @@ const toggleSort = (field: 'name' | 'email' | 'status') => {
   }
 }
 
-// Computed
+// Computed — search + type filtering happen client-side over the club roster.
 const filteredPlayers = computed(() => {
+  const searchLower = searchQuery.value.toLowerCase()
   return players.value.filter((player) => {
-    const searchLower = searchQuery.value.toLowerCase()
-    const matchesSearch =
-      player.firstName.toLowerCase().includes(searchLower) ||
-      player.lastName?.toLowerCase().includes(searchLower) ||
-      player.email.toLowerCase().includes(searchLower) ||
-      player.username?.toLowerCase().includes(searchLower)
-
-    const matchesStatus =
-      statusFilter.value === 'all' ||
-      (statusFilter.value === 'active' && player.isActive) ||
-      (statusFilter.value === 'inactive' && !player.isActive)
-
-    return matchesSearch && matchesStatus
+    const matchesSearch = player.displayName.toLowerCase().includes(searchLower)
+    const matchesType =
+      typeFilter.value === 'all' ||
+      (typeFilter.value === 'app' && player.isClaimed) ||
+      (typeFilter.value === 'roster' && !player.isClaimed)
+    return matchesSearch && matchesType
   })
 })
 
 const sortedPlayers = computed(() => {
   const list = [...filteredPlayers.value]
   const dir = sortDirection.value === 'asc' ? 1 : -1
-  list.sort((a, b) => {
-    switch (sortField.value) {
-      case 'name': {
-        const nameA = getDisplayName(a).toLowerCase()
-        const nameB = getDisplayName(b).toLowerCase()
-        return nameA.localeCompare(nameB) * dir
-      }
-      case 'email':
-        return a.email.localeCompare(b.email) * dir
-      case 'status':
-        return (Number(b.isActive) - Number(a.isActive)) * dir
-      default:
-        return 0
-    }
-  })
+  list.sort((a, b) => a.displayName.localeCompare(b.displayName) * dir)
   return list
 })
 
 // Methods
-const getInitials = (player: User) => {
-  const first = player.firstName?.charAt(0)?.toUpperCase() || ''
-  const last = player.lastName?.charAt(0)?.toUpperCase() || ''
+const getInitials = (player: ClubPlayer) => {
+  const parts = player.displayName.trim().split(/\s+/)
+  const first = parts[0]?.charAt(0)?.toUpperCase() || ''
+  const last = parts.length > 1 ? parts[parts.length - 1].charAt(0).toUpperCase() : ''
   return `${first}${last}` || '?'
-}
-
-const getDisplayName = (player: User) => {
-  if (player.firstName && player.lastName) return `${player.firstName} ${player.lastName}`
-  if (player.firstName) return player.firstName
-  return player.username || player.email
 }
 
 const fetchPlayers = async () => {
   if (!club.value) return
   try {
     loading.value = true
-    const result = await GqlGetUsers({
-      search: searchQuery.value || undefined,
-      isActive: statusFilter.value === 'all' ? undefined : statusFilter.value === 'active',
-    })
-    players.value = (result?.users?.items || []) as User[]
+    const result = await GqlGetClubPlayers({ clubId: club.value.id })
+    players.value = (result?.clubPlayers || []) as ClubPlayer[]
   } catch (error) {
-    console.error('Failed to fetch players:', error)
+    console.error('Failed to fetch roster:', error)
   } finally {
     loading.value = false
   }
@@ -275,7 +236,11 @@ const openCreateModal = () => {
   showFormModal.value = true
 }
 
-const openEditModal = (player: User) => {
+const openImportModal = () => {
+  showImportModal.value = true
+}
+
+const openEditModal = (player: ClubPlayer) => {
   selectedPlayer.value = player
   formMode.value = 'edit'
   showFormModal.value = true
@@ -291,7 +256,12 @@ const handlePlayerSaved = async () => {
   await fetchPlayers()
 }
 
-const confirmDeactivate = (player: User) => {
+const handleImported = async () => {
+  showImportModal.value = false
+  await fetchPlayers()
+}
+
+const confirmArchive = (player: ClubPlayer) => {
   playerToDelete.value = player
   showDeleteModal.value = true
 }
@@ -301,38 +271,22 @@ const closeDeleteModal = () => {
   playerToDelete.value = null
 }
 
-const handleDeleteConfirmed = async () => {
+const handleArchiveConfirmed = async () => {
   if (!playerToDelete.value) return
   try {
-    await GqlDeactivatePlayer({ id: playerToDelete.value.id })
+    await GqlArchiveClubPlayer({
+      input: { id: playerToDelete.value.id, isActive: false },
+    })
     closeDeleteModal()
     await fetchPlayers()
   } catch (error) {
-    console.error('Failed to deactivate player:', error)
-    toast.error(t('players.deactivateFailed'))
-  }
-}
-
-const reactivatePlayer = async (id: string) => {
-  try {
-    await GqlReactivatePlayer({ id })
-    await fetchPlayers()
-  } catch (error) {
-    console.error('Failed to reactivate player:', error)
-    toast.error(t('players.reactivateFailed'))
+    console.error('Failed to archive player:', error)
+    toast.error(t('players.archiveFailed'))
   }
 }
 
 // Lifecycle
 onMounted(fetchPlayers)
-
-// Watch search query with debounce
-let searchTimeout: ReturnType<typeof setTimeout> | null = null
-watch(searchQuery, () => {
-  if (searchTimeout) clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(fetchPlayers, 300)
-})
-watch(statusFilter, fetchPlayers)
 </script>
 
 <style scoped>
@@ -394,6 +348,12 @@ watch(statusFilter, fetchPlayers)
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--color-pp-text);
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .icon-md {
@@ -523,7 +483,7 @@ watch(statusFilter, fetchPlayers)
 @media (min-width: 768px) {
   .column-headers {
     display: grid;
-    grid-template-columns: 2fr 2fr 1fr auto;
+    grid-template-columns: 2fr 1fr auto;
     gap: 1rem;
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--color-pp-border-strong);
@@ -570,7 +530,7 @@ watch(statusFilter, fetchPlayers)
   .player-row {
     padding: 1rem;
     display: grid;
-    grid-template-columns: 2fr 2fr 1fr auto;
+    grid-template-columns: 2fr 1fr auto;
     align-items: center;
     gap: 1rem;
   }

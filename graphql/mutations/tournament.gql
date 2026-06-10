@@ -25,7 +25,7 @@ mutation AddTournamentEntry($input: AddTournamentEntryInput!) {
     id
     tournamentId
     userId
-    registeredPlayerId
+    clubPlayerId
     entryType
     amountCents
     chipsReceived
@@ -47,7 +47,7 @@ mutation EnterTournamentResults($input: EnterTournamentResultsInput!) {
       id
       tournamentId
       userId
-      registeredPlayerId
+      clubPlayerId
       displayName
       finalPosition
       prizeCents

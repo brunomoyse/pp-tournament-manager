@@ -115,7 +115,9 @@
     "collapse": "Inklappen",
     "edit": "Bewerken",
     "ok": "OK",
-    "user": "Gebruiker"
+    "user": "Gebruiker",
+    "back": "Terug",
+    "done": "Klaar"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -408,7 +410,39 @@
     "deactivateConfirmMessage": "Weet je zeker dat je {name} wilt deactiveren? Deze speler kan niet meer deelnemen aan toernooien.",
     "saveFailed": "Speler opslaan mislukt. Probeer opnieuw.",
     "deactivateFailed": "Speler deactiveren mislukt. Probeer opnieuw.",
-    "reactivateFailed": "Speler heractiveren mislukt. Probeer opnieuw."
+    "reactivateFailed": "Speler heractiveren mislukt. Probeer opnieuw.",
+    "type": "Type",
+    "appUser": "App-gebruiker",
+    "appUsers": "App-gebruikers",
+    "rosterOnly": "Lijst",
+    "displayName": "Weergavenaam",
+    "displayNamePlaceholder": "bv. Jean Dupont",
+    "displayNameHint": "De naam op de lijst, klok en resultaten.",
+    "archive": "Archiveren",
+    "archiveFailed": "Archiveren van speler mislukt. Probeer opnieuw.",
+    "archiveConfirmTitle": "Speler archiveren?",
+    "archiveConfirmMessage": "Weet je zeker dat je {name} wilt archiveren? De speler wordt verborgen van de lijst, maar de toernooigeschiedenis blijft behouden.",
+    "import": {
+      "button": "Importeren",
+      "title": "Spelers importeren",
+      "dropPrompt": "Sleep een CSV- of Excel-bestand hierheen, of klik om te bladeren",
+      "formats": "Accepteert .csv, .xlsx en .xls",
+      "parsed": "{rows} rijen uit {file}",
+      "aiFormat": "Automatisch opmaken met AI",
+      "or": "of",
+      "mapManually": "Kolommen handmatig koppelen",
+      "pickColumns": "Kies de kolom(men) die de naam van de speler vormen",
+      "useColumns": "Deze kolommen gebruiken",
+      "reviewPrompt": "Controleer {count} spelers voor het importeren. Bewerk of deselecteer een rij.",
+      "createdCount": "{count} spelers geïmporteerd",
+      "skippedCount": "{count} overgeslagen",
+      "importCount": "{count} spelers importeren",
+      "emptyFile": "Dit bestand bevat geen gegevensrijen.",
+      "parseFailed": "Kan dit bestand niet lezen. Controleer het formaat.",
+      "aiNoResult": "De AI vond geen namen — probeer de kolommen handmatig te koppelen.",
+      "aiUnavailable": "AI-opmaak is niet beschikbaar — koppel de kolommen handmatig.",
+      "importFailed": "Importeren mislukt. Probeer opnieuw."
+    }
   },
   "error": {
     "boundary": {
@@ -772,5 +806,44 @@
       "minutesAgo": "{count}min geleden",
       "hoursAgo": "{count}u geleden"
     }
+  },
+  "onboarding": {
+    "eyebrow": "Aan de slag",
+    "title": "Maak je club aan",
+    "subtitle": "Stel je club in en organiseer toernooien in enkele minuten.",
+    "sectionAccount": "Je account",
+    "sectionClub": "Je club",
+    "firstName": "Voornaam",
+    "lastName": "Achternaam",
+    "clubName": "Clubnaam",
+    "country": "Land",
+    "address": "Adres",
+    "postalCode": "Postcode",
+    "city": "Stad",
+    "vatNumber": "Btw-nummer",
+    "createClub": "Club aanmaken",
+    "show": "Toon",
+    "hide": "Verberg",
+    "passwordHint": "Minstens 8 tekens, met een letter en een cijfer.",
+    "passwordWeak": "Wachtwoord moet minstens 8 tekens bevatten, met een letter en een cijfer.",
+    "required": "Dit veld is verplicht",
+    "vatHint": "bijv. {example}",
+    "vatInvalid": "Voer een geldig btw-nummer in (bijv. {example})",
+    "vatChecking": "Ondernemingsregister controleren…",
+    "vatFound": "✓ {name}",
+    "vatNotFound": "Geen onderneming gevonden voor dit btw-nummer.",
+    "vatUnverified": "Kan nu niet verifiëren. Je kunt toch doorgaan.",
+    "emailTaken": "Er bestaat al een account met dit e-mailadres.",
+    "genericError": "Er ging iets mis. Probeer het opnieuw.",
+    "legalName": "Officiële naam",
+    "legalNameHint": "Je geregistreerde wettelijke naam, op basis van je btw-nummer.",
+    "clubNameHint": "Zichtbaar voor spelers in de app.",
+    "reviewWarning": "Dit lijkt geen geregistreerde vzw te zijn. Je kunt doorgaan, maar je club wordt gecontroleerd vóór activering."
+  },
+  "countries": {
+    "BE": "België",
+    "FR": "Frankrijk",
+    "LU": "Luxemburg",
+    "NL": "Nederland"
   }
 }

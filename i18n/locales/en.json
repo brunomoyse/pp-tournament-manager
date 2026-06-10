@@ -115,7 +115,9 @@
     "collapse": "Collapse",
     "edit": "Edit",
     "ok": "OK",
-    "user": "User"
+    "user": "User",
+    "back": "Back",
+    "done": "Done"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -408,7 +410,39 @@
     "deactivateConfirmMessage": "Are you sure you want to deactivate {name}? This player will no longer be able to participate in tournaments.",
     "saveFailed": "Failed to save player. Please try again.",
     "deactivateFailed": "Failed to deactivate player. Please try again.",
-    "reactivateFailed": "Failed to reactivate player. Please try again."
+    "reactivateFailed": "Failed to reactivate player. Please try again.",
+    "type": "Type",
+    "appUser": "App user",
+    "appUsers": "App users",
+    "rosterOnly": "Roster",
+    "displayName": "Display Name",
+    "displayNamePlaceholder": "e.g. Jean Dupont",
+    "displayNameHint": "The name shown on the roster, clock, and results.",
+    "archive": "Archive",
+    "archiveFailed": "Failed to archive player. Please try again.",
+    "archiveConfirmTitle": "Archive player?",
+    "archiveConfirmMessage": "Are you sure you want to archive {name}? They'll be hidden from the roster but their tournament history is kept.",
+    "import": {
+      "button": "Import",
+      "title": "Import players",
+      "dropPrompt": "Drop a CSV or Excel file, or click to browse",
+      "formats": "Accepts .csv, .xlsx and .xls",
+      "parsed": "{rows} rows from {file}",
+      "aiFormat": "Auto-format with AI",
+      "or": "or",
+      "mapManually": "Map columns manually",
+      "pickColumns": "Pick the column(s) that make up each player's name",
+      "useColumns": "Use these columns",
+      "reviewPrompt": "Review {count} players before importing. Edit or deselect any row.",
+      "createdCount": "{count} players imported",
+      "skippedCount": "{count} skipped",
+      "importCount": "Import {count} players",
+      "emptyFile": "This file has no data rows.",
+      "parseFailed": "Could not read this file. Please check the format.",
+      "aiNoResult": "The AI couldn't find names — try mapping columns manually.",
+      "aiUnavailable": "AI formatting is unavailable — map columns manually.",
+      "importFailed": "Import failed. Please try again."
+    }
   },
   "error": {
     "boundary": {
@@ -772,5 +806,44 @@
       "minutesAgo": "{count}m ago",
       "hoursAgo": "{count}h ago"
     }
+  },
+  "onboarding": {
+    "eyebrow": "Get started",
+    "title": "Create your club",
+    "subtitle": "Set up your club and start running tournaments in minutes.",
+    "sectionAccount": "Your account",
+    "sectionClub": "Your club",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "clubName": "Club name",
+    "country": "Country",
+    "address": "Address",
+    "postalCode": "Postal code",
+    "city": "City",
+    "vatNumber": "VAT number",
+    "createClub": "Create club",
+    "show": "Show",
+    "hide": "Hide",
+    "passwordHint": "At least 8 characters, with a letter and a number.",
+    "passwordWeak": "Password must be at least 8 characters and include a letter and a number.",
+    "required": "This field is required",
+    "vatHint": "e.g. {example}",
+    "vatInvalid": "Enter a valid VAT number (e.g. {example})",
+    "vatChecking": "Checking the company register…",
+    "vatFound": "✓ {name}",
+    "vatNotFound": "No company found for this VAT number.",
+    "vatUnverified": "Couldn’t verify right now. You can still continue.",
+    "emailTaken": "An account with this email already exists.",
+    "genericError": "Something went wrong. Please try again.",
+    "legalName": "Official name",
+    "legalNameHint": "Your registered legal name, from your VAT number.",
+    "clubNameHint": "Shown to players in the app.",
+    "reviewWarning": "This does not look like a registered non-profit (ASBL/VZW). You can continue, but your club will be reviewed before activation."
+  },
+  "countries": {
+    "BE": "Belgium",
+    "FR": "France",
+    "LU": "Luxembourg",
+    "NL": "Netherlands"
   }
 }

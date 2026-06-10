@@ -115,7 +115,7 @@ const finishedPlayers = computed<FinishedPlayer[]>(() => {
             ? `${tp.user.lastName} ${tp.user.firstName}`
             : `${tp.user.firstName || ''} ${tp.user.lastName || ''}`.trim()
           : '')
-      const playerId = tp.user?.id || tp.registration.registeredPlayerId
+      const playerId = tp.user?.id || tp.registration.clubPlayerId
       return {
         id: playerId,
         name: displayName || tp.user?.username || tp.user?.email || 'Unknown',

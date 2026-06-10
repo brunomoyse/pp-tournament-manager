@@ -25,7 +25,7 @@ export interface SeatAssignment {
   tournamentId: string
   clubTableId: string
   userId?: string | null
-  registeredPlayerId: string
+  clubPlayerId: string
   seatNumber: number
   stackSize?: number | null
   isCurrent: boolean
@@ -50,7 +50,7 @@ export interface TableWithSeats {
 
 /** A registered/checked-in player not currently seated. */
 export interface UnseatedPlayer {
-  registeredPlayerId: string
+  clubPlayerId: string
   displayName: string
   user?: User | null
 }

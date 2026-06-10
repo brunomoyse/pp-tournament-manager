@@ -24,7 +24,6 @@
     <div class="tab-content">
       <!-- Search Tab -->
       <div v-if="activeTab === 'search'" class="search-tab">
-        <!-- Search Input -->
         <div class="search-input-wrapper">
           <IonIcon :icon="searchOutline" class="search-input-icon" />
           <input
@@ -32,17 +31,16 @@
             type="text"
             :placeholder="t('registerModal.searchPlaceholder')"
             class="pp-input search-input"
-            @input="debouncedSearch"
           />
         </div>
 
         <!-- Loading State -->
-        <div v-if="searching" class="search-loading">
+        <div v-if="loadingRoster" class="search-loading">
           <IonIcon :icon="refreshOutline" class="search-spinner pp-animate-spin" />
           <span class="search-loading-text">{{ t('registerModal.searching') }}</span>
         </div>
 
-        <!-- Search Results -->
+        <!-- Results -->
         <div v-else-if="searchResults.length > 0" class="search-results">
           <p class="results-count">
             {{ t('registerModal.playersFound', { count: searchResults.length }) }}
@@ -50,17 +48,19 @@
           <div v-for="player in searchResults" :key="player.id" class="result-card">
             <div class="result-player">
               <div class="result-avatar">
-                {{ getInitials(player.firstName, player.lastName) }}
+                {{ getInitials(player.displayName) }}
               </div>
               <div>
-                <h4 class="result-name">{{ getPlayerName(player) }}</h4>
-                <p class="result-email">{{ player.email }}</p>
+                <h4 class="result-name">{{ player.displayName }}</h4>
+                <p class="result-email">
+                  {{ player.isClaimed ? t('players.appUser') : t('players.rosterOnly') }}
+                </p>
               </div>
             </div>
             <PpButton
               size="sm"
               variant="primary"
-              @click="registerExistingPlayer(player.id)"
+              @click="registerPlayer(player.id)"
               :disabled="registering === player.id"
               :loading="registering === player.id"
             >
@@ -73,7 +73,7 @@
         </div>
 
         <!-- Empty State -->
-        <div v-else-if="searchQuery && !searching" class="search-empty">
+        <div v-else-if="searchQuery" class="search-empty">
           <IonIcon :icon="searchOutline" class="empty-icon" />
           <p class="empty-text">
             {{ t('registerModal.noPlayersMatching', { query: searchQuery }) }}
@@ -83,7 +83,6 @@
           </button>
         </div>
 
-        <!-- Initial State -->
         <div v-else class="search-empty">
           <IonIcon :icon="personOutline" class="empty-icon" />
           <p class="empty-text">{{ t('registerModal.searchPrompt') }}</p>
@@ -93,51 +92,18 @@
       <!-- Create Tab -->
       <div v-if="activeTab === 'create'" class="create-tab">
         <form @submit.prevent="createAndRegister" class="create-form">
-          <div class="name-grid">
-            <div>
-              <label class="pp-label">{{ t('players.firstName') }} *</label>
-              <input
-                v-model="newPlayer.firstName"
-                type="text"
-                required
-                class="pp-input"
-                placeholder="John"
-              />
-            </div>
-            <div>
-              <label class="pp-label">{{ t('players.lastName') }} *</label>
-              <input
-                v-model="newPlayer.lastName"
-                type="text"
-                required
-                class="pp-input"
-                placeholder="Doe"
-              />
-            </div>
-          </div>
-
           <div>
-            <label class="pp-label">{{ t('auth.email') }} *</label>
+            <label class="pp-label">{{ t('players.displayName') }} *</label>
             <input
-              v-model="newPlayer.email"
-              type="email"
+              v-model="newDisplayName"
+              type="text"
               required
               class="pp-input"
-              placeholder="john@example.com"
+              :placeholder="t('players.displayNamePlaceholder')"
             />
+            <p class="create-hint">{{ t('players.displayNameHint') }}</p>
           </div>
 
-          <div>
-            <label class="pp-label">{{ t('registerModal.phoneOptional') }}</label>
-            <input
-              v-model="newPlayer.phone"
-              type="tel"
-              class="pp-input"
-              placeholder="+1 234 567 890"
-            />
-          </div>
-
-          <!-- Error Message -->
           <div v-if="error" class="form-error">
             <p class="form-error-text">{{ error }}</p>
           </div>
@@ -158,8 +124,9 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { searchOutline, personAddOutline, personOutline } from 'ionicons/icons'
+import { searchOutline, personAddOutline, personOutline, refreshOutline } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
+import type { ClubPlayer } from '~/types/user'
 
 const { t } = useI18n()
 const clubStore = useClubStore()
@@ -167,7 +134,7 @@ const clubStore = useClubStore()
 const props = defineProps<{
   isOpen: boolean
   tournamentId: string
-  registeredPlayerIds: string[]
+  clubPlayerIds: string[]
 }>()
 
 const emit = defineEmits<{
@@ -175,74 +142,46 @@ const emit = defineEmits<{
   registered: [data: { playerId: string }]
 }>()
 
-// State
 const activeTab = ref<'search' | 'create'>('search')
 const searchQuery = ref('')
-const searchResults = ref<any[]>([])
-const searching = ref(false)
+const roster = ref<ClubPlayer[]>([])
+const loadingRoster = ref(false)
 const registering = ref<string | null>(null)
 const creating = ref(false)
 const error = ref<string | null>(null)
+const newDisplayName = ref('')
 
-const newPlayer = reactive({
-  firstName: '',
-  lastName: '',
-  email: '',
-  phone: '',
+// Search filters the loaded roster client-side, excluding already-registered players.
+const searchResults = computed(() => {
+  const q = searchQuery.value.trim().toLowerCase()
+  if (!q) return []
+  return roster.value.filter(
+    (p) => !props.clubPlayerIds.includes(p.id) && p.displayName.toLowerCase().includes(q),
+  )
 })
 
-// Debounced search
-let searchTimeout: ReturnType<typeof setTimeout> | null = null
-const debouncedSearch = () => {
-  if (searchTimeout) clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(() => {
-    performSearch()
-  }, 300)
-}
-
-// Search for players
-const performSearch = async () => {
-  if (!searchQuery.value || searchQuery.value.length < 2) {
-    searchResults.value = []
-    return
-  }
-
+const loadRoster = async () => {
+  if (!clubStore.club) return
   try {
-    searching.value = true
-    error.value = null
-
-    const result = await GqlGetUsers({
-      search: searchQuery.value,
-      isActive: true,
-      pagination: { limit: 20 },
-    })
-
-    // Filter out already registered players
-    searchResults.value = (result?.users?.items || []).filter(
-      (user: any) => !props.registeredPlayerIds.includes(user.id),
-    )
-  } catch (e: any) {
-    console.error('Search failed:', e)
-    error.value = 'Failed to search players'
+    loadingRoster.value = true
+    const result = await GqlGetClubPlayers({ clubId: clubStore.club.id })
+    roster.value = (result?.clubPlayers || []) as ClubPlayer[]
+  } catch (e) {
+    console.error('Failed to load roster:', e)
+    error.value = 'Failed to load roster'
   } finally {
-    searching.value = false
+    loadingRoster.value = false
   }
 }
 
-// Register existing player
-const registerExistingPlayer = async (playerId: string) => {
+const registerPlayer = async (clubPlayerId: string) => {
   try {
-    registering.value = playerId
+    registering.value = clubPlayerId
     error.value = null
-
-    await GqlRegisterTournament({
-      input: {
-        tournamentId: props.tournamentId,
-        userId: playerId,
-      },
+    await GqlRegisterRosterPlayer({
+      input: { tournamentId: props.tournamentId, clubPlayerId },
     })
-
-    emit('registered', { playerId })
+    emit('registered', { playerId: clubPlayerId })
     close()
   } catch (e: any) {
     console.error('Registration failed:', e)
@@ -252,38 +191,25 @@ const registerExistingPlayer = async (playerId: string) => {
   }
 }
 
-// Create new player and register
 const createAndRegister = async () => {
   try {
     creating.value = true
     error.value = null
 
-    // First create the player
-    const createResult = await GqlCreatePlayer({
+    const createResult = await GqlCreateClubPlayer({
       input: {
         clubId: clubStore.club!.id,
-        firstName: newPlayer.firstName,
-        lastName: newPlayer.lastName,
-        email: newPlayer.email,
-        phone: newPlayer.phone || undefined,
+        displayName: newDisplayName.value.trim(),
       },
     })
+    const clubPlayerId = createResult?.createClubPlayer?.id
+    if (!clubPlayerId) throw new Error('Failed to create player')
 
-    if (!createResult?.createPlayer?.id) {
-      throw new Error('Failed to create player')
-    }
-
-    const playerId = createResult.createPlayer.id
-
-    // Then register them for the tournament
-    await GqlRegisterTournament({
-      input: {
-        tournamentId: props.tournamentId,
-        userId: playerId,
-      },
+    await GqlRegisterRosterPlayer({
+      input: { tournamentId: props.tournamentId, clubPlayerId },
     })
 
-    emit('registered', { playerId })
+    emit('registered', { playerId: clubPlayerId })
     close()
   } catch (e: any) {
     console.error('Create & register failed:', e)
@@ -293,39 +219,30 @@ const createAndRegister = async () => {
   }
 }
 
-// Helper functions
-const getInitials = (firstName?: string | null, lastName?: string | null) => {
-  const f = firstName?.[0] || ''
-  const l = lastName?.[0] || ''
+const getInitials = (displayName: string) => {
+  const parts = displayName.trim().split(/\s+/)
+  const f = parts[0]?.[0] || ''
+  const l = parts.length > 1 ? parts[parts.length - 1][0] : ''
   return (f + l).toUpperCase() || '?'
 }
 
-const getPlayerName = (player: any) => {
-  const name = `${player.firstName || ''} ${player.lastName || ''}`.trim()
-  return name || player.username || player.email || 'Unknown'
-}
-
 const close = () => {
-  // Reset state
   searchQuery.value = ''
-  searchResults.value = []
   error.value = null
   activeTab.value = 'search'
-  newPlayer.firstName = ''
-  newPlayer.lastName = ''
-  newPlayer.email = ''
-  newPlayer.phone = ''
+  newDisplayName.value = ''
   emit('close')
 }
 
-// Clear search when modal opens
 watch(
   () => props.isOpen,
   (isOpen) => {
     if (isOpen) {
       searchQuery.value = ''
-      searchResults.value = []
       error.value = null
+      newDisplayName.value = ''
+      activeTab.value = 'search'
+      loadRoster()
     }
   },
 )
@@ -382,7 +299,6 @@ watch(
   padding: 1rem;
 }
 
-/* Search Tab */
 .search-tab > * + * {
   margin-top: 1rem;
 }
@@ -425,7 +341,6 @@ watch(
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* Search Results */
 .search-results > * + * {
   margin-top: 0.5rem;
 }
@@ -480,7 +395,6 @@ watch(
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* Empty / Initial State */
 .search-empty {
   text-align: center;
   padding: 2rem 0;
@@ -510,15 +424,14 @@ watch(
   text-decoration: underline;
 }
 
-/* Create Tab */
 .create-form > * + * {
   margin-top: 1rem;
 }
 
-.name-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+.create-hint {
+  color: var(--color-pp-text-dim);
+  font-size: 0.8rem;
+  margin-top: 0.35rem;
 }
 
 .form-error {
@@ -531,12 +444,6 @@ watch(
 .form-error-text {
   color: var(--pp-red-400);
   font-size: 0.875rem;
-}
-
-/* Icon sizes */
-.icon-lg {
-  width: 1.5rem;
-  height: 1.5rem;
 }
 
 .icon-md {

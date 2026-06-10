@@ -158,7 +158,7 @@
         <RegisterPlayerModal
           :isOpen="showRegisterPlayerModal"
           :tournamentId="selectedTournamentId"
-          :registeredPlayerIds="registeredPlayerIds"
+          :clubPlayerIds="clubPlayerIds"
           @close="showRegisterPlayerModal = false"
           @registered="handlePlayerRegistered"
         />
@@ -349,10 +349,11 @@ const { data: playersData, refresh: refreshPlayers } = await useLazyAsyncData(
   () => GqlGetTournamentPlayers({ tournamentId: selectedTournamentId }),
 )
 
-// Get registered player IDs to filter them out in search
-const registeredPlayerIds = computed(() => {
+// Club-player IDs already in this tournament — used to filter them out of the
+// roster search in RegisterPlayerModal (registration is keyed on club_player).
+const clubPlayerIds = computed(() => {
   return (playersData.value?.tournamentPlayers?.items || [])
-    .map((tp: any) => tp.user?.id || tp.registration.registeredPlayerId)
+    .map((tp: any) => tp.registration.clubPlayerId)
     .filter(Boolean)
 })
 

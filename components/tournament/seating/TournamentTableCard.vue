@@ -119,11 +119,10 @@ const { t } = useI18n()
 const tournamentStore = useTournamentStore()
 
 const lookupPlayerStatus = (playerId: string): string => {
-  // Match on userId or registeredPlayerId
+  // Match on userId or clubPlayerId
   return (
-    tournamentStore.registrations?.find(
-      (r) => r.userId === playerId || r.registeredPlayerId === playerId,
-    )?.status || 'SEATED'
+    tournamentStore.registrations?.find((r) => r.userId === playerId || r.clubPlayerId === playerId)
+      ?.status || 'SEATED'
   )
 }
 
@@ -256,8 +255,8 @@ const openPlayerModal = (seatNumber: number) => {
 
   selectedPlayer.value = player
   selectedSeatNumber.value = seatNumber
-  // Use userId if available, otherwise use registeredPlayerId
-  const playerId = player.id || seatData?.assignment?.registeredPlayerId
+  // Use userId if available, otherwise use clubPlayerId
+  const playerId = player.id || seatData?.assignment?.clubPlayerId
   selectedPlayerStatus.value = lookupPlayerStatus(playerId)
   showPlayerModal.value = true
 }

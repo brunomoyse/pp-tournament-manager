@@ -115,7 +115,9 @@
     "collapse": "Réduire",
     "edit": "Modifier",
     "ok": "OK",
-    "user": "Utilisateur"
+    "user": "Utilisateur",
+    "back": "Retour",
+    "done": "Terminé"
   },
   "nav": {
     "dashboard": "Tableau de bord",
@@ -408,7 +410,39 @@
     "deactivateConfirmMessage": "Êtes-vous sûr de vouloir désactiver {name} ? Ce joueur ne pourra plus participer aux tournois.",
     "saveFailed": "Échec de l'enregistrement du joueur. Veuillez réessayer.",
     "deactivateFailed": "Échec de la désactivation du joueur. Veuillez réessayer.",
-    "reactivateFailed": "Échec de la réactivation du joueur. Veuillez réessayer."
+    "reactivateFailed": "Échec de la réactivation du joueur. Veuillez réessayer.",
+    "type": "Type",
+    "appUser": "Utilisateur",
+    "appUsers": "Utilisateurs",
+    "rosterOnly": "Liste",
+    "displayName": "Nom affiché",
+    "displayNamePlaceholder": "ex. Jean Dupont",
+    "displayNameHint": "Le nom affiché sur la liste, l'horloge et les résultats.",
+    "archive": "Archiver",
+    "archiveFailed": "Échec de l'archivage du joueur. Veuillez réessayer.",
+    "archiveConfirmTitle": "Archiver le joueur ?",
+    "archiveConfirmMessage": "Voulez-vous vraiment archiver {name} ? Il sera masqué de la liste, mais son historique de tournois est conservé.",
+    "import": {
+      "button": "Importer",
+      "title": "Importer des joueurs",
+      "dropPrompt": "Déposez un fichier CSV ou Excel, ou cliquez pour parcourir",
+      "formats": "Accepte .csv, .xlsx et .xls",
+      "parsed": "{rows} lignes depuis {file}",
+      "aiFormat": "Formater avec l'IA",
+      "or": "ou",
+      "mapManually": "Associer les colonnes manuellement",
+      "pickColumns": "Choisissez la ou les colonnes qui composent le nom du joueur",
+      "useColumns": "Utiliser ces colonnes",
+      "reviewPrompt": "Vérifiez {count} joueurs avant l'import. Modifiez ou décochez une ligne.",
+      "createdCount": "{count} joueurs importés",
+      "skippedCount": "{count} ignorés",
+      "importCount": "Importer {count} joueurs",
+      "emptyFile": "Ce fichier ne contient aucune ligne de données.",
+      "parseFailed": "Impossible de lire ce fichier. Vérifiez le format.",
+      "aiNoResult": "L'IA n'a trouvé aucun nom — essayez d'associer les colonnes manuellement.",
+      "aiUnavailable": "Le formatage par IA est indisponible — associez les colonnes manuellement.",
+      "importFailed": "Échec de l'import. Veuillez réessayer."
+    }
   },
   "error": {
     "boundary": {
@@ -772,5 +806,44 @@
       "minutesAgo": "Il y a {count}min",
       "hoursAgo": "Il y a {count}h"
     }
+  },
+  "onboarding": {
+    "eyebrow": "Commencez",
+    "title": "Créez votre club",
+    "subtitle": "Configurez votre club et lancez vos tournois en quelques minutes.",
+    "sectionAccount": "Votre compte",
+    "sectionClub": "Votre club",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "clubName": "Nom du club",
+    "country": "Pays",
+    "address": "Adresse",
+    "postalCode": "Code postal",
+    "city": "Ville",
+    "vatNumber": "Numéro de TVA",
+    "createClub": "Créer le club",
+    "show": "Afficher",
+    "hide": "Masquer",
+    "passwordHint": "Au moins 8 caractères, avec une lettre et un chiffre.",
+    "passwordWeak": "Le mot de passe doit comporter au moins 8 caractères, avec une lettre et un chiffre.",
+    "required": "Ce champ est requis",
+    "vatHint": "p. ex. {example}",
+    "vatInvalid": "Saisissez un numéro de TVA valide (p. ex. {example})",
+    "vatChecking": "Vérification du registre des entreprises…",
+    "vatFound": "✓ {name}",
+    "vatNotFound": "Aucune entreprise trouvée pour ce numéro de TVA.",
+    "vatUnverified": "Vérification impossible pour l’instant. Vous pouvez continuer.",
+    "emailTaken": "Un compte existe déjà avec cet e-mail.",
+    "genericError": "Une erreur s’est produite. Veuillez réessayer.",
+    "legalName": "Nom officiel",
+    "legalNameHint": "Votre dénomination légale, d’après votre numéro de TVA.",
+    "clubNameHint": "Affiché aux joueurs dans l’app.",
+    "reviewWarning": "Cette entreprise ne semble pas être une ASBL. Vous pouvez continuer, mais votre club sera vérifié avant son activation."
+  },
+  "countries": {
+    "BE": "Belgique",
+    "FR": "France",
+    "LU": "Luxembourg",
+    "NL": "Pays-Bas"
   }
 }

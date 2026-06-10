@@ -44,7 +44,7 @@ export interface TournamentRegistration {
   id: string
   tournamentId?: string
   userId?: string | null
-  registeredPlayerId?: string
+  clubPlayerId?: string
   displayName?: string
   notes?: string | null
   registrationTime: string
@@ -64,7 +64,7 @@ export interface TournamentResult {
   id: string
   tournamentId: string
   userId?: string | null
-  registeredPlayerId?: string
+  clubPlayerId?: string
   displayName?: string
   finalPosition: number
   prizeCents: number
@@ -134,7 +134,7 @@ export interface TournamentEntry {
   id: string
   tournamentId: string
   userId?: string | null
-  registeredPlayerId?: string
+  clubPlayerId?: string
   entryType: EntryType
   amountCents: number
   chipsReceived?: number | null
@@ -218,7 +218,7 @@ export type LeaderboardPeriod =
   | 'LAST_7_DAYS'
 
 export interface LeaderboardEntry {
-  registeredPlayerId?: string
+  clubPlayerId?: string
   displayName?: string
   user?: User | null
   rank: number

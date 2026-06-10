@@ -146,8 +146,8 @@
       >
         <button
           v-for="player in unassignedPlayers"
-          :key="player.registeredPlayerId"
-          @click="selectPlayerForSeat(player.registeredPlayerId)"
+          :key="player.clubPlayerId"
+          @click="selectPlayerForSeat(player.clubPlayerId)"
           class="seating-manager__player-option"
         >
           <div class="seating-manager__player-avatar">

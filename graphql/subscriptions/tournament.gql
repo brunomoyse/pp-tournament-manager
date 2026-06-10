@@ -49,7 +49,7 @@ subscription TournamentRegistrations($tournamentId: ID!) {
       registration {
         id
         userId
-        registeredPlayerId
+        clubPlayerId
         registrationTime
         status
         notes

@@ -35,18 +35,14 @@
       <!-- Action Buttons -->
       <div class="toolbar-right">
         <PpButton
-          v-if="registeredPlayers.length > 0"
+          v-if="clubPlayers.length > 0"
           variant="secondary"
           :disabled="checkingInAll"
           :loading="checkingInAll"
           @click="checkInAllPlayers"
         >
           <IonIcon v-if="!checkingInAll" :icon="checkmarkDoneOutline" class="icon-sm" />
-          {{
-            checkingInAll
-              ? `${checkInProgress}/${registeredPlayers.length}`
-              : t('buttons.checkInAll')
-          }}
+          {{ checkingInAll ? `${checkInProgress}/${clubPlayers.length}` : t('buttons.checkInAll') }}
         </PpButton>
         <PpButton v-if="canRegisterPlayers" @click="$emit('registerPlayer')">
           <IonIcon :icon="personAddOutline" class="icon-sm" />
@@ -241,14 +237,14 @@ const { data: seatingData, refresh: refreshSeating } = await useLazyAsyncData(
   () => GqlGetTournamentSeatingChart({ tournamentId: selectedTournamentId }),
 )
 
-// Build lookup map: userId or registeredPlayerId -> { tableNumber, seatNumber }
+// Build lookup map: userId or clubPlayerId -> { tableNumber, seatNumber }
 const seatLookup = computed(() => {
   const map = new Map<string, { tableNumber: number; seatNumber: number }>()
   const tables = seatingData.value?.tournamentSeatingChart?.tables || []
   for (const tableData of tables) {
     for (const seat of tableData.seats) {
-      // Try userId first, fall back to registeredPlayerId (always present)
-      const key = seat.assignment?.userId || seat.assignment?.registeredPlayerId
+      // Try userId first, fall back to clubPlayerId (always present)
+      const key = seat.assignment?.userId || seat.assignment?.clubPlayerId
       if (key) {
         map.set(key, {
           tableNumber: tableData.table.tableNumber,
@@ -269,7 +265,7 @@ const refreshPlayers = async () => {
 const tournamentPlayers = computed(() => playersData.value?.tournamentPlayers?.items || [])
 
 // Get registered players for "Check In All" button
-const registeredPlayers = computed(() =>
+const clubPlayers = computed(() =>
   tournamentPlayers.value.filter((tp: any) => tp.registration.status === 'REGISTERED'),
 )
 
@@ -319,8 +315,8 @@ const filteredPlayers = computed(() => {
       const username = tp.user?.username || ''
       const email = tp.user?.email || ''
 
-      // Use userId if available, otherwise use registeredPlayerId (always present)
-      const playerId = tp.user?.id || tp.registration.registeredPlayerId
+      // Use userId if available, otherwise use clubPlayerId (always present)
+      const playerId = tp.user?.id || tp.registration.clubPlayerId
       const seat = seatLookup.value.get(playerId)
 
       return {
@@ -376,7 +372,7 @@ const checkInPlayer = async (playerId: string) => {
   try {
     checkingIn.value = playerId
 
-    // playerId here is either userId or registeredPlayerId; pass it as userId for the mutation
+    // playerId here is either userId or clubPlayerId; pass it as userId for the mutation
     const result = await GqlCheckInPlayer({
       input: {
         tournamentId: selectedTournamentId,
@@ -534,7 +530,7 @@ defineExpose({ refreshPlayers })
 const checkInAllPlayers = async () => {
   if (checkingInAll.value) return
 
-  const players = registeredPlayers.value
+  const players = clubPlayers.value
   if (players.length === 0) return
 
   checkingInAll.value = true
@@ -545,8 +541,8 @@ const checkInAllPlayers = async () => {
 
   for (const tp of players) {
     try {
-      // Use userId if available, otherwise use registeredPlayerId
-      const playerId = tp.user?.id || tp.registration.registeredPlayerId
+      // Use userId if available, otherwise use clubPlayerId
+      const playerId = tp.user?.id || tp.registration.clubPlayerId
       const result = await GqlCheckInPlayer({
         input: {
           tournamentId: selectedTournamentId,

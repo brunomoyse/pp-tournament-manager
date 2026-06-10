@@ -1,0 +1,10 @@
+query GetClubPlayers($clubId: ID!) {
+  clubPlayers(clubId: $clubId) {
+    id
+    clubId
+    displayName
+    appUserId
+    isClaimed
+    isActive
+  }
+}

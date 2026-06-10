@@ -166,7 +166,7 @@
                 <tbody>
                   <tr
                     v-for="(entry, index) in leaderboard"
-                    :key="entry.registeredPlayerId || entry.user?.id || index"
+                    :key="entry.clubPlayerId || entry.user?.id || index"
                     :class="[
                       'pp-stagger-item',
                       'table-row',

@@ -5,10 +5,10 @@
         <IonIcon :icon="warningOutline" class="delete-modal-icon" />
       </div>
       <h2 class="delete-modal-title">
-        {{ t('players.deactivateConfirmTitle') }}
+        {{ t('players.archiveConfirmTitle') }}
       </h2>
       <p class="delete-modal-message">
-        {{ t('players.deactivateConfirmMessage', { name: playerName }) }}
+        {{ t('players.archiveConfirmMessage', { name: playerName }) }}
       </p>
     </div>
 
@@ -17,7 +17,7 @@
         {{ t('common.cancel') }}
       </PpButton>
       <PpButton variant="danger" class="delete-modal-action-btn" @click="$emit('confirmed')">
-        {{ t('players.deactivate') }}
+        {{ t('players.archive') }}
       </PpButton>
     </template>
   </PpModal>
@@ -27,11 +27,11 @@
 import { IonIcon } from '@ionic/vue'
 import { warningOutline } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
-import type { User } from '~/types/user'
+import type { ClubPlayer } from '~/types/user'
 
 interface Props {
   isOpen: boolean
-  player: User | null
+  player: ClubPlayer | null
 }
 
 const props = defineProps<Props>()
@@ -42,13 +42,7 @@ defineEmits<{
 
 const { t } = useI18n()
 
-const playerName = computed(() => {
-  if (!props.player) return ''
-  if (props.player.firstName && props.player.lastName) {
-    return `${props.player.firstName} ${props.player.lastName}`
-  }
-  return props.player.firstName || props.player.username || props.player.email
-})
+const playerName = computed(() => props.player?.displayName ?? '')
 </script>
 
 <style scoped>
