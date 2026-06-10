@@ -1,7 +1,0 @@
-query GetClubs {
-  clubs {
-    id
-    name
-    city
-  }
-}

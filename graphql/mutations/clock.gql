@@ -1,13 +1,3 @@
-mutation CreateTournamentClock($tournamentId: ID!) {
-  createTournamentClock(tournamentId: $tournamentId) {
-    id
-    tournamentId
-    status
-    currentLevel
-    autoAdvance
-  }
-}
-
 mutation StartTournamentClock($tournamentId: ID!) {
   startTournamentClock(tournamentId: $tournamentId) {
     id

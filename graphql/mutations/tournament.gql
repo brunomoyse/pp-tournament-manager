@@ -1,12 +1,3 @@
-mutation AssignTableToTournament($input: AssignTableToTournamentInput!) {
-  assignTableToTournament(input: $input) {
-    id
-    tournamentId
-    tableNumber
-    maxSeats
-  }
-}
-
 mutation AssignTablesToTournament($input: AssignTablesToTournamentInput!) {
   assignTablesToTournament(input: $input) {
     id
@@ -34,10 +25,6 @@ mutation AddTournamentEntry($input: AddTournamentEntryInput!) {
     createdAt
     updatedAt
   }
-}
-
-mutation DeleteTournamentEntry($entryId: ID!) {
-  deleteTournamentEntry(entryId: $entryId)
 }
 
 mutation EnterTournamentResults($input: EnterTournamentResultsInput!) {

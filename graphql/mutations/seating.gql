@@ -44,19 +44,6 @@ mutation MovePlayer($input: MovePlayerInput!) {
   }
 }
 
-mutation UpdateStackSize($input: UpdateStackSizeInput!) {
-  updateStackSize(input: $input) {
-    id
-    tournamentId
-    clubTableId
-    userId
-    seatNumber
-    stackSize
-    isCurrent
-    assignedAt
-  }
-}
-
 mutation BalanceTables($input: BalanceTablesInput!) {
   balanceTables(input: $input) {
     id

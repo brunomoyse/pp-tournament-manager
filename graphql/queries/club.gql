@@ -1,11 +1,3 @@
-query GetClubs {
-  clubs {
-    id
-    name
-    city
-  }
-}
-
 query GetClubTables($clubId: UUID!) {
   clubTables(clubId: $clubId) {
     id

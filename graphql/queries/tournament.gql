@@ -103,31 +103,6 @@ query GetTournament($id: UUID!) {
   }
 }
 
-query GetTournamentStructure($tournamentId: ID!) {
-  tournamentStructure(tournamentId: $tournamentId) {
-    id
-    tournamentId
-    levelNumber
-    smallBlind
-    bigBlind
-    ante
-    durationMinutes
-    isBreak
-    breakDurationMinutes
-  }
-}
-
-mutation RegisterTournament($input: RegisterForTournamentInput!) {
-  registerForTournament(input: $input) {
-    id
-    tournamentId
-    userId
-    registrationTime
-    status
-    notes
-  }
-}
-
 query GetTournamentPlayers($tournamentId: UUID!, $pagination: PaginationInput) {
   tournamentPlayers(tournamentId: $tournamentId, pagination: $pagination) {
     items {
@@ -169,22 +144,6 @@ query GetTournamentPayout($tournamentId: ID!) {
       percentage
       amountCents
     }
-    createdAt
-    updatedAt
-  }
-}
-
-query GetTournamentEntries($tournamentId: ID!) {
-  tournamentEntries(tournamentId: $tournamentId) {
-    id
-    tournamentId
-    userId
-    clubPlayerId
-    entryType
-    amountCents
-    chipsReceived
-    recordedBy
-    notes
     createdAt
     updatedAt
   }
@@ -233,57 +192,6 @@ query GetLeaderboard($period: LeaderboardPeriod, $pagination: PaginationInput, $
     pageSize
     offset
     hasNextPage
-  }
-}
-
-query GetMyTournamentStatistics {
-  myTournamentStatistics {
-    last7Days {
-      totalItm
-      totalTournaments
-      totalWinnings
-      totalBuyIns
-      itmPercentage
-      roiPercentage
-    }
-    last30Days {
-      totalItm
-      totalTournaments
-      totalWinnings
-      totalBuyIns
-      itmPercentage
-      roiPercentage
-    }
-    lastYear {
-      totalItm
-      totalTournaments
-      totalWinnings
-      totalBuyIns
-      itmPercentage
-      roiPercentage
-    }
-  }
-}
-
-query GetMyRecentTournamentResults($limit: Int) {
-  myRecentTournamentResults(limit: $limit) {
-    result {
-      id
-      tournamentId
-      userId
-      finalPosition
-      prizeCents
-      points
-      notes
-      createdAt
-    }
-    tournament {
-      id
-      title
-      startTime
-      buyInCents
-      rakeCents
-    }
   }
 }
 

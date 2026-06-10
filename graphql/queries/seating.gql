@@ -36,30 +36,3 @@ query GetTournamentSeatingChart($tournamentId: UUID!) {
     }
   }
 }
-
-query GetTableSeatAssignments($clubTableId: UUID!) {
-  tableSeatAssignments(clubTableId: $clubTableId) {
-    assignment {
-      id
-      seatNumber
-      stackSize
-      assignedAt
-    }
-    displayName
-    player {
-      id
-      firstName
-      lastName
-    }
-  }
-}
-
-query GetSeatingHistory($tournamentId: UUID!, $limit: Int) {
-  tournamentSeatingHistory(tournamentId: $tournamentId, limit: $limit) {
-    id
-    seatNumber
-    stackSize
-    isCurrent
-    assignedAt
-  }
-}
