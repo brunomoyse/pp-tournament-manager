@@ -10,6 +10,17 @@ export default defineNuxtConfig({
     'pinia-plugin-persistedstate/nuxt',
     'nuxt-graphql-client',
   ],
+  ionic: {
+    css: {
+      // Imported manually in assets/css/main.css under @layer ionic. The
+      // module would inject these unlayered, and Ionic's normalize ships a
+      // `button { padding: 0; border-radius: 0 }` reset that an unlayered
+      // rule lets win over every Tailwind utility (rounded-full, px-*).
+      core: false,
+      basic: false,
+      utilities: false,
+    },
+  },
   ssr: false,
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },

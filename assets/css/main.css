@@ -1,3 +1,14 @@
+/* Ionic globals sit in the lowest cascade layer so Tailwind's base and
+   utilities win. Module injection is disabled in nuxt.config.ts because
+   @nuxtjs/ionic loads these unlayered, letting Ionic's button reset
+   (padding: 0; border-radius: 0) beat every utility class. */
+@layer ionic, theme, base, components, utilities;
+
+@import '@ionic/vue/css/core.css' layer(ionic);
+@import '@ionic/vue/css/normalize.css' layer(ionic);
+@import '@ionic/vue/css/structure.css' layer(ionic);
+@import '@ionic/vue/css/typography.css' layer(ionic);
+
 @import 'tailwindcss';
 @import './design-tokens.css';
 
