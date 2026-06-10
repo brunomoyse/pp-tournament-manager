@@ -12,7 +12,7 @@
     "finished": "Alles staat klaar. Tijd voor je eerste toernooi.",
     "welcome": {
       "title": "Welkom bij PocketPair",
-      "subtitle": "Jouw pokerclub, professioneel beheerd.",
+      "subtitle": "Jouw pokerclub, als een prof beheerd.",
       "point1": "Maak en draai toernooien met een live klok",
       "point2": "Beheer spelers, check-ins en tafelindeling",
       "point3": "Volg resultaten, uitbetalingen en klassementen",
@@ -22,11 +22,11 @@
     "steps": {
       "dashboard-stats": {
         "title": "Je club in één oogopslag",
-        "desc": "Lopende toernooien, spelersaantallen en gemiddelde buy-ins. Het dashboard houdt de essentie in beeld zodra je inlogt."
+        "desc": "Lopende toernooien, spelersaantallen en gemiddelde buy-ins: het dashboard houdt het belangrijkste in beeld zodra je inlogt."
       },
       "nav": {
-        "title": "Alles binnen één klik",
-        "desc": "Dashboard, toernooien, spelers, sjablonen en rapporten: zo navigeer je door PocketPair."
+        "title": "Alles binnen handbereik",
+        "desc": "Dashboard, toernooien, spelers, sjablonen en rapporten: zo vind je je weg in PocketPair."
       },
       "create-tournament": {
         "title": "Maak je eerste toernooi",
@@ -46,14 +46,14 @@
       },
       "setup-guide": {
         "title": "Je startgids",
-        "desc": "Volg deze stappen om toernooiklaar te zijn. Elk item vinkt zichzelf af, wij houden het voor je bij."
+        "desc": "Volg deze stappen om klaar te zijn voor je eerste toernooi. Elk onderdeel vinkt zichzelf af terwijl je bezig bent, wij houden het bij."
       }
     },
     "checklist": {
       "title": "Startgids",
       "subtitle": "Een paar stappen tot je eerste toernooi",
       "dismiss": "Verbergen",
-      "completed": "Installatie voltooid. Je club is klaar.",
+      "completed": "Alles is ingesteld. Je club is klaar.",
       "items": {
         "takeTour": "Volg de rondleiding",
         "createTournament": "Maak je eerste toernooi",
@@ -197,7 +197,7 @@
     "registerPlayer": "Speler Inschrijven",
     "walkIn": "Walk-in",
     "qrCheckIn": "QR Check-in",
-    "qrCode": "QR Code",
+    "qrCode": "QR-code",
     "checkIn": "Inchecken",
     "undo": "Ongedaan maken",
     "seat": "Plaatsen",
@@ -457,25 +457,25 @@
   },
   "qr": {
     "generate": {
-      "title": "Speler Check-in QR Code",
+      "title": "QR-code voor check-in",
       "playerName": "Speler",
       "instructions": "Laat de speler deze QR-code scannen met hun mobiele app om in te checken",
-      "qrCodeAlt": "Check-in QR Code",
+      "qrCodeAlt": "Check-in QR-code",
       "manualCode": "Handmatige code (Terugval)",
       "copy": "Kopieer naar klembord",
       "generating": "QR-code genereren...",
       "error": "Genereren van QR-code mislukt. Probeer het opnieuw."
     },
     "tournament": {
-      "title": "Toernooi Check-in QR Code",
+      "title": "QR-code voor toernooi-check-in",
       "instructions": "Spelers kunnen deze QR-code scannen met de PocketPair app om in te checken voor dit toernooi",
-      "qrCodeAlt": "Toernooi Check-in QR Code",
+      "qrCodeAlt": "QR-code voor toernooi-check-in",
       "manualCode": "Handmatige code (Terugval)",
       "copy": "Kopieer naar klembord",
       "generating": "QR-code genereren...",
       "error": "Genereren van QR-code mislukt. Probeer het opnieuw.",
       "print": "Afdrukken",
-      "button": "Check-in QR Code"
+      "button": "Check-in QR-code"
     }
   },
   "tournamentStatuses": {
@@ -585,7 +585,7 @@
     "checkInSuccessEntryFailed": "Speler ingecheckt, maar inschrijving registreren mislukt.",
     "cancelSuccess": "Registratie geannuleerd.",
     "cancelFailed": "Registratie annuleren mislukt.",
-    "promoteSuccess": "Speler gepromoveerd van wachtlijst.",
+    "promoteSuccess": "Speler gepromoveerd van de wachtlijst.",
     "noTablesAssigned": "Kan het toernooi niet starten: er zijn geen tafels toegewezen. Wijs eerst tafels toe.",
     "checkInNoSeat": "Speler ingecheckt maar geen stoel beschikbaar. Wijs handmatig een stoel toe.",
     "checkInAllSomeUnseated": "{seated} van {count} spelers geplaatst. {unseated} ingecheckt zonder stoel.",
@@ -597,7 +597,7 @@
     "title": "Toernooi Status",
     "currentStatus": "Huidige status",
     "confirmTitle": "Status wijzigen",
-    "confirmMessage": "Weet je zeker dat je de toernooi status wilt wijzigen naar \"{status}\"?",
+    "confirmMessage": "Weet je zeker dat je de status naar \"{status}\" wilt wijzigen?",
     "confirm": "Bevestigen",
     "actions": {
       "openRegistration": "Inschrijving openen",
@@ -703,13 +703,13 @@
   "templates": {
     "title": "Sjablonen",
     "payoutTemplates": "Uitbetalingssjablonen",
-    "blindStructures": "Blind Structuren",
+    "blindStructures": "Blindstructuren",
     "addPayoutTemplate": "Sjabloon toevoegen",
     "addBlindStructure": "Structuur toevoegen",
     "createPayoutTemplate": "Uitbetalingssjabloon maken",
     "editPayoutTemplate": "Uitbetalingssjabloon bewerken",
-    "createBlindStructure": "Blind structuur maken",
-    "editBlindStructure": "Blind structuur bewerken",
+    "createBlindStructure": "Blindstructuur maken",
+    "editBlindStructure": "Blindstructuur bewerken",
     "name": "Naam",
     "namePlaceholder": "Voer sjabloonnaam in",
     "description": "Beschrijving",
@@ -742,11 +742,11 @@
     "levelCount": "{count} niveaus",
     "breakCount": "{count} pauzes",
     "noPayoutTemplates": "Nog geen uitbetalingssjablonen",
-    "noBlindStructures": "Nog geen blind structuren",
-    "createFirstPayout": "Maak uw eerste uitbetalingssjabloon",
-    "createFirstBlind": "Maak uw eerste blind structuur",
+    "noBlindStructures": "Nog geen blindstructuren",
+    "createFirstPayout": "Maak je eerste uitbetalingssjabloon",
+    "createFirstBlind": "Maak je eerste blindstructuur",
     "deleteConfirmTitle": "Sjabloon verwijderen",
-    "deleteConfirmMessage": "Weet u zeker dat u \"{name}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+    "deleteConfirmMessage": "Weet je zeker dat je \"{name}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
     "deleteInUseWarning": "Dit sjabloon wordt mogelijk gebruikt door toernooien. Verwijderen zal dan niet lukken.",
     "deleteSuccess": "Sjabloon succesvol verwijderd.",
     "deleteFailed": "Sjabloon verwijderen mislukt.",
@@ -778,7 +778,7 @@
       "registered": "Speler ingeschreven",
       "waitlisted": "Speler op wachtlijst gezet",
       "cancelled": "Inschrijving geannuleerd",
-      "promoted": "Speler gepromoveerd van wachtlijst",
+      "promoted": "Speler gepromoveerd van de wachtlijst",
       "self_check_in": "Speler zelf ingecheckt",
       "check_in": "Speler ingecheckt"
     },
@@ -825,14 +825,14 @@
     "show": "Toon",
     "hide": "Verberg",
     "passwordHint": "Minstens 8 tekens, met een letter en een cijfer.",
-    "passwordWeak": "Wachtwoord moet minstens 8 tekens bevatten, met een letter en een cijfer.",
+    "passwordWeak": "Je wachtwoord moet minstens 8 tekens bevatten, met een letter en een cijfer.",
     "required": "Dit veld is verplicht",
     "vatHint": "bijv. {example}",
     "vatInvalid": "Voer een geldig btw-nummer in (bijv. {example})",
-    "vatChecking": "Ondernemingsregister controleren…",
+    "vatChecking": "We controleren het ondernemingsregister…",
     "vatFound": "✓ {name}",
     "vatNotFound": "Geen onderneming gevonden voor dit btw-nummer.",
-    "vatUnverified": "Kan nu niet verifiëren. Je kunt toch doorgaan.",
+    "vatUnverified": "We kunnen dit nu niet verifiëren. Je kunt toch doorgaan.",
     "emailTaken": "Er bestaat al een account met dit e-mailadres.",
     "genericError": "Er ging iets mis. Probeer het opnieuw.",
     "legalName": "Officiële naam",

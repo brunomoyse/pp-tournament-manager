@@ -12,48 +12,48 @@
     "finished": "Tout est prêt. À vous de lancer votre premier tournoi.",
     "welcome": {
       "title": "Bienvenue sur PocketPair",
-      "subtitle": "Votre club de poker, géré comme un pro.",
-      "point1": "Créez et animez des tournois avec horloge en direct",
-      "point2": "Gérez joueurs, check-ins et placements aux tables",
-      "point3": "Suivez résultats, gains et classements",
+      "subtitle": "Votre club de poker, géré de main de maître.",
+      "point1": "Créez et animez vos tournois, clock en temps réel à l'appui",
+      "point2": "Gérez les joueurs, les check-ins et le placement aux tables",
+      "point3": "Suivez les résultats, les gains et les classements",
       "start": "Faire la visite",
       "skip": "Plus tard"
     },
     "steps": {
       "dashboard-stats": {
         "title": "Votre club en un coup d'œil",
-        "desc": "Tournois en cours, nombre de joueurs et buy-ins moyens. Le tableau de bord garde l'essentiel sous les yeux dès la connexion."
+        "desc": "Tournois en cours, nombre de joueurs, tendance des buy-ins : le tableau de bord réunit l'essentiel dès la connexion."
       },
       "nav": {
         "title": "Tout à portée de clic",
-        "desc": "Tableau de bord, tournois, joueurs, modèles et rapports : c'est ici que vous naviguez dans PocketPair."
+        "desc": "Tableau de bord, tournois, joueurs, modèles et rapports : tout est accessible d'ici, en un clic."
       },
       "create-tournament": {
         "title": "Créez votre premier tournoi",
-        "desc": "Définissez le buy-in, la structure des blinds et l'horaire. PocketPair s'occupe ensuite de l'horloge, des placements et des gains."
+        "desc": "Définissez le buy-in, la structure des blinds et l'horaire. PocketPair gère ensuite la clock, le placement et les gains."
       },
       "add-players": {
         "title": "Constituez votre base de joueurs",
-        "desc": "Ajoutez vos habitués une seule fois et retrouvez-les partout. Inscriptions, check-ins et statistiques restent liés à chaque joueur."
+        "desc": "Ajoutez vos habitués une fois pour toutes et retrouvez-les partout. Inscriptions, check-ins et statistiques restent rattachés à chaque joueur."
       },
       "templates": {
-        "title": "Configurez une fois, réutilisez toujours",
-        "desc": "Structures de blinds et répartitions des gains vivent ici sous forme de modèles : lancer le prochain tournoi ne prend que quelques secondes."
+        "title": "On configure une fois, on réutilise sans fin",
+        "desc": "Vos structures de blinds et grilles de gains sont enregistrées ici comme modèles : lancer le prochain tournoi ne prend plus que quelques secondes."
       },
       "reports": {
         "title": "Maîtrisez vos chiffres",
-        "desc": "Fréquentation, prize pools et classements sur la période de votre choix. Tout pour suivre la progression de votre club."
+        "desc": "Fréquentation, prize pools et classements sur la période de votre choix. Tout ce qu'il faut pour suivre la progression de votre club."
       },
       "setup-guide": {
         "title": "Votre guide de démarrage",
-        "desc": "Suivez ces étapes pour être prêt à lancer un tournoi. Chaque élément se coche tout seul, on s'en occupe pour vous."
+        "desc": "Suivez ces étapes pour être fin prêt à lancer un tournoi. Chaque point se coche tout seul au fil de vos actions."
       }
     },
     "checklist": {
       "title": "Guide de démarrage",
-      "subtitle": "Quelques étapes pour être prêt à jouer",
+      "subtitle": "Quelques étapes avant votre premier tournoi",
       "dismiss": "Masquer",
-      "completed": "Configuration terminée. Votre club est prêt.",
+      "completed": "Tout est en place. Votre club est prêt.",
       "items": {
         "takeTour": "Faire la visite guidée",
         "createTournament": "Créer votre premier tournoi",
@@ -137,7 +137,7 @@
     "tournamentSettings": "Paramètres du Tournoi",
     "tournamentStatus": "Statut du Tournoi",
     "prizePool": "Cagnotte",
-    "blindStructure": "Structure des Blindes",
+    "blindStructure": "Structure des Blinds",
     "tableManagement": "Gestion des Tables",
     "tournamentClock": "Clock",
     "regularPlayers": "Joueurs réguliers"
@@ -168,7 +168,7 @@
     "status": "Statut",
     "currentLevel": "Niveau Actuel",
     "levelDuration": "Durée du niveau",
-    "blinds": "Blindes",
+    "blinds": "Blinds",
     "place": "Place",
     "table": "Table",
     "tables": "Tables",
@@ -215,7 +215,7 @@
     "link": "Lier",
     "register": "Inscrire",
     "remove": "Supprimer",
-    "updateStack": "Modifier le Tapis",
+    "updateStack": "Modifier le stack",
     "checkInAll": "Valider tous"
   },
   "status": {
@@ -249,12 +249,12 @@
     "createFirstTournament": "Créez votre premier tournoi pour commencer",
     "tournamentConfigurationComingSoon": "La configuration du tournoi et les paramètres avancés seront bientôt disponibles ici.",
     "noRecentActivity": "Aucune activité récente",
-    "clockDisconnected": "Clock Déconnecté",
+    "clockDisconnected": "Clock déconnectée",
     "noPayoutStructure": "Aucune structure de gains définie",
     "noPlayersSeated": "Aucun joueur assis",
     "loadingSeatingChart": "Chargement du plan de table...",
     "noTablesLinked": "Aucune table liée à ce tournoi",
-    "noBlindStructure": "Aucune structure de blindes disponible",
+    "noBlindStructure": "Aucune structure de blinds disponible",
     "loadingClubTables": "Chargement des tables du club...",
     "selectTablesToAssign": "Sélectionnez les tables de {clubName} à assigner à ce tournoi :",
     "noTablesFound": "Aucune table trouvée pour ce club",
@@ -333,9 +333,9 @@
     "lateRegistrationLevel": "Niveau inscr. tardive",
     "lateRegistrationLevelPlaceholder": "ex. 6",
     "lateRegistrationLevelHelp": "L'inscription reste ouverte jusqu'à la fin de ce niveau. Laissez vide pour contrôle manuel.",
-    "blindStructure": "Structure des Blindes",
+    "blindStructure": "Structure des Blinds",
     "selectTemplate": "Modèle de Structure",
-    "selectTemplatePlaceholder": "Sélectionnez un modèle de structure de blindes",
+    "selectTemplatePlaceholder": "Sélectionnez un modèle de structure de blinds",
     "templatePreview": "Aperçu de la Structure",
     "break": "Pause",
     "level": "Niveau",
@@ -417,7 +417,7 @@
     "rosterOnly": "Liste",
     "displayName": "Nom affiché",
     "displayNamePlaceholder": "ex. Jean Dupont",
-    "displayNameHint": "Le nom affiché sur la liste, l'horloge et les résultats.",
+    "displayNameHint": "Le nom affiché sur la liste, la clock et les résultats.",
     "archive": "Archiver",
     "archiveFailed": "Échec de l'archivage du joueur. Veuillez réessayer.",
     "archiveConfirmTitle": "Archiver le joueur ?",
@@ -457,25 +457,25 @@
   },
   "qr": {
     "generate": {
-      "title": "QR Code d'enregistrement du joueur",
+      "title": "Code QR de présence du joueur",
       "playerName": "Joueur",
-      "instructions": "Demandez au joueur de scanner ce code QR avec son application mobile pour s'enregistrer",
-      "qrCodeAlt": "Code QR d'enregistrement",
+      "instructions": "Demandez au joueur de scanner ce code QR avec son application mobile pour confirmer sa présence",
+      "qrCodeAlt": "Code QR de présence",
       "manualCode": "Code manuel (Solution de secours)",
       "copy": "Copier dans le presse-papiers",
       "generating": "Génération du code QR...",
       "error": "Échec de la génération du code QR. Veuillez réessayer."
     },
     "tournament": {
-      "title": "QR Code de présence au tournoi",
-      "instructions": "Les joueurs peuvent scanner ce QR code avec l'application PocketPair pour confirmer leur présence au tournoi",
-      "qrCodeAlt": "QR Code de présence au tournoi",
+      "title": "Code QR de présence au tournoi",
+      "instructions": "Les joueurs peuvent scanner ce code QR avec l'application PocketPair pour confirmer leur présence au tournoi",
+      "qrCodeAlt": "Code QR de présence au tournoi",
       "manualCode": "Code manuel (Solution de secours)",
       "copy": "Copier dans le presse-papiers",
       "generating": "Génération du code QR...",
       "error": "Échec de la génération du code QR. Veuillez réessayer.",
       "print": "Imprimer",
-      "button": "QR Code de présence"
+      "button": "Code QR de présence"
     }
   },
   "tournamentStatuses": {
@@ -556,10 +556,10 @@
     "removeFromTournament": "Retirer du tournoi",
     "moveTable": "Changer de Table",
     "relocateToAnother": "Déplacer vers une autre table",
-    "updateStack": "Modifier le Tapis",
+    "updateStack": "Modifier le stack",
     "modifyChipCount": "Modifier le nombre de jetons",
-    "updateStackSize": "Modifier le Tapis",
-    "newStackSize": "Nouveau Tapis",
+    "updateStackSize": "Modifier le stack",
+    "newStackSize": "Nouveau stack",
     "enterChipCount": "Entrez le nombre de jetons",
     "scanQRToCheckIn": "Le joueur doit scanner ce code QR avec son application mobile pour confirmer sa présence",
     "failedToGenerateQR": "Échec de la génération du code QR"
@@ -597,7 +597,7 @@
     "title": "Statut du Tournoi",
     "currentStatus": "Statut actuel",
     "confirmTitle": "Changer le statut",
-    "confirmMessage": "Êtes-vous sûr de vouloir changer le statut du tournoi en \"{status}\" ?",
+    "confirmMessage": "Êtes-vous sûr de vouloir passer le statut du tournoi à \"{status}\" ?",
     "confirm": "Confirmer",
     "actions": {
       "openRegistration": "Ouvrir les inscriptions",
@@ -703,13 +703,13 @@
   "templates": {
     "title": "Modèles",
     "payoutTemplates": "Modèles de paiement",
-    "blindStructures": "Structures de blindes",
+    "blindStructures": "Structures de blinds",
     "addPayoutTemplate": "Ajouter un modèle",
     "addBlindStructure": "Ajouter une structure",
     "createPayoutTemplate": "Créer un modèle de paiement",
     "editPayoutTemplate": "Modifier le modèle de paiement",
-    "createBlindStructure": "Créer une structure de blindes",
-    "editBlindStructure": "Modifier la structure de blindes",
+    "createBlindStructure": "Créer une structure de blinds",
+    "editBlindStructure": "Modifier la structure de blinds",
     "name": "Nom",
     "namePlaceholder": "Entrez le nom du modèle",
     "description": "Description",
@@ -726,8 +726,8 @@
     "percentageInvalid": "Doit égaler 100%",
     "levels": "Niveaux",
     "levelNumber": "Niveau",
-    "smallBlind": "Petite blinde",
-    "bigBlind": "Grosse blinde",
+    "smallBlind": "Petite blind",
+    "bigBlind": "Grosse blind",
     "ante": "Ante",
     "duration": "Durée (min)",
     "isBreak": "Pause",
@@ -742,9 +742,9 @@
     "levelCount": "{count} niveaux",
     "breakCount": "{count} pauses",
     "noPayoutTemplates": "Aucun modèle de paiement",
-    "noBlindStructures": "Aucune structure de blindes",
+    "noBlindStructures": "Aucune structure de blinds",
     "createFirstPayout": "Créez votre premier modèle de paiement",
-    "createFirstBlind": "Créez votre première structure de blindes",
+    "createFirstBlind": "Créez votre première structure de blinds",
     "deleteConfirmTitle": "Supprimer le modèle",
     "deleteConfirmMessage": "Êtes-vous sûr de vouloir supprimer \"{name}\" ? Cette action est irréversible.",
     "deleteInUseWarning": "Ce modèle peut être utilisé par des tournois. La suppression échouera le cas échéant.",
@@ -766,9 +766,9 @@
   },
   "activity": {
     "clock": {
-      "start": "Horloge démarrée",
-      "pause": "Horloge en pause",
-      "resume": "Horloge reprise",
+      "start": "Clock démarrée",
+      "pause": "Clock en pause",
+      "resume": "Clock reprise",
       "level_advance": "Niveau avancé au {level_number}",
       "manual_advance": "Niveau avancé manuellement au {level_number}",
       "manual_revert": "Niveau revenu au {level_number}",
@@ -808,9 +808,9 @@
     }
   },
   "onboarding": {
-    "eyebrow": "Commencez",
+    "eyebrow": "Pour commencer",
     "title": "Créez votre club",
-    "subtitle": "Configurez votre club et lancez vos tournois en quelques minutes.",
+    "subtitle": "Mettez votre club en place et lancez vos tournois en quelques minutes.",
     "sectionAccount": "Votre compte",
     "sectionClub": "Votre club",
     "firstName": "Prénom",
@@ -829,10 +829,10 @@
     "required": "Ce champ est requis",
     "vatHint": "p. ex. {example}",
     "vatInvalid": "Saisissez un numéro de TVA valide (p. ex. {example})",
-    "vatChecking": "Vérification du registre des entreprises…",
+    "vatChecking": "Consultation du registre des entreprises…",
     "vatFound": "✓ {name}",
     "vatNotFound": "Aucune entreprise trouvée pour ce numéro de TVA.",
-    "vatUnverified": "Vérification impossible pour l’instant. Vous pouvez continuer.",
+    "vatUnverified": "Vérification impossible pour le moment. Vous pouvez tout de même continuer.",
     "emailTaken": "Un compte existe déjà avec cet e-mail.",
     "genericError": "Une erreur s’est produite. Veuillez réessayer.",
     "legalName": "Nom officiel",
