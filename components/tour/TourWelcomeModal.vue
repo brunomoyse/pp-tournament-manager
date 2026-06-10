@@ -51,10 +51,6 @@ const enter = (order: number, fromY = 14) => ({
         <img src="/assets/icon-no-bg.png" alt="PocketPair" class="welcome-logo" />
       </Motion>
 
-      <Motion v-bind="enter(1)">
-        <p class="welcome-eyebrow">{{ t('tour.welcome.eyebrow') }}</p>
-      </Motion>
-
       <Motion v-bind="enter(2)">
         <h2 class="welcome-title pp-gold-text">{{ t('tour.welcome.title') }}</h2>
       </Motion>
@@ -133,16 +129,6 @@ const enter = (order: number, fromY = 14) => ({
   .welcome-logo-glow {
     animation: none;
   }
-}
-
-.welcome-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--color-pp-gold-deep);
-  margin-bottom: 0.5rem;
 }
 
 .welcome-title {

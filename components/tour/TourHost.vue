@@ -44,33 +44,14 @@ watch(
   { immediate: true },
 )
 
-// Logout mid-tour: close everything quietly (flags stay persisted).
-// isAuthenticated can flap for a moment during the proactive token refresh,
-// so only a sustained false counts as a real logout.
-let logoutTimer: ReturnType<typeof setTimeout> | null = null
-
-watch(
-  () => authStore.isAuthenticated,
-  (authed) => {
-    if (authed) {
-      if (logoutTimer) {
-        clearTimeout(logoutTimer)
-        logoutTimer = null
-      }
-      return
-    }
-    logoutTimer = setTimeout(() => {
-      logoutTimer = null
-      if (authStore.isAuthenticated) return
-      if (tourStore.isActive) tourStore.abortTour()
-      tourStore.welcomeOpen = false
-    }, 1500)
-  },
-)
-
+// Logout mid-tour: this component lives in the default layout, which only
+// unmounts when the user really leaves the authenticated app (login and
+// club-registration pages use layout: false). Cleaning up here is more
+// reliable than watching isAuthenticated, which flaps during token refresh.
 onBeforeUnmount(() => {
   if (welcomeTimer) clearTimeout(welcomeTimer)
-  if (logoutTimer) clearTimeout(logoutTimer)
+  if (tourStore.isActive) tourStore.abortTour()
+  tourStore.welcomeOpen = false
 })
 </script>
 
