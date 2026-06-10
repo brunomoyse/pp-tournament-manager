@@ -23,11 +23,11 @@
     "steps": {
       "dashboard-stats": {
         "title": "Votre club en un coup d'œil",
-        "desc": "Tournois en cours, nombre de joueurs et buy-ins moyens — le tableau de bord garde l'essentiel sous les yeux dès la connexion."
+        "desc": "Tournois en cours, nombre de joueurs et buy-ins moyens. Le tableau de bord garde l'essentiel sous les yeux dès la connexion."
       },
       "nav": {
         "title": "Tout à portée de clic",
-        "desc": "Tableau de bord, tournois, joueurs, modèles et rapports — c'est ici que vous naviguez dans PocketPair."
+        "desc": "Tableau de bord, tournois, joueurs, modèles et rapports : c'est ici que vous naviguez dans PocketPair."
       },
       "create-tournament": {
         "title": "Créez votre premier tournoi",
@@ -35,7 +35,7 @@
       },
       "add-players": {
         "title": "Constituez votre base de joueurs",
-        "desc": "Ajoutez vos habitués une seule fois et retrouvez-les partout — inscriptions, check-ins et statistiques restent liés à chaque joueur."
+        "desc": "Ajoutez vos habitués une seule fois et retrouvez-les partout. Inscriptions, check-ins et statistiques restent liés à chaque joueur."
       },
       "templates": {
         "title": "Configurez une fois, réutilisez toujours",
@@ -43,18 +43,18 @@
       },
       "reports": {
         "title": "Maîtrisez vos chiffres",
-        "desc": "Fréquentation, prize pools et classements sur la période de votre choix — tout pour suivre la progression de votre club."
+        "desc": "Fréquentation, prize pools et classements sur la période de votre choix. Tout pour suivre la progression de votre club."
       },
       "setup-guide": {
         "title": "Votre guide de démarrage",
-        "desc": "Suivez ces étapes pour être prêt à lancer un tournoi. Chaque élément se coche tout seul — on s'en occupe pour vous."
+        "desc": "Suivez ces étapes pour être prêt à lancer un tournoi. Chaque élément se coche tout seul, on s'en occupe pour vous."
       }
     },
     "checklist": {
       "title": "Guide de démarrage",
       "subtitle": "Quelques étapes pour être prêt à jouer",
       "dismiss": "Masquer",
-      "completed": "Configuration terminée — votre club est prêt.",
+      "completed": "Configuration terminée. Votre club est prêt.",
       "items": {
         "takeTour": "Faire la visite guidée",
         "createTournament": "Créer votre premier tournoi",

@@ -147,7 +147,7 @@ const goToStep = async (step: TourStep) => {
   if (token !== sequence) return
 
   if (!el) {
-    console.warn(`[tour] target "${step.id}" not found — skipping step`)
+    console.warn(`[tour] target "${step.id}" not found, skipping step`)
     if (tourStore.isLastStep) {
       tourStore.finishTour()
     } else {

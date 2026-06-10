@@ -23,11 +23,11 @@
     "steps": {
       "dashboard-stats": {
         "title": "Je club in één oogopslag",
-        "desc": "Lopende toernooien, spelersaantallen en gemiddelde buy-ins — het dashboard houdt de essentie in beeld zodra je inlogt."
+        "desc": "Lopende toernooien, spelersaantallen en gemiddelde buy-ins. Het dashboard houdt de essentie in beeld zodra je inlogt."
       },
       "nav": {
         "title": "Alles binnen één klik",
-        "desc": "Dashboard, toernooien, spelers, sjablonen en rapporten — zo navigeer je door PocketPair."
+        "desc": "Dashboard, toernooien, spelers, sjablonen en rapporten: zo navigeer je door PocketPair."
       },
       "create-tournament": {
         "title": "Maak je eerste toernooi",
@@ -35,7 +35,7 @@
       },
       "add-players": {
         "title": "Bouw je spelersbestand op",
-        "desc": "Voeg je vaste spelers één keer toe en gebruik ze overal — inschrijvingen, check-ins en statistieken blijven aan elke speler gekoppeld."
+        "desc": "Voeg je vaste spelers één keer toe en gebruik ze overal. Inschrijvingen, check-ins en statistieken blijven aan elke speler gekoppeld."
       },
       "templates": {
         "title": "Eén keer instellen, altijd hergebruiken",
@@ -43,18 +43,18 @@
       },
       "reports": {
         "title": "Ken je cijfers",
-        "desc": "Opkomst, prijzenpotten en klassementen over elke periode — alles om de groei van je club te volgen."
+        "desc": "Opkomst, prijzenpotten en klassementen over elke periode. Alles om de groei van je club te volgen."
       },
       "setup-guide": {
         "title": "Je startgids",
-        "desc": "Volg deze stappen om toernooiklaar te zijn. Elk item vinkt zichzelf af — wij houden het voor je bij."
+        "desc": "Volg deze stappen om toernooiklaar te zijn. Elk item vinkt zichzelf af, wij houden het voor je bij."
       }
     },
     "checklist": {
       "title": "Startgids",
       "subtitle": "Een paar stappen tot je eerste toernooi",
       "dismiss": "Verbergen",
-      "completed": "Installatie voltooid — je club is klaar.",
+      "completed": "Installatie voltooid. Je club is klaar.",
       "items": {
         "takeTour": "Volg de rondleiding",
         "createTournament": "Maak je eerste toernooi",

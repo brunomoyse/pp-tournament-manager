@@ -23,11 +23,11 @@
     "steps": {
       "dashboard-stats": {
         "title": "Your club at a glance",
-        "desc": "Live tournaments, player counts and buy-in trends — the dashboard keeps the essentials in view from the moment you sign in."
+        "desc": "Live tournaments, player counts and buy-in trends. The dashboard keeps the essentials in view from the moment you sign in."
       },
       "nav": {
         "title": "Everything one click away",
-        "desc": "Dashboard, tournaments, players, templates and reports — this is how you move around PocketPair."
+        "desc": "Dashboard, tournaments, players, templates and reports: this is how you move around PocketPair."
       },
       "create-tournament": {
         "title": "Create your first tournament",
@@ -35,7 +35,7 @@
       },
       "add-players": {
         "title": "Build your player base",
-        "desc": "Add your regulars once and reuse them everywhere — registrations, check-ins and statistics stay linked to each player."
+        "desc": "Add your regulars once and reuse them everywhere. Registrations, check-ins and statistics stay linked to each player."
       },
       "templates": {
         "title": "Set up once, reuse forever",
@@ -43,18 +43,18 @@
       },
       "reports": {
         "title": "Know your numbers",
-        "desc": "Attendance, prize pools and leaderboards over any period — everything you need to follow your club's progress."
+        "desc": "Attendance, prize pools and leaderboards over any period. Everything you need to follow your club's progress."
       },
       "setup-guide": {
         "title": "Your setup guide",
-        "desc": "Follow these steps to get tournament-ready. Each item ticks itself off as you go — we keep track for you."
+        "desc": "Follow these steps to get tournament-ready. Each item ticks itself off as you go, we keep track for you."
       }
     },
     "checklist": {
       "title": "Setup guide",
       "subtitle": "A few steps to get tournament-ready",
       "dismiss": "Dismiss",
-      "completed": "Setup complete — your club is ready.",
+      "completed": "Setup complete. Your club is ready.",
       "items": {
         "takeTour": "Take the tour",
         "createTournament": "Create your first tournament",

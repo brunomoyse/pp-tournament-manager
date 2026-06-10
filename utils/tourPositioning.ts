@@ -17,7 +17,7 @@ export type PopoverPlacement = 'top' | 'bottom' | 'left' | 'right'
 /**
  * First element carrying `data-tour="<id>"` that is actually visible inside
  * the viewport. `offsetParent` checks fail for `position: fixed` elements
- * (sidebar, tab bar), so visibility is judged from the client rect instead —
+ * (sidebar, tab bar), so visibility is judged from the client rect instead;
  * this also rejects the mobile sidebar parked off-screen at translateX(-100%).
  */
 export function findTourTarget(id: string): HTMLElement | null {
@@ -48,7 +48,7 @@ export function holeFromTarget(el: HTMLElement, padding = 8, radius = 14): HoleR
   }
 }
 
-/** Zero-size hole at the center of another — used for the iris close/open. */
+/** Zero-size hole at the center of another, used for the iris close/open. */
 export function collapsedHole(from: HoleRect): HoleRect {
   return { x: from.x + from.w / 2, y: from.y + from.h / 2, w: 0, h: 0, r: 0 }
 }

@@ -4,11 +4,11 @@
  * the id: `tour.steps.<id>.title` / `tour.steps.<id>.desc`.
  *
  * The same `data-tour` value may exist on several elements (e.g. sidebar nav
- * on desktop AND the bottom tab bar on mobile) — the engine picks whichever
+ * on desktop AND the bottom tab bar on mobile); the engine picks whichever
  * one is actually visible in the viewport.
  */
 export interface TourStep {
-  /** Step id — doubles as the `data-tour` attribute value. */
+  /** Step id; doubles as the `data-tour` attribute value. */
   id: string
   /** Route the step lives on; the engine navigates there if needed. */
   route: string

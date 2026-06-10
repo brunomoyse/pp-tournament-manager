@@ -7,7 +7,7 @@ import TourOverlay from '~/components/tour/TourOverlay.vue'
 
 /**
  * TourHost: mounts the onboarding pieces once in the default layout and
- * handles the triggers around them — first-run welcome on the dashboard,
+ * handles the triggers around them: first-run welcome on the dashboard,
  * checklist "visited" signals, and cleanup when the user logs out.
  */
 const tourStore = useTourStore()

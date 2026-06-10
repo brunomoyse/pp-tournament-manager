@@ -8,7 +8,7 @@ import { spring } from '~/composables/useMotionTokens'
 import { prefersReducedMotion } from '~/utils/tourPositioning'
 
 /**
- * TourPopover: the step card of the guided tour. Purely presentational —
+ * TourPopover: the step card of the guided tour. Purely presentational;
  * <TourOverlay> owns positioning and passes the current step in.
  */
 const props = defineProps<{
