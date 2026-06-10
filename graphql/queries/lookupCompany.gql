@@ -1,0 +1,11 @@
+query LookupCompany($country: String!, $vatNumber: String!) {
+  lookupCompany(country: $country, vatNumber: $vatNumber) {
+    available
+    valid
+    name
+    nonProfit
+    street
+    postalCode
+    city
+  }
+}

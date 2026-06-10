@@ -18,6 +18,19 @@ export interface LoginCredentials {
   rememberMe?: boolean
 }
 
+export interface OnboardClubInput {
+  firstName: string
+  lastName: string
+  email: string
+  password: string
+  clubName: string
+  country: string
+  address?: string
+  city?: string
+  postalCode?: string
+  vatNumber: string
+}
+
 export const useAuthStore = defineStore(
   'auth',
   () => {
@@ -170,6 +183,40 @@ export const useAuthStore = defineStore(
       }
     }
 
+    // Self-serve onboarding: create the owner account + club, then log straight
+    // in with the returned JWT. Mirrors login()'s token/club plumbing.
+    const register = async (input: OnboardClubInput): Promise<AuthUser | null> => {
+      isLoading.value = true
+      error.value = null
+
+      try {
+        const result = await GqlOnboardClub({ input })
+
+        if (result?.onboardClub?.token && result?.onboardClub?.user) {
+          const { token, user } = result.onboardClub
+          storeAuthState(token, user)
+
+          if (user.managedClub) {
+            const clubStore = useClubStore()
+            clubStore.setSelectedClub({
+              id: user.managedClub.id,
+              name: user.managedClub.name,
+              city: '',
+            })
+          }
+
+          return user
+        }
+
+        return null
+      } catch (err) {
+        error.value = err as Error
+        throw err
+      } finally {
+        isLoading.value = false
+      }
+    }
+
     const logout = async (): Promise<void> => {
       isLoading.value = true
       error.value = null
@@ -286,6 +333,7 @@ export const useAuthStore = defineStore(
 
       // Actions
       login,
+      register,
       logout,
       fetchMe,
       initialize,

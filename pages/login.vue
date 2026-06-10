@@ -165,6 +165,15 @@
               {{ isLoading ? t('status.loading') : t('auth.login') }}
             </PpButton>
           </PpFadeUp>
+
+          <PpFadeUp :delay="0.38">
+            <p class="signup-prompt">
+              {{ t('auth.noAccount') }}
+              <NuxtLink to="/onboarding" class="signup-link">{{
+                t('onboarding.createClub')
+              }}</NuxtLink>
+            </p>
+          </PpFadeUp>
         </form>
       </div>
     </PpFadeUp>
@@ -541,5 +550,21 @@ input:-webkit-autofill:focus {
 
 .forgot-link:hover {
   color: var(--color-pp-gold);
+}
+
+.signup-prompt {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-pp-text-muted);
+}
+
+.signup-link {
+  color: var(--color-pp-gold);
+  font-weight: 500;
+  margin-left: 0.25rem;
+}
+
+.signup-link:hover {
+  color: var(--color-pp-gold-strong);
 }
 </style>
