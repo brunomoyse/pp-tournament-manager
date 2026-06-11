@@ -7,12 +7,13 @@
             <div>
               <p class="eyebrow">{{ t('nav.dashboard') }}</p>
               <h1 class="page-title">
-                <span>{{ t('messages.welcomeBack', { name: '' }).replace(/\s+$/, '') }}</span>
-                <span class="pp-gold-text"
-                  >&nbsp;{{
-                    currentUser?.firstName || currentUser?.username || t('common.user')
-                  }}</span
-                >
+                <i18n-t keypath="messages.welcomeBack" tag="span" scope="global">
+                  <template #name>
+                    <span class="pp-gold-text">{{
+                      currentUser?.firstName || currentUser?.username || t('common.user')
+                    }}</span>
+                  </template>
+                </i18n-t>
               </h1>
             </div>
             <PpButton magnetic @click="createTournament">
@@ -86,7 +87,7 @@
                 <PpAnimatedNumber :value="playerStats.uniquePlayers" />
               </div>
               <div v-if="playerStats.thisWeek > 0" class="stat-trend">
-                {{ playerStats.thisWeek }} {{ t('reports.period.last7Days').toLowerCase() }}
+                {{ t('messages.newThisWeek', { count: playerStats.thisWeek }) }}
               </div>
             </PpCard>
           </PpStaggerItem>

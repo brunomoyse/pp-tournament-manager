@@ -249,6 +249,7 @@
   },
   "messages": {
     "welcomeBack": "Welkom terug, {name}!",
+    "newThisWeek": "+{count} deze week",
     "noActiveTournaments": "Geen actieve toernooien",
     "noTournamentsYet": "Nog geen toernooien",
     "createFirstTournament": "Maak je eerste toernooi aan om te beginnen",

@@ -249,6 +249,7 @@
   },
   "messages": {
     "welcomeBack": "Bonjour, {name} !",
+    "newThisWeek": "+{count} cette semaine",
     "noActiveTournaments": "Aucun tournoi actif",
     "noTournamentsYet": "Aucun tournoi pour le moment",
     "createFirstTournament": "Créez votre premier tournoi pour commencer",

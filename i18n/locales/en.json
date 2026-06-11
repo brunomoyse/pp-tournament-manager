@@ -249,6 +249,7 @@
   },
   "messages": {
     "welcomeBack": "Welcome back, {name}!",
+    "newThisWeek": "+{count} this week",
     "noActiveTournaments": "No active tournaments",
     "noTournamentsYet": "No tournaments yet",
     "createFirstTournament": "Create your first tournament to get started",
