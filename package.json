@@ -29,7 +29,7 @@
     "@tailwindcss/vite": "^4.3.0",
     "graphql-ws": "^6.0.8",
     "motion-v": "^2.3.0",
-    "nuxt": "^4.4.7",
+    "nuxt": "^4.4.8",
     "nuxt-graphql-client": "^0.2.46",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
