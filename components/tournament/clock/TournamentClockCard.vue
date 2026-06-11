@@ -4,6 +4,10 @@
     <div class="clock-card__header">
       <div class="clock-card__header-left">
         <h3 class="clock-card__title">{{ t('headings.tournamentClock') }}</h3>
+        <button class="clock-card__tv-button" :title="t('display.openOnTv')" @click="openTvDisplay">
+          <IonIcon :icon="tvOutline" class="clock-card__tv-icon" />
+          <span>{{ t('display.tv') }}</span>
+        </button>
       </div>
       <div v-if="clock?.status === 'RUNNING'" class="clock-card__live-badge">
         <div class="clock-card__live-dot pp-animate-pulse"></div>
@@ -208,6 +212,7 @@ import {
   playSkipForwardOutline,
   playSkipBackOutline,
   refreshOutline,
+  tvOutline,
 } from 'ionicons/icons'
 import { formatBlinds, formatDuration } from '~/utils'
 import { useI18n } from '~/composables/useI18n'
@@ -401,6 +406,10 @@ const timerColorClass = computed(() => {
 
 // Clock subscription is now handled globally in the main tournament page
 const selectedTournamentId = route.params.id as string
+
+const openTvDisplay = () => {
+  window.open(`/tournament/${selectedTournamentId}/display`, '_blank', 'noopener')
+}
 
 // Loading state for secondary controls
 const isAdvancing = ref(false)
@@ -613,7 +622,34 @@ const getClockButtonText = () => {
 .clock-card__header-left {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+}
+
+.clock-card__tv-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-pp-text-muted);
+  background: none;
+  border: 1px solid var(--color-pp-border-strong);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.clock-card__tv-button:hover {
+  color: var(--color-pp-gold);
+  border-color: rgba(254, 231, 138, 0.5);
+}
+
+.clock-card__tv-icon {
+  width: 1rem;
+  height: 1rem;
 }
 
 .clock-card__title {

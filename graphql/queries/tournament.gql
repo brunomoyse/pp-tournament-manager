@@ -160,6 +160,8 @@ query GetTournamentEntryStats($tournamentId: ID!) {
     reEntryCount
     addonCount
     totalRakeCents
+    totalChips
+    playersRemaining
   }
 }
 

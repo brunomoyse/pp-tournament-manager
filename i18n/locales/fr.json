@@ -845,5 +845,26 @@
     "FR": "France",
     "LU": "Luxembourg",
     "NL": "Pays-Bas"
+  },
+  "display": {
+    "tv": "TV",
+    "openOnTv": "Ouvrir la clock en plein écran pour un téléviseur ou un projecteur",
+    "level": "Niveau",
+    "break": "Pause",
+    "ante": "Ante",
+    "next": "Suivant",
+    "players": "Joueurs",
+    "prizePool": "Prize pool",
+    "buyIn": "Buy-in",
+    "payouts": "Gains",
+    "paused": "En pause",
+    "lateRegOpen": "Inscriptions tardives ouvertes",
+    "lateRegUntilLevel": "Late reg jusqu'à la fin du niveau {level}",
+    "blinds": "Blinds",
+    "nextBreak": "Prochaine pause",
+    "avgStack": "Stack moyen",
+    "entries": "Entrées",
+    "rebuys": "rebuy | rebuys",
+    "addons": "add-on | add-ons"
   }
 }

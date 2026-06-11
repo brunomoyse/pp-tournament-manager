@@ -845,5 +845,26 @@
     "FR": "France",
     "LU": "Luxembourg",
     "NL": "Netherlands"
+  },
+  "display": {
+    "tv": "TV",
+    "openOnTv": "Open the full-screen clock for a TV or projector",
+    "level": "Level",
+    "break": "Break",
+    "ante": "Ante",
+    "next": "Next",
+    "players": "Players",
+    "prizePool": "Prize pool",
+    "buyIn": "Buy-in",
+    "payouts": "Payouts",
+    "paused": "Paused",
+    "lateRegOpen": "Late registration open",
+    "lateRegUntilLevel": "Late reg until end of level {level}",
+    "blinds": "Blinds",
+    "nextBreak": "Next break",
+    "avgStack": "Avg stack",
+    "entries": "Entries",
+    "rebuys": "rebuy | rebuys",
+    "addons": "add-on | add-ons"
   }
 }
