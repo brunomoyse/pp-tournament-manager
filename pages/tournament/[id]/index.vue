@@ -117,10 +117,15 @@
           </div>
 
           <!-- Results Display (FINISHED) -->
-          <TournamentResultsDisplay
-            v-if="tournament?.liveStatus === 'FINISHED'"
-            class="results-section"
-          />
+          <template v-if="tournament?.liveStatus === 'FINISHED'">
+            <div class="export-bar export-bar--end">
+              <PpButton variant="secondary" size="sm" @click="openPrint('payouts')">
+                <ion-icon :icon="printOutline" class="icon-md" />
+                {{ t('exports.printPayoutSheet') }}
+              </PpButton>
+            </div>
+            <TournamentResultsDisplay class="results-section" />
+          </template>
 
           <!-- Prediction resolution (FINISHED; self-gates on the predictions feature flag) -->
           <TournamentPredictionsCard
@@ -145,6 +150,16 @@
         <!-- Players Tab -->
         <Transition name="tab-fade" mode="out-in">
           <div v-if="activeTab === 'players'" key="players">
+            <div class="export-bar">
+              <PpButton variant="ghost" size="sm" @click="exportPlayersCsv">
+                <ion-icon :icon="downloadOutline" class="icon-md" />
+                {{ t('exports.button') }}
+              </PpButton>
+              <PpButton variant="ghost" size="sm" @click="openPrint('players')">
+                <ion-icon :icon="printOutline" class="icon-md" />
+                {{ t('exports.printPlayerList') }}
+              </PpButton>
+            </div>
             <TournamentPlayersTable
               ref="playersTable"
               @player-checked-in="handlePlayerCheckedIn"
@@ -264,7 +279,14 @@ definePageMeta({
   middleware: 'auth',
 })
 
-import { settingsOutline, createOutline, warningOutline, qrCodeOutline } from 'ionicons/icons'
+import {
+  settingsOutline,
+  createOutline,
+  warningOutline,
+  qrCodeOutline,
+  downloadOutline,
+  printOutline,
+} from 'ionicons/icons'
 import { useNetworkStatus } from '@/composables/useNetworkStatus'
 import { useTournamentStore } from '~/stores/useTournamentStore'
 import TournamentStructureCard from '~/components/tournament/clock/TournamentStructureCard.vue'
@@ -283,6 +305,8 @@ import { useGqlSubscription } from '~/composables/useGqlSubscription'
 import type { TournamentClock } from '~/types/clock'
 import { formatPrice } from '~/utils'
 import { getTournamentStatusLabel, getTournamentStatusVariant } from '~/utils/tournamentStatus'
+import { getRegistrationStatusLabel } from '~/utils/registrationStatus'
+import { downloadCsv, exportFilename } from '~/utils/exportCsv'
 
 const { connectionStatus } = useNetworkStatus()
 const route = useRoute()
@@ -356,6 +380,52 @@ const clubPlayerIds = computed(() => {
     .map((tp: any) => tp.registration.clubPlayerId)
     .filter(Boolean)
 })
+
+// ── Exports ────────────────────────────────────────────────────────
+// Seat label per player, resolved from the seating chart we already load.
+const seatByPlayer = computed(() => {
+  const map = new Map<string, string>()
+  for (const tbl of overviewSeatingData.value?.tournamentSeatingChart?.tables || []) {
+    const tableNo = tbl.table?.tableNumber
+    for (const s of tbl.seats || []) {
+      const a = s.assignment
+      const key = a?.clubPlayerId || a?.userId
+      if (key && a?.seatNumber != null) map.set(key, `T${tableNo} · S${a.seatNumber}`)
+    }
+  }
+  return map
+})
+
+const exportPlayersCsv = () => {
+  const rows = (playersData.value?.tournamentPlayers?.items || [])
+    .filter((tp: any) => tp.registration.status !== 'CANCELLED')
+    .map((tp: any) => {
+      const key = tp.registration.clubPlayerId || tp.registration.userId
+      return {
+        name: tp.displayName || tp.user?.username || tp.user?.email || '—',
+        status: tp.registration.status,
+        seat: (key && seatByPlayer.value.get(key)) || '',
+        registeredAt: tp.registration.registrationTime,
+      }
+    })
+    .toSorted((a: any, b: any) => a.name.localeCompare(b.name))
+
+  downloadCsv(exportFilename([tournament.value?.title, t('exports.doc.playerList')]), rows, [
+    { label: t('exports.col.player'), value: (r) => r.name },
+    { label: t('exports.col.status'), value: (r) => getRegistrationStatusLabel(r.status, t) },
+    { label: t('exports.col.seat'), value: (r) => r.seat },
+    {
+      label: t('exports.col.registeredAt'),
+      value: (r) =>
+        r.registeredAt ? new Date(r.registeredAt).toLocaleString(`${locale.value}-BE`) : '',
+    },
+  ])
+}
+
+// Open a printable document (payout sheet / player list) in a new tab.
+const openPrint = (doc: 'payouts' | 'players') => {
+  window.open(`/tournament/${selectedTournamentId}/print?doc=${doc}`, '_blank', 'noopener')
+}
 
 // Check if tournament can be edited (not FINISHED)
 const canEditTournament = computed(() => {
@@ -903,6 +973,18 @@ onMounted(async () => {
   margin-bottom: 1.5rem;
   display: flex;
   justify-content: center;
+}
+
+/* Export toolbar (players tab, payout sheet) */
+.export-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.export-bar--end {
+  justify-content: flex-end;
 }
 
 /* Results Section */

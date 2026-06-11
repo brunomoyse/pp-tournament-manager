@@ -866,5 +866,44 @@
     "entries": "Entrées",
     "rebuys": "rebuy | rebuys",
     "addons": "add-on | add-ons"
+  },
+  "exports": {
+    "button": "Export CSV",
+    "print": "Imprimer",
+    "printHint": "La fenêtre d'impression s'ouvre automatiquement.",
+    "printPayoutSheet": "Imprimer la feuille de gains",
+    "printPlayerList": "Imprimer la liste",
+    "printedOn": "Imprimé le",
+    "buyIn": "Buy-in",
+    "totalPrizePool": "Prize pool total",
+    "noData": "Rien à imprimer pour l'instant.",
+    "doc": {
+      "payoutSheet": "Feuille de gains",
+      "playerList": "Liste des joueurs"
+    },
+    "col": {
+      "position": "Pos.",
+      "player": "Joueur",
+      "prize": "Gain",
+      "signature": "Signature",
+      "status": "Statut",
+      "seat": "Table / siège",
+      "type": "Type",
+      "rank": "Rang",
+      "tournaments": "Tournois",
+      "buyIns": "Buy-ins (EUR)",
+      "winnings": "Gains (EUR)",
+      "netProfit": "Net (EUR)",
+      "itm": "ITM",
+      "itmPct": "ITM %",
+      "roi": "ROI %",
+      "avgFinish": "Place moy.",
+      "firstPlaces": "Victoires",
+      "finalTables": "Tables finales",
+      "points": "Points",
+      "registeredAt": "Inscrit le"
+    },
+    "typeApp": "Compte app",
+    "typeRoster": "Roster"
   }
 }

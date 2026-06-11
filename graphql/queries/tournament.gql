@@ -149,6 +149,15 @@ query GetTournamentPayout($tournamentId: ID!) {
   }
 }
 
+query GetTournamentResults($tournamentId: ID!) {
+  tournamentResults(tournamentId: $tournamentId) {
+    finalPosition
+    prizeCents
+    points
+    displayName
+  }
+}
+
 query GetTournamentEntryStats($tournamentId: ID!) {
   tournamentEntryStats(tournamentId: $tournamentId) {
     tournamentId

@@ -96,7 +96,18 @@
 
           <!-- Leaderboard Section -->
           <div class="leaderboard-section">
-            <h2 class="leaderboard-title">{{ t('reports.leaderboard') }}</h2>
+            <div class="leaderboard-header">
+              <h2 class="leaderboard-title">{{ t('reports.leaderboard') }}</h2>
+              <PpButton
+                variant="ghost"
+                size="sm"
+                :disabled="leaderboard.length === 0"
+                @click="exportLeaderboardCsv"
+              >
+                <IonIcon :icon="downloadOutline" class="icon-md" />
+                {{ t('exports.button') }}
+              </PpButton>
+            </div>
 
             <!-- Empty State -->
             <div v-if="leaderboard.length === 0" class="leaderboard-empty">
@@ -258,9 +269,11 @@ import {
   ribbonOutline,
   gameControllerOutline,
   podiumOutline,
+  downloadOutline,
 } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 import { formatPrice } from '~/utils'
+import { downloadCsv, csvAmount, exportFilename } from '~/utils/exportCsv'
 
 const router = useRouter()
 const clubStore = useClubStore()
@@ -386,6 +399,36 @@ const fetchLeaderboard = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// Export the current leaderboard (selected period) to CSV.
+const exportLeaderboardCsv = () => {
+  const periodLabel = periods.find((p) => p.value === selectedPeriod.value)?.label
+  downloadCsv(
+    exportFilename([club?.name, t('reports.leaderboard'), periodLabel ? t(periodLabel) : '']),
+    leaderboard.value,
+    [
+      { label: t('exports.col.rank'), value: (e) => e.rank },
+      { label: t('exports.col.player'), value: (e) => getFullName(e.user, e.displayName) },
+      { label: t('exports.col.points'), value: (e) => e.points },
+      { label: t('exports.col.tournaments'), value: (e) => e.totalTournaments },
+      { label: t('exports.col.buyIns'), value: (e) => csvAmount(e.totalBuyIns) },
+      { label: t('exports.col.winnings'), value: (e) => csvAmount(e.totalWinnings) },
+      { label: t('exports.col.netProfit'), value: (e) => csvAmount(e.netProfit) },
+      { label: t('exports.col.itm'), value: (e) => e.totalItm },
+      {
+        label: t('exports.col.itmPct'),
+        value: (e) => e.itmPercentage.toFixed(1).replace('.', ','),
+      },
+      { label: t('exports.col.roi'), value: (e) => e.roiPercentage.toFixed(1).replace('.', ',') },
+      {
+        label: t('exports.col.avgFinish'),
+        value: (e) => e.averageFinish.toFixed(1).replace('.', ','),
+      },
+      { label: t('exports.col.firstPlaces'), value: (e) => e.firstPlaces },
+      { label: t('exports.col.finalTables'), value: (e) => e.finalTables },
+    ],
+  )
 }
 
 // Watch for period changes
@@ -570,11 +613,23 @@ onMounted(() => {
   border: 1px solid var(--color-pp-border-strong);
 }
 
+.leaderboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
 .leaderboard-title {
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--color-pp-text);
-  margin-bottom: 1rem;
+}
+
+.icon-md {
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .leaderboard-empty {

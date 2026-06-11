@@ -866,5 +866,44 @@
     "entries": "Entries",
     "rebuys": "rebuy | rebuys",
     "addons": "add-on | add-ons"
+  },
+  "exports": {
+    "button": "Export CSV",
+    "print": "Print",
+    "printHint": "The print dialog opens automatically.",
+    "printPayoutSheet": "Print payout sheet",
+    "printPlayerList": "Print list",
+    "printedOn": "Printed on",
+    "buyIn": "Buy-in",
+    "totalPrizePool": "Total prize pool",
+    "noData": "Nothing to print yet.",
+    "doc": {
+      "payoutSheet": "Payout sheet",
+      "playerList": "Player list"
+    },
+    "col": {
+      "position": "Pos.",
+      "player": "Player",
+      "prize": "Prize",
+      "signature": "Signature",
+      "status": "Status",
+      "seat": "Table / seat",
+      "type": "Type",
+      "rank": "Rank",
+      "tournaments": "Tournaments",
+      "buyIns": "Buy-ins (EUR)",
+      "winnings": "Winnings (EUR)",
+      "netProfit": "Net (EUR)",
+      "itm": "ITM",
+      "itmPct": "ITM %",
+      "roi": "ROI %",
+      "avgFinish": "Avg finish",
+      "firstPlaces": "Wins",
+      "finalTables": "Final tables",
+      "points": "Points",
+      "registeredAt": "Registered at"
+    },
+    "typeApp": "App user",
+    "typeRoster": "Roster"
   }
 }

@@ -8,6 +8,14 @@
             <h1 class="page-title">{{ t('players.title') }}</h1>
           </PpFadeUp>
           <PpFadeUp :delay="0.08" data-tour="add-players" class="header-actions">
+            <PpButton
+              variant="ghost"
+              :disabled="filteredPlayers.length === 0"
+              @click="exportRosterCsv"
+            >
+              <IonIcon :icon="downloadOutline" class="icon-md" />
+              {{ t('exports.button') }}
+            </PpButton>
             <PpButton variant="secondary" @click="openImportModal">
               <IonIcon :icon="cloudUploadOutline" class="icon-md" />
               {{ t('players.import.button') }}
@@ -155,8 +163,10 @@ import {
   createOutline,
   banOutline,
   cloudUploadOutline,
+  downloadOutline,
 } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
+import { downloadCsv, exportFilename } from '~/utils/exportCsv'
 import type { ClubPlayer } from '~/types/user'
 
 const clubStore = useClubStore()
@@ -283,6 +293,17 @@ const handleArchiveConfirmed = async () => {
     console.error('Failed to archive player:', error)
     toast.error(t('players.archiveFailed'))
   }
+}
+
+// Export the (filtered) roster to CSV.
+const exportRosterCsv = () => {
+  downloadCsv(exportFilename([club.value?.name, t('nav.players')]), sortedPlayers.value, [
+    { label: t('exports.col.player'), value: (p) => p.displayName },
+    {
+      label: t('exports.col.type'),
+      value: (p) => (p.isClaimed ? t('exports.typeApp') : t('exports.typeRoster')),
+    },
+  ])
 }
 
 // Lifecycle

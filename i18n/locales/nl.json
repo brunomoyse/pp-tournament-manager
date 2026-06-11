@@ -866,5 +866,44 @@
     "entries": "Entries",
     "rebuys": "rebuy | rebuys",
     "addons": "add-on | add-ons"
+  },
+  "exports": {
+    "button": "CSV exporteren",
+    "print": "Afdrukken",
+    "printHint": "Het afdrukvenster opent automatisch.",
+    "printPayoutSheet": "Uitbetalingslijst afdrukken",
+    "printPlayerList": "Lijst afdrukken",
+    "printedOn": "Afgedrukt op",
+    "buyIn": "Buy-in",
+    "totalPrizePool": "Totale prijzenpot",
+    "noData": "Nog niets om af te drukken.",
+    "doc": {
+      "payoutSheet": "Uitbetalingslijst",
+      "playerList": "Spelerslijst"
+    },
+    "col": {
+      "position": "Pos.",
+      "player": "Speler",
+      "prize": "Prijs",
+      "signature": "Handtekening",
+      "status": "Status",
+      "seat": "Tafel / stoel",
+      "type": "Type",
+      "rank": "Rang",
+      "tournaments": "Toernooien",
+      "buyIns": "Buy-ins (EUR)",
+      "winnings": "Winst (EUR)",
+      "netProfit": "Netto (EUR)",
+      "itm": "ITM",
+      "itmPct": "ITM %",
+      "roi": "ROI %",
+      "avgFinish": "Gem. plaats",
+      "firstPlaces": "Overwinningen",
+      "finalTables": "Finaletafels",
+      "points": "Punten",
+      "registeredAt": "Ingeschreven op"
+    },
+    "typeApp": "App-account",
+    "typeRoster": "Roster"
   }
 }
