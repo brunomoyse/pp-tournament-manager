@@ -185,6 +185,36 @@
           />
           <p class="tournament-form-help">{{ t('tournament.lateRegistrationLevelHelp') }}</p>
         </div>
+
+        <!-- Bounty / Knockout -->
+        <div class="tournament-form-field">
+          <label class="pp-label">{{ t('tournament.bountyType') }}</label>
+          <select v-model="form.bountyType" class="pp-select">
+            <option value="NONE">{{ t('tournament.bountyTypeNone') }}</option>
+            <option value="FIXED">{{ t('tournament.bountyTypeFixed') }}</option>
+            <option value="PROGRESSIVE">{{ t('tournament.bountyTypeProgressive') }}</option>
+          </select>
+          <p class="tournament-form-help">{{ t('tournament.bountyTypeHelp') }}</p>
+        </div>
+
+        <!-- Bounty amount (euros) -->
+        <div v-if="form.bountyType !== 'NONE'" class="tournament-form-field">
+          <label class="pp-label">
+            {{ t('tournament.bountyAmount') }} (EUR)
+            <span class="tournament-form-required">*</span>
+          </label>
+          <input
+            v-model.number="bountyAmountEuros"
+            type="number"
+            min="0"
+            step="0.5"
+            class="pp-input"
+          />
+          <p v-if="bountyTooLarge" class="tournament-form-error">
+            {{ t('tournament.bountyAmountTooLarge') }}
+          </p>
+          <p v-else class="tournament-form-help">{{ t('tournament.bountyAmountHelp') }}</p>
+        </div>
       </div>
 
       <!-- Blind Structure Template Section -->
@@ -319,10 +349,27 @@ const form = ref<TournamentFormData>({
   addonChips: null,
   addonPriceCents: null,
   lateRegistrationLevel: null,
+  bountyType: 'NONE',
+  bountyAmountCents: null,
   templateId: '',
 })
 
 const saving = ref(false)
+
+// Computed for bounty amount in euros (display; stored as cents)
+const bountyAmountEuros = computed({
+  get: () => (form.value.bountyAmountCents ?? 0) / 100,
+  set: (val: number) => {
+    form.value.bountyAmountCents = val ? Math.round(val * 100) : null
+  },
+})
+
+// The bounty slice is carved from each buy-in, so it must stay below it.
+const bountyTooLarge = computed(
+  () =>
+    form.value.bountyType !== 'NONE' &&
+    (form.value.bountyAmountCents ?? 0) >= form.value.buyInCents,
+)
 
 // Computed for voucher value in euros (display; stored as cents)
 const voucherValueEuros = computed({
@@ -362,7 +409,9 @@ const isFormValid = computed(() => {
     form.value.name.trim() &&
     form.value.startTime &&
     form.value.buyInCents >= 0 &&
-    form.value.templateId
+    form.value.templateId &&
+    !bountyTooLarge.value &&
+    (form.value.bountyType === 'NONE' || (form.value.bountyAmountCents ?? 0) > 0)
   )
 })
 
@@ -398,6 +447,8 @@ watch(
         addonChips: props.tournament.addonChips ?? null,
         addonPriceCents: props.tournament.addonPriceCents ?? null,
         lateRegistrationLevel: props.tournament.lateRegistrationLevel ?? null,
+        bountyType: props.tournament.bountyType ?? 'NONE',
+        bountyAmountCents: props.tournament.bountyAmountCents ?? null,
         templateId: templates.value[0]?.id ?? '',
       }
     } else if (isOpen && props.mode === 'create') {
@@ -416,6 +467,8 @@ watch(
         addonChips: null,
         addonPriceCents: null,
         lateRegistrationLevel: null,
+        bountyType: 'NONE',
+        bountyAmountCents: null,
         templateId: templates.value[0]?.id ?? '',
       }
     }
@@ -446,6 +499,9 @@ const handleSubmit = async () => {
           addonChips: form.value.addonChips || undefined,
           addonPriceCents: form.value.addonPriceCents ?? undefined,
           lateRegistrationLevel: form.value.lateRegistrationLevel || undefined,
+          bountyType: form.value.bountyType,
+          bountyAmountCents:
+            form.value.bountyType === 'NONE' ? 0 : (form.value.bountyAmountCents ?? 0),
           templateId: form.value.templateId,
         },
       })
@@ -467,6 +523,9 @@ const handleSubmit = async () => {
           addonChips: form.value.addonChips || undefined,
           addonPriceCents: form.value.addonPriceCents ?? undefined,
           lateRegistrationLevel: form.value.lateRegistrationLevel || undefined,
+          bountyType: form.value.bountyType,
+          bountyAmountCents:
+            form.value.bountyType === 'NONE' ? 0 : (form.value.bountyAmountCents ?? 0),
           templateId: form.value.templateId,
         },
       })
@@ -535,6 +594,12 @@ const closeModal = () => {
   margin-top: 0.25rem;
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.5);
+}
+
+.tournament-form-error {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: #f87171;
 }
 
 .tournament-form-template-description {

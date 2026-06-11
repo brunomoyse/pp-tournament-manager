@@ -24,11 +24,17 @@ export interface Tournament {
   addonChips?: number | null
   addonPriceCents?: number | null
 
+  bountyType?: BountyType
+  bountyAmountCents?: number | null
+
   clock?: TournamentClock | null
   club?: Club
   registrations: TournamentRegistration[]
   structure: TournamentStructure[]
 }
+
+/** Bounty / progressive-knockout mode for a tournament. */
+export type BountyType = 'NONE' | 'FIXED' | 'PROGRESSIVE'
 
 export type TournamentStatus = 'UPCOMING' | 'IN_PROGRESS' | 'COMPLETED'
 export type TournamentLiveStatus =
@@ -320,6 +326,8 @@ export interface CreateTournamentInput {
   addonChips?: number
   addonPriceCents?: number
   lateRegistrationLevel?: number
+  bountyType?: BountyType
+  bountyAmountCents?: number
   templateId?: string
   structure?: TournamentStructureInput[]
 }
@@ -340,6 +348,8 @@ export interface UpdateTournamentInput {
   addonChips?: number
   addonPriceCents?: number
   lateRegistrationLevel?: number
+  bountyType?: BountyType
+  bountyAmountCents?: number
   templateId?: string
   structure?: TournamentStructureInput[]
 }
@@ -360,5 +370,7 @@ export interface TournamentFormData {
   addonChips: number | null
   addonPriceCents: number | null
   lateRegistrationLevel: number | null
+  bountyType: BountyType
+  bountyAmountCents: number | null
   templateId: string
 }

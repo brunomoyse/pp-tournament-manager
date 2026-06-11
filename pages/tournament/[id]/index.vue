@@ -124,6 +124,13 @@
             class="results-section"
           />
 
+          <!-- Bounty leaderboard (PKO tournaments) -->
+          <TournamentBountiesCard
+            v-if="isPko"
+            :tournament-id="selectedTournamentId"
+            class="results-section"
+          />
+
           <!-- Results Display (FINISHED) -->
           <template v-if="tournament?.liveStatus === 'FINISHED'">
             <div class="export-bar export-bar--end">
@@ -309,6 +316,7 @@ import EnterResultsModal from '~/components/tournament/results/EnterResultsModal
 import TournamentResultsDisplay from '~/components/tournament/results/TournamentResultsDisplay.vue'
 import TournamentPredictionsCard from '~/components/tournament/overview/TournamentPredictionsCard.vue'
 import TournamentCashReportCard from '~/components/tournament/entries/TournamentCashReportCard.vue'
+import TournamentBountiesCard from '~/components/tournament/entries/TournamentBountiesCard.vue'
 import TournamentActivityFeed from '~/components/tournament/overview/TournamentActivityFeed.vue'
 import { useGqlSubscription } from '~/composables/useGqlSubscription'
 import type { TournamentClock } from '~/types/clock'
@@ -338,6 +346,7 @@ const cashReportCard = ref()
 
 // Use store getters for reactive data
 const tournament = computed(() => tournamentStore.tournament)
+const isPko = computed(() => (tournament.value?.bountyType ?? 'NONE') !== 'NONE')
 const clock = computed(() => tournamentStore.clock)
 const club = computed(() => clubStore.club)
 

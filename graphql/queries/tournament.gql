@@ -47,6 +47,8 @@ query GetTournament($id: UUID!) {
     rebuyMax
     addonChips
     addonPriceCents
+    bountyType
+    bountyAmountCents
     structure {
       id
       tournamentId

@@ -88,6 +88,8 @@ mutation CreateTournament($input: CreateTournamentInput!) {
     addonChips
     addonPriceCents
     lateRegistrationLevel
+    bountyType
+    bountyAmountCents
     createdAt
     updatedAt
     structure {
@@ -145,6 +147,8 @@ mutation UpdateTournament($input: UpdateTournamentInput!) {
     addonChips
     addonPriceCents
     lateRegistrationLevel
+    bountyType
+    bountyAmountCents
     createdAt
     updatedAt
     structure {

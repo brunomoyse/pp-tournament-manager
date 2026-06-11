@@ -57,6 +57,16 @@ mutation BalanceTables($input: BalanceTablesInput!) {
   }
 }
 
-mutation EliminatePlayer($tournamentId: ID!, $userId: ID!, $notes: String) {
-  eliminatePlayer(tournamentId: $tournamentId, userId: $userId, notes: $notes)
+mutation EliminatePlayer(
+  $tournamentId: ID!
+  $userId: ID!
+  $hunterUserId: ID
+  $notes: String
+) {
+  eliminatePlayer(
+    tournamentId: $tournamentId
+    userId: $userId
+    hunterUserId: $hunterUserId
+    notes: $notes
+  )
 }

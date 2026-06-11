@@ -333,6 +333,14 @@
     "lateRegistrationLevel": "Niveau inscr. tardive",
     "lateRegistrationLevelPlaceholder": "ex. 6",
     "lateRegistrationLevelHelp": "L'inscription reste ouverte jusqu'à la fin de ce niveau. Laissez vide pour contrôle manuel.",
+    "bountyType": "Bounty / Knockout",
+    "bountyTypeNone": "Aucun",
+    "bountyTypeFixed": "Bounty fixe",
+    "bountyTypeProgressive": "Progressif (PKO)",
+    "bountyTypeHelp": "Chaque élimination paie un bounty. En progressif, la prime est partagée : moitié cash, moitié ajoutée à la tête du chasseur.",
+    "bountyAmount": "Montant du bounty",
+    "bountyAmountHelp": "Part de chaque buy-in (et rebuy / re-entry) mise de côté pour le bounty.",
+    "bountyAmountTooLarge": "Le bounty doit être inférieur au buy-in.",
     "blindStructure": "Structure des blinds",
     "selectTemplate": "Modèle de structure",
     "selectTemplatePlaceholder": "Sélectionnez un modèle de structure de blinds",
@@ -545,7 +553,11 @@
     "linkedNCount": "{success} table(s) sur {total} liée(s)",
     "linkedFailures": "Échec : {tables}",
     "goToPlayers": "Aller aux joueurs",
-    "currentSeat": "Siège actuel"
+    "currentSeat": "Siège actuel",
+    "whoKnockedOut": "Qui a éliminé {name} ?",
+    "selectHunterHelp": "Choisissez le joueur ayant réalisé le knockout pour lui attribuer le bounty.",
+    "skipHunter": "Sans bounty",
+    "noHunterCandidates": "Aucun autre joueur assis à qui attribuer le bounty."
   },
   "playerAction": {
     "title": "Actions joueur",
@@ -791,7 +803,8 @@
       "player_moved": "Joueur déplacé au siège {seat_number}",
       "stack_updated": "Stack mis à jour à {stack_size}",
       "tables_balanced": "Tables équilibrées ({players_moved} joueurs déplacés)",
-      "player_eliminated": "Joueur éliminé"
+      "player_eliminated": "Joueur éliminé",
+      "bounty_collected": "Bounty encaissé"
     },
     "entry": {
       "added": "Entrée ajoutée ({entry_type}, {amount_cents}c)",
@@ -926,5 +939,13 @@
     "type": "Type",
     "empty": "Aucune entrée enregistrée.",
     "export": "Export CSV"
+  },
+  "bounties": {
+    "title": "Bounties",
+    "empty": "Aucun knockout enregistré.",
+    "hunter": "Chasseur",
+    "knockouts": "KO",
+    "collected": "Encaissé",
+    "knockedOut": "a éliminé"
   }
 }

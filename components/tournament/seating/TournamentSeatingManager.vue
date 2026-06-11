@@ -180,6 +180,49 @@
       </template>
     </PpModal>
 
+    <!-- Hunter Selection Modal (bounty / PKO) -->
+    <PpModal
+      :open="showHunterModal"
+      size="md"
+      :title="t('seating.whoKnockedOut', { name: pendingElimination?.name })"
+      @close="closeHunterModal"
+    >
+      <p class="seating-manager__modal-description">{{ t('seating.selectHunterHelp') }}</p>
+
+      <div
+        v-if="hunterCandidates.length > 0"
+        class="seating-manager__modal-scroll seating-manager__player-list"
+      >
+        <button
+          v-for="candidate in hunterCandidates"
+          :key="candidate.userId"
+          :disabled="playerActionProcessing"
+          class="seating-manager__player-option"
+          @click="confirmHunter(candidate.userId)"
+        >
+          <div class="seating-manager__player-avatar">
+            {{ getInitialsFromDisplayName(candidate.name) }}
+          </div>
+          <div>
+            <div class="seating-manager__player-name">{{ candidate.name }}</div>
+          </div>
+        </button>
+      </div>
+
+      <div v-else class="seating-manager__no-players">
+        {{ t('seating.noHunterCandidates') }}
+      </div>
+
+      <template #footer>
+        <PpButton variant="secondary" :disabled="playerActionProcessing" @click="closeHunterModal">
+          {{ t('buttons.cancel') }}
+        </PpButton>
+        <PpButton variant="ghost" :disabled="playerActionProcessing" @click="confirmHunter(null)">
+          {{ t('seating.skipHunter') }}
+        </PpButton>
+      </template>
+    </PpModal>
+
     <!-- Break Table Modal -->
     <PpModal
       :open="showBreakTableModal"
@@ -295,6 +338,10 @@ const playerToMove = ref<{ playerId: string; fromTable: number; fromSeat: number
 const showPlayerSelectionModal = ref(false)
 const targetSeat = ref<{ tableId: string; seatNumber: number } | null>(null)
 
+// Bounty / PKO: when eliminating, ask who made the knockout.
+const showHunterModal = ref(false)
+const pendingElimination = ref<{ playerId: string; name: string } | null>(null)
+
 // Lifted busy state for PlayerActionModal so its buttons reflect real async work
 const playerActionProcessing = ref(false)
 
@@ -326,6 +373,23 @@ const isCurrentSeat = (tableNumber: number, seatNum: number) => {
 const unassignedPlayers = computed(
   () => seatingData.value?.tournamentSeatingChart?.unassignedPlayers || [],
 )
+
+// Bounty / PKO helpers
+const isPkoTournament = computed(() => (tournament.value?.bountyType ?? 'NONE') !== 'NONE')
+
+// Seated players (with an app account) eligible to be named as the knockout's hunter.
+const hunterCandidates = computed(() => {
+  const victimId = pendingElimination.value?.playerId
+  const tables = seatingData.value?.tournamentSeatingChart?.tables || []
+  const out: { userId: string; name: string }[] = []
+  for (const td of tables) {
+    for (const s of td.seats || []) {
+      const uid = s.assignment?.userId
+      if (uid && uid !== victimId) out.push({ userId: uid, name: s.displayName })
+    }
+  }
+  return out.toSorted((a, b) => a.name.localeCompare(b.name))
+})
 
 // Event handlers
 // Note: all mutation handlers below intentionally do NOT call refreshSeatingData().
@@ -420,14 +484,30 @@ const handleTablesAssigned = () => {
 
 const handlePlayerStatusChanged = async (data: { playerId: string; status: string }) => {
   if (playerActionProcessing.value) return
+  if (data.status !== 'ELIMINATED') return
+
+  // In a bounty / PKO tournament, ask who made the knockout first.
+  if (isPkoTournament.value) {
+    pendingElimination.value = {
+      playerId: data.playerId,
+      name: getSeatedPlayerName(data.playerId),
+    }
+    showHunterModal.value = true
+    return
+  }
+
+  await runElimination(data.playerId, null)
+}
+
+const runElimination = async (playerId: string, hunterUserId: string | null) => {
+  if (playerActionProcessing.value) return
   playerActionProcessing.value = true
   try {
-    if (data.status === 'ELIMINATED') {
-      await GqlEliminatePlayer({
-        tournamentId: selectedTournamentId,
-        userId: data.playerId,
-      })
-    }
+    await GqlEliminatePlayer({
+      tournamentId: selectedTournamentId,
+      userId: playerId,
+      hunterUserId: hunterUserId ?? undefined,
+    })
     // Subscription will refresh seating data; no manual refetch needed.
   } catch (error) {
     console.error('Failed to update player:', error)
@@ -435,6 +515,29 @@ const handlePlayerStatusChanged = async (data: { playerId: string; status: strin
   } finally {
     playerActionProcessing.value = false
   }
+}
+
+const getSeatedPlayerName = (playerId: string): string => {
+  const tables = seatingData.value?.tournamentSeatingChart?.tables || []
+  for (const td of tables) {
+    for (const s of td.seats || []) {
+      if (s.assignment?.userId === playerId) return s.displayName
+    }
+  }
+  return ''
+}
+
+const confirmHunter = async (hunterUserId: string | null) => {
+  const victim = pendingElimination.value
+  if (!victim) return
+  showHunterModal.value = false
+  await runElimination(victim.playerId, hunterUserId)
+  pendingElimination.value = null
+}
+
+const closeHunterModal = () => {
+  showHunterModal.value = false
+  pendingElimination.value = null
 }
 
 const handlePlayerMove = async (data: {

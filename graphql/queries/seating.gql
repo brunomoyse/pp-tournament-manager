@@ -36,3 +36,15 @@ query GetTournamentSeatingChart($tournamentId: UUID!) {
     }
   }
 }
+
+query GetTournamentBounties($tournamentId: ID!) {
+  tournamentBounties(tournamentId: $tournamentId) {
+    id
+    hunterClubPlayerId
+    victimClubPlayerId
+    hunterName
+    victimName
+    amountCents
+    createdAt
+  }
+}

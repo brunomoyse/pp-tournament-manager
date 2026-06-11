@@ -333,6 +333,14 @@
     "lateRegistrationLevel": "Late reg. niveau",
     "lateRegistrationLevelPlaceholder": "bijv. 6",
     "lateRegistrationLevelHelp": "Inschrijving blijft open tot het einde van dit niveau. Laat leeg voor handmatige controle.",
+    "bountyType": "Bounty / Knockout",
+    "bountyTypeNone": "Geen",
+    "bountyTypeFixed": "Vaste bounty",
+    "bountyTypeProgressive": "Progressief (PKO)",
+    "bountyTypeHelp": "Elke knockout betaalt een bounty. Progressief splitst die: helft cash, helft toegevoegd aan de eigen kop van de jager.",
+    "bountyAmount": "Bountybedrag",
+    "bountyAmountHelp": "Deel van elke buy-in (en rebuy / re-entry) dat opzij gaat als bounty.",
+    "bountyAmountTooLarge": "De bounty moet kleiner zijn dan de buy-in.",
     "blindStructure": "Blindstructuur",
     "selectTemplate": "Structuur sjabloon",
     "selectTemplatePlaceholder": "Selecteer een blindstructuur sjabloon",
@@ -545,7 +553,11 @@
     "linkedNCount": "{success} van {total} tafels gekoppeld",
     "linkedFailures": "Mislukt: {tables}",
     "goToPlayers": "Naar spelers",
-    "currentSeat": "Huidige stoel"
+    "currentSeat": "Huidige stoel",
+    "whoKnockedOut": "Wie heeft {name} uitgeschakeld?",
+    "selectHunterHelp": "Kies de speler die de knockout maakte om de bounty toe te kennen.",
+    "skipHunter": "Geen bounty",
+    "noHunterCandidates": "Geen andere zittende spelers om de bounty aan toe te kennen."
   },
   "playerAction": {
     "title": "Speler acties",
@@ -791,7 +803,8 @@
       "player_moved": "Speler verplaatst naar stoel {seat_number}",
       "stack_updated": "Stack bijgewerkt naar {stack_size}",
       "tables_balanced": "Tafels gebalanceerd ({players_moved} spelers verplaatst)",
-      "player_eliminated": "Speler geëlimineerd"
+      "player_eliminated": "Speler geëlimineerd",
+      "bounty_collected": "Bounty geïnd"
     },
     "entry": {
       "added": "Entry toegevoegd ({entry_type}, {amount_cents}c)",
@@ -926,5 +939,13 @@
     "type": "Type",
     "empty": "Nog geen entries geregistreerd.",
     "export": "CSV exporteren"
+  },
+  "bounties": {
+    "title": "Bounties",
+    "empty": "Nog geen knockouts geregistreerd.",
+    "hunter": "Jager",
+    "knockouts": "KO's",
+    "collected": "Geïnd",
+    "knockedOut": "schakelde uit"
   }
 }
