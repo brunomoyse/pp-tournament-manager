@@ -28,6 +28,10 @@ export interface Tournament {
   bountyAmountCents?: number | null
   leaderboardConfigId?: string | null
 
+  seriesId?: string | null
+  flightLabel?: string | null
+  isFinalDay?: boolean
+
   clock?: TournamentClock | null
   club?: Club
   registrations: TournamentRegistration[]

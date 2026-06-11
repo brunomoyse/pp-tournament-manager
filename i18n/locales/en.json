@@ -1027,5 +1027,61 @@
       "history": "History",
       "none": "No adjustments yet."
     }
+  },
+  "series": {
+    "eyebrow": "Multi-day series",
+    "newSeries": "Multi-day series",
+    "createTitle": "New multi-day series",
+    "step": {
+      "config": "Shared configuration",
+      "flights": "Day 1 flights",
+      "finalDay": "Final day & review"
+    },
+    "fields": {
+      "title": "Series title",
+      "titlePlaceholder": "e.g. Summer Main Event",
+      "buyIn": "Buy-in",
+      "rake": "Rake",
+      "seatCap": "Seat cap",
+      "lateRegLevel": "Late reg. level",
+      "blindTemplate": "Blind structure",
+      "noTemplate": "No template",
+      "sharedHint": "Applied to every flight and the final day."
+    },
+    "flightLabelPlaceholder": "e.g. Day 1A",
+    "addFlight": "Add flight",
+    "flightsLabel": "Flights",
+    "next": "Next",
+    "create": "Create series",
+    "created": "Series created",
+    "createError": "Could not create the series",
+    "closeFlightTitle": "Close flight — survivors & stacks",
+    "closeFlightHint": "Confirm each surviving player's final chip count. They'll qualify for Day 2.",
+    "noSurvivors": "No seated players to carry forward.",
+    "player": "Player",
+    "chipStack": "Chip stack",
+    "confirmClose": "Close flight",
+    "flightClosed": "Flight closed",
+    "closeError": "Could not close the flight",
+    "finalDay": "Final day",
+    "qualifiers": "Qualifiers",
+    "openDay2": "Open / refresh Day 2",
+    "noQualifiers": "No qualifiers yet. Close a flight to add survivors.",
+    "chips": "chips",
+    "notFound": "Series not found",
+    "day2Opened": "Day 2 seeded with qualifiers",
+    "day2Error": "Could not open Day 2",
+    "partOfSeries": "Part of a series",
+    "closeFlight": "Close flight",
+    "viewSeries": "View series"
+  },
+  "liveStatus": {
+    "NOT_STARTED": "Not started",
+    "REGISTRATION_OPEN": "Registration open",
+    "LATE_REGISTRATION": "Late registration",
+    "IN_PROGRESS": "In progress",
+    "BREAK": "Break",
+    "FINAL_TABLE": "Final table",
+    "FINISHED": "Finished"
   }
 }

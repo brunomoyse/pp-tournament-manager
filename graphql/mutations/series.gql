@@ -1,0 +1,20 @@
+mutation CreateTournamentSeries($input: CreateTournamentSeriesInput!) {
+  createTournamentSeries(input: $input) {
+    id
+    title
+  }
+}
+
+mutation CloseFlight($input: CloseFlightInput!) {
+  closeFlight(input: $input) {
+    id
+    liveStatus
+  }
+}
+
+mutation OpenDayTwo($seriesId: ID!) {
+  openDayTwo(seriesId: $seriesId) {
+    id
+    title
+  }
+}

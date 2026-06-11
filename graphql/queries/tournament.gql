@@ -50,6 +50,9 @@ query GetTournament($id: UUID!) {
     bountyType
     bountyAmountCents
     leaderboardConfigId
+    seriesId
+    flightLabel
+    isFinalDay
     structure {
       id
       tournamentId

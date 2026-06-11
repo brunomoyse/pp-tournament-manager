@@ -248,7 +248,7 @@
     "assigned": "Assignée"
   },
   "messages": {
-    "welcomeBack": "Bon retour, {name} !",
+    "welcomeBack": "Bonjour, {name} !",
     "noActiveTournaments": "Aucun tournoi actif",
     "noTournamentsYet": "Aucun tournoi pour le moment",
     "createFirstTournament": "Créez votre premier tournoi pour commencer",
@@ -1027,5 +1027,61 @@
       "history": "Historique",
       "none": "Aucun ajustement."
     }
+  },
+  "series": {
+    "eyebrow": "Série multi-day",
+    "newSeries": "Série multi-day",
+    "createTitle": "Nouvelle série multi-day",
+    "step": {
+      "config": "Configuration partagée",
+      "flights": "Flights du Day 1",
+      "finalDay": "Day final & récap"
+    },
+    "fields": {
+      "title": "Titre de la série",
+      "titlePlaceholder": "ex. Main Event d'été",
+      "buyIn": "Buy-in",
+      "rake": "Rake",
+      "seatCap": "Places max",
+      "lateRegLevel": "Niveau late reg.",
+      "blindTemplate": "Structure de blinds",
+      "noTemplate": "Aucun modèle",
+      "sharedHint": "Appliqué à chaque flight et au day final."
+    },
+    "flightLabelPlaceholder": "ex. Day 1A",
+    "addFlight": "Ajouter un flight",
+    "flightsLabel": "Flights",
+    "next": "Suivant",
+    "create": "Créer la série",
+    "created": "Série créée",
+    "createError": "Impossible de créer la série",
+    "closeFlightTitle": "Clôturer le flight — survivants & tapis",
+    "closeFlightHint": "Confirmez le tapis final de chaque survivant. Ils seront qualifiés pour le Day 2.",
+    "noSurvivors": "Aucun joueur assis à reporter.",
+    "player": "Joueur",
+    "chipStack": "Tapis",
+    "confirmClose": "Clôturer le flight",
+    "flightClosed": "Flight clôturé",
+    "closeError": "Impossible de clôturer le flight",
+    "finalDay": "Day final",
+    "qualifiers": "Qualifiés",
+    "openDay2": "Ouvrir / actualiser le Day 2",
+    "noQualifiers": "Aucun qualifié. Clôturez un flight pour ajouter des survivants.",
+    "chips": "jetons",
+    "notFound": "Série introuvable",
+    "day2Opened": "Day 2 alimenté avec les qualifiés",
+    "day2Error": "Impossible d'ouvrir le Day 2",
+    "partOfSeries": "Fait partie d'une série",
+    "closeFlight": "Clôturer le flight",
+    "viewSeries": "Voir la série"
+  },
+  "liveStatus": {
+    "NOT_STARTED": "Pas démarré",
+    "REGISTRATION_OPEN": "Inscriptions ouvertes",
+    "LATE_REGISTRATION": "Late registration",
+    "IN_PROGRESS": "En cours",
+    "BREAK": "Pause",
+    "FINAL_TABLE": "Table finale",
+    "FINISHED": "Terminé"
   }
 }

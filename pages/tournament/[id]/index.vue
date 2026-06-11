@@ -68,6 +68,27 @@
       <div class="tab-content">
         <!-- Overview Tab (v-show keeps components mounted so refs stay available from other tabs) -->
         <div v-show="activeTab === 'overview'">
+          <!-- Multi-day series banner -->
+          <div v-if="tournament?.seriesId" class="series-banner">
+            <div class="series-banner-body">
+              <span class="series-banner-eyebrow">{{ t('series.partOfSeries') }}</span>
+              <span class="series-banner-label">{{ tournament.flightLabel }}</span>
+            </div>
+            <div class="series-banner-actions">
+              <PpButton
+                v-if="!tournament.isFinalDay && tournament.liveStatus !== 'FINISHED'"
+                variant="primary"
+                size="sm"
+                @click="showCloseFlightModal = true"
+              >
+                {{ t('series.closeFlight') }}
+              </PpButton>
+              <PpButton variant="secondary" size="sm" :to="`/series/${tournament.seriesId}`">
+                {{ t('series.viewSeries') }}
+              </PpButton>
+            </div>
+          </div>
+
           <!-- Warning: No tables linked -->
           <div v-if="showNoTablesWarning" class="warning-banner warning-banner--orange">
             <ion-icon :icon="warningOutline" class="warning-icon warning-icon--orange" />
@@ -210,6 +231,14 @@
           @results-entered="handleResultsEntered"
         />
 
+        <!-- Close Flight Modal (multi-day series) -->
+        <CloseFlightModal
+          :open="showCloseFlightModal"
+          :tournament-id="selectedTournamentId"
+          @close="showCloseFlightModal = false"
+          @closed="onFlightClosed"
+        />
+
         <!-- Seating Tab -->
         <Transition name="tab-fade" mode="out-in">
           <div v-if="activeTab === 'seating'" key="seating">
@@ -313,6 +342,7 @@ import TournamentFormModal from '~/components/tournament/TournamentFormModal.vue
 import RegisterPlayerModal from '~/components/tournament/players/RegisterPlayerModal.vue'
 import TournamentQRModal from '~/components/tournament/TournamentQRModal.vue'
 import EnterResultsModal from '~/components/tournament/results/EnterResultsModal.vue'
+import CloseFlightModal from '~/components/tournament/series/CloseFlightModal.vue'
 import TournamentResultsDisplay from '~/components/tournament/results/TournamentResultsDisplay.vue'
 import TournamentPredictionsCard from '~/components/tournament/overview/TournamentPredictionsCard.vue'
 import TournamentCashReportCard from '~/components/tournament/entries/TournamentCashReportCard.vue'
@@ -355,6 +385,9 @@ const showEditModal = ref(false)
 
 // Results modal state
 const showEnterResultsModal = ref(false)
+
+// Multi-day series: close-flight modal state
+const showCloseFlightModal = ref(false)
 
 // Player modals state
 const showRegisterPlayerModal = ref(false)
@@ -537,6 +570,13 @@ const handleStatusChanged = async (status: string) => {
 // Handle results entered
 const handleResultsEntered = async () => {
   showEnterResultsModal.value = false
+  const response = await GqlGetTournament({ id: selectedTournamentId })
+  if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
+}
+
+// Handle a flight closed (multi-day): refresh tournament (now FINISHED).
+const onFlightClosed = async () => {
+  showCloseFlightModal.value = false
   const response = await GqlGetTournament({ id: selectedTournamentId })
   if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
 }
@@ -908,6 +948,45 @@ onMounted(async () => {
   gap: 0.75rem;
   padding: 1rem;
   border-radius: 0.75rem;
+}
+
+.series-banner {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 1rem;
+  border-radius: 0.75rem;
+  background-color: rgba(254, 231, 138, 0.08);
+  border: 1px solid rgba(254, 231, 138, 0.3);
+}
+
+.series-banner-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.series-banner-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-pp-gold-deep);
+}
+
+.series-banner-label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-pp-text);
+}
+
+.series-banner-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .warning-banner--orange {

@@ -1,0 +1,32 @@
+query GetTournamentSeriesList($clubId: ID!) {
+  tournamentSeriesList(clubId: $clubId) {
+    id
+    title
+    bestStackForward
+    createdAt
+  }
+}
+
+query GetTournamentSeries($id: ID!) {
+  tournamentSeries(id: $id) {
+    id
+    clubId
+    title
+    bestStackForward
+    flights {
+      id
+      title
+      flightLabel
+      isFinalDay
+      status
+      liveStatus
+      startTime
+    }
+    qualifications {
+      clubPlayerId
+      fromTournamentId
+      chipCount
+      isBest
+    }
+  }
+}

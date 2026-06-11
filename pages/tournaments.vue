@@ -10,10 +10,16 @@
             </h1>
           </PpFadeUp>
           <PpFadeUp :delay="0.08" data-tour="create-tournament">
-            <PpButton magnetic @click="createTournament">
-              <IonIcon :icon="addOutline" class="icon-md" />
-              {{ t('buttons.createTournament') }}
-            </PpButton>
+            <div class="header-actions">
+              <PpButton variant="secondary" @click="showSeriesModal = true">
+                <IonIcon :icon="layersOutline" class="icon-md" />
+                {{ t('series.newSeries') }}
+              </PpButton>
+              <PpButton magnetic @click="createTournament">
+                <IonIcon :icon="addOutline" class="icon-md" />
+                {{ t('buttons.createTournament') }}
+              </PpButton>
+            </div>
           </PpFadeUp>
         </div>
 
@@ -110,6 +116,13 @@
       @close="showTournamentModal = false"
       @saved="onTournamentSaved"
     />
+
+    <!-- Multi-day series wizard -->
+    <CreateSeriesModal
+      :open="showSeriesModal"
+      @close="showSeriesModal = false"
+      @created="onSeriesCreated"
+    />
   </IonPage>
 </template>
 
@@ -122,8 +135,15 @@ definePageMeta({
 })
 
 import { IonPage, IonContent, IonIcon, IonSpinner } from '@ionic/vue'
-import { searchOutline, trophyOutline, chevronForwardOutline, addOutline } from 'ionicons/icons'
+import {
+  searchOutline,
+  trophyOutline,
+  chevronForwardOutline,
+  addOutline,
+  layersOutline,
+} from 'ionicons/icons'
 import TournamentFormModal from '~/components/tournament/TournamentFormModal.vue'
+import CreateSeriesModal from '~/components/tournament/series/CreateSeriesModal.vue'
 import { useI18n } from '~/composables/useI18n'
 import { formatPrice } from '~/utils'
 import { getTournamentStatusLabel, getTournamentStatusVariant } from '~/utils/tournamentStatus'
@@ -140,6 +160,12 @@ const tournaments = ref<GetTournamentsQuery['tournaments']['items']>([])
 const searchQuery = ref('')
 const statusFilter = ref<TournamentStatus | ''>('')
 const showTournamentModal = ref(false)
+const showSeriesModal = ref(false)
+
+const onSeriesCreated = (id: string) => {
+  showSeriesModal.value = false
+  router.push(`/series/${id}`)
+}
 
 // Filtered and sorted tournaments
 const filteredTournaments = computed(() => {
@@ -213,6 +239,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 .page-bg {
   background-color: var(--color-pp-bg);
 }

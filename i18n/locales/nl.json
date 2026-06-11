@@ -1027,5 +1027,61 @@
       "history": "Geschiedenis",
       "none": "Nog geen aanpassingen."
     }
+  },
+  "series": {
+    "eyebrow": "Meerdaagse serie",
+    "newSeries": "Meerdaagse serie",
+    "createTitle": "Nieuwe meerdaagse serie",
+    "step": {
+      "config": "Gedeelde configuratie",
+      "flights": "Dag 1-flights",
+      "finalDay": "Finaledag & overzicht"
+    },
+    "fields": {
+      "title": "Serietitel",
+      "titlePlaceholder": "bv. Summer Main Event",
+      "buyIn": "Buy-in",
+      "rake": "Rake",
+      "seatCap": "Max. plaatsen",
+      "lateRegLevel": "Late reg.-niveau",
+      "blindTemplate": "Blindstructuur",
+      "noTemplate": "Geen sjabloon",
+      "sharedHint": "Toegepast op elke flight en de finaledag."
+    },
+    "flightLabelPlaceholder": "bv. Dag 1A",
+    "addFlight": "Flight toevoegen",
+    "flightsLabel": "Flights",
+    "next": "Volgende",
+    "create": "Serie aanmaken",
+    "created": "Serie aangemaakt",
+    "createError": "Kon de serie niet aanmaken",
+    "closeFlightTitle": "Flight afsluiten — survivors & stacks",
+    "closeFlightHint": "Bevestig de eindstack van elke survivor. Zij kwalificeren zich voor Dag 2.",
+    "noSurvivors": "Geen gezeten spelers om door te schuiven.",
+    "player": "Speler",
+    "chipStack": "Chipstack",
+    "confirmClose": "Flight afsluiten",
+    "flightClosed": "Flight afgesloten",
+    "closeError": "Kon de flight niet afsluiten",
+    "finalDay": "Finaledag",
+    "qualifiers": "Gekwalificeerden",
+    "openDay2": "Dag 2 openen / verversen",
+    "noQualifiers": "Nog geen gekwalificeerden. Sluit een flight af om survivors toe te voegen.",
+    "chips": "chips",
+    "notFound": "Serie niet gevonden",
+    "day2Opened": "Dag 2 gevuld met gekwalificeerden",
+    "day2Error": "Kon Dag 2 niet openen",
+    "partOfSeries": "Onderdeel van een serie",
+    "closeFlight": "Flight afsluiten",
+    "viewSeries": "Serie bekijken"
+  },
+  "liveStatus": {
+    "NOT_STARTED": "Niet gestart",
+    "REGISTRATION_OPEN": "Inschrijving open",
+    "LATE_REGISTRATION": "Late registration",
+    "IN_PROGRESS": "Bezig",
+    "BREAK": "Pauze",
+    "FINAL_TABLE": "Finaletafel",
+    "FINISHED": "Afgelopen"
   }
 }
