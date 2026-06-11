@@ -37,6 +37,8 @@ export const useAuthStore = defineStore(
     // State
     const currentUser = ref<AuthUser | null>(null)
     const authToken = ref<string | null>(null)
+    /** Login-time "remember me" choice; gates cross-session persistence. */
+    const rememberMe = ref(false)
     const isLoading = ref(false)
     const error = ref<Error | null>(null)
 
@@ -53,6 +55,7 @@ export const useAuthStore = defineStore(
     const clearAuthState = () => {
       authToken.value = null
       currentUser.value = null
+      rememberMe.value = false
 
       // Clear refresh timer
       if (refreshTimerId) {
@@ -93,14 +96,20 @@ export const useAuthStore = defineStore(
         // Set token for GraphQL client
         useGqlToken(token)
 
-        // Force save to localStorage as backup (in case Pinia persistence fails)
-        localStorage.setItem(
-          'auth-backup',
-          JSON.stringify({
-            authToken: token,
-            currentUser: user,
-          }),
-        )
+        // localStorage survives browser restarts, so only keep the backup when
+        // the user asked to be remembered; otherwise the session must end with
+        // the browser (matching the session-scoped refresh cookie).
+        if (rememberMe.value) {
+          localStorage.setItem(
+            'auth-backup',
+            JSON.stringify({
+              authToken: token,
+              currentUser: user,
+            }),
+          )
+        } else {
+          localStorage.removeItem('auth-backup')
+        }
 
         // Set up proactive token refresh
         setupTokenRefreshTimer()
@@ -130,14 +139,16 @@ export const useAuthStore = defineStore(
           if (import.meta.client) {
             useGqlToken(newToken)
 
-            // Update backup localStorage
-            localStorage.setItem(
-              'auth-backup',
-              JSON.stringify({
-                authToken: newToken,
-                currentUser: currentUser.value,
-              }),
-            )
+            // Update backup localStorage (remembered sessions only)
+            if (rememberMe.value) {
+              localStorage.setItem(
+                'auth-backup',
+                JSON.stringify({
+                  authToken: newToken,
+                  currentUser: currentUser.value,
+                }),
+              )
+            }
           }
 
           return newToken
@@ -159,6 +170,7 @@ export const useAuthStore = defineStore(
 
         if (result?.loginUser?.token && result?.loginUser?.user) {
           const { token, user } = result.loginUser
+          rememberMe.value = credentials.rememberMe ?? false
           storeAuthState(token, user)
 
           // Store managedClub in club store if available
@@ -194,6 +206,8 @@ export const useAuthStore = defineStore(
 
         if (result?.onboardClub?.token && result?.onboardClub?.user) {
           const { token, user } = result.onboardClub
+          // A fresh club owner shouldn't be logged out by closing the browser.
+          rememberMe.value = true
           storeAuthState(token, user)
 
           if (user.managedClub) {
@@ -322,6 +336,7 @@ export const useAuthStore = defineStore(
       // State (not readonly - required for Pinia persistence plugin)
       currentUser,
       authToken,
+      rememberMe,
       isLoading,
       error,
 
@@ -342,7 +357,7 @@ export const useAuthStore = defineStore(
   },
   {
     persist: {
-      pick: ['currentUser', 'authToken'],
+      pick: ['currentUser', 'authToken', 'rememberMe'],
     },
   },
 )

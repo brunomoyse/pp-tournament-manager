@@ -186,13 +186,17 @@ definePageMeta({
 })
 
 import { ref, computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useAuthStore, type LoginCredentials } from '~/stores/useAuthStore'
 
 const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
-const { login, isLoading } = authStore
+// Plain destructuring would freeze isLoading (loses reactivity); the button's
+// loading state depends on it staying a ref.
+const { isLoading } = storeToRefs(authStore)
+const { login } = authStore
 
 watch(
   () => authStore.isAuthenticated,
