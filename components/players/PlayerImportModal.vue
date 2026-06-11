@@ -215,7 +215,7 @@ const parseFile = async (file: File) => {
     rows.value = matrix.slice(1).map((r) => r.map((c) => String(c ?? '')))
     fileName.value = file.name
     showManual.value = false
-    selectedColumns.value = []
+    selectedColumns.value = guessNameColumns(headers.value)
     step.value = 'map'
   } catch (err) {
     console.error('Parse failed:', err)
@@ -256,6 +256,32 @@ const runAiFormat = async () => {
 }
 
 // ── Manual column mapping ──────────────────────────────────────────
+// Pre-select name columns from known header conventions. Kholdem (the main
+// migration source: FR/EN UI, semicolon CSVs) labels them Pseudo / Prénom /
+// Nom; a standalone nickname column wins over first+last name pairs.
+const NICKNAME_HEADERS = ['pseudo', 'nickname', 'surnom', 'bijnaam', 'alias']
+const FIRSTNAME_HEADERS = ['prénom', 'prenom', 'first name', 'firstname', 'voornaam']
+const LASTNAME_HEADERS = ['nom', 'last name', 'lastname', 'naam', 'achternaam', 'nom de famille']
+const FULLNAME_HEADERS = ['joueur', 'player', 'name', 'speler', 'display name', 'displayname']
+
+const guessNameColumns = (cols: string[]): number[] => {
+  const norm = cols.map((h) => h.toLowerCase().trim())
+  const findAll = (names: string[]) =>
+    norm.map((h, i) => (names.includes(h) ? i : -1)).filter((i) => i >= 0)
+
+  const nick = findAll(NICKNAME_HEADERS)
+  if (nick.length) return [nick[0]]
+
+  const first = findAll(FIRSTNAME_HEADERS)
+  const last = findAll(LASTNAME_HEADERS)
+  if (first.length && last.length) return [first[0], last[0]]
+
+  const full = findAll(FULLNAME_HEADERS)
+  if (full.length) return [full[0]]
+
+  return []
+}
+
 const runManualMap = () => {
   const cols = selectedColumns.value.toSorted((a, b) => a - b)
   candidates.value = rows.value.map((row) => ({
