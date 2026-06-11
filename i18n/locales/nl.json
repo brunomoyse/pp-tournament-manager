@@ -634,7 +634,9 @@
       "reEntryCount": "Re-entries",
       "addonCount": "Add-ons",
       "totalRake": "Totale rake"
-    }
+    },
+    "voucher": "Drankbon",
+    "bonus": "Bonus"
   },
   "prizePool": {
     "entriesAndPlayers": "{entries} inschrijvingen van {players} spelers",
@@ -905,5 +907,24 @@
     },
     "typeApp": "App-account",
     "typeRoster": "Roster"
+  },
+  "payment": {
+    "method": "Betaalmethode",
+    "cash": "Cash",
+    "card": "Kaart",
+    "bankTransfer": "Overschrijving",
+    "voucher": "Bon",
+    "comp": "Gratis",
+    "other": "Andere"
+  },
+  "cashReport": {
+    "title": "Kassa",
+    "collected": "Geïnd",
+    "rake": "Rake",
+    "prizePool": "Prijzenpot",
+    "total": "Totaal",
+    "type": "Type",
+    "empty": "Nog geen entries geregistreerd.",
+    "export": "CSV exporteren"
   }
 }

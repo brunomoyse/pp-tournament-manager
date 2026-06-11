@@ -22,6 +22,7 @@ mutation AddTournamentEntry($input: AddTournamentEntryInput!) {
     chipsReceived
     recordedBy
     notes
+    paymentMethod
     createdAt
     updatedAt
   }

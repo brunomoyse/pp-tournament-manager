@@ -634,7 +634,9 @@
       "reEntryCount": "Ré-entrées",
       "addonCount": "Add-ons",
       "totalRake": "Rake total"
-    }
+    },
+    "voucher": "Jeton boisson",
+    "bonus": "Bonus"
   },
   "prizePool": {
     "entriesAndPlayers": "{entries} entrées de {players} joueurs",
@@ -905,5 +907,24 @@
     },
     "typeApp": "Compte app",
     "typeRoster": "Roster"
+  },
+  "payment": {
+    "method": "Méthode de paiement",
+    "cash": "Cash",
+    "card": "Carte",
+    "bankTransfer": "Virement",
+    "voucher": "Jeton",
+    "comp": "Offert",
+    "other": "Autre"
+  },
+  "cashReport": {
+    "title": "Caisse",
+    "collected": "Encaissé",
+    "rake": "Rake",
+    "prizePool": "Prize pool",
+    "total": "Total",
+    "type": "Type",
+    "empty": "Aucune entrée enregistrée.",
+    "export": "Export CSV"
   }
 }

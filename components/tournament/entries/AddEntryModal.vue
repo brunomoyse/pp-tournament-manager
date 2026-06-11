@@ -28,6 +28,27 @@
         </div>
       </div>
 
+      <!-- Payment Method -->
+      <div class="form-group">
+        <label class="pp-label">{{ t('entries.paymentMethod') }}</label>
+        <div class="payment-method-grid">
+          <button
+            v-for="method in paymentMethods"
+            :key="method.value"
+            type="button"
+            @click="form.paymentMethod = method.value"
+            :class="[
+              'entry-type-button',
+              'payment-method-button',
+              form.paymentMethod === method.value ? 'entry-type-button--active' : '',
+            ]"
+          >
+            <IonIcon :icon="method.icon" class="payment-method-icon" />
+            {{ method.label }}
+          </button>
+        </div>
+      </div>
+
       <!-- Amount -->
       <div class="form-group">
         <label class="pp-label">{{ t('entries.amount') }}</label>
@@ -80,8 +101,16 @@
 </template>
 
 <script setup lang="ts">
+import { IonIcon } from '@ionic/vue'
+import {
+  cashOutline,
+  cardOutline,
+  swapHorizontalOutline,
+  ticketOutline,
+  giftOutline,
+} from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
-import { EntryType } from '~/types/enums'
+import { EntryType, PaymentMethod } from '~/types/enums'
 
 interface Props {
   isOpen: boolean
@@ -113,11 +142,24 @@ const entryTypes = computed(() => [
   { value: 'ADDON' as EntryType, label: t('entries.addon') },
 ])
 
+const paymentMethods = computed(() => [
+  { value: PaymentMethod.CASH, label: t('payment.cash'), icon: cashOutline },
+  { value: PaymentMethod.CARD, label: t('payment.card'), icon: cardOutline },
+  {
+    value: PaymentMethod.BANK_TRANSFER,
+    label: t('payment.bankTransfer'),
+    icon: swapHorizontalOutline,
+  },
+  { value: PaymentMethod.VOUCHER, label: t('payment.voucher'), icon: ticketOutline },
+  { value: PaymentMethod.COMP, label: t('payment.comp'), icon: giftOutline },
+])
+
 const form = ref({
   entryType: props.defaultEntryType as EntryType,
   amountCents: props.defaultAmountCents,
   chipsReceived: 0 as number | undefined,
   notes: '',
+  paymentMethod: PaymentMethod.CASH as PaymentMethod,
 })
 
 // Euro display for amount
@@ -138,6 +180,7 @@ watch(
         amountCents: props.defaultAmountCents,
         chipsReceived: undefined,
         notes: '',
+        paymentMethod: PaymentMethod.CASH,
       }
     }
   },
@@ -156,6 +199,7 @@ const handleSubmit = async () => {
         amountCents: form.value.amountCents || undefined,
         chipsReceived: form.value.chipsReceived || undefined,
         notes: form.value.notes || undefined,
+        paymentMethod: form.value.paymentMethod,
       },
     })
 
@@ -201,6 +245,25 @@ const closeModal = () => {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
+}
+
+.payment-method-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.payment-method-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.payment-method-icon {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex-shrink: 0;
 }
 
 .entry-type-button {

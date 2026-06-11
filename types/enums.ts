@@ -29,6 +29,17 @@ export const EntryType = {
   ADDON: 'ADDON',
 } as const
 
+export const PaymentMethod = {
+  CASH: 'CASH',
+  CARD: 'CARD',
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  VOUCHER: 'VOUCHER',
+  COMP: 'COMP',
+  OTHER: 'OTHER',
+} as const
+
+export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
+
 export const Role = {
   ADMIN: 'ADMIN',
   MANAGER: 'MANAGER',

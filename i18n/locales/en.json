@@ -634,7 +634,9 @@
       "reEntryCount": "Re-entries",
       "addonCount": "Add-ons",
       "totalRake": "Total Rake"
-    }
+    },
+    "voucher": "Voucher",
+    "bonus": "Bonus"
   },
   "prizePool": {
     "entriesAndPlayers": "{entries} entries from {players} players",
@@ -905,5 +907,24 @@
     },
     "typeApp": "App user",
     "typeRoster": "Roster"
+  },
+  "payment": {
+    "method": "Payment method",
+    "cash": "Cash",
+    "card": "Card",
+    "bankTransfer": "Transfer",
+    "voucher": "Voucher",
+    "comp": "Comp",
+    "other": "Other"
+  },
+  "cashReport": {
+    "title": "Cash report",
+    "collected": "Collected",
+    "rake": "Rake",
+    "prizePool": "Prize pool",
+    "total": "Total",
+    "type": "Type",
+    "empty": "No entries recorded yet.",
+    "export": "Export CSV"
   }
 }

@@ -149,6 +149,22 @@ query GetTournamentPayout($tournamentId: ID!) {
   }
 }
 
+query GetTournamentCashReport($tournamentId: ID!) {
+  tournamentCashReport(tournamentId: $tournamentId) {
+    tournamentId
+    totalCollectedCents
+    totalRakeCents
+    prizePoolCents
+    entryCount
+    lines {
+      paymentMethod
+      entryType
+      amountCents
+      count
+    }
+  }
+}
+
 query GetTournamentResults($tournamentId: ID!) {
   tournamentResults(tournamentId: $tournamentId) {
     finalPosition

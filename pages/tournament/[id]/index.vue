@@ -116,6 +116,14 @@
             </PpButton>
           </div>
 
+          <!-- Cash report (manager-only financials) -->
+          <TournamentCashReportCard
+            ref="cashReportCard"
+            :tournament-id="selectedTournamentId"
+            :tournament-title="tournament?.title"
+            class="results-section"
+          />
+
           <!-- Results Display (FINISHED) -->
           <template v-if="tournament?.liveStatus === 'FINISHED'">
             <div class="export-bar export-bar--end">
@@ -300,6 +308,7 @@ import TournamentQRModal from '~/components/tournament/TournamentQRModal.vue'
 import EnterResultsModal from '~/components/tournament/results/EnterResultsModal.vue'
 import TournamentResultsDisplay from '~/components/tournament/results/TournamentResultsDisplay.vue'
 import TournamentPredictionsCard from '~/components/tournament/overview/TournamentPredictionsCard.vue'
+import TournamentCashReportCard from '~/components/tournament/entries/TournamentCashReportCard.vue'
 import TournamentActivityFeed from '~/components/tournament/overview/TournamentActivityFeed.vue'
 import { useGqlSubscription } from '~/composables/useGqlSubscription'
 import type { TournamentClock } from '~/types/clock'
@@ -325,6 +334,7 @@ const activeTab = ref('overview')
 const seatingManager = ref()
 const prizePoolCard = ref()
 const playersTable = ref()
+const cashReportCard = ref()
 
 // Use store getters for reactive data
 const tournament = computed(() => tournamentStore.tournament)
@@ -498,10 +508,13 @@ const handlePlayerRegistered = async (data: { playerId: string }) => {
   if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
 }
 
-// Handle entry added (refresh stats in prize pool card)
+// Handle entry added (refresh stats in prize pool card + cash report)
 const handleEntryAdded = async () => {
   if (prizePoolCard.value?.refreshStats) {
     await prizePoolCard.value.refreshStats()
+  }
+  if (cashReportCard.value?.refresh) {
+    await cashReportCard.value.refresh()
   }
 }
 
