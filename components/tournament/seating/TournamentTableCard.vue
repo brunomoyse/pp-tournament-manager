@@ -83,7 +83,9 @@
             <span class="table-card__player-seat"
               >{{ t('labels.seat') }} {{ seatData.assignment.seatNumber }}:</span
             >
-            <span class="table-card__player-name">{{ getPlayerFullName(seatData.player) }}</span>
+            <span class="table-card__player-name">{{
+              seatData.displayName || getPlayerFullName(seatData.player)
+            }}</span>
           </div>
           <IonIcon :icon="chevronForwardOutline" class="table-card__player-chevron" />
         </button>
@@ -134,15 +136,17 @@ interface Table {
 
 interface SeatAssignment {
   assignment: {
-    userId: string
+    userId: string | null
+    clubPlayerId?: string | null
     seatNumber: number
     stackSize?: number | null
   }
+  displayName?: string | null
   player: {
     id: string
     firstName: string
     lastName?: string | null
-  }
+  } | null
 }
 
 interface Props {
@@ -216,7 +220,17 @@ const isTopHalf = (seatNumber: number): boolean => {
 
 // Helper functions
 const getSeatPlayer = (seatNumber: number) => {
-  return props.seats?.find((s) => s.assignment.seatNumber === seatNumber)?.player
+  const seat = props.seats?.find((s) => s.assignment.seatNumber === seatNumber)
+  if (!seat) return null
+  // A seat is occupied whenever an assignment exists. Account-less roster
+  // players have no linked app user, so fall back to the seat's displayName.
+  return {
+    id: seat.player?.id ?? null,
+    firstName: seat.player?.firstName ?? null,
+    lastName: seat.player?.lastName ?? null,
+    displayName: seat.displayName ?? null,
+    clubPlayerId: seat.assignment?.clubPlayerId ?? null,
+  }
 }
 
 const getPlayerDisplayName = (player: any) => {
