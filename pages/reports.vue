@@ -15,6 +15,7 @@
             v-for="period in periods"
             :key="period.value"
             @click="selectedPeriod = period.value"
+            :disabled="!!selectedConfigId"
             :class="[
               'period-tab',
               selectedPeriod === period.value ? 'period-tab--active' : 'period-tab--inactive',
@@ -22,6 +23,16 @@
           >
             {{ t(period.label) }}
           </button>
+        </div>
+
+        <!-- League selector (only when the club has leagues) -->
+        <div v-if="leagues.length" class="league-row">
+          <label class="league-label">{{ t('leagues.viewLabel') }}</label>
+          <select v-model="selectedConfigId" class="pp-select league-select">
+            <option :value="null">{{ t('leagues.defaultView') }}</option>
+            <option v-for="lg in leagues" :key="lg.id" :value="lg.id">{{ lg.name }}</option>
+          </select>
+          <NuxtLink to="/leagues" class="league-manage-link">{{ t('leagues.manage') }}</NuxtLink>
         </div>
 
         <!-- Loading State -->
@@ -294,6 +305,10 @@ const selectedPeriod = ref<LeaderboardPeriod>(LeaderboardPeriod.ALL_TIME)
 const loading = ref(true)
 const leaderboard = ref<LeaderboardItem[]>([])
 
+// Leagues (configurable leaderboards). null = the club's default period-based view.
+const leagues = ref<{ id: string; name: string }[]>([])
+const selectedConfigId = ref<string | null>(null)
+
 // Computed stats from leaderboard data
 const stats = computed(() => {
   if (leaderboard.value.length === 0) {
@@ -390,6 +405,7 @@ const fetchLeaderboard = async () => {
     const { leaderboard: result } = await GqlGetLeaderboard({
       period: selectedPeriod.value,
       clubId: club.id,
+      configId: selectedConfigId.value || undefined,
       pagination: { limit: 50 },
     })
     leaderboard.value = result?.items || []
@@ -431,13 +447,26 @@ const exportLeaderboardCsv = () => {
   )
 }
 
-// Watch for period changes
-watch(selectedPeriod, () => {
+// Load the club's leagues for the selector.
+const fetchLeagues = async () => {
+  if (!club) return
+  try {
+    const { leaderboardConfigs } = await GqlGetLeaderboardConfigs({ clubId: club.id })
+    leagues.value = (leaderboardConfigs || []).map((c) => ({ id: c.id, name: c.name }))
+  } catch (error) {
+    console.error('Failed to fetch leagues:', error)
+    leagues.value = []
+  }
+}
+
+// Watch for period / league changes
+watch([selectedPeriod, selectedConfigId], () => {
   fetchLeaderboard()
 })
 
 // Initial fetch
 onMounted(() => {
+  fetchLeagues()
   fetchLeaderboard()
 })
 </script>
@@ -528,6 +557,52 @@ onMounted(() => {
 
 .period-tab--inactive:hover {
   background-color: rgba(36, 36, 42, 0.5);
+}
+
+.period-tab:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* League selector */
+.league-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+.league-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--color-pp-text-muted);
+}
+
+.pp-select {
+  background-color: var(--color-pp-surface-2);
+  color: var(--color-pp-text);
+  border: 1px solid var(--color-pp-border-strong);
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.league-select {
+  min-width: 12rem;
+}
+
+.league-manage-link {
+  font-size: 0.8rem;
+  color: var(--color-pp-gold);
+  text-decoration: none;
+}
+
+.league-manage-link:hover {
+  text-decoration: underline;
 }
 
 /* Loading */

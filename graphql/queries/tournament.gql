@@ -49,6 +49,7 @@ query GetTournament($id: UUID!) {
     addonPriceCents
     bountyType
     bountyAmountCents
+    leaderboardConfigId
     structure {
       id
       tournamentId
@@ -192,8 +193,13 @@ query GetTournamentEntryStats($tournamentId: ID!) {
   }
 }
 
-query GetLeaderboard($period: LeaderboardPeriod, $pagination: PaginationInput, $clubId: UUID) {
-  leaderboard(period: $period, pagination: $pagination, clubId: $clubId) {
+query GetLeaderboard(
+  $period: LeaderboardPeriod
+  $pagination: PaginationInput
+  $clubId: UUID
+  $configId: UUID
+) {
+  leaderboard(period: $period, pagination: $pagination, clubId: $clubId, configId: $configId) {
     items {
       clubPlayerId
       displayName

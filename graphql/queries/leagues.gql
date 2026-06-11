@@ -1,0 +1,38 @@
+query GetLeaderboardConfigs($clubId: ID!) {
+  leaderboardConfigs(clubId: $clubId) {
+    id
+    clubId
+    name
+    formula {
+      basePoints
+      fieldMultiplier
+      buyinMultiplier
+      positionCurve
+      minPlayers
+      cap
+      countBestN
+    }
+    membershipMode
+    periodStart
+    periodEnd
+    isDefault
+    createdAt
+    updatedAt
+  }
+}
+
+query GetLeaderboardAdjustments($configId: ID!) {
+  leaderboardAdjustments(configId: $configId) {
+    id
+    configId
+    clubPlayerId
+    pointsDelta
+    reason
+    createdBy
+    createdAt
+  }
+}
+
+query PreviewScoring($formula: ScoringFormulaInput!, $samples: [ScoringSampleInput!]!) {
+  previewScoring(formula: $formula, samples: $samples)
+}

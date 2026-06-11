@@ -17,7 +17,7 @@
       <!-- Navigation -->
       <nav class="sidebar-nav pp-hide-scrollbar" data-tour="nav">
         <NuxtLink
-          v-for="item in navItems"
+          v-for="item in sidebarNavItems"
           :key="item.to"
           :to="item.to"
           :class="['nav-link', isActive(item.to) ? 'nav-link--active' : 'nav-link--inactive']"
@@ -126,6 +126,7 @@ import {
   peopleOutline,
   constructOutline,
   statsChartOutline,
+  podiumOutline,
   logOutOutline,
 } from 'ionicons/icons'
 import { useAuthStore } from '~/stores/useAuthStore'
@@ -150,6 +151,12 @@ const navItems = computed(() => [
   { to: '/players', icon: peopleOutline, label: t('nav.players') },
   { to: '/templates', icon: constructOutline, label: t('nav.templates') },
   { to: '/reports', icon: statsChartOutline, label: t('nav.reports') },
+])
+
+// Sidebar drawer shows everything; the bottom tab bar stays at the 5 primary items.
+const sidebarNavItems = computed(() => [
+  ...navItems.value,
+  { to: '/leagues', icon: podiumOutline, label: t('nav.leagues') },
 ])
 
 const isActive = (path: string) => {

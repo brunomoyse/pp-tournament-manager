@@ -117,7 +117,11 @@
     "ok": "OK",
     "user": "Utilisateur",
     "back": "Retour",
-    "done": "Terminé"
+    "done": "Terminé",
+    "save": "Enregistrer",
+    "create": "Créer",
+    "delete": "Supprimer",
+    "unknown": "Inconnu"
   },
   "nav": {
     "dashboard": "Tableau de bord",
@@ -126,7 +130,8 @@
     "templates": "Modèles",
     "reports": "Rapports",
     "menu": "Menu",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "leagues": "Ligues"
   },
   "headings": {
     "activeTournaments": "Tournois actifs",
@@ -352,7 +357,10 @@
     "create": "Créer",
     "rake": "Rake",
     "save": "Enregistrer",
-    "saveFailed": "Échec de l'enregistrement du tournoi. Veuillez réessayer."
+    "saveFailed": "Échec de l'enregistrement du tournoi. Veuillez réessayer.",
+    "league": "Ligue",
+    "leagueNone": "Aucune ligue",
+    "leagueHelp": "Rattachez éventuellement ce tournoi à une ligue (utilisé par les ligues « taguées »)."
   },
   "reports": {
     "title": "Statistiques du club",
@@ -947,5 +955,77 @@
     "knockouts": "KO",
     "collected": "Encaissé",
     "knockedOut": "a éliminé"
+  },
+  "leagues": {
+    "title": "Ligues",
+    "subtitle": "Formules de points et saisons personnalisées pour les leaderboards de votre club.",
+    "new": "Nouvelle ligue",
+    "newTitle": "Nouvelle ligue",
+    "editTitle": "Modifier la ligue",
+    "default": "Par défaut",
+    "manage": "Gérer les ligues",
+    "viewLabel": "Vue ligue",
+    "defaultView": "Par défaut (par période)",
+    "period": "Période",
+    "periodStart": "Date de début",
+    "periodEnd": "Date de fin",
+    "allTime": "Depuis toujours",
+    "allResults": "Tous",
+    "from": "À partir du",
+    "until": "Jusqu'au",
+    "deleteConfirm": "Supprimer la ligue « {name} » ? Cette action est irréversible.",
+    "empty": {
+      "title": "Aucune ligue",
+      "text": "Créez une ligue pour appliquer une formule de points personnalisée ou un leaderboard saisonnier."
+    },
+    "fields": {
+      "name": "Nom",
+      "namePlaceholder": "ex. Saison Hiver 2026",
+      "isDefault": "Ligue par défaut",
+      "isDefaultHint": "Affichée en premier et utilisée comme classement principal du club."
+    },
+    "formula": {
+      "title": "Formule de points",
+      "basePoints": "Points de base",
+      "fieldMultiplier": "Multiplicateur de field",
+      "buyinMultiplier": "Multiplicateur de buy-in",
+      "positionCurve": "Courbe de position",
+      "minPlayers": "Joueurs min.",
+      "cap": "Plafond de points",
+      "bestN": "N meilleurs résultats"
+    },
+    "curve": {
+      "sqrt": "Racine carrée",
+      "harmonic": "Harmonique",
+      "linear": "Linéaire"
+    },
+    "membership": {
+      "title": "Composition",
+      "mode": "Tournois comptabilisés",
+      "allInPeriod": "Tous sur la période",
+      "tagged": "Tagués uniquement",
+      "allInPeriodHint": "Tous les tournois du club dans la période sont comptés.",
+      "taggedHint": "Seuls les tournois explicitement liés à cette ligue sont comptés."
+    },
+    "preview": {
+      "title": "Aperçu en direct",
+      "caption": "Points pour un événement de 20 joueurs à 50 €.",
+      "finish": "Place",
+      "points": "Points",
+      "note": "Calculé par le serveur à partir de la formule ci-dessus.",
+      "rankSuffix": "e"
+    },
+    "adjustments": {
+      "title": "Ajustements",
+      "modalTitle": "Ajustements — {name}",
+      "player": "Joueur",
+      "selectPlayer": "Sélectionnez un joueur",
+      "delta": "Points",
+      "reason": "Motif",
+      "reasonPlaceholder": "ex. Correction manuelle",
+      "add": "Ajouter un ajustement",
+      "history": "Historique",
+      "none": "Aucun ajustement."
+    }
   }
 }

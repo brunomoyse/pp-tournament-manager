@@ -117,7 +117,11 @@
     "ok": "OK",
     "user": "Gebruiker",
     "back": "Terug",
-    "done": "Klaar"
+    "done": "Klaar",
+    "save": "Opslaan",
+    "create": "Aanmaken",
+    "delete": "Verwijderen",
+    "unknown": "Onbekend"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -126,7 +130,8 @@
     "templates": "Sjablonen",
     "reports": "Rapporten",
     "menu": "Menu",
-    "logout": "Uitloggen"
+    "logout": "Uitloggen",
+    "leagues": "Competities"
   },
   "headings": {
     "activeTournaments": "Actieve toernooien",
@@ -352,7 +357,10 @@
     "create": "Aanmaken",
     "rake": "Rake",
     "save": "Opslaan",
-    "saveFailed": "Toernooi opslaan mislukt. Probeer opnieuw."
+    "saveFailed": "Toernooi opslaan mislukt. Probeer opnieuw.",
+    "league": "Competitie",
+    "leagueNone": "Geen competitie",
+    "leagueHelp": "Koppel dit toernooi eventueel aan een competitie (gebruikt door 'getagde' competities)."
   },
   "reports": {
     "title": "Club statistieken",
@@ -947,5 +955,77 @@
     "knockouts": "KO's",
     "collected": "Geïnd",
     "knockedOut": "schakelde uit"
+  },
+  "leagues": {
+    "title": "Competities",
+    "subtitle": "Eigen puntenformules en seizoenen voor de leaderboards van je club.",
+    "new": "Nieuwe competitie",
+    "newTitle": "Nieuwe competitie",
+    "editTitle": "Competitie bewerken",
+    "default": "Standaard",
+    "manage": "Competities beheren",
+    "viewLabel": "Competitieweergave",
+    "defaultView": "Standaard (per periode)",
+    "period": "Periode",
+    "periodStart": "Startdatum",
+    "periodEnd": "Einddatum",
+    "allTime": "Altijd",
+    "allResults": "Alle",
+    "from": "Vanaf",
+    "until": "Tot",
+    "deleteConfirm": "Competitie \"{name}\" verwijderen? Dit kan niet ongedaan worden gemaakt.",
+    "empty": {
+      "title": "Nog geen competities",
+      "text": "Maak een competitie aan voor een eigen puntenformule of een seizoensgebonden leaderboard."
+    },
+    "fields": {
+      "name": "Naam",
+      "namePlaceholder": "bv. Winterseizoen 2026",
+      "isDefault": "Standaardcompetitie",
+      "isDefaultHint": "Wordt eerst getoond en gebruikt als de hoofdklassering van de club."
+    },
+    "formula": {
+      "title": "Puntenformule",
+      "basePoints": "Basispunten",
+      "fieldMultiplier": "Field-multiplier",
+      "buyinMultiplier": "Buy-in-multiplier",
+      "positionCurve": "Positiecurve",
+      "minPlayers": "Min. spelers",
+      "cap": "Puntenplafond",
+      "bestN": "Beste N resultaten"
+    },
+    "curve": {
+      "sqrt": "Vierkantswortel",
+      "harmonic": "Harmonisch",
+      "linear": "Lineair"
+    },
+    "membership": {
+      "title": "Samenstelling",
+      "mode": "Meegetelde toernooien",
+      "allInPeriod": "Alles in periode",
+      "tagged": "Alleen getagd",
+      "allInPeriodHint": "Elk clubtoernooi binnen de periode telt mee.",
+      "taggedHint": "Alleen toernooien die expliciet aan deze competitie zijn gekoppeld tellen mee."
+    },
+    "preview": {
+      "title": "Live voorbeeld",
+      "caption": "Punten voor een toernooi met 20 spelers à € 50.",
+      "finish": "Plaats",
+      "points": "Punten",
+      "note": "Berekend door de server op basis van bovenstaande formule.",
+      "rankSuffix": "e"
+    },
+    "adjustments": {
+      "title": "Aanpassingen",
+      "modalTitle": "Aanpassingen — {name}",
+      "player": "Speler",
+      "selectPlayer": "Selecteer een speler",
+      "delta": "Punten",
+      "reason": "Reden",
+      "reasonPlaceholder": "bv. Handmatige correctie",
+      "add": "Aanpassing toevoegen",
+      "history": "Geschiedenis",
+      "none": "Nog geen aanpassingen."
+    }
   }
 }

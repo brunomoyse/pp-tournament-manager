@@ -90,6 +90,7 @@ mutation CreateTournament($input: CreateTournamentInput!) {
     lateRegistrationLevel
     bountyType
     bountyAmountCents
+    leaderboardConfigId
     createdAt
     updatedAt
     structure {
@@ -149,6 +150,7 @@ mutation UpdateTournament($input: UpdateTournamentInput!) {
     lateRegistrationLevel
     bountyType
     bountyAmountCents
+    leaderboardConfigId
     createdAt
     updatedAt
     structure {

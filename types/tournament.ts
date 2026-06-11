@@ -26,6 +26,7 @@ export interface Tournament {
 
   bountyType?: BountyType
   bountyAmountCents?: number | null
+  leaderboardConfigId?: string | null
 
   clock?: TournamentClock | null
   club?: Club
@@ -328,6 +329,7 @@ export interface CreateTournamentInput {
   lateRegistrationLevel?: number
   bountyType?: BountyType
   bountyAmountCents?: number
+  leaderboardConfigId?: string
   templateId?: string
   structure?: TournamentStructureInput[]
 }
@@ -350,6 +352,7 @@ export interface UpdateTournamentInput {
   lateRegistrationLevel?: number
   bountyType?: BountyType
   bountyAmountCents?: number
+  leaderboardConfigId?: string
   templateId?: string
   structure?: TournamentStructureInput[]
 }
@@ -372,5 +375,6 @@ export interface TournamentFormData {
   lateRegistrationLevel: number | null
   bountyType: BountyType
   bountyAmountCents: number | null
+  leaderboardConfigId: string | null
   templateId: string
 }

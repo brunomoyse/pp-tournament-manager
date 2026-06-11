@@ -117,7 +117,11 @@
     "ok": "OK",
     "user": "User",
     "back": "Back",
-    "done": "Done"
+    "done": "Done",
+    "save": "Save",
+    "create": "Create",
+    "delete": "Delete",
+    "unknown": "Unknown"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -126,7 +130,8 @@
     "templates": "Templates",
     "reports": "Reports",
     "menu": "Menu",
-    "logout": "Logout"
+    "logout": "Logout",
+    "leagues": "Leagues"
   },
   "headings": {
     "activeTournaments": "Active Tournaments",
@@ -352,7 +357,10 @@
     "create": "Create",
     "rake": "Rake",
     "save": "Save",
-    "saveFailed": "Failed to save tournament. Please try again."
+    "saveFailed": "Failed to save tournament. Please try again.",
+    "league": "League",
+    "leagueNone": "No league",
+    "leagueHelp": "Optionally attach this tournament to a league (used by 'tagged' leagues)."
   },
   "reports": {
     "title": "Club Statistics",
@@ -947,5 +955,77 @@
     "knockouts": "KOs",
     "collected": "Collected",
     "knockedOut": "knocked out"
+  },
+  "leagues": {
+    "title": "Leagues",
+    "subtitle": "Custom points formulas and seasons for your club's leaderboards.",
+    "new": "New league",
+    "newTitle": "New league",
+    "editTitle": "Edit league",
+    "default": "Default",
+    "manage": "Manage leagues",
+    "viewLabel": "League view",
+    "defaultView": "Default (by period)",
+    "period": "Period",
+    "periodStart": "Start date",
+    "periodEnd": "End date",
+    "allTime": "All time",
+    "allResults": "All",
+    "from": "From",
+    "until": "Until",
+    "deleteConfirm": "Delete the league \"{name}\"? This cannot be undone.",
+    "empty": {
+      "title": "No leagues yet",
+      "text": "Create a league to run a custom points formula or a season-based leaderboard."
+    },
+    "fields": {
+      "name": "Name",
+      "namePlaceholder": "e.g. Winter Season 2026",
+      "isDefault": "Default league",
+      "isDefaultHint": "Shown first and used as the club's primary ranking."
+    },
+    "formula": {
+      "title": "Scoring formula",
+      "basePoints": "Base points",
+      "fieldMultiplier": "Field multiplier",
+      "buyinMultiplier": "Buy-in multiplier",
+      "positionCurve": "Position curve",
+      "minPlayers": "Min players",
+      "cap": "Points cap",
+      "bestN": "Best N results"
+    },
+    "curve": {
+      "sqrt": "Square root",
+      "harmonic": "Harmonic",
+      "linear": "Linear"
+    },
+    "membership": {
+      "title": "Membership",
+      "mode": "Tournaments counted",
+      "allInPeriod": "All in period",
+      "tagged": "Tagged only",
+      "allInPeriodHint": "Every club tournament within the period counts.",
+      "taggedHint": "Only tournaments explicitly linked to this league count."
+    },
+    "preview": {
+      "title": "Live preview",
+      "caption": "Points for a 20-player €50 event.",
+      "finish": "Finish",
+      "points": "Points",
+      "note": "Computed by the backend from the formula above.",
+      "rankSuffix": "th"
+    },
+    "adjustments": {
+      "title": "Adjustments",
+      "modalTitle": "Adjustments — {name}",
+      "player": "Player",
+      "selectPlayer": "Select a player",
+      "delta": "Points",
+      "reason": "Reason",
+      "reasonPlaceholder": "e.g. Manual correction",
+      "add": "Add adjustment",
+      "history": "History",
+      "none": "No adjustments yet."
+    }
   }
 }

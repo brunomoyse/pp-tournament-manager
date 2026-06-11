@@ -1,0 +1,32 @@
+mutation CreateLeaderboardConfig($input: CreateLeaderboardConfigInput!) {
+  createLeaderboardConfig(input: $input) {
+    id
+    name
+    isDefault
+  }
+}
+
+mutation UpdateLeaderboardConfig($input: UpdateLeaderboardConfigInput!) {
+  updateLeaderboardConfig(input: $input) {
+    id
+    name
+    isDefault
+  }
+}
+
+mutation DeleteLeaderboardConfig($id: ID!) {
+  deleteLeaderboardConfig(id: $id)
+}
+
+mutation AddLeaderboardAdjustment($input: AddLeaderboardAdjustmentInput!) {
+  addLeaderboardAdjustment(input: $input) {
+    id
+    pointsDelta
+    reason
+    createdAt
+  }
+}
+
+mutation RemoveLeaderboardAdjustment($id: ID!, $configId: ID!) {
+  removeLeaderboardAdjustment(id: $id, configId: $configId)
+}

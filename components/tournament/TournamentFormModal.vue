@@ -215,6 +215,16 @@
           </p>
           <p v-else class="tournament-form-help">{{ t('tournament.bountyAmountHelp') }}</p>
         </div>
+
+        <!-- League (configurable leaderboard) -->
+        <div v-if="leagues.length" class="tournament-form-field">
+          <label class="pp-label">{{ t('tournament.league') }}</label>
+          <select v-model="form.leaderboardConfigId" class="pp-select">
+            <option :value="null">{{ t('tournament.leagueNone') }}</option>
+            <option v-for="lg in leagues" :key="lg.id" :value="lg.id">{{ lg.name }}</option>
+          </select>
+          <p class="tournament-form-help">{{ t('tournament.leagueHelp') }}</p>
+        </div>
       </div>
 
       <!-- Blind Structure Template Section -->
@@ -323,9 +333,24 @@ const fetchTemplates = async () => {
   }
 }
 
+// Fetch the club's leagues (configurable leaderboards) for the optional selector.
+const leagues = ref<{ id: string; name: string }[]>([])
+
+const fetchLeagues = async () => {
+  const clubId = clubStore.club?.id
+  if (!clubId) return
+  try {
+    const { leaderboardConfigs } = await GqlGetLeaderboardConfigs({ clubId })
+    leagues.value = (leaderboardConfigs || []).map((c) => ({ id: c.id, name: c.name }))
+  } catch (error) {
+    console.error('Failed to fetch leagues:', error)
+  }
+}
+
 // Fetch templates on component mount
 onMounted(() => {
   fetchTemplates()
+  fetchLeagues()
 })
 
 // Computed to get selected template details
@@ -351,6 +376,7 @@ const form = ref<TournamentFormData>({
   lateRegistrationLevel: null,
   bountyType: 'NONE',
   bountyAmountCents: null,
+  leaderboardConfigId: null,
   templateId: '',
 })
 
@@ -449,6 +475,7 @@ watch(
         lateRegistrationLevel: props.tournament.lateRegistrationLevel ?? null,
         bountyType: props.tournament.bountyType ?? 'NONE',
         bountyAmountCents: props.tournament.bountyAmountCents ?? null,
+        leaderboardConfigId: props.tournament.leaderboardConfigId ?? null,
         templateId: templates.value[0]?.id ?? '',
       }
     } else if (isOpen && props.mode === 'create') {
@@ -469,6 +496,7 @@ watch(
         lateRegistrationLevel: null,
         bountyType: 'NONE',
         bountyAmountCents: null,
+        leaderboardConfigId: null,
         templateId: templates.value[0]?.id ?? '',
       }
     }
@@ -502,6 +530,7 @@ const handleSubmit = async () => {
           bountyType: form.value.bountyType,
           bountyAmountCents:
             form.value.bountyType === 'NONE' ? 0 : (form.value.bountyAmountCents ?? 0),
+          leaderboardConfigId: form.value.leaderboardConfigId || undefined,
           templateId: form.value.templateId,
         },
       })
@@ -526,6 +555,7 @@ const handleSubmit = async () => {
           bountyType: form.value.bountyType,
           bountyAmountCents:
             form.value.bountyType === 'NONE' ? 0 : (form.value.bountyAmountCents ?? 0),
+          leaderboardConfigId: form.value.leaderboardConfigId || undefined,
           templateId: form.value.templateId,
         },
       })
