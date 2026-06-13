@@ -1084,5 +1084,9 @@
     "BREAK": "Break",
     "FINAL_TABLE": "Final table",
     "FINISHED": "Finished"
+  },
+  "legal": {
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy"
   }
 }

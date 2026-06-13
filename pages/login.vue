@@ -174,6 +174,18 @@
               }}</NuxtLink>
             </p>
           </PpFadeUp>
+
+          <PpFadeUp :delay="0.44">
+            <p class="legal-links">
+              <a :href="legalUrls.terms" target="_blank" rel="noopener" class="legal-link">{{
+                t('legal.termsOfService')
+              }}</a>
+              <span aria-hidden="true">·</span>
+              <a :href="legalUrls.privacy" target="_blank" rel="noopener" class="legal-link">{{
+                t('legal.privacyPolicy')
+              }}</a>
+            </p>
+          </PpFadeUp>
         </form>
       </div>
     </PpFadeUp>
@@ -208,6 +220,16 @@ watch(
   },
   { immediate: true },
 )
+
+// Legal pages live on the marketing site (hash routes). Override the base per
+// environment via NUXT_PUBLIC_LANDING_URL; defaults to the public site.
+const landingBase =
+  ((useRuntimeConfig().public as Record<string, unknown>).landingUrl as string | undefined) ??
+  'https://pocketpair.be'
+const legalUrls = {
+  terms: `${landingBase}/#/terms`,
+  privacy: `${landingBase}/#/privacy`,
+}
 
 const email = ref('')
 const password = ref('')
@@ -570,5 +592,23 @@ input:-webkit-autofill:focus {
 
 .signup-link:hover {
   color: var(--color-pp-gold-strong);
+}
+
+.legal-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-pp-text-dim);
+}
+
+.legal-link {
+  color: var(--color-pp-text-muted);
+  transition: color 0.15s ease;
+}
+
+.legal-link:hover {
+  color: var(--color-pp-text);
 }
 </style>
