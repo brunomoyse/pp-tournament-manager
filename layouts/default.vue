@@ -57,7 +57,7 @@
             <div class="user-name-wrapper">
               <div class="user-name">{{ userName }}</div>
             </div>
-            <button @click="handleLogout" class="logout-button">
+            <button @click="handleLogout" class="logout-button" :aria-label="t('nav.logout')">
               <IonIcon :icon="logOutOutline" class="icon-sm" />
             </button>
           </div>
@@ -66,7 +66,7 @@
     </aside>
 
     <!-- Hamburger button (fixed, z-30 to sit above Ionic's ion-page z-0) -->
-    <button @click="drawerOpen = true" class="hamburger-button">
+    <button @click="drawerOpen = true" class="hamburger-button" :aria-label="t('nav.menu')">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="hamburger-icon"
@@ -494,11 +494,12 @@ onMounted(async () => {
 /* Hamburger Button */
 .hamburger-button {
   position: fixed;
-  top: 0.75rem;
+  /* Clear the status bar / notch on iPad + iPhone (Capacitor webview). */
+  top: calc(0.75rem + env(safe-area-inset-top));
   left: 1rem;
   z-index: 30;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: 0.75rem;
   background-color: var(--color-pp-surface-2);
   border: 1px solid var(--color-pp-border-strong);
@@ -535,9 +536,10 @@ onMounted(async () => {
   }
 }
 
-/* Push ion-content down so page content clears the fixed hamburger button */
+/* Push ion-content down so page content clears the fixed hamburger button
+   (0.75rem top + 2.75rem button) plus the top safe-area inset. */
 .pp-main :deep(ion-content) {
-  --padding-top: 52px;
+  --padding-top: calc(56px + env(safe-area-inset-top));
 }
 
 /* Bottom Tab Bar */

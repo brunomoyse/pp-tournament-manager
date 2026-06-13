@@ -49,7 +49,15 @@
             'table-card__seat',
             getSeatPlayer(seatNumber) ? 'table-card__seat--occupied' : 'table-card__seat--empty',
           ]"
+          role="button"
+          tabindex="0"
+          :aria-label="
+            getSeatPlayer(seatNumber)
+              ? `${t('labels.seat')} ${seatNumber}, ${getPlayerDisplayName(getSeatPlayer(seatNumber))}`
+              : t('labels.emptySeat', { number: seatNumber })
+          "
           @click="handleSeatClick(seatNumber)"
+          @keydown.enter.space.prevent="handleSeatClick(seatNumber)"
         >
           {{ seatNumber }}
         </div>

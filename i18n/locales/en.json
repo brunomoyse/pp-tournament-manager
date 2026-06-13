@@ -181,6 +181,7 @@
     "seatsOccupied": "seats occupied",
     "seatedPlayers": "Seated Players:",
     "seat": "Seat",
+    "emptySeat": "Seat {number}, empty",
     "activeTables": "Active Tables",
     "minutes": "minutes",
     "noLocation": "No location",

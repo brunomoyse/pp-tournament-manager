@@ -181,6 +181,7 @@
     "seatsOccupied": "places occupées",
     "seatedPlayers": "Joueurs assis :",
     "seat": "Siège",
+    "emptySeat": "Siège {number}, vide",
     "activeTables": "Tables actives",
     "minutes": "minutes",
     "noLocation": "Aucun lieu",

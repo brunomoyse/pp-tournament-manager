@@ -181,6 +181,7 @@
     "seatsOccupied": "plaatsen bezet",
     "seatedPlayers": "Gezeten spelers:",
     "seat": "Stoel",
+    "emptySeat": "Stoel {number}, leeg",
     "activeTables": "Actieve tafels",
     "minutes": "minuten",
     "noLocation": "Geen locatie",

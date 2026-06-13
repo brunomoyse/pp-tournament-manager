@@ -138,7 +138,12 @@
 
             <!-- More Actions Dropdown -->
             <div class="dropdown-wrapper">
-              <button @click="toggleMenu(player.id)" class="menu-button">
+              <button
+                @click="toggleMenu(player.id)"
+                class="menu-button"
+                :aria-label="t('labels.actions')"
+                :aria-expanded="openMenuId === player.id"
+              >
                 <IonIcon :icon="ellipsisVerticalOutline" class="icon-md" />
               </button>
               <div v-if="openMenuId === player.id" class="dropdown-menu">

@@ -32,12 +32,13 @@
               v-model="searchQuery"
               type="text"
               :placeholder="t('tournaments.search')"
+              :aria-label="t('tournaments.search')"
               class="search-input"
             />
           </div>
 
           <!-- Status Filter -->
-          <select v-model="statusFilter" class="status-filter">
+          <select v-model="statusFilter" class="status-filter" :aria-label="t('labels.status')">
             <option value="">{{ t('tournaments.all') }}</option>
             <option value="UPCOMING">{{ t('tournaments.upcoming') }}</option>
             <option value="IN_PROGRESS">{{ t('tournaments.inProgress') }}</option>

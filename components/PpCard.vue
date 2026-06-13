@@ -48,6 +48,17 @@ function onLeave(e: PointerEvent) {
   el.style.removeProperty('--pp-mx')
   el.style.removeProperty('--pp-my')
 }
+
+// Keyboard parity for interactive cards: Enter/Space activate the same way a
+// click does. Synthesizing a native click fires whatever @click the consumer
+// attached (fallthrough), so callers need no extra wiring.
+function onKeydown(e: KeyboardEvent) {
+  if (!props.interactive) return
+  if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+    e.preventDefault()
+    ;(e.currentTarget as HTMLElement).click()
+  }
+}
 </script>
 
 <template>
@@ -55,8 +66,11 @@ function onLeave(e: PointerEvent) {
     :is="as"
     class="pp-card ppc"
     :class="[paddingClass, { 'is-interactive': interactive }]"
+    :role="interactive ? 'button' : undefined"
+    :tabindex="interactive ? 0 : undefined"
     @pointermove="onMove"
     @pointerleave="onLeave"
+    @keydown="onKeydown"
   >
     <slot />
   </component>

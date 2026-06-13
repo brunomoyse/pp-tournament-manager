@@ -194,6 +194,9 @@ onBeforeUnmount(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  /* 44pt minimum tap target (icon stays 1.25rem; the box grows around it). */
+  min-width: 44px;
+  min-height: 44px;
   padding: 0.4rem;
   border-radius: 9999px;
   color: var(--color-pp-text-muted);

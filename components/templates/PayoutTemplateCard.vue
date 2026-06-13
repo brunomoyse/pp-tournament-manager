@@ -1,7 +1,15 @@
 <template>
   <div class="template-card">
     <!-- Card Header -->
-    <div class="card-header" @click="expanded = !expanded">
+    <div
+      class="card-header"
+      role="button"
+      tabindex="0"
+      :aria-expanded="expanded"
+      :aria-label="template.name"
+      @click="expanded = !expanded"
+      @keydown.enter.space.prevent="expanded = !expanded"
+    >
       <div class="card-header-left">
         <h3 class="card-title">{{ template.name }}</h3>
         <div class="card-meta">
