@@ -16,4 +16,12 @@ export default defineNuxtPlugin(({ vueApp }) => {
   })
 
   vueApp.use(i18n)
+
+  // Expose the instance so non-setup contexts (e.g. the global GraphQL error
+  // handler plugin) can translate via `useNuxtApp().$i18n.global.t(...)`.
+  return {
+    provide: {
+      i18n,
+    },
+  }
 })

@@ -2,6 +2,16 @@ import { useAuthStore } from '~/stores/useAuthStore'
 
 export default defineNuxtPlugin(() => {
   const router = useRouter()
+  const nuxtApp = useNuxtApp()
+  const toast = useToast()
+
+  // Translate via the i18n instance the i18n plugin provides. Resolved lazily
+  // (at error time) so it's populated regardless of plugin load order; falls
+  // back to the raw key if i18n isn't ready.
+  const translate = (key: string) => {
+    const t = nuxtApp.$i18n?.global?.t
+    return typeof t === 'function' ? t(key) : key
+  }
 
   // Set up global GraphQL error handler
   useGqlError((err: any) => {
@@ -41,6 +51,13 @@ export default defineNuxtPlugin(() => {
         // The failed request won't be retried automatically —
         // the user/component will need to re-trigger the operation.
       })
+      return
     }
+
+    // Non-auth failure (server error, network drop, validation): surface a
+    // toast instead of failing silently so the user knows the action didn't go
+    // through. A generic message avoids leaking backend internals.
+    console.error('[gql] request failed', err)
+    toast.error(translate('error.boundary.defaultMessage'))
   })
 })

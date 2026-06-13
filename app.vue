@@ -1,5 +1,6 @@
 <template>
   <IonApp class="pp-app">
+    <PpConnectionBanner />
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
