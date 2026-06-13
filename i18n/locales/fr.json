@@ -439,6 +439,8 @@
     "archiveFailed": "Échec de l'archivage du joueur. Veuillez réessayer.",
     "archiveConfirmTitle": "Archiver le joueur ?",
     "archiveConfirmMessage": "Voulez-vous vraiment archiver {name} ? Il sera masqué de la liste, mais son historique de tournois est conservé.",
+    "cancelRegisterTitle": "Retirer l'inscription ?",
+    "cancelRegisterMessage": "Voulez-vous vraiment retirer {name} de ce tournoi ? Cela annule son inscription.",
     "import": {
       "button": "Importer",
       "title": "Importer des joueurs",
@@ -606,6 +608,7 @@
     "checkInSuccessEntryFailed": "Joueur validé, mais l'enregistrement de l'entrée a échoué.",
     "cancelSuccess": "Inscription annulée.",
     "cancelFailed": "Échec de l'annulation de l'inscription.",
+    "levelChangeFailed": "Échec du changement de niveau. Veuillez réessayer.",
     "promoteSuccess": "Joueur promu depuis la file d'attente.",
     "noTablesAssigned": "Impossible de démarrer le tournoi : aucune table n'est assignée. Veuillez d'abord assigner des tables.",
     "checkInNoSeat": "Joueur validé mais aucun siège disponible. Veuillez assigner un siège manuellement.",
@@ -713,7 +716,18 @@
   "clock": {
     "startConfirmTitle": "Démarrer le tournoi",
     "startConfirmMessage": "Le tournoi n'a pas encore commencé. Démarrer la clock ouvrira les inscriptions tardives et lancera le tournoi. Continuer ?",
-    "startConfirm": "Démarrer"
+    "startConfirm": "Démarrer",
+    "advanceConfirmTitle": "Passer au niveau suivant ?",
+    "advanceConfirmMessage": "L'horloge avancera au niveau de blinds suivant pour tout le monde. Continuer ?",
+    "revertConfirmTitle": "Revenir au niveau précédent ?",
+    "revertConfirmMessage": "L'horloge reviendra au niveau de blinds précédent pour tout le monde. Continuer ?"
+  },
+  "celebration": {
+    "eyebrow": "C'est dans la boîte",
+    "completeTitle": "Tournoi terminé",
+    "completeSubtitle": "Les résultats finaux sont là. Bien joué.",
+    "champion": "Champion",
+    "viewResults": "Voir les résultats"
   },
   "warnings": {
     "noTablesLinked": "Aucune table liée au tournoi",

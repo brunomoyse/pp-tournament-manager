@@ -239,6 +239,13 @@
           @closed="onFlightClosed"
         />
 
+        <!-- Tournament-complete celebration (fires once on the FINISHED transition) -->
+        <TournamentCompleteCelebration
+          :open="showCompletionCelebration"
+          :tournament-title="tournament?.title"
+          @close="showCompletionCelebration = false"
+        />
+
         <!-- Seating Tab -->
         <Transition name="tab-fade" mode="out-in">
           <div v-if="activeTab === 'seating'" key="seating">
@@ -376,6 +383,19 @@ const cashReportCard = ref()
 
 // Use store getters for reactive data
 const tournament = computed(() => tournamentStore.tournament)
+
+// Celebrate the moment a tournament finishes. Only on a live transition into
+// FINISHED (prev defined & not already finished) — navigating to an
+// already-finished tournament shouldn't re-pop the celebration.
+const showCompletionCelebration = ref(false)
+watch(
+  () => tournament.value?.liveStatus,
+  (status, prev) => {
+    if (status === 'FINISHED' && prev && prev !== 'FINISHED') {
+      showCompletionCelebration.value = true
+    }
+  },
+)
 const isPko = computed(() => (tournament.value?.bountyType ?? 'NONE') !== 'NONE')
 const clock = computed(() => tournamentStore.clock)
 const club = computed(() => clubStore.club)

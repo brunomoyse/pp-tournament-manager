@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, onBeforeUnmount } from 'vue'
+import { watch, onBeforeUnmount, ref, nextTick } from 'vue'
 import { IonIcon } from '@ionic/vue'
 import { closeOutline } from 'ionicons/icons'
 
@@ -27,12 +27,48 @@ const props = withDefaults(
 
 const emit = defineEmits<{ close: [] }>()
 
+const panelRef = ref<HTMLElement | null>(null)
+let previouslyFocused: HTMLElement | null = null
+
 const onBackdrop = () => {
   if (props.closeOnBackdrop) emit('close')
 }
 
+// Visible, enabled, focusable descendants of the panel.
+const focusable = (): HTMLElement[] => {
+  if (!panelRef.value) return []
+  const selector =
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  return Array.from(panelRef.value.querySelectorAll<HTMLElement>(selector)).filter(
+    (el) => el.offsetParent !== null,
+  )
+}
+
 const onKeydown = (e: KeyboardEvent) => {
-  if (e.key === 'Escape' && props.open) emit('close')
+  if (!props.open) return
+  if (e.key === 'Escape') {
+    emit('close')
+    return
+  }
+  // Trap Tab so keyboard / screen-reader focus stays within the dialog.
+  if (e.key === 'Tab') {
+    const items = focusable()
+    if (items.length === 0) {
+      e.preventDefault()
+      panelRef.value?.focus()
+      return
+    }
+    const first = items[0]
+    const last = items[items.length - 1]
+    const active = document.activeElement as HTMLElement | null
+    if (e.shiftKey && active === first) {
+      e.preventDefault()
+      last.focus()
+    } else if (!e.shiftKey && active === last) {
+      e.preventDefault()
+      first.focus()
+    }
+  }
 }
 
 watch(
@@ -40,11 +76,20 @@ watch(
   (open) => {
     if (typeof document === 'undefined') return
     if (open) {
+      previouslyFocused = document.activeElement as HTMLElement | null
       document.addEventListener('keydown', onKeydown)
       document.body.style.overflow = 'hidden'
+      // Move focus into the dialog once it's rendered.
+      void nextTick(() => {
+        const items = focusable()
+        ;(items[0] ?? panelRef.value)?.focus()
+      })
     } else {
       document.removeEventListener('keydown', onKeydown)
       document.body.style.overflow = ''
+      // Return focus to whatever opened the modal.
+      previouslyFocused?.focus()
+      previouslyFocused = null
     }
   },
 )
@@ -61,7 +106,7 @@ onBeforeUnmount(() => {
     <Transition name="pp-modal">
       <div v-if="open" class="pp-modal-overlay" role="dialog" aria-modal="true">
         <div class="pp-modal-backdrop" @click="onBackdrop" />
-        <div class="pp-modal-panel" :class="`pp-modal-panel--${size}`">
+        <div ref="panelRef" tabindex="-1" class="pp-modal-panel" :class="`pp-modal-panel--${size}`">
           <header v-if="title || $slots.header" class="pp-modal-header">
             <slot name="header">
               <h3 class="pp-modal-title">{{ title }}</h3>

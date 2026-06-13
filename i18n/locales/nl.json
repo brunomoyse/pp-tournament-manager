@@ -439,6 +439,8 @@
     "archiveFailed": "Archiveren van speler mislukt. Probeer opnieuw.",
     "archiveConfirmTitle": "Speler archiveren?",
     "archiveConfirmMessage": "Weet je zeker dat je {name} wilt archiveren? De speler wordt verborgen van de lijst, maar de toernooigeschiedenis blijft behouden.",
+    "cancelRegisterTitle": "Inschrijving verwijderen?",
+    "cancelRegisterMessage": "Weet je zeker dat je {name} uit dit toernooi wilt verwijderen? Dit annuleert de inschrijving.",
     "import": {
       "button": "Importeren",
       "title": "Spelers importeren",
@@ -606,6 +608,7 @@
     "checkInSuccessEntryFailed": "Speler ingecheckt, maar inschrijving registreren mislukt.",
     "cancelSuccess": "Registratie geannuleerd.",
     "cancelFailed": "Registratie annuleren mislukt.",
+    "levelChangeFailed": "Niveau wijzigen mislukt. Probeer het opnieuw.",
     "promoteSuccess": "Speler gepromoveerd van de wachtlijst.",
     "noTablesAssigned": "Kan het toernooi niet starten: er zijn geen tafels toegewezen. Wijs eerst tafels toe.",
     "checkInNoSeat": "Speler ingecheckt maar geen stoel beschikbaar. Wijs handmatig een stoel toe.",
@@ -713,7 +716,18 @@
   "clock": {
     "startConfirmTitle": "Toernooi starten",
     "startConfirmMessage": "Het toernooi is nog niet begonnen. De klok starten opent late inschrijving en start het toernooi. Doorgaan?",
-    "startConfirm": "Starten"
+    "startConfirm": "Starten",
+    "advanceConfirmTitle": "Naar volgend niveau?",
+    "advanceConfirmMessage": "Hiermee gaat de klok voor iedereen naar het volgende blindniveau. Doorgaan?",
+    "revertConfirmTitle": "Terug naar vorig niveau?",
+    "revertConfirmMessage": "Hiermee gaat de klok voor iedereen terug naar het vorige blindniveau. Doorgaan?"
+  },
+  "celebration": {
+    "eyebrow": "Dat zit erop",
+    "completeTitle": "Toernooi voltooid",
+    "completeSubtitle": "De eindresultaten zijn binnen. Goed gespeeld.",
+    "champion": "Kampioen",
+    "viewResults": "Resultaten bekijken"
   },
   "warnings": {
     "noTablesLinked": "Geen tafels gekoppeld aan het toernooi",

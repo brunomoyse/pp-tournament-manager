@@ -92,19 +92,16 @@
         </PpStagger>
 
         <!-- Empty State -->
-        <div v-else class="empty-state">
-          <div class="empty-icon-wrapper">
-            <IonIcon :icon="trophyOutline" class="empty-icon" />
-          </div>
-          <h4 class="empty-title">{{ t('tournaments.noTournaments') }}</h4>
-          <p class="empty-text">
-            {{
-              searchQuery || statusFilter
-                ? t('tournaments.tryDifferentFilter')
-                : t('tournaments.createFirst')
-            }}
-          </p>
-        </div>
+        <PpEmptyState
+          v-else
+          :icon="trophyOutline"
+          :title="t('tournaments.noTournaments')"
+          :description="
+            searchQuery || statusFilter
+              ? t('tournaments.tryDifferentFilter')
+              : t('tournaments.createFirst')
+          "
+        />
       </div>
     </IonContent>
 
@@ -468,37 +465,4 @@ select option {
 }
 
 /* Empty State */
-.empty-state {
-  text-align: center;
-  padding: 5rem 0;
-}
-
-.empty-icon-wrapper {
-  width: 5rem;
-  height: 5rem;
-  background-color: var(--color-pp-surface-2);
-  border-radius: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1.5rem;
-  border: 1px solid var(--color-pp-border-strong);
-}
-
-.empty-icon {
-  width: 2.5rem;
-  height: 2.5rem;
-  color: rgba(255, 255, 255, 0.3);
-}
-
-.empty-title {
-  font-size: 1.125rem;
-  font-weight: 500;
-  color: #ffffff;
-  margin-bottom: 0.5rem;
-}
-
-.empty-text {
-  color: rgba(255, 255, 255, 0.6);
-}
 </style>

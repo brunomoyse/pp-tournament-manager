@@ -142,7 +142,7 @@
         <!-- Secondary Controls -->
         <div class="clock-card__secondary-controls">
           <button
-            @click="revertLevel"
+            @click="requestRevertLevel"
             :disabled="isReverting"
             class="pp-action-button pp-action-button--secondary clock-card__secondary-button"
           >
@@ -162,7 +162,7 @@
           </button>
 
           <button
-            @click="advanceLevel"
+            @click="requestAdvanceLevel"
             :disabled="isAdvancing"
             class="pp-action-button pp-action-button--secondary clock-card__secondary-button"
           >
@@ -198,6 +198,36 @@
         </PpButton>
         <PpButton :disabled="isStarting" :loading="isStarting" @click="confirmStartTournament">
           {{ t('clock.startConfirm') }}
+        </PpButton>
+      </template>
+    </PpModal>
+
+    <!-- Advance / Revert Level Confirmation Dialog -->
+    <PpModal
+      :open="!!levelConfirm"
+      size="sm"
+      :title="
+        levelConfirm === 'advance' ? t('clock.advanceConfirmTitle') : t('clock.revertConfirmTitle')
+      "
+      @close="levelConfirm = null"
+    >
+      <p class="clock-card__confirm-message">
+        {{
+          levelConfirm === 'advance'
+            ? t('clock.advanceConfirmMessage')
+            : t('clock.revertConfirmMessage')
+        }}
+      </p>
+      <template #footer>
+        <PpButton variant="secondary" @click="levelConfirm = null">
+          {{ t('buttons.cancel') }}
+        </PpButton>
+        <PpButton
+          :disabled="isAdvancing || isReverting"
+          :loading="isAdvancing || isReverting"
+          @click="confirmLevelChange"
+        >
+          {{ t('buttons.confirm') }}
         </PpButton>
       </template>
     </PpModal>
@@ -471,6 +501,23 @@ const resumeClock = async () => {
   }
 }
 
+// Manual level changes are consequential mid-tournament, so confirm before mutating
+// (Agency: double-check destructive/disruptive actions). A single dialog serves both
+// directions via `levelConfirm`.
+const levelConfirm = ref<'advance' | 'revert' | null>(null)
+const requestAdvanceLevel = () => {
+  levelConfirm.value = 'advance'
+}
+const requestRevertLevel = () => {
+  levelConfirm.value = 'revert'
+}
+const confirmLevelChange = async () => {
+  const direction = levelConfirm.value
+  if (direction === 'advance') await advanceLevel()
+  else if (direction === 'revert') await revertLevel()
+  levelConfirm.value = null
+}
+
 const advanceLevel = async () => {
   isAdvancing.value = true
   try {
@@ -480,6 +527,7 @@ const advanceLevel = async () => {
     }
   } catch (error) {
     console.error('Failed to advance level:', error)
+    toast.error(t('toast.levelChangeFailed'))
   } finally {
     isAdvancing.value = false
   }
@@ -494,6 +542,7 @@ const revertLevel = async () => {
     }
   } catch (error) {
     console.error('Failed to revert level:', error)
+    toast.error(t('toast.levelChangeFailed'))
   } finally {
     isReverting.value = false
   }

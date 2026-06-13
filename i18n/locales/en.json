@@ -439,6 +439,8 @@
     "archiveFailed": "Failed to archive player. Please try again.",
     "archiveConfirmTitle": "Archive player?",
     "archiveConfirmMessage": "Are you sure you want to archive {name}? They'll be hidden from the roster but their tournament history is kept.",
+    "cancelRegisterTitle": "Remove registration?",
+    "cancelRegisterMessage": "Are you sure you want to remove {name} from this tournament? This cancels their registration.",
     "import": {
       "button": "Import",
       "title": "Import players",
@@ -606,6 +608,7 @@
     "checkInSuccessEntryFailed": "Player checked in, but entry recording failed.",
     "cancelSuccess": "Registration cancelled.",
     "cancelFailed": "Failed to cancel registration.",
+    "levelChangeFailed": "Failed to change the level. Please try again.",
     "promoteSuccess": "Player promoted from waitlist.",
     "noTablesAssigned": "Cannot start the tournament: no tables are assigned. Please assign tables first.",
     "checkInNoSeat": "Player checked in but no seat available. Please assign a seat manually.",
@@ -713,7 +716,18 @@
   "clock": {
     "startConfirmTitle": "Start Tournament",
     "startConfirmMessage": "The tournament has not started yet. Starting the clock will open late registration and begin the tournament. Continue?",
-    "startConfirm": "Start"
+    "startConfirm": "Start",
+    "advanceConfirmTitle": "Advance to next level?",
+    "advanceConfirmMessage": "This moves the clock forward to the next blind level for everyone. Continue?",
+    "revertConfirmTitle": "Revert to previous level?",
+    "revertConfirmMessage": "This moves the clock back to the previous blind level for everyone. Continue?"
+  },
+  "celebration": {
+    "eyebrow": "That's a wrap",
+    "completeTitle": "Tournament complete",
+    "completeSubtitle": "The final results are in. Well played.",
+    "champion": "Champion",
+    "viewResults": "View results"
   },
   "warnings": {
     "noTablesLinked": "No tables linked to this tournament",

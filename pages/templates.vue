@@ -50,14 +50,19 @@
           </div>
 
           <!-- Empty State -->
-          <div v-else-if="filteredPayoutTemplates.length === 0" class="centered-state">
-            <h4 class="empty-title">{{ t('templates.noPayoutTemplates') }}</h4>
-            <p class="empty-text">{{ t('templates.createFirstPayout') }}</p>
-            <PpButton v-if="isAdmin" @click="openPayoutCreate">
-              <IonIcon :icon="addOutline" class="icon-md" />
-              {{ t('templates.addPayoutTemplate') }}
-            </PpButton>
-          </div>
+          <PpEmptyState
+            v-else-if="filteredPayoutTemplates.length === 0"
+            :icon="trophyOutline"
+            :title="t('templates.noPayoutTemplates')"
+            :description="t('templates.createFirstPayout')"
+          >
+            <template v-if="isAdmin" #action>
+              <PpButton @click="openPayoutCreate">
+                <IonIcon :icon="addOutline" class="icon-md" />
+                {{ t('templates.addPayoutTemplate') }}
+              </PpButton>
+            </template>
+          </PpEmptyState>
 
           <!-- Card Grid -->
           <div v-else class="card-grid">
@@ -99,14 +104,19 @@
           </div>
 
           <!-- Empty State -->
-          <div v-else-if="filteredBlindTemplates.length === 0" class="centered-state">
-            <h4 class="empty-title">{{ t('templates.noBlindStructures') }}</h4>
-            <p class="empty-text">{{ t('templates.createFirstBlind') }}</p>
-            <PpButton v-if="isAdmin" @click="openBlindCreate">
-              <IonIcon :icon="addOutline" class="icon-md" />
-              {{ t('templates.addBlindStructure') }}
-            </PpButton>
-          </div>
+          <PpEmptyState
+            v-else-if="filteredBlindTemplates.length === 0"
+            :icon="layersOutline"
+            :title="t('templates.noBlindStructures')"
+            :description="t('templates.createFirstBlind')"
+          >
+            <template v-if="isAdmin" #action>
+              <PpButton @click="openBlindCreate">
+                <IonIcon :icon="addOutline" class="icon-md" />
+                {{ t('templates.addBlindStructure') }}
+              </PpButton>
+            </template>
+          </PpEmptyState>
 
           <!-- Card Grid -->
           <div v-else class="card-grid">
@@ -161,7 +171,7 @@ definePageMeta({
 })
 
 import { IonPage, IonContent, IonIcon } from '@ionic/vue'
-import { searchOutline, addOutline } from 'ionicons/icons'
+import { searchOutline, addOutline, trophyOutline, layersOutline } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 import { useAuthStore } from '~/stores/useAuthStore'
 import type { PayoutTemplate, BlindStructureTemplate } from '~/types/tournament'

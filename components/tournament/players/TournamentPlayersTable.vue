@@ -52,9 +52,9 @@
     </div>
 
     <!-- Players List -->
-    <div class="players-list">
+    <div class="players-list" role="table" :aria-label="t('tabs.players')">
       <!-- Column Headers -->
-      <div class="column-headers">
+      <div class="column-headers" role="row">
         <button
           @click="sortBy = sortBy === 'name' ? 'status' : 'name'"
           :class="['sort-button', sortBy === 'name' && 'sort-button--active']"
@@ -69,15 +69,15 @@
           {{ t('labels.tableSeat') }}
           <IonIcon :icon="swapVerticalOutline" class="icon-xs" />
         </button>
-        <span class="column-header--center">{{ t('labels.status') }}</span>
-        <span class="column-header--right">{{ t('labels.actions') }}</span>
+        <span role="columnheader" class="column-header--center">{{ t('labels.status') }}</span>
+        <span role="columnheader" class="column-header--right">{{ t('labels.actions') }}</span>
       </div>
 
       <!-- Player Rows -->
-      <div class="player-rows">
-        <div v-for="player in filteredPlayers" :key="player.id" class="player-row">
+      <div class="player-rows" role="rowgroup">
+        <div v-for="player in filteredPlayers" :key="player.id" class="player-row" role="row">
           <!-- Name Column -->
-          <div class="player-name-col">
+          <div class="player-name-col" role="cell">
             <div class="player-avatar">
               {{ getInitials(player.name) }}
             </div>
@@ -85,7 +85,7 @@
           </div>
 
           <!-- Table / Seat Column -->
-          <div class="table-seat-col">
+          <div class="table-seat-col" role="cell">
             <PpBadge v-if="player.tableNumber !== null" variant="gold">
               T{{ player.tableNumber }} / S{{ player.seatNumber }}
             </PpBadge>
@@ -103,14 +103,14 @@
           </div>
 
           <!-- Status Column -->
-          <div class="status-col">
+          <div class="status-col" role="cell">
             <PpBadge :variant="getRegistrationStatusVariant(player.status)">
               {{ getRegistrationStatusLabel(player.status, t) }}
             </PpBadge>
           </div>
 
           <!-- Actions Column -->
-          <div class="actions-col">
+          <div class="actions-col" role="cell">
             <!-- Check In Button -->
             <PpButton
               v-if="player.status === 'REGISTERED'"
@@ -143,7 +143,7 @@
               </button>
               <div v-if="openMenuId === player.id" class="dropdown-menu">
                 <button
-                  @click="cancelRegistration(player)"
+                  @click="requestCancelRegistration(player)"
                   :disabled="cancelling === player.id"
                   class="dropdown-item dropdown-item--danger"
                 >
@@ -159,6 +159,15 @@
         </div>
       </div>
     </div>
+
+    <!-- Cancel registration confirmation -->
+    <CancelRegistrationConfirmModal
+      :is-open="!!playerToCancel"
+      :player-name="playerToCancel?.name ?? ''"
+      :processing="cancelling === playerToCancel?.id"
+      @close="playerToCancel = null"
+      @confirmed="confirmCancelRegistration"
+    />
   </div>
 </template>
 
@@ -182,6 +191,7 @@ import {
   getRegistrationStatusVariant,
 } from '~/utils/registrationStatus'
 import { EntryType } from '~/types/enums'
+import CancelRegistrationConfirmModal from './CancelRegistrationConfirmModal.vue'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -210,6 +220,7 @@ const checkingInAll = ref(false)
 const checkInProgress = ref(0)
 const cancelling = ref<string | null>(null)
 const openMenuId = ref<string | null>(null)
+const playerToCancel = ref<{ id: string; name: string } | null>(null)
 
 const toggleMenu = (playerId: string) => {
   openMenuId.value = openMenuId.value === playerId ? null : playerId
@@ -501,9 +512,16 @@ const handleSeatPlayer = async (player: any) => {
   }
 }
 
-// Cancel/remove registration
-const cancelRegistration = async (player: any) => {
+// Cancel/remove registration — open the confirmation modal first (Agency: double-check
+// before a destructive action) instead of mutating straight from the dropdown.
+const requestCancelRegistration = (player: { id: string; name: string }) => {
   openMenuId.value = null
+  playerToCancel.value = { id: player.id, name: player.name }
+}
+
+const confirmCancelRegistration = async () => {
+  const player = playerToCancel.value
+  if (!player) return
   try {
     cancelling.value = player.id
     await GqlCancelRegistration({
@@ -515,6 +533,7 @@ const cancelRegistration = async (player: any) => {
     await refreshPlayers()
     toast.success(t('toast.cancelSuccess'))
     $emit('player-checked-in', { playerId: player.id, result: null })
+    playerToCancel.value = null
   } catch (error) {
     console.error('Failed to cancel registration:', error)
     toast.error(t('toast.cancelFailed'))
