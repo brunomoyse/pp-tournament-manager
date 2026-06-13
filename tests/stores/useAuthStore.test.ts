@@ -339,5 +339,37 @@ describe('useAuthStore', () => {
 
       expect(result).toBeNull()
     })
+
+    it('should share one in-flight refresh across concurrent callers (single-flight)', async () => {
+      const store = useAuthStore()
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ token: 'new-token' }),
+      })
+      global.fetch = fetchMock
+
+      // Two overlapping refreshes (e.g. the proactive timer firing mid-request)
+      // must rotate the cookie ONCE, not race each other into a sign-out.
+      const [a, b] = await Promise.all([store.refreshAccessToken(), store.refreshAccessToken()])
+
+      expect(a).toBe('new-token')
+      expect(b).toBe('new-token')
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+    })
+
+    it('should clear the in-flight guard so a later refresh runs again', async () => {
+      const store = useAuthStore()
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ token: 'new-token' }),
+      })
+      global.fetch = fetchMock
+
+      await store.refreshAccessToken()
+      await store.refreshAccessToken()
+
+      // Sequential (non-overlapping) calls each perform their own fetch.
+      expect(fetchMock).toHaveBeenCalledTimes(2)
+    })
   })
 })

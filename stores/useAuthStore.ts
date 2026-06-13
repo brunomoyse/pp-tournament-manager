@@ -44,6 +44,10 @@ export const useAuthStore = defineStore(
 
     // Token refresh timer
     let refreshTimerId: ReturnType<typeof setTimeout> | null = null
+    // Single-flight guard: concurrent 401s (or the refresh timer firing mid-
+    // request) must share one in-flight refresh. Parallel rotations would
+    // invalidate each other's refresh cookie and cascade into a forced sign-out.
+    let refreshInFlight: Promise<string | null> | null = null
 
     // Getters
     const isAuthenticated = computed(() => !!authToken.value && !!currentUser.value)
@@ -117,47 +121,53 @@ export const useAuthStore = defineStore(
     }
 
     const refreshAccessToken = async (): Promise<string | null> => {
-      try {
-        const config = useRuntimeConfig()
-        const baseUrl = config.public.authBaseUrl as string
+      if (refreshInFlight) return refreshInFlight
+      refreshInFlight = (async (): Promise<string | null> => {
+        try {
+          const config = useRuntimeConfig()
+          const baseUrl = config.public.authBaseUrl as string
 
-        const response = await fetch(`${baseUrl}/auth/refresh`, {
-          method: 'POST',
-          credentials: 'include',
-        })
+          const response = await fetch(`${baseUrl}/auth/refresh`, {
+            method: 'POST',
+            credentials: 'include',
+          })
 
-        if (!response.ok) {
-          return null
-        }
-
-        const data = await response.json()
-        const newToken = data.token
-
-        if (newToken) {
-          authToken.value = newToken
-
-          if (import.meta.client) {
-            useGqlToken(newToken)
-
-            // Update backup localStorage (remembered sessions only)
-            if (rememberMe.value) {
-              localStorage.setItem(
-                'auth-backup',
-                JSON.stringify({
-                  authToken: newToken,
-                  currentUser: currentUser.value,
-                }),
-              )
-            }
+          if (!response.ok) {
+            return null
           }
 
-          return newToken
-        }
+          const data = await response.json()
+          const newToken = data.token
 
-        return null
-      } catch {
-        return null
-      }
+          if (newToken) {
+            authToken.value = newToken
+
+            if (import.meta.client) {
+              useGqlToken(newToken)
+
+              // Update backup localStorage (remembered sessions only)
+              if (rememberMe.value) {
+                localStorage.setItem(
+                  'auth-backup',
+                  JSON.stringify({
+                    authToken: newToken,
+                    currentUser: currentUser.value,
+                  }),
+                )
+              }
+            }
+
+            return newToken
+          }
+
+          return null
+        } catch {
+          return null
+        } finally {
+          refreshInFlight = null
+        }
+      })()
+      return refreshInFlight
     }
 
     // Actions
