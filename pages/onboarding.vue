@@ -242,6 +242,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: false,
+  title: 'auth.createAccount',
 })
 
 import { ref, computed, watch } from 'vue'

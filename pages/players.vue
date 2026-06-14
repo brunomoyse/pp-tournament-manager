@@ -160,6 +160,7 @@
 <script setup lang="ts">
 definePageMeta({
   middleware: 'auth',
+  title: 'nav.players',
 })
 
 import { IonPage, IonContent, IonIcon } from '@ionic/vue'

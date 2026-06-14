@@ -71,6 +71,7 @@ import type { GetClubAnnouncementsQuery } from '#gql'
 
 definePageMeta({
   middleware: 'auth',
+  title: 'nav.announcements',
 })
 
 import { IonPage, IonContent, IonIcon, IonSpinner } from '@ionic/vue'

@@ -85,7 +85,7 @@ import { getRegistrationStatusLabel } from '~/utils/registrationStatus'
 // A printable paper document: light theme on purpose (ink on paper), distinct
 // from the dark app surface. No layout, no auth — fed by public queries so a
 // document can be printed from a fresh tab.
-definePageMeta({ layout: false })
+definePageMeta({ layout: false, title: 'nav.tournaments' })
 
 const { t, locale } = useI18n()
 const route = useRoute()

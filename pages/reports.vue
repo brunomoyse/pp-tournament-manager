@@ -291,6 +291,7 @@ import type { GetLeaderboardQuery } from '#gql'
 
 definePageMeta({
   middleware: 'auth',
+  title: 'nav.reports',
 })
 
 import { IonPage, IonContent, IonIcon, IonSpinner } from '@ionic/vue'

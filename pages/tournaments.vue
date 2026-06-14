@@ -130,6 +130,7 @@ import type { TournamentStatus } from '~/types/tournament'
 
 definePageMeta({
   middleware: 'auth',
+  title: 'nav.tournaments',
 })
 
 import { IonPage, IonContent, IonIcon, IonSpinner } from '@ionic/vue'

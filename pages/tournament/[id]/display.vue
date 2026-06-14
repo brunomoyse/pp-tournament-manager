@@ -131,7 +131,7 @@ import type { TournamentClock, TournamentStructure } from '~/types/clock'
 // Full-screen TV display. Deliberately public: every query used here
 // (tournament + structure, clock, payouts, entry stats) is unauthenticated,
 // so the page can run all evening on a TV without a session.
-definePageMeta({ layout: false })
+definePageMeta({ layout: false, title: 'nav.tournaments' })
 
 const { t, locale } = useI18n()
 const route = useRoute()

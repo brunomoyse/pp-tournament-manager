@@ -221,6 +221,7 @@ import type { GetTournamentsQuery, GetLeaderboardQuery } from '#gql'
 
 definePageMeta({
   middleware: 'auth',
+  title: 'nav.dashboard',
 })
 
 import { IonPage, IonContent, IonIcon, IonSkeletonText, alertController } from '@ionic/vue'

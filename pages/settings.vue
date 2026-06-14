@@ -44,6 +44,7 @@
 <script setup lang="ts">
 definePageMeta({
   middleware: 'auth',
+  title: 'nav.settings',
 })
 
 import { IonPage, IonContent, IonIcon } from '@ionic/vue'

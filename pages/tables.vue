@@ -94,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ middleware: 'auth', title: 'nav.tables' })
 
 import { IonPage, IonContent, IonIcon } from '@ionic/vue'
 import {

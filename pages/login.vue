@@ -195,6 +195,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: false,
+  title: 'auth.login',
 })
 
 import { ref, computed } from 'vue'

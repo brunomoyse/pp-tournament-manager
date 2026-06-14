@@ -328,6 +328,7 @@ import { useI18n } from '~/composables/useI18n'
 
 definePageMeta({
   middleware: 'auth',
+  title: 'nav.tournaments',
 })
 
 import {

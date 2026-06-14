@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ middleware: 'auth', title: 'nav.tournaments' })
 
 import { IonPage, IonContent, IonIcon, IonSpinner } from '@ionic/vue'
 import { arrowForwardOutline } from 'ionicons/icons'
