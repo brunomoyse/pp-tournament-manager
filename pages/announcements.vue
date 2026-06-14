@@ -148,6 +148,63 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.page-bg,
+.content-bg {
+  background-color: var(--color-pp-bg);
+}
+
+.page-container {
+  padding: 1.5rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .page-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--color-pp-gold-deep);
+}
+
+.page-title {
+  margin-top: 0.65rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3vw + 0.5rem, 2.5rem);
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-pp-text);
+}
+
+.page-subtitle {
+  margin-top: 0.4rem;
+  color: var(--color-pp-text-muted);
+  font-size: 0.9rem;
+  max-width: 40ch;
+}
+
 .announcements-list {
   display: flex;
   flex-direction: column;

@@ -199,8 +199,6 @@ onMounted(fetchTables)
 
 .page-container {
   padding: 1.5rem 1rem;
-  max-width: 56rem;
-  margin: 0 auto;
 }
 
 @media (min-width: 640px) {
@@ -210,8 +208,15 @@ onMounted(fetchTables)
   }
 }
 
+@media (min-width: 1024px) {
+  .page-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
 .page-header {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .eyebrow {
@@ -233,8 +238,10 @@ onMounted(fetchTables)
 }
 
 .page-subtitle {
-  margin-top: 0.5rem;
+  margin-top: 0.4rem;
   color: var(--color-pp-text-muted);
+  font-size: 0.9rem;
+  max-width: 40ch;
 }
 
 .add-panel {
