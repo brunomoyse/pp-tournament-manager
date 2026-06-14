@@ -26,25 +26,25 @@ const formatter = new Intl.NumberFormat(props.locale, {
 const display = ref('0')
 const el = ref<HTMLSpanElement | null>(null)
 let rafId: number | null = null
-let hasAnimated = false
+let inView = false
+let reducedMotion = false
 
 function easeOut(t: number) {
   return 1 - Math.pow(1 - t, 3)
 }
 
-function startCountUp() {
-  if (hasAnimated) return
-  hasAnimated = true
+function runCountUp() {
+  if (rafId !== null) cancelAnimationFrame(rafId)
   const start = performance.now()
-  const target = props.value
   const durationMs = props.duration * 1000
 
   const tick = (now: number) => {
-    const elapsed = now - start
-    const t = Math.min(elapsed / durationMs, 1)
-    const current = Math.round(easeOut(t) * target)
-    display.value = formatter.format(current)
-    if (t < 1) rafId = requestAnimationFrame(tick)
+    const t = Math.min((now - start) / durationMs, 1)
+    // Read the target live every frame. The stat cards are above the fold, so
+    // the observer fires while async data is still loading (value === 0); a
+    // frozen target would keep writing 0 and clobber the value once it lands.
+    display.value = formatter.format(Math.round(easeOut(t) * props.value))
+    rafId = t < 1 ? requestAnimationFrame(tick) : null
   }
   rafId = requestAnimationFrame(tick)
 }
@@ -52,16 +52,18 @@ function startCountUp() {
 onMounted(() => {
   if (typeof window === 'undefined' || !el.value) return
 
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (reducedMotion) {
+    inView = true
     display.value = formatter.format(props.value)
-    hasAnimated = true
     return
   }
 
   const observer = new IntersectionObserver(
     (entries) => {
       if (entries[0]?.isIntersecting) {
-        startCountUp()
+        inView = true
+        runCountUp()
         observer.disconnect()
       }
     },
@@ -74,10 +76,18 @@ onUnmounted(() => {
   if (rafId !== null) cancelAnimationFrame(rafId)
 })
 
+// Reflect values that arrive (or change) after the first paint: re-run the
+// count-up if already visible, snap if reduced motion. If not yet in view, the
+// observer starts the animation later and reads the live value.
 watch(
   () => props.value,
-  (next) => {
-    if (hasAnimated) display.value = formatter.format(next)
+  () => {
+    if (!inView) return
+    if (reducedMotion) {
+      display.value = formatter.format(props.value)
+    } else {
+      runCountUp()
+    }
   },
 )
 </script>
