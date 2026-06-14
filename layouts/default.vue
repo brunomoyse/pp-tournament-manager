@@ -135,6 +135,7 @@ import {
   constructOutline,
   statsChartOutline,
   podiumOutline,
+  megaphoneOutline,
   logOutOutline,
   compassOutline,
   settingsOutline,
@@ -174,6 +175,7 @@ const navItems = computed(() => [
 const sidebarNavItems = computed(() => [
   ...navItems.value,
   { to: '/leagues', icon: podiumOutline, label: t('nav.leagues') },
+  { to: '/announcements', icon: megaphoneOutline, label: t('nav.announcements') },
 ])
 
 const isActive = (path: string) => {

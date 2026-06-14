@@ -133,7 +133,8 @@
     "logout": "Logout",
     "leagues": "Leagues",
     "replayTour": "Guided tour",
-    "settings": "Settings"
+    "settings": "Settings",
+    "announcements": "Announcements"
   },
   "settings": {
     "title": "Settings",
@@ -157,7 +158,8 @@
     "blindStructure": "Blind Structure",
     "tableManagement": "Table Management",
     "tournamentClock": "Tournament Clock",
-    "regularPlayers": "Regular Players"
+    "regularPlayers": "Regular Players",
+    "upcomingTournaments": "Upcoming (7 days)"
   },
   "labels": {
     "latest": "Latest:",
@@ -277,7 +279,8 @@
     "loadingClubTables": "Loading club tables...",
     "selectTablesToAssign": "Select tables from {clubName} to assign to this tournament:",
     "noTablesFound": "No tables found for this club",
-    "contactClubAdmin": "Contact your club administrator to add tables"
+    "contactClubAdmin": "Contact your club administrator to add tables",
+    "activeThisWeek": "{count} active this week"
   },
   "alerts": {
     "createTournament": {
@@ -381,7 +384,8 @@
     "period": {
       "allTime": "All Time",
       "last30Days": "Last 30 Days",
-      "last7Days": "Last 7 Days"
+      "last7Days": "Last 7 Days",
+      "currentYear": "This year"
     },
     "leaderboard": "Leaderboard",
     "tournaments": "Tournaments",
@@ -396,7 +400,10 @@
     "roiPercent": "ROI%",
     "netProfit": "Net Profit",
     "points": "Points",
-    "noData": "No tournament data yet"
+    "noData": "No tournament data yet",
+    "activePlayers": "Active players",
+    "volumeThisMonth": "Volume (30 days)",
+    "winnings": "Winnings"
   },
   "tournaments": {
     "title": "All Tournaments",
@@ -448,10 +455,19 @@
     "displayName": "Display Name",
     "displayNamePlaceholder": "e.g. Jean Dupont",
     "displayNameHint": "The name shown on the roster, clock, and results.",
+    "firstName": "First name",
+    "firstNamePlaceholder": "e.g. Jean",
+    "lastName": "Last name",
+    "lastNamePlaceholder": "e.g. Dupont",
+    "nameHint": "Shown on the roster, clock, and results as “Last name / First name”.",
     "archive": "Archive",
     "archiveFailed": "Failed to archive player. Please try again.",
     "archiveConfirmTitle": "Archive player?",
     "archiveConfirmMessage": "Are you sure you want to archive {name}? They'll be hidden from the roster but their tournament history is kept.",
+    "anonymize": "Anonymise",
+    "anonymizeFailed": "Failed to anonymise player. Please try again.",
+    "anonymizeConfirmTitle": "Anonymise player?",
+    "anonymizeConfirmMessage": "Are you sure you want to anonymise {name}? Their name is scrubbed and they're removed from the roster, but their tournament history is kept.",
     "cancelRegisterTitle": "Remove registration?",
     "cancelRegisterMessage": "Are you sure you want to remove {name} from this tournament? This cancels their registration.",
     "import": {
@@ -784,6 +800,7 @@
     "breakDuration": "Break Duration (min)",
     "addLevel": "Add Level",
     "addBreak": "Add Break",
+    "reorderLevel": "Reorder level (drag)",
     "totalDuration": "Total Duration",
     "hours": "h",
     "playerRange": "{min}-{max} players",
@@ -1115,5 +1132,28 @@
   "legal": {
     "termsOfService": "Terms of Service",
     "privacyPolicy": "Privacy Policy"
+  },
+  "announcements": {
+    "title": "Announcements",
+    "subtitle": "Broadcast news and updates to your players.",
+    "create": "New announcement",
+    "send": "Send announcement",
+    "sent": "Announcement sent",
+    "sendFailed": "Could not send the announcement. Please try again.",
+    "scope": "Audience",
+    "scopeTournament": "A tournament",
+    "scopeClub": "Whole club",
+    "scopePlatform": "All players (platform-wide)",
+    "tournament": "Tournament",
+    "tournamentPlaceholder": "Select a tournament",
+    "titleLabel": "Title",
+    "titlePlaceholder": "e.g. Free pizza tonight",
+    "bodyLabel": "Message",
+    "bodyPlaceholder": "Write your announcement…",
+    "audienceTournament": "Players registered for the selected tournament will be notified.",
+    "audienceClub": "Every player on your club roster will be notified.",
+    "audiencePlatform": "Every PocketPair player will be notified.",
+    "emptyTitle": "No announcements yet",
+    "emptyDescription": "Send your first announcement to reach your players."
   }
 }

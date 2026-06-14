@@ -1,0 +1,17 @@
+query GetClubAnnouncements($clubId: ID!, $pagination: PaginationInput) {
+  clubAnnouncements(clubId: $clubId, pagination: $pagination) {
+    items {
+      id
+      scope
+      clubId
+      tournamentId
+      title
+      body
+      createdAt
+    }
+    totalCount
+    pageSize
+    offset
+    hasNextPage
+  }
+}

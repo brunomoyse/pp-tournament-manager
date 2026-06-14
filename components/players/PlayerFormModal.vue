@@ -7,20 +7,31 @@
   >
     <!-- Form -->
     <form @submit.prevent="handleSubmit" class="player-form">
-      <!-- Display Name -->
+      <!-- First name -->
       <div class="player-form-field">
         <label class="pp-label">
-          {{ t('players.displayName') }}
+          {{ t('players.firstName') }}
           <span class="player-form-required">*</span>
         </label>
         <input
-          v-model="form.displayName"
+          v-model="form.firstName"
           type="text"
           required
           class="pp-input"
-          :placeholder="t('players.displayNamePlaceholder')"
+          :placeholder="t('players.firstNamePlaceholder')"
         />
-        <p class="player-form-hint">{{ t('players.displayNameHint') }}</p>
+      </div>
+
+      <!-- Last name -->
+      <div class="player-form-field">
+        <label class="pp-label">{{ t('players.lastName') }}</label>
+        <input
+          v-model="form.lastName"
+          type="text"
+          class="pp-input"
+          :placeholder="t('players.lastNamePlaceholder')"
+        />
+        <p class="player-form-hint">{{ t('players.nameHint') }}</p>
       </div>
 
       <!-- Actions -->
@@ -62,21 +73,25 @@ const { t } = useI18n()
 const toast = useToast()
 const clubStore = useClubStore()
 
-// Form state — roster entries carry only a display name; email and account
-// details belong to app users, who self-onboard and claim their entry.
-const form = ref<{ displayName: string }>({ displayName: '' })
+// Form state — roster entries carry a structured first/last name; email and
+// account details belong to app users, who self-onboard and claim their entry.
+const form = ref<{ firstName: string; lastName: string }>({ firstName: '', lastName: '' })
 const saving = ref(false)
 
-const isFormValid = computed(() => !!form.value.displayName.trim())
+const isFormValid = computed(() => !!form.value.firstName.trim())
 
-// Populate form when editing / reset on open
+// Populate form when editing / reset on open. Legacy entries may have no
+// structured parts — fall back to the display name as the first-name seed.
 watch(
   () => props.isOpen,
   (isOpen) => {
     if (isOpen && props.player && props.mode === 'edit') {
-      form.value = { displayName: props.player.displayName }
+      form.value = {
+        firstName: props.player.firstName ?? props.player.displayName,
+        lastName: props.player.lastName ?? '',
+      }
     } else if (isOpen && props.mode === 'create') {
-      form.value = { displayName: '' }
+      form.value = { firstName: '', lastName: '' }
     }
   },
 )
@@ -91,14 +106,16 @@ const handleSubmit = async () => {
       await GqlCreateClubPlayer({
         input: {
           clubId: clubStore.club?.id || '',
-          displayName: form.value.displayName.trim(),
+          firstName: form.value.firstName.trim(),
+          lastName: form.value.lastName.trim(),
         },
       })
     } else if (props.player) {
       await GqlUpdateClubPlayer({
         input: {
           id: props.player.id,
-          displayName: form.value.displayName.trim(),
+          firstName: form.value.firstName.trim(),
+          lastName: form.value.lastName.trim(),
         },
       })
     }

@@ -136,7 +136,13 @@
                 <div class="podium-name">
                   {{ getFullName(leaderboard[1]?.user, leaderboard[1]?.displayName) }}
                 </div>
-                <div class="podium-points">{{ leaderboard[1]?.points }} pts</div>
+                <div class="podium-points">
+                  {{
+                    isLeagueView
+                      ? `${rankedLeaderboard[1]?.points} pts`
+                      : formatPrice(rankedLeaderboard[1]?.totalWinnings ?? 0, locale)
+                  }}
+                </div>
                 <div class="podium-bar podium-bar--second">
                   <span class="podium-rank podium-rank--second">2</span>
                 </div>
@@ -150,7 +156,13 @@
                 <div class="podium-name-first">
                   {{ getFullName(leaderboard[0]?.user, leaderboard[0]?.displayName) }}
                 </div>
-                <div class="podium-points-first">{{ leaderboard[0]?.points }} pts</div>
+                <div class="podium-points-first">
+                  {{
+                    isLeagueView
+                      ? `${rankedLeaderboard[0]?.points} pts`
+                      : formatPrice(rankedLeaderboard[0]?.totalWinnings ?? 0, locale)
+                  }}
+                </div>
                 <div class="podium-bar podium-bar--first">
                   <span class="podium-rank podium-rank--first">1</span>
                 </div>
@@ -164,7 +176,13 @@
                 <div class="podium-name">
                   {{ getFullName(leaderboard[2]?.user, leaderboard[2]?.displayName) }}
                 </div>
-                <div class="podium-points">{{ leaderboard[2]?.points }} pts</div>
+                <div class="podium-points">
+                  {{
+                    isLeagueView
+                      ? `${rankedLeaderboard[2]?.points} pts`
+                      : formatPrice(rankedLeaderboard[2]?.totalWinnings ?? 0, locale)
+                  }}
+                </div>
                 <div class="podium-bar podium-bar--third">
                   <span class="podium-rank podium-rank--third">3</span>
                 </div>
@@ -182,12 +200,14 @@
                     <th class="th-cell th-center">{{ t('reports.itmPercent') }}</th>
                     <th class="th-cell th-center">{{ t('reports.roiPercent') }}</th>
                     <th class="th-cell th-right">{{ t('reports.netProfit') }}</th>
-                    <th class="th-cell-last">{{ t('reports.points') }}</th>
+                    <th class="th-cell-last">
+                      {{ isLeagueView ? t('reports.points') : t('reports.winnings') }}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr
-                    v-for="(entry, index) in leaderboard"
+                    v-for="(entry, index) in rankedLeaderboard"
                     :key="entry.clubPlayerId || entry.user?.id || index"
                     :class="[
                       'pp-stagger-item',
@@ -248,9 +268,11 @@
                         }}{{ formatPrice(entry.netProfit, locale) }}
                       </span>
                     </td>
-                    <!-- Points -->
+                    <!-- Points (leagues) / Winnings (default stats view) -->
                     <td class="td-cell-last">
-                      <span class="points-value">{{ entry.points }}</span>
+                      <span class="points-value">
+                        {{ isLeagueView ? entry.points : formatPrice(entry.totalWinnings, locale) }}
+                      </span>
                     </td>
                   </tr>
                 </tbody>
@@ -296,18 +318,31 @@ const { club } = clubStore
 type LeaderboardItem = GetLeaderboardQuery['leaderboard']['items'][number]
 
 const periods = [
+  { value: LeaderboardPeriod.CURRENT_YEAR, label: 'reports.period.currentYear' },
   { value: LeaderboardPeriod.ALL_TIME, label: 'reports.period.allTime' },
   { value: LeaderboardPeriod.LAST_30_DAYS, label: 'reports.period.last30Days' },
   { value: LeaderboardPeriod.LAST_7_DAYS, label: 'reports.period.last7Days' },
 ]
 
-const selectedPeriod = ref<LeaderboardPeriod>(LeaderboardPeriod.ALL_TIME)
+const selectedPeriod = ref<LeaderboardPeriod>(LeaderboardPeriod.CURRENT_YEAR)
 const loading = ref(true)
 const leaderboard = ref<LeaderboardItem[]>([])
 
 // Leagues (configurable leaderboards). null = the club's default period-based view.
 const leagues = ref<{ id: string; name: string }[]>([])
 const selectedConfigId = ref<string | null>(null)
+
+// Points are a league concept; the default club stats view ranks by winnings.
+const isLeagueView = computed(() => !!selectedConfigId.value)
+
+// The list to render: leagues keep the server's points ranking; the default
+// view ranks by total winnings (and re-numbers ranks accordingly).
+const rankedLeaderboard = computed<LeaderboardItem[]>(() => {
+  if (isLeagueView.value) return leaderboard.value
+  return leaderboard.value
+    .toSorted((a, b) => b.totalWinnings - a.totalWinnings)
+    .map((entry, index) => ({ ...entry, rank: index + 1 }))
+})
 
 // Computed stats from leaderboard data
 const stats = computed(() => {
@@ -422,7 +457,7 @@ const exportLeaderboardCsv = () => {
   const periodLabel = periods.find((p) => p.value === selectedPeriod.value)?.label
   downloadCsv(
     exportFilename([club?.name, t('reports.leaderboard'), periodLabel ? t(periodLabel) : '']),
-    leaderboard.value,
+    rankedLeaderboard.value,
     [
       { label: t('exports.col.rank'), value: (e) => e.rank },
       { label: t('exports.col.player'), value: (e) => getFullName(e.user, e.displayName) },

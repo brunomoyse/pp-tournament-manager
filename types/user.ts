@@ -25,6 +25,9 @@ export interface ClubPlayer {
   id: string
   clubId: string
   displayName: string
+  // Structured name parts. Null for legacy / bulk-imported single-field entries.
+  firstName?: string | null
+  lastName?: string | null
   appUserId?: string | null
   isClaimed: boolean
   isActive: boolean

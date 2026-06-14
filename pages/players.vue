@@ -97,7 +97,7 @@
                 <div class="player-avatar">
                   {{ getInitials(player) }}
                 </div>
-                <span class="player-name">{{ player.displayName }}</span>
+                <span class="player-name">{{ formatName(player) }}</span>
               </div>
 
               <!-- Type -->
@@ -113,9 +113,16 @@
                   <IonIcon :icon="createOutline" class="icon-sm" />
                   {{ t('common.edit') }}
                 </PpButton>
-                <PpButton variant="danger" size="sm" @click="confirmArchive(player)">
+                <!-- App users own their account; anonymise/archive is reserved
+                     for roster-only (unclaimed) entries. -->
+                <PpButton
+                  v-if="!player.isClaimed"
+                  variant="danger"
+                  size="sm"
+                  @click="confirmAnonymize(player)"
+                >
                   <IonIcon :icon="banOutline" class="icon-sm" />
-                  {{ t('players.archive') }}
+                  {{ t('players.anonymize') }}
                 </PpButton>
               </div>
             </div>
@@ -133,12 +140,12 @@
       @saved="handlePlayerSaved"
     />
 
-    <!-- Archive Confirmation Modal -->
+    <!-- Anonymise Confirmation Modal -->
     <PlayersPlayerDeleteModal
       :is-open="showDeleteModal"
       :player="playerToDelete"
       @close="closeDeleteModal"
-      @confirmed="handleArchiveConfirmed"
+      @confirmed="handleAnonymizeConfirmed"
     />
 
     <!-- Bulk Import Modal -->
@@ -211,19 +218,39 @@ const filteredPlayers = computed(() => {
   })
 })
 
+// Sort key: family name first (the roster is ordered by family name), falling
+// back to the display name for legacy single-field entries.
+const sortKey = (p: ClubPlayer) => (p.lastName?.trim() || p.displayName).toLowerCase()
+
 const sortedPlayers = computed(() => {
   const list = [...filteredPlayers.value]
   const dir = sortDirection.value === 'asc' ? 1 : -1
-  list.sort((a, b) => a.displayName.localeCompare(b.displayName) * dir)
+  list.sort((a, b) => {
+    const byLast = sortKey(a).localeCompare(sortKey(b))
+    if (byLast !== 0) return byLast * dir
+    return (a.firstName ?? '').localeCompare(b.firstName ?? '') * dir
+  })
   return list
 })
 
 // Methods
+// Display as "Family name / First name"; legacy entries fall back to display name.
+const formatName = (player: ClubPlayer) => {
+  const last = player.lastName?.trim()
+  const first = player.firstName?.trim()
+  if (last && first) return `${last} / ${first}`
+  if (last) return last
+  return player.displayName
+}
+
 const getInitials = (player: ClubPlayer) => {
+  const first = player.firstName?.trim()?.charAt(0)?.toUpperCase()
+  const last = player.lastName?.trim()?.charAt(0)?.toUpperCase()
+  if (first || last) return `${last ?? ''}${first ?? ''}` || '?'
   const parts = player.displayName.trim().split(/\s+/)
-  const first = parts[0]?.charAt(0)?.toUpperCase() || ''
-  const last = parts.length > 1 ? parts[parts.length - 1].charAt(0).toUpperCase() : ''
-  return `${first}${last}` || '?'
+  const a = parts[0]?.charAt(0)?.toUpperCase() || ''
+  const b = parts.length > 1 ? parts[parts.length - 1].charAt(0).toUpperCase() : ''
+  return `${a}${b}` || '?'
 }
 
 const fetchPlayers = async () => {
@@ -271,7 +298,7 @@ const handleImported = async () => {
   await fetchPlayers()
 }
 
-const confirmArchive = (player: ClubPlayer) => {
+const confirmAnonymize = (player: ClubPlayer) => {
   playerToDelete.value = player
   showDeleteModal.value = true
 }
@@ -281,17 +308,15 @@ const closeDeleteModal = () => {
   playerToDelete.value = null
 }
 
-const handleArchiveConfirmed = async () => {
+const handleAnonymizeConfirmed = async () => {
   if (!playerToDelete.value) return
   try {
-    await GqlArchiveClubPlayer({
-      input: { id: playerToDelete.value.id, isActive: false },
-    })
+    await GqlAnonymizeClubPlayer({ id: playerToDelete.value.id })
     closeDeleteModal()
     await fetchPlayers()
   } catch (error) {
-    console.error('Failed to archive player:', error)
-    toast.error(t('players.archiveFailed'))
+    console.error('Failed to anonymise player:', error)
+    toast.error(t('players.anonymizeFailed'))
   }
 }
 

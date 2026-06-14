@@ -60,7 +60,7 @@
         <PpFadeUp :delay="0.12">
           <TourChecklistCard
             :tournaments-count="isLoading ? null : tournaments.length"
-            :players-count="allTimeLeaderboard ? playerStats.uniquePlayers : null"
+            :players-count="allTimeLeaderboard ? (allTimeLeaderboard.totalCount ?? 0) : null"
           />
         </PpFadeUp>
 
@@ -80,14 +80,14 @@
           <PpStaggerItem>
             <PpCard padding="sm" class="pp-poker-watermark" data-suit="&#9829;">
               <div class="stat-header">
-                <span class="stat-label">{{ t('reports.players') }}</span>
+                <span class="stat-label">{{ t('reports.activePlayers') }}</span>
                 <IonIcon :icon="peopleOutline" class="stat-icon" />
               </div>
               <div class="stat-value">
-                <PpAnimatedNumber :value="playerStats.uniquePlayers" />
+                <PpAnimatedNumber :value="playerStats.activePlayers" />
               </div>
               <div v-if="playerStats.thisWeek > 0" class="stat-trend">
-                {{ t('messages.newThisWeek', { count: playerStats.thisWeek }) }}
+                {{ t('messages.activeThisWeek', { count: playerStats.thisWeek }) }}
               </div>
             </PpCard>
           </PpStaggerItem>
@@ -95,21 +95,21 @@
           <PpStaggerItem>
             <PpCard padding="sm" class="pp-poker-watermark" data-suit="&#9830;">
               <div class="stat-header">
-                <span class="stat-label">{{ t('reports.avgBuyIn') }}</span>
+                <span class="stat-label">{{ t('reports.volumeThisMonth') }}</span>
                 <IonIcon :icon="cashOutline" class="stat-icon" />
               </div>
-              <div class="stat-value">{{ formatPrice(playerStats.avgBuyIn, locale) }}</div>
+              <div class="stat-value">{{ formatPrice(playerStats.volumeThisMonth, locale) }}</div>
             </PpCard>
           </PpStaggerItem>
 
           <PpStaggerItem>
             <PpCard padding="sm" class="pp-poker-watermark" data-suit="&#9827;">
               <div class="stat-header">
-                <span class="stat-label">{{ t('headings.regularPlayers') }}</span>
-                <IonIcon :icon="peopleOutline" class="stat-icon" />
+                <span class="stat-label">{{ t('headings.upcomingTournaments') }}</span>
+                <IonIcon :icon="calendarOutline" class="stat-icon" />
               </div>
               <div class="stat-value">
-                <PpAnimatedNumber :value="playerStats.regularPlayers" />
+                <PpAnimatedNumber :value="upcomingTournaments.length" />
               </div>
             </PpCard>
           </PpStaggerItem>
@@ -231,6 +231,7 @@ import {
   chevronForwardOutline,
   cashOutline,
   warningOutline,
+  calendarOutline,
 } from 'ionicons/icons'
 import { useAuthStore } from '~/stores/useAuthStore'
 import { formatPrice } from '~/utils'
@@ -250,24 +251,35 @@ const { club } = clubStore
 const tournaments = ref<GetTournamentsQuery['tournaments']['items']>([])
 const allTimeLeaderboard = ref<GetLeaderboardQuery['leaderboard'] | null>(null)
 const weekLeaderboard = ref<GetLeaderboardQuery['leaderboard'] | null>(null)
+const monthLeaderboard = ref<GetLeaderboardQuery['leaderboard'] | null>(null)
 
 const isLoading = ref(true)
 const showTournamentModal = ref(false)
 
 const playerStats = computed(() => {
-  const entries = allTimeLeaderboard.value?.items || []
-  const uniquePlayers = allTimeLeaderboard.value?.totalCount || 0
+  // Players active in the last 30 days (audience health) + buy-in volume over
+  // the same window (business). Both come from the rolling-30d leaderboard.
+  const monthEntries = monthLeaderboard.value?.items || []
+  const activePlayers = monthLeaderboard.value?.totalCount || 0
   const thisWeek = weekLeaderboard.value?.totalCount || 0
-  const totalBuyIns = entries.reduce((sum, e) => sum + e.totalBuyIns, 0)
-  const totalTournaments = entries.reduce((sum, e) => sum + e.totalTournaments, 0)
-  const avgBuyIn = totalTournaments > 0 ? Math.round(totalBuyIns / totalTournaments) : 0
-  const regularPlayers = entries.filter((e) => e.totalTournaments >= 3).length
-  return { uniquePlayers, thisWeek, avgBuyIn, regularPlayers }
+  const volumeThisMonth = monthEntries.reduce((sum, e) => sum + e.totalBuyIns, 0)
+  return { activePlayers, thisWeek, volumeThisMonth }
 })
 
 const activeTournaments = computed(() =>
   tournaments.value.filter((t) => t.status === 'IN_PROGRESS'),
 )
+
+// Tournaments scheduled within the next 7 days (and not yet completed).
+const upcomingTournaments = computed(() => {
+  const now = Date.now()
+  const horizon = now + 7 * 24 * 60 * 60 * 1000
+  return tournaments.value.filter((t) => {
+    if (t.status === 'COMPLETED' || !t.startTime) return false
+    const start = new Date(t.startTime).getTime()
+    return start >= now && start <= horizon
+  })
+})
 
 const recentTournaments = computed(() =>
   [...tournaments.value]
@@ -371,10 +383,16 @@ onMounted(async () => {
         pagination: { limit: 200 },
       }),
       GqlGetLeaderboard({ clubId: club.id, period: LeaderboardPeriod.LAST_7_DAYS }),
+      GqlGetLeaderboard({
+        clubId: club.id,
+        period: LeaderboardPeriod.LAST_30_DAYS,
+        pagination: { limit: 200 },
+      }),
     ])
-      .then(([allTimeRes, weekRes]) => {
+      .then(([allTimeRes, weekRes, monthRes]) => {
         allTimeLeaderboard.value = allTimeRes.leaderboard
         weekLeaderboard.value = weekRes.leaderboard
+        monthLeaderboard.value = monthRes.leaderboard
       })
       .catch((err) => {
         console.error('Failed to load leaderboard data:', err)

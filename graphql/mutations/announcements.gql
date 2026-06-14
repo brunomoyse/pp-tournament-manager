@@ -1,0 +1,11 @@
+mutation CreateAnnouncement($input: CreateAnnouncementInput!) {
+  createAnnouncement(input: $input) {
+    id
+    scope
+    clubId
+    tournamentId
+    title
+    body
+    createdAt
+  }
+}

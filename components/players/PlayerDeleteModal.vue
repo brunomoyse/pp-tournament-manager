@@ -5,10 +5,10 @@
         <IonIcon :icon="warningOutline" class="delete-modal-icon" />
       </div>
       <h2 class="delete-modal-title">
-        {{ t('players.archiveConfirmTitle') }}
+        {{ t('players.anonymizeConfirmTitle') }}
       </h2>
       <p class="delete-modal-message">
-        {{ t('players.archiveConfirmMessage', { name: playerName }) }}
+        {{ t('players.anonymizeConfirmMessage', { name: playerName }) }}
       </p>
     </div>
 
@@ -17,7 +17,7 @@
         {{ t('common.cancel') }}
       </PpButton>
       <PpButton variant="danger" class="delete-modal-action-btn" @click="$emit('confirmed')">
-        {{ t('players.archive') }}
+        {{ t('players.anonymize') }}
       </PpButton>
     </template>
   </PpModal>

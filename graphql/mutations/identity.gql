@@ -3,6 +3,8 @@ mutation CreateClubPlayer($input: CreateClubPlayerInput!) {
     id
     clubId
     displayName
+    firstName
+    lastName
     appUserId
     isClaimed
     isActive
@@ -13,6 +15,8 @@ mutation UpdateClubPlayer($input: UpdateClubPlayerInput!) {
   updateClubPlayer(input: $input) {
     id
     displayName
+    firstName
+    lastName
     isActive
   }
 }
@@ -20,6 +24,14 @@ mutation UpdateClubPlayer($input: UpdateClubPlayerInput!) {
 mutation ArchiveClubPlayer($input: ArchiveClubPlayerInput!) {
   archiveClubPlayer(input: $input) {
     id
+    isActive
+  }
+}
+
+mutation AnonymizeClubPlayer($id: ID!) {
+  anonymizeClubPlayer(id: $id) {
+    id
+    displayName
     isActive
   }
 }

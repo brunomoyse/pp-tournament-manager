@@ -133,7 +133,8 @@
     "logout": "Uitloggen",
     "leagues": "Competities",
     "replayTour": "Rondleiding",
-    "settings": "Instellingen"
+    "settings": "Instellingen",
+    "announcements": "Aankondigingen"
   },
   "settings": {
     "title": "Instellingen",
@@ -157,7 +158,8 @@
     "blindStructure": "Blindstructuur",
     "tableManagement": "Tafelbeheer",
     "tournamentClock": "Toernooiklok",
-    "regularPlayers": "Vaste spelers"
+    "regularPlayers": "Vaste spelers",
+    "upcomingTournaments": "Binnenkort (7 dagen)"
   },
   "labels": {
     "latest": "Laatste:",
@@ -277,7 +279,8 @@
     "loadingClubTables": "Clubtafels laden...",
     "selectTablesToAssign": "Selecteer tafels van {clubName} om toe te wijzen aan dit toernooi:",
     "noTablesFound": "Geen tafels gevonden voor deze club",
-    "contactClubAdmin": "Neem contact op met je clubbeheerder om tafels toe te voegen"
+    "contactClubAdmin": "Neem contact op met je clubbeheerder om tafels toe te voegen",
+    "activeThisWeek": "{count} actief deze week"
   },
   "alerts": {
     "createTournament": {
@@ -381,7 +384,8 @@
     "period": {
       "allTime": "Altijd",
       "last30Days": "Laatste 30 dagen",
-      "last7Days": "Laatste 7 dagen"
+      "last7Days": "Laatste 7 dagen",
+      "currentYear": "Dit jaar"
     },
     "leaderboard": "Ranglijst",
     "tournaments": "Toernooien",
@@ -396,7 +400,10 @@
     "roiPercent": "ROI%",
     "netProfit": "Netto winst",
     "points": "Punten",
-    "noData": "Nog geen toernooigegevens"
+    "noData": "Nog geen toernooigegevens",
+    "activePlayers": "Actieve spelers",
+    "volumeThisMonth": "Volume (30 dagen)",
+    "winnings": "Winst"
   },
   "tournaments": {
     "title": "Alle toernooien",
@@ -448,10 +455,19 @@
     "displayName": "Weergavenaam",
     "displayNamePlaceholder": "bv. Jean Dupont",
     "displayNameHint": "De naam op de lijst, klok en resultaten.",
+    "firstName": "Voornaam",
+    "firstNamePlaceholder": "bv. Jean",
+    "lastName": "Achternaam",
+    "lastNamePlaceholder": "bv. Dupont",
+    "nameHint": "Wordt op de lijst, klok en resultaten getoond als “Achternaam / Voornaam”.",
     "archive": "Archiveren",
     "archiveFailed": "Archiveren van speler mislukt. Probeer opnieuw.",
     "archiveConfirmTitle": "Speler archiveren?",
     "archiveConfirmMessage": "Weet je zeker dat je {name} wilt archiveren? De speler wordt verborgen van de lijst, maar de toernooigeschiedenis blijft behouden.",
+    "anonymize": "Anonimiseren",
+    "anonymizeFailed": "Anonimiseren van speler mislukt. Probeer opnieuw.",
+    "anonymizeConfirmTitle": "Speler anonimiseren?",
+    "anonymizeConfirmMessage": "Weet je zeker dat je {name} wilt anonimiseren? De naam wordt gewist en de speler verdwijnt van de lijst, maar de toernooigeschiedenis blijft behouden.",
     "cancelRegisterTitle": "Inschrijving verwijderen?",
     "cancelRegisterMessage": "Weet je zeker dat je {name} uit dit toernooi wilt verwijderen? Dit annuleert de inschrijving.",
     "import": {
@@ -784,6 +800,7 @@
     "breakDuration": "Pauzeduur (min)",
     "addLevel": "Niveau toevoegen",
     "addBreak": "Pauze toevoegen",
+    "reorderLevel": "Niveau herschikken (slepen)",
     "totalDuration": "Totale duur",
     "hours": "u",
     "playerRange": "{min}-{max} spelers",
@@ -1115,5 +1132,28 @@
   "legal": {
     "termsOfService": "Gebruiksvoorwaarden",
     "privacyPolicy": "Privacybeleid"
+  },
+  "announcements": {
+    "title": "Aankondigingen",
+    "subtitle": "Deel nieuws en updates met je spelers.",
+    "create": "Nieuwe aankondiging",
+    "send": "Aankondiging versturen",
+    "sent": "Aankondiging verzonden",
+    "sendFailed": "Kon de aankondiging niet versturen. Probeer het opnieuw.",
+    "scope": "Doelgroep",
+    "scopeTournament": "Eén toernooi",
+    "scopeClub": "Hele club",
+    "scopePlatform": "Alle spelers (platformbreed)",
+    "tournament": "Toernooi",
+    "tournamentPlaceholder": "Kies een toernooi",
+    "titleLabel": "Titel",
+    "titlePlaceholder": "bv. Gratis pizza vanavond",
+    "bodyLabel": "Bericht",
+    "bodyPlaceholder": "Schrijf je aankondiging…",
+    "audienceTournament": "Spelers die zijn ingeschreven voor het gekozen toernooi krijgen een melding.",
+    "audienceClub": "Alle spelers op je clubrooster krijgen een melding.",
+    "audiencePlatform": "Alle PocketPair-spelers krijgen een melding.",
+    "emptyTitle": "Nog geen aankondigingen",
+    "emptyDescription": "Verstuur je eerste aankondiging om je spelers te bereiken."
   }
 }

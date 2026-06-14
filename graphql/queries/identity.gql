@@ -3,6 +3,8 @@ query GetClubPlayers($clubId: ID!) {
     id
     clubId
     displayName
+    firstName
+    lastName
     appUserId
     isClaimed
     isActive

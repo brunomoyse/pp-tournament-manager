@@ -133,7 +133,8 @@
     "logout": "Déconnexion",
     "leagues": "Ligues",
     "replayTour": "Visite guidée",
-    "settings": "Réglages"
+    "settings": "Réglages",
+    "announcements": "Annonces"
   },
   "settings": {
     "title": "Réglages",
@@ -157,7 +158,8 @@
     "blindStructure": "Structure des blinds",
     "tableManagement": "Gestion des tables",
     "tournamentClock": "Clock",
-    "regularPlayers": "Joueurs réguliers"
+    "regularPlayers": "Joueurs réguliers",
+    "upcomingTournaments": "À venir (7 jours)"
   },
   "labels": {
     "latest": "Dernier :",
@@ -277,7 +279,8 @@
     "loadingClubTables": "Chargement des tables du club...",
     "selectTablesToAssign": "Sélectionnez les tables de {clubName} à assigner à ce tournoi :",
     "noTablesFound": "Aucune table trouvée pour ce club",
-    "contactClubAdmin": "Contactez l'administrateur de votre club pour ajouter des tables"
+    "contactClubAdmin": "Contactez l'administrateur de votre club pour ajouter des tables",
+    "activeThisWeek": "{count} actifs cette semaine"
   },
   "alerts": {
     "createTournament": {
@@ -381,7 +384,8 @@
     "period": {
       "allTime": "Tout le temps",
       "last30Days": "30 derniers jours",
-      "last7Days": "7 derniers jours"
+      "last7Days": "7 derniers jours",
+      "currentYear": "Cette année"
     },
     "leaderboard": "Classement",
     "tournaments": "Tournois",
@@ -396,7 +400,10 @@
     "roiPercent": "ROI%",
     "netProfit": "Profit net",
     "points": "Points",
-    "noData": "Aucune donnée de tournoi"
+    "noData": "Aucune donnée de tournoi",
+    "activePlayers": "Joueurs actifs",
+    "volumeThisMonth": "Volume (30 jours)",
+    "winnings": "Gains"
   },
   "tournaments": {
     "title": "Tous les tournois",
@@ -448,10 +455,19 @@
     "displayName": "Nom affiché",
     "displayNamePlaceholder": "ex. Jean Dupont",
     "displayNameHint": "Le nom affiché sur la liste, la clock et les résultats.",
+    "firstName": "Prénom",
+    "firstNamePlaceholder": "ex. Jean",
+    "lastName": "Nom",
+    "lastNamePlaceholder": "ex. Dupont",
+    "nameHint": "Affiché sur la liste, la clock et les résultats sous la forme « Nom / Prénom ».",
     "archive": "Archiver",
     "archiveFailed": "Échec de l'archivage du joueur. Veuillez réessayer.",
     "archiveConfirmTitle": "Archiver le joueur ?",
     "archiveConfirmMessage": "Voulez-vous vraiment archiver {name} ? Il sera masqué de la liste, mais son historique de tournois est conservé.",
+    "anonymize": "Anonymiser",
+    "anonymizeFailed": "Échec de l'anonymisation du joueur. Veuillez réessayer.",
+    "anonymizeConfirmTitle": "Anonymiser le joueur ?",
+    "anonymizeConfirmMessage": "Voulez-vous vraiment anonymiser {name} ? Son nom est effacé et il est retiré de la liste, mais son historique de tournois est conservé.",
     "cancelRegisterTitle": "Retirer l'inscription ?",
     "cancelRegisterMessage": "Voulez-vous vraiment retirer {name} de ce tournoi ? Cela annule son inscription.",
     "import": {
@@ -784,6 +800,7 @@
     "breakDuration": "Durée de pause (min)",
     "addLevel": "Ajouter un niveau",
     "addBreak": "Ajouter une pause",
+    "reorderLevel": "Réordonner le niveau (glisser)",
     "totalDuration": "Durée totale",
     "hours": "h",
     "playerRange": "{min}-{max} joueurs",
@@ -1115,5 +1132,28 @@
   "legal": {
     "termsOfService": "Conditions générales",
     "privacyPolicy": "Politique de confidentialité"
+  },
+  "announcements": {
+    "title": "Annonces",
+    "subtitle": "Diffusez actualités et informations à vos joueurs.",
+    "create": "Nouvelle annonce",
+    "send": "Envoyer l'annonce",
+    "sent": "Annonce envoyée",
+    "sendFailed": "Impossible d'envoyer l'annonce. Veuillez réessayer.",
+    "scope": "Audience",
+    "scopeTournament": "Un tournoi",
+    "scopeClub": "Tout le club",
+    "scopePlatform": "Tous les joueurs (plateforme)",
+    "tournament": "Tournoi",
+    "tournamentPlaceholder": "Sélectionnez un tournoi",
+    "titleLabel": "Titre",
+    "titlePlaceholder": "ex. Pizza offerte ce soir",
+    "bodyLabel": "Message",
+    "bodyPlaceholder": "Rédigez votre annonce…",
+    "audienceTournament": "Les joueurs inscrits au tournoi sélectionné seront notifiés.",
+    "audienceClub": "Tous les joueurs de votre club seront notifiés.",
+    "audiencePlatform": "Tous les joueurs PocketPair seront notifiés.",
+    "emptyTitle": "Aucune annonce",
+    "emptyDescription": "Envoyez votre première annonce pour toucher vos joueurs."
   }
 }

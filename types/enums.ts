@@ -1,5 +1,6 @@
 export const LeaderboardPeriod = {
   ALL_TIME: 'ALL_TIME',
+  CURRENT_YEAR: 'CURRENT_YEAR',
   LAST_YEAR: 'LAST_YEAR',
   LAST_6_MONTHS: 'LAST_6_MONTHS',
   LAST_30_DAYS: 'LAST_30_DAYS',

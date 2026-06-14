@@ -45,6 +45,7 @@
           <table class="levels-table">
             <thead>
               <tr>
+                <th></th>
                 <th>#</th>
                 <th>{{ t('templates.smallBlind') }}</th>
                 <th>{{ t('templates.bigBlind') }}</th>
@@ -58,8 +59,26 @@
               <tr
                 v-for="(level, index) in form.levels"
                 :key="index"
-                :class="{ 'break-row': level.isBreak }"
+                :class="{
+                  'break-row': level.isBreak,
+                  'drag-over': dragOverIndex === index && dragIndex !== index,
+                  dragging: dragIndex === index,
+                }"
+                @dragover.prevent="onDragOver(index)"
+                @drop="onDrop(index)"
               >
+                <td class="drag-cell">
+                  <button
+                    type="button"
+                    class="drag-handle"
+                    :aria-label="t('templates.reorderLevel')"
+                    draggable="true"
+                    @dragstart="onDragStart(index)"
+                    @dragend="onDragEnd"
+                  >
+                    <IonIcon :icon="reorderThreeOutline" class="drag-icon" />
+                  </button>
+                </td>
                 <td class="level-num">{{ level.levelNumber }}</td>
                 <td>
                   <input
@@ -171,7 +190,12 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { addCircleOutline, removeCircleOutline, cafeOutline } from 'ionicons/icons'
+import {
+  addCircleOutline,
+  removeCircleOutline,
+  cafeOutline,
+  reorderThreeOutline,
+} from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 import type { BlindStructureTemplate } from '~/types/tournament'
 
@@ -242,6 +266,36 @@ const addLevel = (isBreak: boolean) => {
 const removeLevel = (index: number) => {
   form.value.levels.splice(index, 1)
   renumberLevels()
+}
+
+// Drag & drop reordering of levels (e.g. moving a break earlier or later).
+const dragIndex = ref<number | null>(null)
+const dragOverIndex = ref<number | null>(null)
+
+const onDragStart = (index: number) => {
+  dragIndex.value = index
+}
+
+const onDragOver = (index: number) => {
+  dragOverIndex.value = index
+}
+
+const onDrop = (index: number) => {
+  const from = dragIndex.value
+  if (from === null || from === index) {
+    onDragEnd()
+    return
+  }
+  const levels = form.value.levels
+  const [moved] = levels.splice(from, 1)
+  levels.splice(index, 0, moved)
+  renumberLevels()
+  onDragEnd()
+}
+
+const onDragEnd = () => {
+  dragIndex.value = null
+  dragOverIndex.value = null
 }
 
 watch(
@@ -373,6 +427,41 @@ const closeModal = () => emit('close')
 
 .break-row {
   background-color: rgba(var(--pp-accent-rgb), 0.05);
+}
+
+.drag-cell {
+  text-align: center;
+  width: 1.75rem;
+}
+
+.drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  color: rgba(255, 255, 255, 0.3);
+  transition: color 0.2s ease;
+}
+
+.drag-handle:hover {
+  color: var(--color-pp-gold);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.drag-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.dragging {
+  opacity: 0.4;
+}
+
+.drag-over td {
+  box-shadow: inset 0 2px 0 0 var(--color-pp-gold);
 }
 
 .level-num {
