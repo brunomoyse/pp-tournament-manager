@@ -374,7 +374,13 @@ const handleMovePlayer = (data: { playerId: string; fromTable: number; fromSeat:
   position: absolute;
   inset: 8px;
   border-radius: 50%;
-  background: linear-gradient(to bottom right, #2d8a40, #1f6830);
+  /* Felt color is themeable so it never clashes with a same-hue accent
+     (e.g. the green clover theme overrides this to a dark forest felt). */
+  background: linear-gradient(
+    to bottom right,
+    var(--pp-felt-from, #2d8a40),
+    var(--pp-felt-to, #1f6830)
+  );
   box-shadow: var(--pp-shadow-inner);
 }
 
@@ -459,9 +465,13 @@ const handleMovePlayer = (data: { playerId: string; fromTable: number; fromSeat:
 
 .table-card__seat--occupied {
   background-color: var(--color-pp-gold);
-  color: var(--color-pp-bg);
+  color: var(--color-pp-on-accent);
   border-color: var(--color-pp-gold);
-  box-shadow: 0 0 12px rgba(var(--pp-accent-rgb), 0.4);
+  /* Light ring keeps the seat readable on the felt even when the accent
+     and the felt share a hue. */
+  box-shadow:
+    0 0 0 1.5px rgba(255, 255, 255, 0.28),
+    0 0 12px rgba(var(--pp-accent-rgb), 0.4);
   transform: scale(1.05);
 }
 

@@ -132,7 +132,12 @@
     "menu": "Menu",
     "logout": "Logout",
     "leagues": "Leagues",
-    "replayTour": "Guided tour"
+    "replayTour": "Guided tour",
+    "settings": "Settings"
+  },
+  "settings": {
+    "title": "Settings",
+    "themeHelp": "Tailor the app's look and feel to your club."
   },
   "theme": {
     "label": "Theme",

@@ -132,7 +132,12 @@
     "menu": "Menu",
     "logout": "Uitloggen",
     "leagues": "Competities",
-    "replayTour": "Rondleiding"
+    "replayTour": "Rondleiding",
+    "settings": "Instellingen"
+  },
+  "settings": {
+    "title": "Instellingen",
+    "themeHelp": "Pas het uiterlijk van de app aan jouw club aan."
   },
   "theme": {
     "label": "Thema",

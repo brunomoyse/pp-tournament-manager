@@ -170,6 +170,10 @@
      green accent; danger keeps red (already distinct). */
   --color-pp-success: #14b8a6;
 
+  /* Dark forest felt so the green seats don't blend into the table. */
+  --pp-felt-from: #163a22;
+  --pp-felt-to: #0e2616;
+
   /* Ionic accent follow-ups */
   --ion-color-primary-contrast-rgb: 15, 18, 16;
   --ion-color-primary-shade: #339a52;

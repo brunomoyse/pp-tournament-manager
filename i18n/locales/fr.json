@@ -132,7 +132,12 @@
     "menu": "Menu",
     "logout": "Déconnexion",
     "leagues": "Ligues",
-    "replayTour": "Visite guidée"
+    "replayTour": "Visite guidée",
+    "settings": "Réglages"
+  },
+  "settings": {
+    "title": "Réglages",
+    "themeHelp": "Personnalisez l'apparence de l'application selon votre club."
   },
   "theme": {
     "label": "Thème",
