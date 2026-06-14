@@ -134,7 +134,24 @@
     "leagues": "Ligues",
     "replayTour": "Visite guidée",
     "settings": "Réglages",
-    "announcements": "Annonces"
+    "announcements": "Annonces",
+    "tables": "Tables"
+  },
+  "tables": {
+    "title": "Tables",
+    "subtitle": "Définissez vos tables physiques à l'avance. Le jeu par défaut est lié automatiquement à chaque nouveau tournoi.",
+    "number": "Table n°",
+    "seats": "Sièges",
+    "seatsShort": "sièges",
+    "defaultSet": "Jeu par défaut",
+    "defaultHint": "Les tables du jeu par défaut sont liées automatiquement aux nouveaux tournois. Une table utilisée par un tournoi en cours n'est pas disponible ailleurs tant qu'il n'est pas terminé.",
+    "add": "Ajouter une table",
+    "addFailed": "Échec de l'ajout de la table.",
+    "updateFailed": "Échec de la mise à jour de la table.",
+    "deleteFailed": "Échec de la suppression de la table.",
+    "deleteConfirm": "Supprimer la table n°{number} ?",
+    "inUse": "Utilisée",
+    "empty": "Aucune table pour l'instant. Ajoutez votre première table ci-dessus."
   },
   "settings": {
     "title": "Réglages",

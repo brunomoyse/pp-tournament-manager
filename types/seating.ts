@@ -6,6 +6,7 @@ export interface ClubTable {
   tableNumber: number
   maxSeats: number
   isActive: boolean
+  isDefault: boolean
   isAssigned: boolean
   createdAt: string
   updatedAt: string

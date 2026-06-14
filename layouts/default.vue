@@ -135,6 +135,7 @@ import {
   constructOutline,
   statsChartOutline,
   podiumOutline,
+  gridOutline,
   megaphoneOutline,
   logOutOutline,
   compassOutline,
@@ -174,6 +175,7 @@ const navItems = computed(() => [
 // Sidebar drawer shows everything; the bottom tab bar stays at the 5 primary items.
 const sidebarNavItems = computed(() => [
   ...navItems.value,
+  { to: '/tables', icon: gridOutline, label: t('nav.tables') },
   { to: '/leagues', icon: podiumOutline, label: t('nav.leagues') },
   { to: '/announcements', icon: megaphoneOutline, label: t('nav.announcements') },
 ])

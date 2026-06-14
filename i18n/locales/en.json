@@ -134,7 +134,24 @@
     "leagues": "Leagues",
     "replayTour": "Guided tour",
     "settings": "Settings",
-    "announcements": "Announcements"
+    "announcements": "Announcements",
+    "tables": "Tables"
+  },
+  "tables": {
+    "title": "Tables",
+    "subtitle": "Predefine your physical tables. The default set is linked to every new tournament automatically.",
+    "number": "Table no.",
+    "seats": "Seats",
+    "seatsShort": "seats",
+    "defaultSet": "Default set",
+    "defaultHint": "Tables in the default set are auto-linked to new tournaments. A table booked by a live tournament can't be used by another until it finishes.",
+    "add": "Add table",
+    "addFailed": "Failed to add table.",
+    "updateFailed": "Failed to update table.",
+    "deleteFailed": "Failed to delete table.",
+    "deleteConfirm": "Delete table #{number}?",
+    "inUse": "In use",
+    "empty": "No tables yet. Add your first table above."
   },
   "settings": {
     "title": "Settings",

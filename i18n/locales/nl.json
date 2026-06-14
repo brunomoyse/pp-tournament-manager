@@ -134,7 +134,24 @@
     "leagues": "Competities",
     "replayTour": "Rondleiding",
     "settings": "Instellingen",
-    "announcements": "Aankondigingen"
+    "announcements": "Aankondigingen",
+    "tables": "Tafels"
+  },
+  "tables": {
+    "title": "Tafels",
+    "subtitle": "Leg je fysieke tafels vooraf vast. De standaardset wordt automatisch aan elk nieuw toernooi gekoppeld.",
+    "number": "Tafelnr.",
+    "seats": "Stoelen",
+    "seatsShort": "stoelen",
+    "defaultSet": "Standaardset",
+    "defaultHint": "Tafels in de standaardset worden automatisch aan nieuwe toernooien gekoppeld. Een tafel die door een lopend toernooi wordt gebruikt, is elders niet beschikbaar tot dat is afgelopen.",
+    "add": "Tafel toevoegen",
+    "addFailed": "Toevoegen van tafel mislukt.",
+    "updateFailed": "Bijwerken van tafel mislukt.",
+    "deleteFailed": "Verwijderen van tafel mislukt.",
+    "deleteConfirm": "Tafel nr. {number} verwijderen?",
+    "inUse": "In gebruik",
+    "empty": "Nog geen tafels. Voeg hierboven je eerste tafel toe."
   },
   "settings": {
     "title": "Instellingen",

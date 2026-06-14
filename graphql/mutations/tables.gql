@@ -1,0 +1,25 @@
+mutation CreateClubTable($input: CreateClubTableInput!) {
+  createClubTable(input: $input) {
+    id
+    clubId
+    tableNumber
+    maxSeats
+    isActive
+    isDefault
+    isAssigned
+  }
+}
+
+mutation UpdateClubTable($input: UpdateClubTableInput!) {
+  updateClubTable(input: $input) {
+    id
+    tableNumber
+    maxSeats
+    isActive
+    isDefault
+  }
+}
+
+mutation DeleteClubTable($id: ID!) {
+  deleteClubTable(id: $id)
+}
