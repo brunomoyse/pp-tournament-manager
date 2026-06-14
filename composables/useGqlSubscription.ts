@@ -22,23 +22,18 @@ export function useGqlSubscription<
     // cleanup previous
     dispose?.()
     connected.value = true
-    console.log('[useGqlSubscription] Subscribing with variables:', vars ?? opts.variables)
 
     dispose = $gqlWs.subscribe<ExecResult<TData>>(
       { query: opts.query, variables: vars ?? opts.variables },
       {
         next: (res) => {
-          console.log('[useGqlSubscription] Received:', res)
           if (res?.data) data.value = res.data as TData
           if (res?.errors?.length) error.value = res.errors
         },
         error: (err) => {
-          console.error('[useGqlSubscription] Error:', err)
           error.value = err
         },
-        complete: () => {
-          console.log('[useGqlSubscription] Complete')
-        },
+        complete: () => {},
       },
     )
   }

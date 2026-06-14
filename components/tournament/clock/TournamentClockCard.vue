@@ -331,19 +331,13 @@ const stopLocalTimer = () => {
 // Watch clock status to start/stop local timer
 watch(
   () => clock.value?.status,
-  (newStatus, oldStatus) => {
-    console.log('[ClockCard] Status changed:', oldStatus, '->', newStatus)
-    console.log('[ClockCard] Clock data:', clock.value)
+  (newStatus) => {
     if (newStatus === 'RUNNING') {
       startLocalTimer()
     } else if (newStatus === 'PAUSED') {
       // When paused, stop timer but preserve last known value as fallback
       stopLocalTimer()
       // Don't set localTimeRemaining to null - preserve it as fallback
-      console.log(
-        '[ClockCard] Paused - timeRemainingSeconds from server:',
-        clock.value?.timeRemainingSeconds,
-      )
     } else {
       // When stopped, reset everything
       stopLocalTimer()

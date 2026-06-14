@@ -33,7 +33,6 @@ export function useNetworkStatus() {
       }
     } catch {
       // Fallback for web/development
-      console.log('Network API not available, using browser fallback')
       isOnline.value = navigator.onLine
       connectionStatus.value = navigator.onLine ? 'connected' : 'disconnected'
     }
@@ -67,8 +66,6 @@ export function useNetworkStatus() {
       await updateNetworkStatus()
     } catch {
       // Fallback for web/development - use browser events
-      console.log('Using browser network events as fallback')
-
       const handleOnline = () => {
         isOnline.value = true
         connectionStatus.value = 'connected'

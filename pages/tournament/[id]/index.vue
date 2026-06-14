@@ -650,9 +650,7 @@ const { data: clockUpdates } = useGqlSubscription({
 // Watch for subscription updates and update the store
 watch(clockUpdates, (raw) => {
   const data = raw as { tournamentClockUpdates?: TournamentClock } | undefined
-  console.log('[TournamentPage] Clock subscription update received:', data)
   if (data?.tournamentClockUpdates) {
-    console.log('[TournamentPage] Updating store with clock:', data.tournamentClockUpdates)
     tournamentStore.setSelectedTournamentClock(data.tournamentClockUpdates)
   }
 })
