@@ -144,6 +144,42 @@
   --ion-item-background: #1f1f23;
 }
 
+/* ============================================
+   Theme: Clover Poker Club (sober four-leaf-clover green)
+   Activated via <html data-theme="clover"> by useThemeStore.
+   ============================================ */
+:root[data-theme='clover'] {
+  --color-pp-bg: #0f1210;
+  --color-pp-surface: #161a17;
+  --color-pp-surface-2: #1d221e;
+  --color-pp-border: #272d28;
+  --color-pp-border-strong: #39423b;
+  --color-pp-text: #f7faf8;
+  --color-pp-text-muted: #9fa8a2;
+  --color-pp-text-dim: #88918b;
+
+  /* Accent: clover green. Luminous enough that dark text reads on it
+     (≈6:1), so on-accent stays dark like the gold theme. */
+  --color-pp-gold: #3aaa5c;
+  --color-pp-gold-strong: #46c46c;
+  --color-pp-gold-deep: #1d6b39;
+  --pp-accent-rgb: 58, 170, 92;
+  --color-pp-on-accent: #0f1210;
+
+  /* Success shifts to teal so positive states stay distinct from the
+     green accent; danger keeps red (already distinct). */
+  --color-pp-success: #14b8a6;
+
+  /* Ionic accent follow-ups */
+  --ion-color-primary-contrast-rgb: 15, 18, 16;
+  --ion-color-primary-shade: #339a52;
+  --ion-color-primary-tint: #4cb56a;
+  --ion-background-color: #0f1210;
+  --ion-background-color-rgb: 15, 18, 16;
+  --ion-card-background: #1a1f1b;
+  --ion-item-background: #1a1f1b;
+}
+
 ion-content,
 ion-page {
   --background: var(--ion-background-color);

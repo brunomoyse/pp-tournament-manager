@@ -137,7 +137,8 @@
   "theme": {
     "label": "Theme",
     "pocketpair": "PocketPair",
-    "vip": "VIP Poker Club"
+    "vip": "VIP Poker Club",
+    "clover": "Clover Poker Club"
   },
   "headings": {
     "activeTournaments": "Active Tournaments",

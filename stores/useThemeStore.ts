@@ -9,7 +9,7 @@ import { ref } from 'vue'
  * `pocketpair` is the default and carries NO data-theme attribute (the
  * `:root` defaults apply); other themes set `data-theme` to their id.
  */
-export type ThemeId = 'pocketpair' | 'vip'
+export type ThemeId = 'pocketpair' | 'vip' | 'clover'
 
 export interface ThemeOption {
   id: ThemeId
@@ -21,6 +21,7 @@ export interface ThemeOption {
 export const THEMES: ThemeOption[] = [
   { id: 'pocketpair', labelKey: 'theme.pocketpair', swatch: '#fee78a' },
   { id: 'vip', labelKey: 'theme.vip', swatch: '#e11d2a' },
+  { id: 'clover', labelKey: 'theme.clover', swatch: '#3aaa5c' },
 ]
 
 export const useThemeStore = defineStore(
