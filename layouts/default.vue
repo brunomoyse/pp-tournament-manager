@@ -49,6 +49,10 @@
 
       <!-- User info + logout -->
       <div class="sidebar-footer">
+        <button type="button" class="footer-action" @click="replayTour">
+          <IonIcon :icon="compassOutline" class="footer-action-icon" />
+          <span>{{ t('nav.replayTour') }}</span>
+        </button>
         <div class="user-info">
           <div class="user-avatar">
             {{ userInitials }}
@@ -128,15 +132,23 @@ import {
   statsChartOutline,
   podiumOutline,
   logOutOutline,
+  compassOutline,
 } from 'ionicons/icons'
 import { useAuthStore } from '~/stores/useAuthStore'
+import { useTourStore } from '~/stores/useTourStore'
 import { useI18n } from '~/composables/useI18n'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const clubStore = useClubStore()
+const tourStore = useTourStore()
 const { t } = useI18n()
+
+const replayTour = () => {
+  drawerOpen.value = false
+  tourStore.startTour()
+}
 
 const club = computed(() => clubStore.club)
 const drawerOpen = ref(false)
@@ -434,6 +446,34 @@ onMounted(async () => {
 .sidebar-footer {
   border-top: 1px solid rgba(84, 84, 95, 0.5);
   padding: 0.75rem;
+}
+
+.footer-action {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  margin-bottom: 0.25rem;
+  border-radius: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.footer-action:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.footer-action-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
 }
 
 .user-info {

@@ -131,7 +131,8 @@
     "reports": "Rapporten",
     "menu": "Menu",
     "logout": "Uitloggen",
-    "leagues": "Competities"
+    "leagues": "Competities",
+    "replayTour": "Rondleiding"
   },
   "headings": {
     "activeTournaments": "Actieve toernooien",

@@ -105,7 +105,12 @@ watch(allDone, (done) => {
 })
 
 const onItemClick = (item: ChecklistItem) => {
-  if (!item.done && item.route) navigateTo(item.route)
+  if (item.done) return
+  if (item.id === 'takeTour') {
+    tourStore.startTour()
+    return
+  }
+  if (item.route) navigateTo(item.route)
 }
 </script>
 
@@ -153,7 +158,7 @@ const onItemClick = (item: ChecklistItem) => {
             class="checklist-item"
             :class="{
               'checklist-item--done': item.done,
-              'checklist-item--link': !item.done && item.route,
+              'checklist-item--link': !item.done && (!!item.route || item.id === 'takeTour'),
             }"
             @click="onItemClick(item)"
           >

@@ -131,7 +131,8 @@
     "reports": "Reports",
     "menu": "Menu",
     "logout": "Logout",
-    "leagues": "Leagues"
+    "leagues": "Leagues",
+    "replayTour": "Guided tour"
   },
   "headings": {
     "activeTournaments": "Active Tournaments",
