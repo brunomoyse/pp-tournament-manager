@@ -391,11 +391,6 @@ onMounted(async () => {
   width: 1rem;
   height: 1rem;
 }
-.icon-md {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
 .page-root,
 .page-content {
   background-color: var(--color-pp-bg);

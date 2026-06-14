@@ -20,8 +20,8 @@
               <IonIcon :icon="cloudUploadOutline" class="icon-md" />
               {{ t('players.import.button') }}
             </PpButton>
-            <PpButton @click="openCreateModal">
-              <IonIcon :icon="personAddOutline" class="icon-md" />
+            <PpButton magnetic @click="openCreateModal">
+              <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('players.addPlayer') }}
             </PpButton>
           </PpFadeUp>
@@ -67,7 +67,7 @@
             <h4 class="empty-title">{{ t('players.noPlayersFound') }}</h4>
             <p class="empty-text">{{ t('players.createFirstPlayer') }}</p>
             <PpButton class="empty-action" @click="openCreateModal">
-              <IonIcon :icon="personAddOutline" class="icon-md" />
+              <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('players.addPlayer') }}
             </PpButton>
           </div>
@@ -157,7 +157,7 @@ definePageMeta({
 
 import { IonPage, IonContent, IonIcon } from '@ionic/vue'
 import {
-  personAddOutline,
+  addOutline,
   searchOutline,
   peopleOutline,
   createOutline,
@@ -350,6 +350,7 @@ onMounted(fetchPlayers)
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
   }
 }
 
@@ -369,17 +370,6 @@ onMounted(fetchPlayers)
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--color-pp-text);
-}
-
-.header-actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.icon-md {
-  width: 1.25rem;
-  height: 1.25rem;
 }
 
 .icon-sm {

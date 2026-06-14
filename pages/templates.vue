@@ -38,7 +38,7 @@
                 class="search-input"
               />
             </div>
-            <PpButton v-if="isAdmin" @click="openPayoutCreate">
+            <PpButton v-if="isAdmin" magnetic @click="openPayoutCreate">
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('templates.addPayoutTemplate') }}
             </PpButton>
@@ -92,7 +92,7 @@
                 class="search-input"
               />
             </div>
-            <PpButton v-if="isAdmin" @click="openBlindCreate">
+            <PpButton v-if="isAdmin" magnetic @click="openBlindCreate">
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('templates.addBlindStructure') }}
             </PpButton>
@@ -480,11 +480,6 @@ onMounted(fetchAll)
   outline: none;
   box-shadow: 0 0 0 2px rgba(254, 231, 138, 0.4);
   border-color: var(--color-pp-gold);
-}
-
-.icon-md {
-  width: 1.25rem;
-  height: 1.25rem;
 }
 
 /* States */

@@ -237,12 +237,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.header-actions {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
 .page-bg {
   background-color: var(--color-pp-bg);
 }
@@ -294,11 +288,6 @@ onMounted(() => {
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--color-pp-text);
-}
-
-.icon-md {
-  width: 1.25rem;
-  height: 1.25rem;
 }
 
 /* Filter Bar */

@@ -9,8 +9,8 @@
               <h1 class="page-title">{{ t('leagues.title') }}</h1>
               <p class="page-subtitle">{{ t('leagues.subtitle') }}</p>
             </div>
-            <PpButton variant="primary" @click="openCreate">
-              <IonIcon :icon="addOutline" />
+            <PpButton variant="primary" magnetic @click="openCreate">
+              <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('leagues.new') }}
             </PpButton>
           </div>

@@ -702,11 +702,6 @@ onMounted(() => {
   color: var(--color-pp-text);
 }
 
-.icon-md {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
 .leaderboard-empty {
   text-align: center;
   padding: 3rem 0;
