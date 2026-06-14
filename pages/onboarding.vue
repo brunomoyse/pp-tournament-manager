@@ -521,7 +521,7 @@ input:-webkit-autofill:focus {
   transform: translateX(-50%);
   width: 540px;
   height: 540px;
-  background-color: rgba(254, 231, 138, 0.07);
+  background-color: rgba(var(--pp-accent-rgb), 0.07);
   border-radius: 9999px;
   filter: blur(120px);
   pointer-events: none;
@@ -532,8 +532,8 @@ input:-webkit-autofill:focus {
   inset: 0;
   pointer-events: none;
   background-image:
-    radial-gradient(at 0% 0%, rgba(254, 231, 138, 0.06) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(254, 231, 138, 0.04) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(var(--pp-accent-rgb), 0.06) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(var(--pp-accent-rgb), 0.04) 0px, transparent 50%);
 }
 
 .onboarding-card-wrap {
@@ -569,7 +569,7 @@ input:-webkit-autofill:focus {
   align-items: center;
   justify-content: center;
   padding: 0.625rem;
-  box-shadow: 0 8px 32px rgba(254, 231, 138, 0.25);
+  box-shadow: 0 8px 32px rgba(var(--pp-accent-rgb), 0.25);
 }
 
 .logo-image {
@@ -687,8 +687,8 @@ input:-webkit-autofill:focus {
   font-size: 0.8rem;
   line-height: 1.4;
   color: var(--color-pp-gold-strong);
-  background-color: rgba(254, 231, 138, 0.08);
-  border: 1px solid rgba(254, 231, 138, 0.25);
+  background-color: rgba(var(--pp-accent-rgb), 0.08);
+  border: 1px solid rgba(var(--pp-accent-rgb), 0.25);
 }
 
 /* Read-only official name pulled from the registry. */
@@ -717,7 +717,7 @@ input:-webkit-autofill:focus {
 }
 
 .form-input:focus {
-  box-shadow: 0 0 0 3px rgba(254, 231, 138, 0.18);
+  box-shadow: 0 0 0 3px rgba(var(--pp-accent-rgb), 0.18);
   border-color: var(--color-pp-gold);
   background-color: rgba(255, 255, 255, 0.07);
 }

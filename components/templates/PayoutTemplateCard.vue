@@ -108,7 +108,7 @@ const playerRange = computed(() => {
 }
 
 .template-card:hover {
-  border-color: rgba(254, 231, 138, 0.3);
+  border-color: rgba(var(--pp-accent-rgb), 0.3);
 }
 
 .card-header {
@@ -142,7 +142,7 @@ const playerRange = computed(() => {
 
 .meta-badge {
   padding: 0.125rem 0.5rem;
-  background-color: rgba(254, 231, 138, 0.1);
+  background-color: rgba(var(--pp-accent-rgb), 0.1);
   color: var(--color-pp-gold);
   border-radius: 9999px;
   font-size: 0.75rem;

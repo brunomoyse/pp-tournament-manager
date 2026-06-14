@@ -654,7 +654,7 @@ onMounted(async () => {
 
 .tournament-row:hover {
   background-color: rgba(255, 255, 255, 0.04);
-  border-color: rgba(254, 231, 138, 0.25);
+  border-color: rgba(var(--pp-accent-rgb), 0.25);
   transform: translateY(-1px);
 }
 
@@ -677,7 +677,7 @@ onMounted(async () => {
 }
 
 .tournament-row:hover .tournament-icon-wrapper {
-  border-color: rgba(254, 231, 138, 0.4);
+  border-color: rgba(var(--pp-accent-rgb), 0.4);
 }
 
 .tournament-icon {

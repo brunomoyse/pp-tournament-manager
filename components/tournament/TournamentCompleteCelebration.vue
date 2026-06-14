@@ -84,10 +84,10 @@ const { spring } = useMotionTokens()
   justify-content: center;
   background: radial-gradient(
     circle at 50% 35%,
-    rgba(254, 231, 138, 0.28),
-    rgba(254, 231, 138, 0.06)
+    rgba(var(--pp-accent-rgb), 0.28),
+    rgba(var(--pp-accent-rgb), 0.06)
   );
-  border: 1px solid rgba(254, 231, 138, 0.35);
+  border: 1px solid rgba(var(--pp-accent-rgb), 0.35);
   box-shadow: var(--shadow-glow);
 }
 

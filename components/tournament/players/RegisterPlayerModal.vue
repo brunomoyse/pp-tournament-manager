@@ -288,7 +288,7 @@ watch(
 .tab-button--active {
   background-color: var(--color-pp-surface-2);
   color: var(--color-pp-gold);
-  border: 1px solid rgba(254, 231, 138, 0.4);
+  border: 1px solid rgba(var(--pp-accent-rgb), 0.4);
   box-shadow: var(--pp-shadow-sm);
 }
 
@@ -363,7 +363,7 @@ watch(
 }
 
 .result-card:hover {
-  border-color: rgba(254, 231, 138, 0.5);
+  border-color: rgba(var(--pp-accent-rgb), 0.5);
 }
 
 .result-player {

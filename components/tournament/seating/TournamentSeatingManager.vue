@@ -793,11 +793,11 @@ defineExpose({ refreshSeatingData })
 }
 
 .seating-manager__move-seat--current {
-  background-color: rgba(254, 231, 138, 0.15);
+  background-color: rgba(var(--pp-accent-rgb), 0.15);
   border-color: var(--color-pp-gold);
   color: var(--color-pp-gold);
   cursor: not-allowed;
-  box-shadow: 0 0 0 2px rgba(254, 231, 138, 0.15);
+  box-shadow: 0 0 0 2px rgba(var(--pp-accent-rgb), 0.15);
 }
 
 .seating-manager__move-seat--available {
@@ -810,7 +810,7 @@ defineExpose({ refreshSeatingData })
 @media (hover: hover) {
   .seating-manager__move-seat--available:hover {
     border-color: var(--color-pp-gold);
-    background-color: rgba(254, 231, 138, 0.2);
+    background-color: rgba(var(--pp-accent-rgb), 0.2);
   }
 }
 
@@ -836,14 +836,14 @@ defineExpose({ refreshSeatingData })
 @media (hover: hover) {
   .seating-manager__player-option:hover {
     border-color: var(--color-pp-gold);
-    background-color: rgba(254, 231, 138, 0.1);
+    background-color: rgba(var(--pp-accent-rgb), 0.1);
   }
 }
 
 .seating-manager__player-avatar {
   width: 2.5rem;
   height: 2.5rem;
-  background-color: rgba(254, 231, 138, 0.2);
+  background-color: rgba(var(--pp-accent-rgb), 0.2);
   border-radius: 9999px;
   display: flex;
   align-items: center;

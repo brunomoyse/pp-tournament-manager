@@ -184,8 +184,8 @@ const onItemClick = (item: ChecklistItem) => {
 
 .checklist-card--celebrating {
   box-shadow:
-    0 0 0 1px rgba(254, 231, 138, 0.35),
-    0 0 42px rgba(254, 231, 138, 0.18);
+    0 0 0 1px rgba(var(--pp-accent-rgb), 0.35),
+    0 0 42px rgba(var(--pp-accent-rgb), 0.18);
 }
 
 .checklist-header {
@@ -219,7 +219,7 @@ const onItemClick = (item: ChecklistItem) => {
   stroke: var(--color-pp-gold);
   stroke-width: 4;
   stroke-linecap: round;
-  filter: drop-shadow(0 0 6px rgba(254, 231, 138, 0.45));
+  filter: drop-shadow(0 0 6px rgba(var(--pp-accent-rgb), 0.45));
   transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -327,7 +327,7 @@ const onItemClick = (item: ChecklistItem) => {
   background-color: var(--color-pp-gold);
   border-color: var(--color-pp-gold);
   transform: scale(1.08);
-  box-shadow: 0 0 10px rgba(254, 231, 138, 0.4);
+  box-shadow: 0 0 10px rgba(var(--pp-accent-rgb), 0.4);
 }
 
 .item-check-icon {
@@ -352,7 +352,7 @@ const onItemClick = (item: ChecklistItem) => {
 .checklist-item--done .item-label {
   color: var(--color-pp-text-dim);
   text-decoration: line-through;
-  text-decoration-color: rgba(254, 231, 138, 0.4);
+  text-decoration-color: rgba(var(--pp-accent-rgb), 0.4);
 }
 
 /* Card exit (dismiss / completion) */

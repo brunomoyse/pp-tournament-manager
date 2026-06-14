@@ -546,7 +546,7 @@ onMounted(() => {
 .period-tab--active {
   background-color: var(--color-pp-surface-2);
   color: var(--color-pp-gold);
-  border: 1px solid rgba(254, 231, 138, 0.4);
+  border: 1px solid rgba(var(--pp-accent-rgb), 0.4);
   box-shadow: var(--pp-shadow-sm);
 }
 
@@ -777,11 +777,11 @@ onMounted(() => {
 .podium-avatar--first {
   width: 4rem;
   height: 4rem;
-  background-color: rgba(254, 231, 138, 0.2);
-  border: 2px solid rgba(254, 231, 138, 0.6);
+  background-color: rgba(var(--pp-accent-rgb), 0.2);
+  border: 2px solid rgba(var(--pp-accent-rgb), 0.6);
   color: var(--color-pp-gold);
   font-size: 1.25rem;
-  box-shadow: 0 0 25px rgba(254, 231, 138, 0.3);
+  box-shadow: 0 0 25px rgba(var(--pp-accent-rgb), 0.3);
 }
 
 .podium-avatar--third {
@@ -842,10 +842,10 @@ onMounted(() => {
 }
 
 .podium-bar--first {
-  background-color: rgba(254, 231, 138, 0.15);
-  border: 1px solid rgba(254, 231, 138, 0.3);
+  background-color: rgba(var(--pp-accent-rgb), 0.15);
+  border: 1px solid rgba(var(--pp-accent-rgb), 0.3);
   height: 130px;
-  box-shadow: 0 0 20px rgba(254, 231, 138, 0.1);
+  box-shadow: 0 0 20px rgba(var(--pp-accent-rgb), 0.1);
 }
 
 .podium-bar--third {
@@ -865,7 +865,7 @@ onMounted(() => {
 
 .podium-rank--first {
   font-size: 2.25rem;
-  color: rgba(254, 231, 138, 0.4);
+  color: rgba(var(--pp-accent-rgb), 0.4);
   padding-bottom: 0.75rem;
 }
 

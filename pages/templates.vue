@@ -418,7 +418,7 @@ onMounted(fetchAll)
 }
 
 .tab--active {
-  background-color: rgba(254, 231, 138, 0.15);
+  background-color: rgba(var(--pp-accent-rgb), 0.15);
   color: var(--color-pp-gold);
 }
 
@@ -478,7 +478,7 @@ onMounted(fetchAll)
 
 .search-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(254, 231, 138, 0.4);
+  box-shadow: 0 0 0 2px rgba(var(--pp-accent-rgb), 0.4);
   border-color: var(--color-pp-gold);
 }
 

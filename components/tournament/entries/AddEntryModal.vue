@@ -284,9 +284,9 @@ const closeModal = () => {
 }
 
 .entry-type-button--active {
-  background-color: rgba(254, 231, 138, 0.2);
+  background-color: rgba(var(--pp-accent-rgb), 0.2);
   color: var(--color-pp-gold);
-  border-color: rgba(254, 231, 138, 0.4);
+  border-color: rgba(var(--pp-accent-rgb), 0.4);
 }
 
 .input-with-prefix {

@@ -134,6 +134,11 @@
     "leagues": "Competities",
     "replayTour": "Rondleiding"
   },
+  "theme": {
+    "label": "Thema",
+    "pocketpair": "PocketPair",
+    "vip": "VIP Poker Club"
+  },
   "headings": {
     "activeTournaments": "Actieve toernooien",
     "players": "Spelers",

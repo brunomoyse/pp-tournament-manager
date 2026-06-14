@@ -109,7 +109,7 @@ const enter = (order: number, fromY = 14) => ({
   position: absolute;
   inset: -1.75rem;
   border-radius: 9999px;
-  background: radial-gradient(circle, rgba(254, 231, 138, 0.22) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(var(--pp-accent-rgb), 0.22) 0%, transparent 70%);
   animation: welcome-glow 3s ease-in-out infinite;
 }
 
@@ -172,7 +172,7 @@ const enter = (order: number, fromY = 14) => ({
   height: 2rem;
   flex-shrink: 0;
   border-radius: 9999px;
-  background-color: rgba(254, 231, 138, 0.1);
+  background-color: rgba(var(--pp-accent-rgb), 0.1);
   color: var(--color-pp-gold);
 }
 

@@ -106,7 +106,7 @@ function onKeydown(e: KeyboardEvent) {
   border-radius: inherit;
   background: radial-gradient(
     220px circle at var(--pp-mx, 50%) var(--pp-my, 0%),
-    rgba(254, 231, 138, 0.1),
+    rgba(var(--pp-accent-rgb), 0.1),
     transparent 70%
   );
   opacity: 0;
@@ -119,7 +119,7 @@ function onKeydown(e: KeyboardEvent) {
     border-color: var(--color-pp-border-strong);
     box-shadow:
       var(--shadow-card),
-      0 0 0 1px rgba(254, 231, 138, 0.1);
+      0 0 0 1px rgba(var(--pp-accent-rgb), 0.1);
   }
   .is-interactive:hover::before {
     opacity: 1;

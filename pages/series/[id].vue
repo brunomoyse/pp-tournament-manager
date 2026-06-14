@@ -227,9 +227,9 @@ const formatDate = (iso: string) =>
   border-radius: 0.5rem;
 }
 .badge--gold {
-  background-color: rgba(254, 231, 138, 0.15);
+  background-color: rgba(var(--pp-accent-rgb), 0.15);
   color: var(--color-pp-gold);
-  border: 1px solid rgba(254, 231, 138, 0.4);
+  border: 1px solid rgba(var(--pp-accent-rgb), 0.4);
 }
 .qual-head {
   display: flex;

@@ -23,6 +23,10 @@
   --color-pp-gold: #fee78a;
   --color-pp-gold-strong: #fcd34d;
   --color-pp-gold-deep: #b8860b;
+  /* Accent channel (for rgba glows/tints) + text drawn on the accent fill.
+     Themes override --color-pp-gold* together with these. */
+  --pp-accent-rgb: 254, 231, 138;
+  --color-pp-on-accent: #18181a;
   --color-pp-danger: #ef4444;
   --color-pp-success: #10b981;
 
@@ -33,7 +37,8 @@
   --radius-xl: 1rem;
   --radius-2xl: 1.25rem;
 
-  --shadow-glow: 0 0 0 1px rgba(254, 231, 138, 0.12), 0 8px 40px -8px rgba(254, 231, 138, 0.18);
+  --shadow-glow:
+    0 0 0 1px rgba(var(--pp-accent-rgb), 0.12), 0 8px 40px -8px rgba(var(--pp-accent-rgb), 0.18);
   --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 20px 40px -20px rgba(0, 0, 0, 0.6);
 }
 
@@ -93,8 +98,8 @@
 @layer utilities {
   .pp-grain {
     background-image:
-      radial-gradient(at 0% 0%, rgba(254, 231, 138, 0.06) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(254, 231, 138, 0.04) 0px, transparent 50%);
+      radial-gradient(at 0% 0%, rgba(var(--pp-accent-rgb), 0.06) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(var(--pp-accent-rgb), 0.04) 0px, transparent 50%);
   }
 
   .pp-card {
@@ -118,7 +123,7 @@
   }
 
   .pp-gold-text {
-    background: linear-gradient(180deg, #fee78a 0%, #b8860b 100%);
+    background: linear-gradient(180deg, var(--color-pp-gold) 0%, var(--color-pp-gold-deep) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;

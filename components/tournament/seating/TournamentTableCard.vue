@@ -461,7 +461,7 @@ const handleMovePlayer = (data: { playerId: string; fromTable: number; fromSeat:
   background-color: var(--color-pp-gold);
   color: var(--color-pp-bg);
   border-color: var(--color-pp-gold);
-  box-shadow: 0 0 12px rgba(254, 231, 138, 0.4);
+  box-shadow: 0 0 12px rgba(var(--pp-accent-rgb), 0.4);
   transform: scale(1.05);
 }
 
@@ -474,7 +474,7 @@ const handleMovePlayer = (data: { playerId: string; fromTable: number; fromSeat:
 
 @media (hover: hover) {
   .table-card__seat--empty:hover {
-    border-color: rgba(254, 231, 138, 0.5);
+    border-color: rgba(var(--pp-accent-rgb), 0.5);
     box-shadow: var(--pp-shadow-lg);
   }
 }

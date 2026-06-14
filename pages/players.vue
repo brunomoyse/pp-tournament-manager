@@ -430,7 +430,7 @@ onMounted(fetchPlayers)
 
 .search-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(254, 231, 138, 0.4);
+  box-shadow: 0 0 0 2px rgba(var(--pp-accent-rgb), 0.4);
   border-color: var(--color-pp-gold);
 }
 
@@ -560,7 +560,7 @@ onMounted(fetchPlayers)
 .player-avatar {
   width: 2.25rem;
   height: 2.25rem;
-  background-color: rgba(254, 231, 138, 0.2);
+  background-color: rgba(var(--pp-accent-rgb), 0.2);
   border-radius: 9999px;
   display: flex;
   align-items: center;

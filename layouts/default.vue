@@ -49,6 +49,20 @@
 
       <!-- User info + logout -->
       <div class="sidebar-footer">
+        <div class="theme-switch" role="group" :aria-label="t('theme.label')">
+          <button
+            v-for="opt in themes"
+            :key="opt.id"
+            type="button"
+            class="theme-chip"
+            :class="{ 'theme-chip--active': themeStore.theme === opt.id }"
+            :aria-pressed="themeStore.theme === opt.id"
+            @click="themeStore.setTheme(opt.id)"
+          >
+            <span class="theme-dot" :style="{ backgroundColor: opt.swatch }" />
+            <span class="theme-chip-label">{{ t(opt.labelKey) }}</span>
+          </button>
+        </div>
         <button type="button" class="footer-action" @click="replayTour">
           <IonIcon :icon="compassOutline" class="footer-action-icon" />
           <span>{{ t('nav.replayTour') }}</span>
@@ -136,6 +150,7 @@ import {
 } from 'ionicons/icons'
 import { useAuthStore } from '~/stores/useAuthStore'
 import { useTourStore } from '~/stores/useTourStore'
+import { useThemeStore, THEMES } from '~/stores/useThemeStore'
 import { useI18n } from '~/composables/useI18n'
 
 const route = useRoute()
@@ -143,6 +158,8 @@ const router = useRouter()
 const authStore = useAuthStore()
 const clubStore = useClubStore()
 const tourStore = useTourStore()
+const themeStore = useThemeStore()
+const themes = THEMES
 const { t } = useI18n()
 
 const replayTour = () => {
@@ -286,7 +303,7 @@ onMounted(async () => {
 
 .sidebar-title {
   font-family: var(--font-display);
-  background: linear-gradient(180deg, #fee78a 0%, #b8860b 100%);
+  background: linear-gradient(180deg, var(--color-pp-gold) 0%, var(--color-pp-gold-deep) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -334,7 +351,7 @@ onMounted(async () => {
 }
 
 .nav-link--active {
-  background-color: rgba(254, 231, 138, 0.1);
+  background-color: rgba(var(--pp-accent-rgb), 0.1);
   color: var(--color-pp-gold);
 }
 
@@ -347,7 +364,7 @@ onMounted(async () => {
   width: 2px;
   border-radius: 2px;
   background-color: var(--color-pp-gold);
-  box-shadow: 0 0 12px rgba(254, 231, 138, 0.45);
+  box-shadow: 0 0 12px rgba(var(--pp-accent-rgb), 0.45);
 }
 
 .nav-link--inactive {
@@ -448,6 +465,56 @@ onMounted(async () => {
   padding: 0.75rem;
 }
 
+.theme-switch {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.25rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-pp-border);
+}
+
+.theme-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-pp-text-muted);
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.theme-chip--active {
+  color: var(--color-pp-text);
+  background-color: var(--color-pp-surface-2);
+}
+
+.theme-chip:hover:not(.theme-chip--active) {
+  color: var(--color-pp-text);
+}
+
+.theme-dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.theme-chip-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .footer-action {
   display: flex;
   align-items: center;
@@ -487,7 +554,7 @@ onMounted(async () => {
   width: 2rem;
   height: 2rem;
   border-radius: 9999px;
-  background-color: rgba(254, 231, 138, 0.2);
+  background-color: rgba(var(--pp-accent-rgb), 0.2);
   display: flex;
   align-items: center;
   justify-content: center;

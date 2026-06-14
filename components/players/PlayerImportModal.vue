@@ -377,7 +377,7 @@ watch(
 .dropzone--active,
 .dropzone:hover {
   border-color: var(--color-pp-gold);
-  background-color: rgba(254, 231, 138, 0.05);
+  background-color: rgba(var(--pp-accent-rgb), 0.05);
 }
 
 .dropzone-icon {

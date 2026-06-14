@@ -169,12 +169,16 @@ const handleTableMove = () => {
 .player-avatar {
   width: 3.5rem;
   height: 3.5rem;
-  background: linear-gradient(to bottom right, rgba(254, 231, 138, 0.2), rgba(254, 231, 138, 0.4));
+  background: linear-gradient(
+    to bottom right,
+    rgba(var(--pp-accent-rgb), 0.2),
+    rgba(var(--pp-accent-rgb), 0.4)
+  );
   border-radius: 9999px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(254, 231, 138, 0.5);
+  border: 2px solid rgba(var(--pp-accent-rgb), 0.5);
 }
 
 .player-avatar-text {

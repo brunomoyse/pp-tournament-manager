@@ -919,12 +919,12 @@ onMounted(async () => {
 }
 
 .tab-button--active {
-  background-color: rgba(254, 231, 138, 0.1);
+  background-color: rgba(var(--pp-accent-rgb), 0.1);
   color: var(--color-pp-gold);
-  border: 1px solid rgba(254, 231, 138, 0.4);
+  border: 1px solid rgba(var(--pp-accent-rgb), 0.4);
   box-shadow:
-    0 0 0 1px rgba(254, 231, 138, 0.12),
-    0 8px 30px -10px rgba(254, 231, 138, 0.25);
+    0 0 0 1px rgba(var(--pp-accent-rgb), 0.12),
+    0 8px 30px -10px rgba(var(--pp-accent-rgb), 0.25);
 }
 
 .tab-button--inactive {
@@ -979,8 +979,8 @@ onMounted(async () => {
   flex-wrap: wrap;
   padding: 0.85rem 1rem;
   border-radius: 0.75rem;
-  background-color: rgba(254, 231, 138, 0.08);
-  border: 1px solid rgba(254, 231, 138, 0.3);
+  background-color: rgba(var(--pp-accent-rgb), 0.08);
+  border: 1px solid rgba(var(--pp-accent-rgb), 0.3);
 }
 
 .series-banner-body {
@@ -1191,13 +1191,13 @@ onMounted(async () => {
   --background: transparent;
   --background-selected: #24242a;
   --color: #94a3b8;
-  --color-selected: #fee78a;
+  --color-selected: var(--color-pp-gold);
   --border-radius: 12px;
   --padding-start: 32px;
   --padding-end: 32px;
   --margin: 4px;
   --box-shadow: none;
-  --box-shadow-selected: 0 2px 8px 0 rgb(254 231 138 / 0.2);
+  --box-shadow-selected: 0 2px 8px 0 rgba(var(--pp-accent-rgb), 0.2);
   margin: 0 2px;
   border: 1px solid #54545f; /* Subtle border for visibility */
   transition: all 0.2s ease;
@@ -1212,8 +1212,8 @@ onMounted(async () => {
 
 .tab-button-custom[aria-selected='true'] {
   --background: #24242a;
-  border: 1px solid rgba(254, 231, 138, 0.6);
-  box-shadow: 0 2px 8px 0 rgb(254 231 138 / 0.2);
+  border: 1px solid rgba(var(--pp-accent-rgb), 0.6);
+  box-shadow: 0 2px 8px 0 rgba(var(--pp-accent-rgb), 0.2);
 }
 
 /* Fullscreen styles for tournament clock */
@@ -1282,7 +1282,7 @@ onMounted(async () => {
   --background: transparent;
   --background-selected: #24242a;
   --color: #ffffff;
-  --color-selected: #fee78a;
+  --color-selected: var(--color-pp-gold);
   --border-radius: 12px;
   --padding-start: 16px;
   --padding-end: 16px;
@@ -1290,7 +1290,7 @@ onMounted(async () => {
   --padding-bottom: 12px;
   --margin: 0;
   --box-shadow: none;
-  --box-shadow-selected: 0 2px 8px 0 rgb(254 231 138 / 0.15);
+  --box-shadow-selected: 0 2px 8px 0 rgba(var(--pp-accent-rgb), 0.15);
   border: 1px solid transparent;
   border-radius: 12px;
   transition: all 0.2s ease;
@@ -1305,9 +1305,9 @@ onMounted(async () => {
 
 .tab-button-custom-grid[aria-selected='true'] {
   --background: #24242a;
-  --color: #fee78a;
-  border: 1px solid rgba(254, 231, 138, 0.4);
-  box-shadow: 0 2px 8px 0 rgb(254 231 138 / 0.15);
+  --color: var(--color-pp-gold);
+  border: 1px solid rgba(var(--pp-accent-rgb), 0.4);
+  box-shadow: 0 2px 8px 0 rgba(var(--pp-accent-rgb), 0.15);
 }
 
 .tab-button-custom-grid ion-label {

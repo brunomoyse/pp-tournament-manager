@@ -135,7 +135,7 @@ const formatChips = (value: number): string => {
 }
 
 .template-card:hover {
-  border-color: rgba(254, 231, 138, 0.3);
+  border-color: rgba(var(--pp-accent-rgb), 0.3);
 }
 
 .card-header {
@@ -236,7 +236,7 @@ const formatChips = (value: number): string => {
 }
 
 .break-row {
-  background-color: rgba(254, 231, 138, 0.05);
+  background-color: rgba(var(--pp-accent-rgb), 0.05);
 }
 
 .break-row td {
@@ -245,7 +245,7 @@ const formatChips = (value: number): string => {
 
 .break-badge {
   padding: 0.0625rem 0.375rem;
-  background-color: rgba(254, 231, 138, 0.15);
+  background-color: rgba(var(--pp-accent-rgb), 0.15);
   color: var(--color-pp-gold);
   border-radius: 0.25rem;
   font-size: 0.6875rem;

@@ -743,9 +743,9 @@ const ordinal = (n: number) => {
 }
 
 .badge--gold {
-  background-color: rgba(254, 231, 138, 0.15);
+  background-color: rgba(var(--pp-accent-rgb), 0.15);
   color: var(--color-pp-gold);
-  border: 1px solid rgba(254, 231, 138, 0.4);
+  border: 1px solid rgba(var(--pp-accent-rgb), 0.4);
 }
 
 .badge--muted {
@@ -840,7 +840,7 @@ const ordinal = (n: number) => {
 
 .pp-input:focus {
   outline: none;
-  border-color: rgba(254, 231, 138, 0.5);
+  border-color: rgba(var(--pp-accent-rgb), 0.5);
 }
 
 .knob-grid {

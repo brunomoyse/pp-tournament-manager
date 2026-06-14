@@ -631,7 +631,7 @@ const onActivity = () => resetIdle()
   line-height: 1.05;
   font-variant-numeric: tabular-nums;
   color: #ffffff;
-  text-shadow: 0 0 80px rgba(254, 231, 138, 0.08);
+  text-shadow: 0 0 80px rgba(var(--pp-accent-rgb), 0.08);
 }
 
 .tv-timer--soon {

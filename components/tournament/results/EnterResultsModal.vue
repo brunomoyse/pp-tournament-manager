@@ -600,7 +600,7 @@ const closeModal = () => {
   width: 2rem;
   height: 2rem;
   border-radius: 9999px;
-  background-color: rgba(254, 231, 138, 0.2);
+  background-color: rgba(var(--pp-accent-rgb), 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -759,9 +759,9 @@ const closeModal = () => {
 }
 
 .deal-type-button--active {
-  background-color: rgba(254, 231, 138, 0.2);
+  background-color: rgba(var(--pp-accent-rgb), 0.2);
   color: var(--color-pp-gold);
-  border-color: rgba(254, 231, 138, 0.4);
+  border-color: rgba(var(--pp-accent-rgb), 0.4);
 }
 
 .affected-positions {
@@ -783,7 +783,7 @@ const closeModal = () => {
 }
 
 .affected-position-item:hover {
-  border-color: rgba(254, 231, 138, 0.4);
+  border-color: rgba(var(--pp-accent-rgb), 0.4);
 }
 
 .affected-position-checkbox {

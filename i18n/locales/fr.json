@@ -134,6 +134,11 @@
     "leagues": "Ligues",
     "replayTour": "Visite guidée"
   },
+  "theme": {
+    "label": "Thème",
+    "pocketpair": "PocketPair",
+    "vip": "VIP Poker Club"
+  },
   "headings": {
     "activeTournaments": "Tournois actifs",
     "players": "Joueurs",

@@ -334,7 +334,7 @@ onMounted(() => {
 
 .search-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(254, 231, 138, 0.4);
+  box-shadow: 0 0 0 2px rgba(var(--pp-accent-rgb), 0.4);
   border-color: var(--color-pp-gold);
 }
 
@@ -349,7 +349,7 @@ onMounted(() => {
 
 .status-filter:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(254, 231, 138, 0.4);
+  box-shadow: 0 0 0 2px rgba(var(--pp-accent-rgb), 0.4);
   border-color: var(--color-pp-gold);
 }
 

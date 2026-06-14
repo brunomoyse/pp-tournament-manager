@@ -37,7 +37,7 @@
             cx="100"
             cy="100"
             r="92"
-            :stroke="timerColor"
+            :style="{ stroke: timerColor }"
             stroke-width="4"
             fill="none"
             stroke-linecap="round"
@@ -423,7 +423,7 @@ const timerColor = computed(() => {
   const remaining = timeRemaining.value
   if (remaining <= 30) return '#ef4444' // red-500
   if (remaining <= 120) return '#eab308' // yellow-500
-  return '#fee78a' // accent gold
+  return 'var(--color-pp-gold)' // brand accent
 })
 
 const timerColorClass = computed(() => {
@@ -693,7 +693,7 @@ const getClockButtonText = () => {
 
 .clock-card__tv-button:hover {
   color: var(--color-pp-gold);
-  border-color: rgba(254, 231, 138, 0.5);
+  border-color: rgba(var(--pp-accent-rgb), 0.5);
 }
 
 .clock-card__tv-icon {
@@ -873,11 +873,11 @@ const getClockButtonText = () => {
 .clock-card__blinds-current {
   border-radius: 0.75rem;
   padding: 0.75rem;
-  border: 2px solid rgba(254, 231, 138, 0.4);
+  border: 2px solid rgba(var(--pp-accent-rgb), 0.4);
   background: linear-gradient(
     to bottom right,
-    rgba(254, 231, 138, 0.15),
-    rgba(254, 231, 138, 0.05)
+    rgba(var(--pp-accent-rgb), 0.15),
+    rgba(var(--pp-accent-rgb), 0.05)
   );
   transition: all 0.5s ease;
 }
@@ -964,24 +964,24 @@ const getClockButtonText = () => {
 
 .clock-card__main-button--running {
   background-color: var(--color-pp-bg);
-  border: 2px solid rgba(254, 231, 138, 0.6);
+  border: 2px solid rgba(var(--pp-accent-rgb), 0.6);
   color: var(--color-pp-gold);
-  box-shadow: 0 0 20px rgba(254, 231, 138, 0.15);
+  box-shadow: 0 0 20px rgba(var(--pp-accent-rgb), 0.15);
 }
 
 .clock-card__main-button--stopped {
-  background: linear-gradient(to right, var(--color-pp-gold), rgba(254, 231, 138, 0.8));
+  background: linear-gradient(to right, var(--color-pp-gold), rgba(var(--pp-accent-rgb), 0.8));
   color: var(--color-pp-bg);
-  box-shadow: 0 4px 20px rgba(254, 231, 138, 0.3);
+  box-shadow: 0 4px 20px rgba(var(--pp-accent-rgb), 0.3);
 }
 
 @media (hover: hover) {
   .clock-card__main-button--running:hover {
-    box-shadow: 0 0 30px rgba(254, 231, 138, 0.25);
+    box-shadow: 0 0 30px rgba(var(--pp-accent-rgb), 0.25);
   }
 
   .clock-card__main-button--stopped:hover {
-    box-shadow: 0 4px 30px rgba(254, 231, 138, 0.45);
+    box-shadow: 0 4px 30px rgba(var(--pp-accent-rgb), 0.45);
   }
 }
 

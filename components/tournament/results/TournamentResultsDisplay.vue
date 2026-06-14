@@ -189,8 +189,8 @@ const finishedPlayers = computed<FinishedPlayer[]>(() => {
 }
 
 .results-card__row--podium {
-  background-color: rgba(254, 231, 138, 0.1);
-  border-color: rgba(254, 231, 138, 0.2);
+  background-color: rgba(var(--pp-accent-rgb), 0.1);
+  border-color: rgba(var(--pp-accent-rgb), 0.2);
 }
 
 .results-card__row--regular {
@@ -217,7 +217,7 @@ const finishedPlayers = computed<FinishedPlayer[]>(() => {
 }
 
 .results-card__position--first {
-  background-color: rgba(254, 231, 138, 0.3);
+  background-color: rgba(var(--pp-accent-rgb), 0.3);
   color: var(--color-pp-gold);
 }
 

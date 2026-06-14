@@ -40,8 +40,8 @@ withDefaults(
 
 .pp-badge--gold {
   color: var(--color-pp-gold);
-  background: rgba(254, 231, 138, 0.08);
-  border-color: rgba(254, 231, 138, 0.3);
+  background: rgba(var(--pp-accent-rgb), 0.08);
+  border-color: rgba(var(--pp-accent-rgb), 0.3);
 }
 .pp-badge--success {
   color: #4ade80;

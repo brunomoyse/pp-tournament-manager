@@ -76,8 +76,8 @@
    ============================================ */
 :root {
   --ion-color-primary: var(--color-pp-gold);
-  --ion-color-primary-rgb: 254, 231, 138;
-  --ion-color-primary-contrast: var(--color-pp-bg);
+  --ion-color-primary-rgb: var(--pp-accent-rgb);
+  --ion-color-primary-contrast: var(--color-pp-on-accent);
   --ion-color-primary-contrast-rgb: 24, 24, 26;
   --ion-color-primary-shade: #e0cb79;
   --ion-color-primary-tint: #fee996;
@@ -106,6 +106,42 @@
   --ion-tab-bar-background: transparent;
   --ion-tab-bar-color: var(--color-pp-text-muted);
   --ion-tab-bar-color-selected: var(--color-pp-gold);
+}
+
+/* ============================================
+   Theme: VIP Poker Club (black / white / poker red)
+   Activated via <html data-theme="vip"> by useThemeStore.
+   Overrides the same semantic tokens, so every pp-* utility, Ionic
+   component and tokenized accent glow follows automatically.
+   ============================================ */
+:root[data-theme='vip'] {
+  --color-pp-bg: #111113;
+  --color-pp-surface: #1a1a1d;
+  --color-pp-surface-2: #232327;
+  --color-pp-border: #2c2c32;
+  --color-pp-border-strong: #3c3c44;
+  --color-pp-text: #fafafa;
+  --color-pp-text-muted: #a6a6ae;
+  --color-pp-text-dim: #8b8b93;
+
+  /* Accent: poker red from the logo (white text passes WCAG AA at 4.77:1) */
+  --color-pp-gold: #e11d2a;
+  --color-pp-gold-strong: #c01620;
+  --color-pp-gold-deep: #7a1014;
+  --pp-accent-rgb: 225, 29, 42;
+  --color-pp-on-accent: #fafafa;
+
+  /* Danger shifts to amber so it stays distinct from the red accent */
+  --color-pp-danger: #f59e0b;
+
+  /* Ionic accent follow-ups (the hardcoded gold bits) */
+  --ion-color-primary-contrast-rgb: 250, 250, 250;
+  --ion-color-primary-shade: #c01620;
+  --ion-color-primary-tint: #e8323c;
+  --ion-background-color: #111113;
+  --ion-background-color-rgb: 17, 17, 19;
+  --ion-card-background: #1f1f23;
+  --ion-item-background: #1f1f23;
 }
 
 ion-content,
@@ -219,7 +255,7 @@ textarea::placeholder {
 
 .pp-input:focus {
   border-color: var(--color-pp-gold);
-  box-shadow: 0 0 0 2px rgba(254, 231, 138, 0.4);
+  box-shadow: 0 0 0 2px rgba(var(--pp-accent-rgb), 0.4);
 }
 
 .pp-input::placeholder {
@@ -256,7 +292,7 @@ textarea::placeholder {
 
 .pp-select:focus {
   border-color: var(--color-pp-gold);
-  box-shadow: 0 0 0 2px rgba(254, 231, 138, 0.4);
+  box-shadow: 0 0 0 2px rgba(var(--pp-accent-rgb), 0.4);
 }
 
 /* ============================================
@@ -265,9 +301,9 @@ textarea::placeholder {
    to <PpBadge>; the .pp-status-badge base class is gone.
    ============================================ */
 .pp-status--gold {
-  background-color: rgba(254, 231, 138, 0.2);
+  background-color: rgba(var(--pp-accent-rgb), 0.2);
   color: var(--color-pp-gold);
-  border-color: rgba(254, 231, 138, 0.3);
+  border-color: rgba(var(--pp-accent-rgb), 0.3);
 }
 
 .pp-status--green {
@@ -470,7 +506,7 @@ textarea::placeholder {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(254, 231, 138, 0.06), transparent);
+    background: linear-gradient(90deg, transparent, rgba(var(--pp-accent-rgb), 0.06), transparent);
     transform: translateX(-100%);
     pointer-events: none;
   }
@@ -522,8 +558,12 @@ textarea::placeholder {
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 700;
-  background: linear-gradient(135deg, rgba(254, 231, 138, 0.15), rgba(254, 231, 138, 0.05));
-  border: 1px solid rgba(254, 231, 138, 0.3);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--pp-accent-rgb), 0.15),
+    rgba(var(--pp-accent-rgb), 0.05)
+  );
+  border: 1px solid rgba(var(--pp-accent-rgb), 0.3);
   color: var(--color-pp-gold);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
 }

@@ -87,7 +87,7 @@ const blockMotion = (order: number) => ({
   border-radius: 1.25rem;
   border: 1px solid var(--color-pp-border-strong);
   box-shadow:
-    0 0 0 1px rgba(254, 231, 138, 0.06),
+    0 0 0 1px rgba(var(--pp-accent-rgb), 0.06),
     0 24px 60px -16px rgba(0, 0, 0, 0.8);
 }
 
@@ -162,11 +162,11 @@ const blockMotion = (order: number) => ({
 .dot--active {
   background-color: var(--color-pp-gold);
   transform: scale(1.35);
-  box-shadow: 0 0 8px rgba(254, 231, 138, 0.6);
+  box-shadow: 0 0 8px rgba(var(--pp-accent-rgb), 0.6);
 }
 
 .dot--done {
-  background-color: rgba(254, 231, 138, 0.45);
+  background-color: rgba(var(--pp-accent-rgb), 0.45);
 }
 
 .popover-actions {

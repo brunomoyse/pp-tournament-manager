@@ -319,11 +319,11 @@ onBeforeUnmount(detachListeners)
   top: 0;
   left: 0;
   pointer-events: none;
-  border: 1.5px solid rgba(254, 231, 138, 0.9);
+  border: 1.5px solid rgba(var(--pp-accent-rgb), 0.9);
   box-shadow:
-    0 0 0 1px rgba(254, 231, 138, 0.15),
-    0 0 24px rgba(254, 231, 138, 0.25),
-    inset 0 0 18px rgba(254, 231, 138, 0.08);
+    0 0 0 1px rgba(var(--pp-accent-rgb), 0.15),
+    0 0 24px rgba(var(--pp-accent-rgb), 0.25),
+    inset 0 0 18px rgba(var(--pp-accent-rgb), 0.08);
   transition: opacity 0.25s ease;
   will-change: transform, width, height;
 }
@@ -336,15 +336,15 @@ onBeforeUnmount(detachListeners)
   0%,
   100% {
     box-shadow:
-      0 0 0 1px rgba(254, 231, 138, 0.15),
-      0 0 24px rgba(254, 231, 138, 0.25),
-      inset 0 0 18px rgba(254, 231, 138, 0.08);
+      0 0 0 1px rgba(var(--pp-accent-rgb), 0.15),
+      0 0 24px rgba(var(--pp-accent-rgb), 0.25),
+      inset 0 0 18px rgba(var(--pp-accent-rgb), 0.08);
   }
   50% {
     box-shadow:
-      0 0 0 1px rgba(254, 231, 138, 0.25),
-      0 0 38px rgba(254, 231, 138, 0.4),
-      inset 0 0 24px rgba(254, 231, 138, 0.14);
+      0 0 0 1px rgba(var(--pp-accent-rgb), 0.25),
+      0 0 38px rgba(var(--pp-accent-rgb), 0.4),
+      inset 0 0 24px rgba(var(--pp-accent-rgb), 0.14);
   }
 }
 

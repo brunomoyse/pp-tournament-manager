@@ -262,9 +262,9 @@ const closeModal = () => {
   border-radius: 0.5rem;
   font-size: 0.8125rem;
   font-weight: 500;
-  background-color: rgba(254, 231, 138, 0.12);
+  background-color: rgba(var(--pp-accent-rgb), 0.12);
   color: var(--color-pp-gold);
-  border: 1px solid rgba(254, 231, 138, 0.4);
+  border: 1px solid rgba(var(--pp-accent-rgb), 0.4);
   cursor: pointer;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23fee78a' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -308,7 +308,7 @@ const closeModal = () => {
 }
 
 .table-row--selectable:hover {
-  border-color: rgba(254, 231, 138, 0.5);
+  border-color: rgba(var(--pp-accent-rgb), 0.5);
 }
 
 .table-row-left {

@@ -372,7 +372,7 @@ const closeModal = () => emit('close')
 }
 
 .break-row {
-  background-color: rgba(254, 231, 138, 0.05);
+  background-color: rgba(var(--pp-accent-rgb), 0.05);
 }
 
 .level-num {
@@ -404,7 +404,7 @@ const closeModal = () => emit('close')
 }
 
 .break-toggle--active {
-  background-color: rgba(254, 231, 138, 0.15);
+  background-color: rgba(var(--pp-accent-rgb), 0.15);
   color: var(--color-pp-gold);
 }
 

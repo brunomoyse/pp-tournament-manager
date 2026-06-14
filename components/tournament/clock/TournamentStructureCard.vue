@@ -154,7 +154,7 @@ onMounted(() => {
 .structure-icon-wrapper {
   width: 2rem;
   height: 2rem;
-  background-color: rgba(254, 231, 138, 0.2);
+  background-color: rgba(var(--pp-accent-rgb), 0.2);
   border-radius: 0.5rem;
   display: flex;
   align-items: center;
@@ -193,7 +193,7 @@ onMounted(() => {
 }
 
 .structure-level--active {
-  background-color: rgba(254, 231, 138, 0.2);
+  background-color: rgba(var(--pp-accent-rgb), 0.2);
   border: 1px solid var(--color-pp-gold);
 }
 

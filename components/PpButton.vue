@@ -57,7 +57,7 @@ const sizes: Record<NonNullable<typeof props.size>, string> = {
 
 const variants: Record<NonNullable<typeof props.variant>, string> = {
   primary:
-    'bg-pp-gold text-pp-bg hover:bg-pp-gold-strong shadow-[0_8px_30px_-8px_rgba(254,231,138,0.5)]',
+    'bg-pp-gold text-[color:var(--color-pp-on-accent)] hover:bg-pp-gold-strong shadow-[0_8px_30px_-8px_rgba(var(--pp-accent-rgb),0.5)]',
   secondary:
     'bg-pp-surface text-pp-text border border-pp-border hover:border-pp-border-strong hover:bg-pp-surface-2',
   ghost: 'text-pp-text-muted hover:text-pp-text hover:bg-white/5',
