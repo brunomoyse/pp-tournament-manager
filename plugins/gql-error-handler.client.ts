@@ -47,9 +47,11 @@ export default defineNuxtPlugin(() => {
             query: currentPath !== '/login' ? { redirect: currentPath } : undefined,
           })
         }
-        // If refresh succeeded, the token is updated.
-        // The failed request won't be retried automatically —
-        // the user/component will need to re-trigger the operation.
+        // If refresh succeeded the token is updated for subsequent requests.
+        // This is now only a safety net: the gql:auth:init hook refreshes the
+        // token just-in-time before each request, so reaching here normally
+        // means the refresh token itself is gone (revoked/expired) — hence the
+        // logout above. The one operation that raced the expiry isn't retried.
       })
       return
     }

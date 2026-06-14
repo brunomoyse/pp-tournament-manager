@@ -13,12 +13,16 @@ export default defineNuxtPlugin((_nuxtApp) => {
   const wsClient: Client | null = import.meta.client
     ? createClient({
         url,
-        connectionParams: async () => ({
-          // mirror the same auth as nuxt-graphql-client
-          headers: authStore.authToken
-            ? { Authorization: `Bearer ${authStore.authToken}` }
-            : undefined,
-        }),
+        // Runs on every (re)connect. Refresh just-in-time so a reconnect after
+        // the tab was suspended past expiry presents a valid token — the backend
+        // only authenticates at connection_init, so a stale token here means the
+        // socket fails auth and retries forever, wedging live updates.
+        connectionParams: async () => {
+          const token = await authStore.ensureFreshToken()
+          return {
+            headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+          }
+        },
         lazy: true,
         keepAlive: 15000,
         retryAttempts: 10,

@@ -31,6 +31,18 @@ export interface OnboardClubInput {
   vatNumber: string
 }
 
+/** Decode a JWT's `exp` claim (ms epoch). Returns null if unparseable. */
+function decodeExpMs(token: string): number | null {
+  try {
+    const part = token.split('.')[1]
+    if (!part) return null
+    const json = JSON.parse(atob(part.replace(/-/g, '+').replace(/_/g, '/')))
+    return typeof json.exp === 'number' ? json.exp * 1000 : null
+  } catch {
+    return null
+  }
+}
+
 export const useAuthStore = defineStore(
   'auth',
   () => {
@@ -168,6 +180,28 @@ export const useAuthStore = defineStore(
         }
       })()
       return refreshInFlight
+    }
+
+    // Return a token guaranteed fresh for the next ~minute, refreshing in place
+    // when it's within 60s of expiry. Called just-in-time before every HTTP
+    // request (gql:auth:init hook) and every WS (re)connect (connectionParams),
+    // so neither path ever leaves with an already-expired token even if the
+    // proactive timer was suspended (backgrounded tab / asleep machine).
+    const ensureFreshToken = async (): Promise<string | null> => {
+      const token = authToken.value
+      if (!token) return null
+      const expMs = decodeExpMs(token)
+      if (expMs !== null && expMs - Date.now() < 60_000) {
+        const newToken = await refreshAccessToken()
+        if (newToken) {
+          setupTokenRefreshTimer()
+          return newToken
+        }
+        // Refresh failed (offline / revoked). Hand back whatever we have; the
+        // gql error handler signs out on the resulting hard 401.
+        return authToken.value
+      }
+      return token
     }
 
     // Actions
@@ -363,6 +397,7 @@ export const useAuthStore = defineStore(
       fetchMe,
       initialize,
       refreshAccessToken,
+      ensureFreshToken,
     }
   },
   {
