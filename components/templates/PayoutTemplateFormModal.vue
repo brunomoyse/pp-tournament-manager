@@ -52,6 +52,42 @@
         </div>
       </div>
 
+      <!-- Auto-generate (pay the top N%) -->
+      <div class="auto-panel">
+        <div class="auto-fields">
+          <div class="form-field auto-field">
+            <label class="pp-label">{{ t('templates.autoPlayers') }}</label>
+            <input v-model.number="autoPlayers" type="number" min="2" class="pp-input" />
+          </div>
+          <div class="form-field auto-field">
+            <label class="pp-label">{{ t('templates.autoPercent') }}</label>
+            <div class="percentage-input-wrapper">
+              <input
+                v-model.number="autoPercent"
+                type="number"
+                min="1"
+                max="100"
+                step="1"
+                class="pp-input percentage-input"
+              />
+              <span class="percentage-suffix">%</span>
+            </div>
+          </div>
+          <PpButton
+            type="button"
+            variant="secondary"
+            size="sm"
+            :loading="generating"
+            class="auto-btn"
+            @click="generateAuto"
+          >
+            <IonIcon :icon="sparklesOutline" class="add-icon" />
+            {{ t('templates.autoGenerate') }}
+          </PpButton>
+        </div>
+        <p class="auto-hint">{{ t('templates.autoHint') }}</p>
+      </div>
+
       <!-- Payout Structure -->
       <div class="form-field">
         <div class="structure-header">
@@ -121,7 +157,7 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { addCircleOutline, removeCircleOutline } from 'ionicons/icons'
+import { addCircleOutline, removeCircleOutline, sparklesOutline } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 import type { PayoutTemplate } from '~/types/tournament'
 
@@ -153,6 +189,35 @@ const form = ref({
   maxPlayers: null as number | null,
   payoutStructure: [{ position: 1, percentage: 100 }] as PayoutEntry[],
 })
+
+// Auto-generate ("pay the top N%") — fills the structure with a decaying curve
+// that the manager can still fine-tune before saving.
+const autoPlayers = ref(20)
+const autoPercent = ref(15)
+const generating = ref(false)
+
+const generateAuto = async () => {
+  if (!autoPlayers.value || autoPlayers.value < 2) return
+  generating.value = true
+  try {
+    const result = await GqlAutoPayoutPreview({
+      numPlayers: autoPlayers.value,
+      percentPaid: autoPercent.value,
+    })
+    const structure = result?.autoPayoutPreview || []
+    if (structure.length) {
+      form.value.payoutStructure = structure.map((e) => ({
+        position: e.position,
+        percentage: e.percentage,
+      }))
+    }
+  } catch (error) {
+    console.error('Failed to generate auto payout:', error)
+    toast.error(t('templates.autoFailed'))
+  } finally {
+    generating.value = false
+  }
+}
 
 const totalPercentage = computed(() => {
   return form.value.payoutStructure.reduce((sum, e) => sum + (e.percentage || 0), 0)
@@ -190,6 +255,9 @@ watch(
           percentage: e.percentage,
         })),
       }
+      // Seed the auto field size from the template's range for a sensible preview.
+      autoPlayers.value = props.template.maxPlayers || props.template.minPlayers || 20
+      autoPercent.value = 15
     } else if (isOpen && props.mode === 'create') {
       form.value = {
         name: '',
@@ -198,6 +266,8 @@ watch(
         maxPlayers: null,
         payoutStructure: [{ position: 1, percentage: 100 }],
       }
+      autoPlayers.value = 20
+      autoPercent.value = 15
     }
   },
 )
@@ -255,6 +325,34 @@ const closeModal = () => emit('close')
 
 .required {
   color: var(--pp-red-400);
+}
+
+.auto-panel {
+  padding: 0.85rem 1rem;
+  background-color: rgba(var(--pp-accent-rgb), 0.06);
+  border: 1px solid var(--color-pp-border-strong);
+  border-radius: 0.75rem;
+}
+
+.auto-fields {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.auto-field {
+  width: 7rem;
+}
+
+.auto-btn {
+  margin-bottom: 1px;
+}
+
+.auto-hint {
+  margin-top: 0.6rem;
+  font-size: 0.75rem;
+  color: var(--color-pp-text-dim);
 }
 
 .structure-header {

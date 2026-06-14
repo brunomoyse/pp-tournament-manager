@@ -283,3 +283,10 @@ query GetSuitablePayoutTemplates($playerCount: Int!) {
     updatedAt
   }
 }
+
+query AutoPayoutPreview($numPlayers: Int!, $percentPaid: Float) {
+  autoPayoutPreview(numPlayers: $numPlayers, percentPaid: $percentPaid) {
+    position
+    percentage
+  }
+}
