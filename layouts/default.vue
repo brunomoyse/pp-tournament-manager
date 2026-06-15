@@ -92,7 +92,7 @@
       <slot />
     </main>
 
-    <!-- [D] Bottom Tab Bar (mobile/tablet only) -->
+    <!-- [D] Bottom Tab Bar (phones only; tablets/desktop use the side rail) -->
     <div class="bottom-tab-bar">
       <div class="tab-bar-inner" data-tour="nav">
         <NuxtLink
@@ -579,7 +579,8 @@ onMounted(async () => {
   min-height: 100dvh;
 }
 
-@media (max-width: 1023px) {
+/* Phones only: reserve space for the fixed bottom tab bar. */
+@media (max-width: 767px) {
   .pp-main {
     padding-bottom: 70px;
   }
@@ -605,14 +606,17 @@ onMounted(async () => {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-@media (min-width: 1024px) {
+/* Tablet (iPad portrait, 768px) and up: drop the bottom tab bar and switch to
+   the persistent side rail. The rail alone is enough navigation at this width;
+   phones (< 768px) keep the bottom tab bar + hamburger drawer. */
+@media (min-width: 768px) {
   .bottom-tab-bar {
     display: none;
   }
 
-  /* Persistent desktop rail: the sidebar is always pinned, so the mobile
-     overlay chrome (hamburger + backdrop) is dropped and both drawer states
-     resolve to fully visible. */
+  /* Persistent rail: the sidebar is always pinned, so the mobile overlay
+     chrome (hamburger + backdrop) is dropped and both drawer states resolve
+     to fully visible. */
   .sidebar--open,
   .sidebar--closed {
     transform: translateX(0);
