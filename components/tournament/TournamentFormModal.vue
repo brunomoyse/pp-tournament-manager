@@ -275,6 +275,40 @@
           </div>
         </div>
       </div>
+
+      <!-- Recurrence Section (create mode only) -->
+      <div v-if="mode === 'create'" class="tournament-form-section">
+        <h3 class="tournament-form-section-title">{{ t('tournament.recurrence.title') }}</h3>
+
+        <label class="tournament-form-toggle">
+          <input v-model="form.recurrenceEnabled" type="checkbox" />
+          <span>{{ t('tournament.recurrence.enable') }}</span>
+        </label>
+
+        <div v-if="form.recurrenceEnabled" class="tournament-form-row">
+          <div class="tournament-form-field">
+            <label class="pp-label">{{ t('tournament.recurrence.frequency') }}</label>
+            <select v-model="form.recurrenceFrequency" class="pp-select">
+              <option value="WEEKLY">{{ t('tournament.recurrence.weekly') }}</option>
+              <option value="MONTHLY">{{ t('tournament.recurrence.monthly') }}</option>
+            </select>
+          </div>
+          <div class="tournament-form-field">
+            <label class="pp-label">
+              {{ t('tournament.recurrence.endDate') }}
+              <span class="tournament-form-required">*</span>
+            </label>
+            <input v-model="form.recurrenceEndDate" type="date" class="pp-input" />
+          </div>
+        </div>
+
+        <p v-if="form.recurrenceEnabled && recurrenceError" class="tournament-form-error">
+          {{ recurrenceError }}
+        </p>
+        <p v-else-if="form.recurrenceEnabled && occurrenceCount > 0" class="tournament-form-help">
+          {{ recurrenceSummary }}
+        </p>
+      </div>
     </form>
 
     <!-- Actions Footer -->
@@ -317,7 +351,7 @@ const emit = defineEmits<{
   saved: []
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const toast = useToast()
 const clubStore = useClubStore()
 
@@ -378,6 +412,9 @@ const form = ref<TournamentFormData>({
   bountyAmountCents: null,
   leaderboardConfigId: null,
   templateId: '',
+  recurrenceEnabled: false,
+  recurrenceFrequency: 'WEEKLY',
+  recurrenceEndDate: '',
 })
 
 const saving = ref(false)
@@ -429,6 +466,41 @@ const rakeEuros = computed({
   },
 })
 
+// Recurrence preview: how many independent tournaments will be created. The
+// end date is treated as inclusive of its whole day (matches the submitted
+// end-of-day timestamp).
+const occurrenceCount = computed(() => {
+  if (!form.value.recurrenceEnabled || !form.value.startTime || !form.value.recurrenceEndDate) {
+    return 0
+  }
+  const start = new Date(form.value.startTime)
+  const end = new Date(`${form.value.recurrenceEndDate}T23:59:59`)
+  return countOccurrences(start, end, form.value.recurrenceFrequency)
+})
+
+const recurrenceError = computed(() => {
+  if (!form.value.recurrenceEnabled) return ''
+  if (!form.value.recurrenceEndDate) return t('tournament.recurrence.endDateRequired')
+  if (occurrenceCount.value < 1) return t('tournament.recurrence.endDateAfterStart')
+  return ''
+})
+
+const recurrenceSummary = computed(() =>
+  t('tournament.recurrence.summary', {
+    count: occurrenceCount.value,
+    frequency: t(
+      `tournament.recurrence.${form.value.recurrenceFrequency === 'WEEKLY' ? 'weekly' : 'monthly'}`,
+    ).toLowerCase(),
+    date: form.value.recurrenceEndDate
+      ? new Date(`${form.value.recurrenceEndDate}T00:00:00`).toLocaleDateString(locale.value, {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+        })
+      : '',
+  }),
+)
+
 // Validation
 const isFormValid = computed(() => {
   return (
@@ -437,7 +509,8 @@ const isFormValid = computed(() => {
     form.value.buyInCents >= 0 &&
     form.value.templateId &&
     !bountyTooLarge.value &&
-    (form.value.bountyType === 'NONE' || (form.value.bountyAmountCents ?? 0) > 0)
+    (form.value.bountyType === 'NONE' || (form.value.bountyAmountCents ?? 0) > 0) &&
+    (!form.value.recurrenceEnabled || (occurrenceCount.value >= 1 && !recurrenceError.value))
   )
 })
 
@@ -477,6 +550,9 @@ watch(
         bountyAmountCents: props.tournament.bountyAmountCents ?? null,
         leaderboardConfigId: props.tournament.leaderboardConfigId ?? null,
         templateId: templates.value[0]?.id ?? '',
+        recurrenceEnabled: false,
+        recurrenceFrequency: 'WEEKLY',
+        recurrenceEndDate: '',
       }
     } else if (isOpen && props.mode === 'create') {
       form.value = {
@@ -498,6 +574,9 @@ watch(
         bountyAmountCents: null,
         leaderboardConfigId: null,
         templateId: templates.value[0]?.id ?? '',
+        recurrenceEnabled: false,
+        recurrenceFrequency: 'WEEKLY',
+        recurrenceEndDate: '',
       }
     }
   },
@@ -532,8 +611,19 @@ const handleSubmit = async () => {
             form.value.bountyType === 'NONE' ? 0 : (form.value.bountyAmountCents ?? 0),
           leaderboardConfigId: form.value.leaderboardConfigId || undefined,
           templateId: form.value.templateId,
+          // Recurrence: when enabled, the backend creates one independent
+          // tournament per interval up to (and including) the end date.
+          recurrenceFrequency: form.value.recurrenceEnabled
+            ? form.value.recurrenceFrequency
+            : undefined,
+          recurrenceEndDate: form.value.recurrenceEnabled
+            ? new Date(`${form.value.recurrenceEndDate}T23:59:59`).toISOString()
+            : undefined,
         },
       })
+      if (form.value.recurrenceEnabled && occurrenceCount.value > 1) {
+        toast.success(t('tournament.recurrence.created', { count: occurrenceCount.value }))
+      }
     } else if (props.tournament) {
       await GqlUpdateTournament({
         input: {
@@ -624,6 +714,14 @@ const closeModal = () => {
   margin-top: 0.25rem;
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.5);
+}
+
+.tournament-form-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-pp-text-muted);
+  cursor: pointer;
 }
 
 .tournament-form-error {

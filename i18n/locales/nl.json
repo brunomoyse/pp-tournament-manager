@@ -143,7 +143,7 @@
     "number": "Tafelnr.",
     "seats": "Stoelen",
     "seatsShort": "stoelen",
-    "defaultSet": "Standaardset",
+    "defaultSet": "Standaard",
     "defaultHint": "Tafels in de standaardset worden automatisch aan nieuwe toernooien gekoppeld. Een tafel die door een lopend toernooi wordt gebruikt, is elders niet beschikbaar tot dat is afgelopen.",
     "add": "Tafel toevoegen",
     "addFailed": "Toevoegen van tafel mislukt.",
@@ -392,6 +392,18 @@
     "rake": "Rake",
     "save": "Opslaan",
     "saveFailed": "Toernooi opslaan mislukt. Probeer opnieuw.",
+    "recurrence": {
+      "title": "Herhaling",
+      "enable": "Dit toernooi herhalen",
+      "frequency": "Frequentie",
+      "weekly": "Wekelijks",
+      "monthly": "Maandelijks",
+      "endDate": "Herhalen tot",
+      "summary": "Maakt {count} toernooien aan, {frequency}, tot {date}.",
+      "endDateRequired": "Kies een datum om tot te herhalen.",
+      "endDateAfterStart": "De einddatum moet na de starttijd liggen.",
+      "created": "{count} toernooien aangemaakt."
+    },
     "league": "Competitie",
     "leagueNone": "Geen competitie",
     "leagueHelp": "Koppel dit toernooi eventueel aan een competitie (gebruikt door 'getagde' competities)."

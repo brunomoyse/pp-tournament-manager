@@ -41,6 +41,9 @@ export interface Tournament {
 /** Bounty / progressive-knockout mode for a tournament. */
 export type BountyType = 'NONE' | 'FIXED' | 'PROGRESSIVE'
 
+// Recurrence cadence for repeating tournaments (mirrors backend RecurrenceFrequency enum)
+export type RecurrenceFrequency = 'WEEKLY' | 'MONTHLY'
+
 export type TournamentStatus = 'UPCOMING' | 'IN_PROGRESS' | 'COMPLETED'
 export type TournamentLiveStatus =
   | 'NOT_STARTED'
@@ -381,4 +384,9 @@ export interface TournamentFormData {
   bountyAmountCents: number | null
   leaderboardConfigId: string | null
   templateId: string
+  // Recurrence (create mode only): when enabled, the backend generates one
+  // independent tournament per interval up to recurrenceEndDate.
+  recurrenceEnabled: boolean
+  recurrenceFrequency: RecurrenceFrequency
+  recurrenceEndDate: string
 }

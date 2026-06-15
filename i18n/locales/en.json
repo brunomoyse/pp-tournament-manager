@@ -143,7 +143,7 @@
     "number": "Table no.",
     "seats": "Seats",
     "seatsShort": "seats",
-    "defaultSet": "Default set",
+    "defaultSet": "Default",
     "defaultHint": "Tables in the default set are auto-linked to new tournaments. A table booked by a live tournament can't be used by another until it finishes.",
     "add": "Add table",
     "addFailed": "Failed to add table.",
@@ -392,6 +392,18 @@
     "rake": "Rake",
     "save": "Save",
     "saveFailed": "Failed to save tournament. Please try again.",
+    "recurrence": {
+      "title": "Repeat",
+      "enable": "Repeat this tournament",
+      "frequency": "Frequency",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "endDate": "Repeat until",
+      "summary": "Creates {count} tournaments, {frequency} until {date}.",
+      "endDateRequired": "Choose a date to repeat until.",
+      "endDateAfterStart": "The end date must be after the start time.",
+      "created": "{count} tournaments created."
+    },
     "league": "League",
     "leagueNone": "No league",
     "leagueHelp": "Optionally attach this tournament to a league (used by 'tagged' leagues)."

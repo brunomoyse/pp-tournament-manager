@@ -143,7 +143,7 @@
     "number": "Table n°",
     "seats": "Sièges",
     "seatsShort": "sièges",
-    "defaultSet": "Jeu par défaut",
+    "defaultSet": "Par défaut",
     "defaultHint": "Les tables du jeu par défaut sont liées automatiquement aux nouveaux tournois. Une table utilisée par un tournoi en cours n'est pas disponible ailleurs tant qu'il n'est pas terminé.",
     "add": "Ajouter une table",
     "addFailed": "Échec de l'ajout de la table.",
@@ -392,6 +392,18 @@
     "rake": "Rake",
     "save": "Enregistrer",
     "saveFailed": "Échec de l'enregistrement du tournoi. Veuillez réessayer.",
+    "recurrence": {
+      "title": "Récurrence",
+      "enable": "Répéter ce tournoi",
+      "frequency": "Fréquence",
+      "weekly": "Hebdomadaire",
+      "monthly": "Mensuelle",
+      "endDate": "Répéter jusqu'au",
+      "summary": "Crée {count} tournois, {frequency}, jusqu'au {date}.",
+      "endDateRequired": "Choisissez une date de fin de répétition.",
+      "endDateAfterStart": "La date de fin doit être postérieure à la date de début.",
+      "created": "{count} tournois créés."
+    },
     "league": "Ligue",
     "leagueNone": "Aucune ligue",
     "leagueHelp": "Rattachez éventuellement ce tournoi à une ligue (utilisé par les ligues « taguées »)."
