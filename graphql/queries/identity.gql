@@ -8,5 +8,6 @@ query GetClubPlayers($clubId: ID!) {
     appUserId
     isClaimed
     isActive
+    lastSeenAt
   }
 }

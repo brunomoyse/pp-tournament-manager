@@ -480,6 +480,8 @@
     "deactivateFailed": "Échec de la désactivation du joueur. Veuillez réessayer.",
     "reactivateFailed": "Échec de la réactivation du joueur. Veuillez réessayer.",
     "type": "Type",
+    "lastSeen": "Vu pour la dernière fois",
+    "neverSeen": "Jamais",
     "appUser": "Utilisateur",
     "appUsers": "Utilisateurs",
     "rosterOnly": "Liste",

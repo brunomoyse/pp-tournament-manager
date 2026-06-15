@@ -480,6 +480,8 @@
     "deactivateFailed": "Speler deactiveren mislukt. Probeer opnieuw.",
     "reactivateFailed": "Speler heractiveren mislukt. Probeer opnieuw.",
     "type": "Type",
+    "lastSeen": "Laatst gezien",
+    "neverSeen": "Nooit",
     "appUser": "App-gebruiker",
     "appUsers": "App-gebruikers",
     "rosterOnly": "Lijst",

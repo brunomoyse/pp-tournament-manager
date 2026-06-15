@@ -81,6 +81,7 @@
               }}</span>
             </button>
             <div>{{ t('players.type') }}</div>
+            <div class="last-seen-col">{{ t('players.lastSeen') }}</div>
             <div class="header-actions-label">{{ t('labels.actions') }}</div>
           </div>
 
@@ -111,6 +112,9 @@
                   {{ player.isClaimed ? t('players.appUser') : t('players.rosterOnly') }}
                 </PpBadge>
               </div>
+
+              <!-- Last seen -->
+              <div class="last-seen-cell">{{ formatLastSeen(player) }}</div>
 
               <!-- Actions -->
               <div class="actions-cell">
@@ -216,7 +220,7 @@ import { downloadCsv, exportFilename } from '~/utils/exportCsv'
 import type { ClubPlayer } from '~/types/user'
 
 const clubStore = useClubStore()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const toast = useToast()
 
 const club = computed(() => clubStore.club)
@@ -310,6 +314,15 @@ const nameParts = (player: ClubPlayer): { last: string; first: string } => {
   const first = player.firstName?.trim()
   if (last) return { last: last.toUpperCase(), first: first ?? '' }
   return { last: player.displayName, first: '' }
+}
+
+// Last activity of the linked app user; roster-only players have never signed in.
+const formatLastSeen = (player: ClubPlayer) => {
+  if (!player.lastSeenAt) return t('players.neverSeen')
+  const d = new Date(player.lastSeenAt)
+  return isNaN(d.getTime())
+    ? t('players.neverSeen')
+    : d.toLocaleDateString(locale.value, { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
 // Avatar initials in first-then-last order (e.g. Damien Blanc -> "DB").
@@ -589,7 +602,7 @@ onMounted(fetchPlayers)
 @media (min-width: 768px) {
   .column-headers {
     display: grid;
-    grid-template-columns: minmax(16rem, 22rem) minmax(7rem, 10rem) minmax(0, 1fr);
+    grid-template-columns: minmax(12rem, 20rem) minmax(6rem, 9rem) minmax(0, 1fr) auto;
     gap: 1rem;
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--color-pp-border-strong);
@@ -640,7 +653,7 @@ onMounted(fetchPlayers)
   .player-row {
     padding: 0.6rem 1rem;
     display: grid;
-    grid-template-columns: minmax(16rem, 22rem) minmax(7rem, 10rem) minmax(0, 1fr);
+    grid-template-columns: minmax(12rem, 20rem) minmax(6rem, 9rem) minmax(0, 1fr) auto;
     align-items: center;
     gap: 1rem;
   }
@@ -692,6 +705,20 @@ onMounted(fetchPlayers)
 
 .type-cell {
   display: flex;
+}
+
+/* Last seen — desktop/tablet only (hidden in the stacked phone layout). */
+.last-seen-cell {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .last-seen-cell {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--color-pp-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 /* Actions — quiet icon buttons; the destructive one only reddens on hover. */

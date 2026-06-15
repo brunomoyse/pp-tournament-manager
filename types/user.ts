@@ -31,6 +31,9 @@ export interface ClubPlayer {
   appUserId?: string | null
   isClaimed: boolean
   isActive: boolean
+  // Linked app user's last activity (login / token refresh). Null for roster-only
+  // entries and users predating activity tracking.
+  lastSeenAt?: string | null
 }
 
 // Notification types

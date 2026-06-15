@@ -480,6 +480,8 @@
     "deactivateFailed": "Failed to deactivate player. Please try again.",
     "reactivateFailed": "Failed to reactivate player. Please try again.",
     "type": "Type",
+    "lastSeen": "Last seen",
+    "neverSeen": "Never",
     "appUser": "App user",
     "appUsers": "App users",
     "rosterOnly": "Roster",
