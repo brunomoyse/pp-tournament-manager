@@ -121,6 +121,8 @@
     "save": "Opslaan",
     "create": "Aanmaken",
     "delete": "Verwijderen",
+    "previous": "Vorige",
+    "next": "Volgende",
     "unknown": "Onbekend"
   },
   "nav": {

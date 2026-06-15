@@ -121,6 +121,8 @@
     "save": "Save",
     "create": "Create",
     "delete": "Delete",
+    "previous": "Previous",
+    "next": "Next",
     "unknown": "Unknown"
   },
   "nav": {

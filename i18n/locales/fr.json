@@ -121,6 +121,8 @@
     "save": "Enregistrer",
     "create": "Créer",
     "delete": "Supprimer",
+    "previous": "Précédent",
+    "next": "Suivant",
     "unknown": "Inconnu"
   },
   "nav": {

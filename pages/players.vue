@@ -81,13 +81,13 @@
               }}</span>
             </button>
             <div>{{ t('players.type') }}</div>
-            <div>{{ t('labels.actions') }}</div>
+            <div class="header-actions-label">{{ t('labels.actions') }}</div>
           </div>
 
           <!-- Players Table -->
           <div v-if="filteredPlayers.length > 0" class="players-list">
             <div
-              v-for="(player, index) in sortedPlayers"
+              v-for="(player, index) in pagedPlayers"
               :key="player.id"
               class="pp-stagger-item player-row"
               :style="{ animationDelay: `${index * 50}ms` }"
@@ -97,11 +97,16 @@
                 <div class="player-avatar">
                   {{ getInitials(player) }}
                 </div>
-                <span class="player-name">{{ formatName(player) }}</span>
+                <span class="player-name">
+                  <span class="player-name__last">{{ nameParts(player).last }}</span>
+                  <span v-if="nameParts(player).first" class="player-name__first">{{
+                    nameParts(player).first
+                  }}</span>
+                </span>
               </div>
 
               <!-- Type -->
-              <div>
+              <div class="type-cell">
                 <PpBadge :variant="player.isClaimed ? 'success' : 'neutral'">
                   {{ player.isClaimed ? t('players.appUser') : t('players.rosterOnly') }}
                 </PpBadge>
@@ -109,23 +114,54 @@
 
               <!-- Actions -->
               <div class="actions-cell">
-                <PpButton variant="secondary" size="sm" @click="openEditModal(player)">
-                  <IonIcon :icon="createOutline" class="icon-sm" />
-                  {{ t('common.edit') }}
-                </PpButton>
+                <button
+                  type="button"
+                  class="row-action"
+                  :title="t('common.edit')"
+                  :aria-label="t('common.edit')"
+                  @click="openEditModal(player)"
+                >
+                  <IonIcon :icon="createOutline" class="row-action-icon" />
+                </button>
                 <!-- App users own their account; anonymise/archive is reserved
                      for roster-only (unclaimed) entries. -->
-                <PpButton
+                <button
                   v-if="!player.isClaimed"
-                  variant="danger"
-                  size="sm"
+                  type="button"
+                  class="row-action row-action--danger"
+                  :title="t('players.anonymize')"
+                  :aria-label="t('players.anonymize')"
                   @click="confirmAnonymize(player)"
                 >
-                  <IonIcon :icon="banOutline" class="icon-sm" />
-                  {{ t('players.anonymize') }}
-                </PpButton>
+                  <IonIcon :icon="banOutline" class="row-action-icon" />
+                </button>
               </div>
             </div>
+          </div>
+
+          <!-- Pager -->
+          <div v-if="totalPages > 1" class="pager">
+            <button
+              type="button"
+              class="row-action"
+              :disabled="currentPage === 1"
+              :title="t('common.previous')"
+              :aria-label="t('common.previous')"
+              @click="goToPage(currentPage - 1)"
+            >
+              <IonIcon :icon="chevronBackOutline" class="row-action-icon" />
+            </button>
+            <span class="pager-page">{{ currentPage }} / {{ totalPages }}</span>
+            <button
+              type="button"
+              class="row-action"
+              :disabled="currentPage === totalPages"
+              :title="t('common.next')"
+              :aria-label="t('common.next')"
+              @click="goToPage(currentPage + 1)"
+            >
+              <IonIcon :icon="chevronForwardOutline" class="row-action-icon" />
+            </button>
           </div>
         </div>
       </div>
@@ -172,6 +208,8 @@ import {
   banOutline,
   cloudUploadOutline,
   downloadOutline,
+  chevronBackOutline,
+  chevronForwardOutline,
 } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 import { downloadCsv, exportFilename } from '~/utils/exportCsv'
@@ -234,20 +272,51 @@ const sortedPlayers = computed(() => {
   return list
 })
 
-// Methods
-// Display as "Family name / First name"; legacy entries fall back to display name.
-const formatName = (player: ClubPlayer) => {
-  const last = player.lastName?.trim()
-  const first = player.firstName?.trim()
-  if (last && first) return `${last} / ${first}`
-  if (last) return last
-  return player.displayName
+// Client-side pagination over the already-loaded roster.
+const pageSize = 20
+const currentPage = ref(1)
+
+const totalPages = computed(() => Math.max(1, Math.ceil(sortedPlayers.value.length / pageSize)))
+
+const pagedPlayers = computed(() => {
+  const start = (currentPage.value - 1) * pageSize
+  return sortedPlayers.value.slice(start, start + pageSize)
+})
+
+const pageStart = computed(() =>
+  sortedPlayers.value.length === 0 ? 0 : (currentPage.value - 1) * pageSize + 1,
+)
+const pageEnd = computed(() => Math.min(currentPage.value * pageSize, sortedPlayers.value.length))
+
+// Jump back to page 1 whenever the result set changes (search / filter / sort).
+watch([searchQuery, typeFilter, sortField, sortDirection], () => {
+  currentPage.value = 1
+})
+
+// Keep the page in range if the list shrinks (e.g. after anonymising the last row).
+watch(totalPages, (max) => {
+  if (currentPage.value > max) currentPage.value = max
+})
+
+const goToPage = (p: number) => {
+  currentPage.value = Math.min(Math.max(1, p), totalPages.value)
 }
 
+// Methods
+// Display as "FAMILYNAME Firstname" (family name upper-cased, first name as-is);
+// legacy entries fall back to the display name in the primary slot.
+const nameParts = (player: ClubPlayer): { last: string; first: string } => {
+  const last = player.lastName?.trim()
+  const first = player.firstName?.trim()
+  if (last) return { last: last.toUpperCase(), first: first ?? '' }
+  return { last: player.displayName, first: '' }
+}
+
+// Avatar initials in first-then-last order (e.g. Damien Blanc -> "DB").
 const getInitials = (player: ClubPlayer) => {
   const first = player.firstName?.trim()?.charAt(0)?.toUpperCase()
   const last = player.lastName?.trim()?.charAt(0)?.toUpperCase()
-  if (first || last) return `${last ?? ''}${first ?? ''}` || '?'
+  if (first || last) return `${first ?? ''}${last ?? ''}` || '?'
   const parts = player.displayName.trim().split(/\s+/)
   const a = parts[0]?.charAt(0)?.toUpperCase() || ''
   const b = parts.length > 1 ? parts[parts.length - 1].charAt(0).toUpperCase() : ''
@@ -520,7 +589,7 @@ onMounted(fetchPlayers)
 @media (min-width: 768px) {
   .column-headers {
     display: grid;
-    grid-template-columns: 2fr 1fr auto;
+    grid-template-columns: minmax(16rem, 22rem) minmax(7rem, 10rem) minmax(0, 1fr);
     gap: 1rem;
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--color-pp-border-strong);
@@ -530,6 +599,10 @@ onMounted(fetchPlayers)
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
+}
+
+.header-actions-label {
+  text-align: right;
 }
 
 .sort-button {
@@ -565,9 +638,9 @@ onMounted(fetchPlayers)
 
 @media (min-width: 768px) {
   .player-row {
-    padding: 1rem;
+    padding: 0.6rem 1rem;
     display: grid;
-    grid-template-columns: 2fr 1fr auto;
+    grid-template-columns: minmax(16rem, 22rem) minmax(7rem, 10rem) minmax(0, 1fr);
     align-items: center;
     gap: 1rem;
   }
@@ -598,20 +671,99 @@ onMounted(fetchPlayers)
 }
 
 .player-name {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.4ch;
+  min-width: 0;
+  font-size: 0.9rem;
+}
+
+.player-name__last {
   font-weight: 600;
-  color: #ffffff;
-  font-size: 0.875rem;
+  color: var(--color-pp-text);
+  letter-spacing: 0.01em;
 }
 
-.player-email {
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.6);
+.player-name__first {
+  font-weight: 500;
+  color: var(--color-pp-text-muted);
 }
 
-/* Actions */
+.type-cell {
+  display: flex;
+}
+
+/* Actions — quiet icon buttons; the destructive one only reddens on hover. */
 .actions-cell {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+
+.row-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: none;
+  border-radius: 0.625rem;
+  background: transparent;
+  color: var(--color-pp-text-muted);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.row-action:hover {
+  color: var(--color-pp-text);
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.row-action:active {
+  transform: scale(0.94);
+}
+
+.row-action:focus-visible {
+  outline: 2px solid var(--color-pp-gold);
+  outline-offset: 2px;
+}
+
+.row-action--danger:hover {
+  color: var(--color-pp-danger);
+  background-color: rgba(239, 68, 68, 0.12);
+}
+
+.row-action:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.row-action-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+/* Pager */
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-top: 1px solid var(--color-pp-border-strong);
+}
+
+.pager-page {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-pp-text-muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 4rem;
+  text-align: center;
 }
 </style>

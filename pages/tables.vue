@@ -37,7 +37,7 @@
               <input v-model="form.isDefault" type="checkbox" />
               <span>{{ t('tables.defaultSet') }}</span>
             </label>
-            <PpButton type="submit" magnetic :loading="saving">
+            <PpButton type="submit" :loading="saving">
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('tables.add') }}
             </PpButton>
@@ -75,15 +75,16 @@
                 </button>
               </div>
               <div class="table-actions">
-                <PpButton
-                  variant="danger"
-                  size="sm"
+                <button
+                  type="button"
+                  class="row-action row-action--danger"
                   :disabled="table.isAssigned"
+                  :title="t('common.delete')"
+                  :aria-label="t('common.delete')"
                   @click="removeTable(table)"
                 >
-                  <IonIcon :icon="trashOutline" class="icon-sm" />
-                  {{ t('common.delete') }}
-                </PpButton>
+                  <IonIcon :icon="trashOutline" class="row-action-icon" />
+                </button>
               </div>
             </div>
           </div>
@@ -354,6 +355,58 @@ onMounted(fetchTables)
 }
 
 .icon-md {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+/* Actions — quiet icon button; reddens only on hover (matches the players list). */
+.table-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.row-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: none;
+  border-radius: 0.625rem;
+  background: transparent;
+  color: var(--color-pp-text-muted);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.row-action:hover {
+  color: var(--color-pp-text);
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.row-action:active {
+  transform: scale(0.94);
+}
+
+.row-action:focus-visible {
+  outline: 2px solid var(--color-pp-gold);
+  outline-offset: 2px;
+}
+
+.row-action:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.row-action--danger:not(:disabled):hover {
+  color: var(--color-pp-danger);
+  background-color: rgba(239, 68, 68, 0.12);
+}
+
+.row-action-icon {
   width: 1.15rem;
   height: 1.15rem;
 }
