@@ -25,10 +25,12 @@ export interface OnboardClubInput {
   password: string
   clubName: string
   country: string
+  /** GraphQL ClubPlan enum value: 'FREE' (Home Game, no VAT) or 'CLUB' (paid, VAT required). */
+  plan?: 'FREE' | 'CLUB'
   address?: string
   city?: string
   postalCode?: string
-  vatNumber: string
+  vatNumber?: string
 }
 
 /** Decode a JWT's `exp` claim (ms epoch). Returns null if unparseable. */

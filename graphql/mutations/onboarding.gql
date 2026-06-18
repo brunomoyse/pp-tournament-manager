@@ -11,11 +11,13 @@ mutation OnboardClub($input: OnboardClubInput!) {
       managedClub {
         id
         name
+        plan
       }
     }
     club {
       id
       name
+      plan
     }
   }
 }

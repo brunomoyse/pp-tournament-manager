@@ -172,12 +172,22 @@ const navItems = computed(() => [
   { to: '/reports', icon: statsChartOutline, label: t('nav.reports') },
 ])
 
+// Free ("Home Game") clubs are a private host tool — player-facing features
+// (announcements, leaderboards/leagues) aren't part of that tier, so hide them.
+const isFreePlan = computed(
+  () => ((authStore.currentUser as any)?.managedClub?.plan ?? 'FREE') === 'FREE',
+)
+
 // Sidebar drawer shows everything; the bottom tab bar stays at the 5 primary items.
 const sidebarNavItems = computed(() => [
   ...navItems.value,
   { to: '/tables', icon: gridOutline, label: t('nav.tables') },
-  { to: '/leagues', icon: podiumOutline, label: t('nav.leagues') },
-  { to: '/announcements', icon: megaphoneOutline, label: t('nav.announcements') },
+  ...(isFreePlan.value
+    ? []
+    : [
+        { to: '/leagues', icon: podiumOutline, label: t('nav.leagues') },
+        { to: '/announcements', icon: megaphoneOutline, label: t('nav.announcements') },
+      ]),
 ])
 
 const isActive = (path: string) => {

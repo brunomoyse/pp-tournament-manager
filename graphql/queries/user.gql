@@ -12,6 +12,8 @@ query GetMe {
       id
       name
       city
+      plan
+      subscriptionExpiresAt
     }
   }
 }

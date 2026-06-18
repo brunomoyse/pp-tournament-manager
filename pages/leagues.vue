@@ -299,7 +299,7 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ middleware: 'auth', title: 'nav.leagues' })
+definePageMeta({ middleware: ['auth', 'paid'], title: 'nav.leagues' })
 
 import { IonPage, IonContent, IonIcon, IonSpinner } from '@ionic/vue'
 import {

@@ -75,6 +75,9 @@ export default defineNuxtConfig({
       authBaseUrl: process.env.NUXT_AUTH_BASE_URL || 'http://localhost:8080',
       authRegisterUrl: process.env.NUXT_AUTH_REGISTER_URL || 'http://localhost:8080/oauth/register',
       authLoginUrl: process.env.NUXT_AUTH_LOGIN_URL || 'http://localhost:8080/oauth/login',
+      // Base URL of the Mollie payments microservice (see tsb-service). Empty
+      // until that service is deployed; the upgrade CTA falls back to contact.
+      paymentsBaseUrl: process.env.NUXT_PUBLIC_PAYMENTS_BASE_URL || '',
     },
   },
 })

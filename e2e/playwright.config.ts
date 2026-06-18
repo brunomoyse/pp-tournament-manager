@@ -30,11 +30,25 @@ export default defineConfig({
     // Main tests: reuse authenticated state
     {
       name: 'chromium',
+      testIgnore: [/.*\.api\.spec\.ts/, /.*\.public\.spec\.ts/],
       use: {
         ...devices['Desktop Chrome'],
         storageState: 'e2e/.auth/manager.json',
       },
       dependencies: ['setup'],
+    },
+
+    // Tiering checks run independently of the manager login.
+    // GraphQL-level: free-tier limits + player-app exclusion.
+    {
+      name: 'api',
+      testMatch: /.*\.api\.spec\.ts/,
+    },
+    // Public UI: the onboarding plan picker (no auth — onboarding is public).
+    {
+      name: 'public',
+      testMatch: /.*\.public\.spec\.ts/,
+      use: { ...devices['Desktop Chrome'] },
     },
   ],
 })

@@ -36,6 +36,46 @@
             </div>
           </section>
         </PpFadeUp>
+
+        <PpFadeUp :delay="0.12">
+          <section class="settings-section">
+            <div class="settings-section__head">
+              <h2 class="settings-section__title">{{ t('settings.planTitle') }}</h2>
+              <p class="settings-section__help">{{ t('settings.planHelp') }}</p>
+            </div>
+
+            <div class="plan-row">
+              <div class="plan-row__info">
+                <span class="plan-row__label">{{ t('settings.currentPlan') }}</span>
+                <span class="plan-row__value">
+                  {{ planLabel }}
+                  <span v-if="renewalDate" class="plan-row__renewal">
+                    · {{ t('settings.renews', { date: renewalDate }) }}
+                  </span>
+                </span>
+              </div>
+              <span class="plan-badge" :class="`plan-badge--${currentPlan}`">{{ planLabel }}</span>
+            </div>
+
+            <template v-if="currentPlan === 'FREE'">
+              <PpButton
+                block
+                size="lg"
+                :loading="isUpgrading"
+                :disabled="isUpgrading"
+                @click="startUpgrade"
+              >
+                {{ t('settings.upgradeToClub') }}
+              </PpButton>
+              <p v-if="upgradeError" class="plan-error">{{ upgradeError }}</p>
+              <p class="plan-casino-hint">
+                {{ t('settings.casinoHint') }}
+                <a :href="casinoContactHref" class="plan-link">{{ t('settings.casinoLink') }}</a>
+              </p>
+            </template>
+            <p v-else class="plan-note">{{ t('settings.planActive') }}</p>
+          </section>
+        </PpFadeUp>
       </div>
     </IonContent>
   </IonPage>
@@ -47,14 +87,98 @@ definePageMeta({
   title: 'nav.settings',
 })
 
+import { ref, computed, onMounted } from 'vue'
 import { IonPage, IonContent, IonIcon } from '@ionic/vue'
 import { checkmarkCircle } from 'ionicons/icons'
 import { useThemeStore, THEMES } from '~/stores/useThemeStore'
 import { useI18n } from '~/composables/useI18n'
+import { useAuthStore } from '~/stores/useAuthStore'
 
 const { t } = useI18n()
 const themeStore = useThemeStore()
 const themes = THEMES
+
+const authStore = useAuthStore()
+const config = useRuntimeConfig()
+const casinoContactHref = 'mailto:cloud@nuagemagique.dev'
+
+const isUpgrading = ref(false)
+const upgradeError = ref('')
+
+// Current club's plan — defaults to FREE until `me` resolves.
+const currentPlan = computed<'FREE' | 'CLUB' | 'CASINO'>(
+  () => (authStore.currentUser as any)?.managedClub?.plan ?? 'FREE',
+)
+const planLabel = computed(() => {
+  switch (currentPlan.value) {
+    case 'CLUB':
+      return t('settings.planClub')
+    case 'CASINO':
+      return t('settings.planCasino')
+    default:
+      return t('settings.planFree')
+  }
+})
+const renewalDate = computed(() => {
+  const iso = (authStore.currentUser as any)?.managedClub?.subscriptionExpiresAt
+  if (!iso) return ''
+  try {
+    return new Date(iso).toLocaleDateString('fr-BE', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  } catch {
+    return ''
+  }
+})
+
+// Kick off a Mollie checkout via the payments microservice (see tsb-service).
+// Until that service is configured, fall back to the contact link.
+const startUpgrade = async () => {
+  upgradeError.value = ''
+  const clubId = (authStore.currentUser as any)?.managedClub?.id
+  if (!clubId) return
+
+  const base = config.public.paymentsBaseUrl as string
+  if (!base) {
+    window.location.href = casinoContactHref
+    return
+  }
+
+  isUpgrading.value = true
+  try {
+    const res = await fetch(`${base.replace(/\/$/, '')}/checkout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authStore.authToken}`,
+      },
+      body: JSON.stringify({
+        clubId,
+        plan: 'CLUB',
+        returnUrl: `${window.location.origin}/settings`,
+      }),
+    })
+    if (!res.ok) throw new Error('checkout failed')
+    const data = await res.json()
+    if (data?.checkoutUrl) {
+      window.location.href = data.checkoutUrl
+    } else {
+      throw new Error('missing checkout url')
+    }
+  } catch {
+    upgradeError.value = t('settings.upgradeError')
+  } finally {
+    isUpgrading.value = false
+  }
+}
+
+// Refresh the plan on mount so returning from a successful checkout reflects
+// the upgrade immediately.
+onMounted(() => {
+  if (authStore.isAuthenticated) authStore.fetchMe().catch(() => {})
+})
 </script>
 
 <style scoped>
@@ -165,5 +289,86 @@ const themes = THEMES
   height: 1.25rem;
   color: var(--color-pp-gold);
   flex-shrink: 0;
+}
+
+/* Club plan section */
+.plan-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.95rem 1rem;
+  border-radius: 0.9rem;
+  border: 1px solid var(--color-pp-border);
+  background-color: var(--color-pp-surface);
+  margin-bottom: 1rem;
+}
+
+.plan-row__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.plan-row__label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--color-pp-text-dim);
+}
+
+.plan-row__value {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-pp-text);
+}
+
+.plan-row__renewal {
+  color: var(--color-pp-text-dim);
+  font-weight: 400;
+}
+
+.plan-badge {
+  flex-shrink: 0;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  border: 1px solid var(--color-pp-border-strong);
+  color: var(--color-pp-text-muted);
+}
+.plan-badge--CLUB,
+.plan-badge--CASINO {
+  color: var(--color-pp-gold);
+  border-color: var(--color-pp-gold);
+  background-color: rgba(var(--pp-accent-rgb), 0.08);
+}
+
+.plan-error {
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  color: var(--color-pp-danger);
+  text-align: center;
+}
+
+.plan-casino-hint {
+  margin-top: 0.8rem;
+  font-size: 0.8rem;
+  color: var(--color-pp-text-dim);
+  text-align: center;
+}
+
+.plan-link {
+  color: var(--color-pp-gold);
+  font-weight: 500;
+  margin-left: 0.2rem;
+}
+
+.plan-note {
+  font-size: 0.85rem;
+  color: var(--color-pp-text-muted);
 }
 </style>

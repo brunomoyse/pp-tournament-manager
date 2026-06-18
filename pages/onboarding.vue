@@ -19,9 +19,53 @@
         </PpFadeUp>
 
         <form @submit.prevent="handleSubmit" class="onboarding-form" novalidate>
+          <!-- ── Plan ────────────────────────────────── -->
+          <PpFadeUp :delay="0.1">
+            <p class="section-heading">{{ t('onboarding.sectionPlan') }}</p>
+          </PpFadeUp>
+
+          <PpFadeUp :delay="0.11">
+            <div class="plan-choice" role="radiogroup" :aria-label="t('onboarding.sectionPlan')">
+              <button
+                type="button"
+                class="plan-card"
+                :class="{ 'plan-card--active': selectedPlan === 'free' }"
+                role="radio"
+                :aria-checked="selectedPlan === 'free'"
+                :disabled="isLoading"
+                @click="selectedPlan = 'free'"
+              >
+                <span class="plan-card__name">{{ t('onboarding.planFreeTitle') }}</span>
+                <span class="plan-card__price">{{ t('onboarding.planFreePrice') }}</span>
+                <span class="plan-card__tagline">{{ t('onboarding.planFreeTagline') }}</span>
+              </button>
+              <button
+                type="button"
+                class="plan-card"
+                :class="{ 'plan-card--active': selectedPlan === 'club' }"
+                role="radio"
+                :aria-checked="selectedPlan === 'club'"
+                :disabled="isLoading"
+                @click="selectedPlan = 'club'"
+              >
+                <span class="plan-card__name">{{ t('onboarding.planClubTitle') }}</span>
+                <span class="plan-card__price">{{ t('onboarding.planClubPrice') }}</span>
+                <span class="plan-card__tagline">{{ t('onboarding.planClubTagline') }}</span>
+              </button>
+            </div>
+            <p class="plan-casino-hint">
+              {{ t('onboarding.planCasinoHint') }}
+              <a :href="casinoContactHref" class="login-link">{{
+                t('onboarding.planCasinoLink')
+              }}</a>
+            </p>
+          </PpFadeUp>
+
           <!-- ── Account ─────────────────────────────── -->
           <PpFadeUp :delay="0.12">
-            <p class="section-heading">{{ t('onboarding.sectionAccount') }}</p>
+            <p class="section-heading section-heading--spaced">
+              {{ t('onboarding.sectionAccount') }}
+            </p>
           </PpFadeUp>
 
           <PpFadeUp :delay="0.14">
@@ -112,7 +156,23 @@
             </div>
           </PpFadeUp>
 
-          <PpFadeUp :delay="0.3">
+          <!-- Free home-game: just a name, no VAT/legal entity. -->
+          <PpFadeUp v-if="selectedPlan === 'free'" :delay="0.3">
+            <div class="field">
+              <label class="field-label">{{ t('onboarding.clubName') }}</label>
+              <input
+                v-model.trim="clubName"
+                type="text"
+                :disabled="isLoading"
+                :class="inputClass(clubNameError)"
+                @input="clubNameError = ''"
+              />
+              <p v-if="clubNameError" class="field-error">{{ clubNameError }}</p>
+              <p v-else class="field-hint">{{ t('onboarding.homeGameNameHint') }}</p>
+            </div>
+          </PpFadeUp>
+
+          <PpFadeUp v-if="selectedPlan === 'club'" :delay="0.3">
             <div class="field">
               <label class="field-label">{{ t('onboarding.vatNumber') }}</label>
               <input
@@ -141,8 +201,8 @@
             </div>
           </PpFadeUp>
 
-          <!-- Company details: revealed once the VAT number resolves -->
-          <PpFadeUp v-if="showCompanyDetails" :delay="0.04">
+          <!-- Company details: revealed once the VAT number resolves (Club only) -->
+          <PpFadeUp v-if="selectedPlan === 'club' && showCompanyDetails" :delay="0.04">
             <div class="company-details">
               <div v-if="showReviewWarning" class="review-warning">
                 {{ t('onboarding.reviewWarning') }}
@@ -269,6 +329,11 @@ watch(
 
 const countries = ONBOARDING_COUNTRIES
 
+// Plan: free home game (lightweight, no VAT) vs paid club (VAT + VIES).
+// Casino is sales-led and not selectable here.
+const selectedPlan = ref<'free' | 'club'>('free')
+const casinoContactHref = 'mailto:cloud@nuagemagique.dev'
+
 // Account
 const firstName = ref('')
 const lastName = ref('')
@@ -331,19 +396,25 @@ const validatePassword = (value: string): boolean =>
 // submit; "notfound"/"checking"/"idle" keep it disabled.
 const vatVerified = computed(() => vatStatus.value === 'found' || vatStatus.value === 'unverified')
 
-const isFormValid = computed(
-  () =>
+const isFormValid = computed(() => {
+  const base =
     !!firstName.value &&
     !!lastName.value &&
     validateEmail(email.value) &&
     validatePassword(password.value) &&
-    !!clubName.value &&
+    !!clubName.value
+  // Free home game: account + name only.
+  if (selectedPlan.value === 'free') return base
+  // Paid club: full legal entity + verified VAT.
+  return (
+    base &&
     !!address.value &&
     !!postalCode.value &&
     !!city.value &&
     isValidVatFormat(country.value, vatNumber.value) &&
-    vatVerified.value,
-)
+    vatVerified.value
+  )
+})
 
 // Verify the company against VIES once the format is valid.
 const runLookup = async () => {
@@ -422,6 +493,18 @@ const validateAll = (): boolean => {
       ? t('onboarding.passwordWeak')
       : ''
   clubNameError.value = clubName.value ? '' : t('onboarding.required')
+
+  // Free home game stops at account + club name.
+  if (selectedPlan.value === 'free') {
+    return (
+      !firstNameError.value &&
+      !lastNameError.value &&
+      !emailError.value &&
+      !passwordError.value &&
+      !clubNameError.value
+    )
+  }
+
   addressError.value = address.value ? '' : t('onboarding.required')
   postalCodeError.value = postalCode.value ? '' : t('onboarding.required')
   cityError.value = city.value ? '' : t('onboarding.required')
@@ -450,9 +533,12 @@ const handleSubmit = async () => {
   formError.value = ''
   if (!validateAll()) return
 
-  // The company must have been verified (or VIES unreachable). If still idle,
-  // run the lookup now and bail so the user sees the result before submitting.
-  if (vatStatus.value === 'idle' || vatStatus.value === 'checking') {
+  // Paid club only: the company must have been verified (or VIES unreachable).
+  // If still idle, run the lookup now and bail so the user sees the result.
+  if (
+    selectedPlan.value === 'club' &&
+    (vatStatus.value === 'idle' || vatStatus.value === 'checking')
+  ) {
     await runLookup()
     if (!vatVerified.value) return
   }
@@ -464,10 +550,17 @@ const handleSubmit = async () => {
     password: password.value,
     clubName: clubName.value,
     country: country.value,
-    address: address.value,
-    city: city.value,
-    postalCode: postalCode.value,
-    vatNumber: vatNumber.value,
+    // GraphQL ClubPlan enum is upper-case (FREE/CLUB).
+    plan: selectedPlan.value === 'club' ? 'CLUB' : 'FREE',
+    // Free home game skips the legal-entity fields entirely.
+    ...(selectedPlan.value === 'club'
+      ? {
+          address: address.value,
+          city: city.value,
+          postalCode: postalCode.value,
+          vatNumber: vatNumber.value,
+        }
+      : {}),
   }
 
   try {
@@ -618,6 +711,65 @@ input:-webkit-autofill:focus {
 
 .section-heading--spaced {
   margin-top: 0.5rem;
+}
+
+/* Plan choice cards (Home Game vs Club) */
+.plan-choice {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.plan-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  text-align: left;
+  padding: 0.85rem 0.95rem;
+  border-radius: 0.85rem;
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--color-pp-border-strong);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.plan-card:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.plan-card:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+.plan-card--active {
+  border-color: var(--color-pp-gold);
+  background-color: rgba(var(--pp-accent-rgb), 0.08);
+  box-shadow: 0 0 0 3px rgba(var(--pp-accent-rgb), 0.15);
+}
+
+.plan-card__name {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-pp-text);
+}
+.plan-card__price {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--color-pp-gold);
+}
+.plan-card__tagline {
+  font-size: 0.75rem;
+  color: var(--color-pp-text-dim);
+  line-height: 1.35;
+}
+
+.plan-casino-hint {
+  margin-top: 0.6rem;
+  font-size: 0.78rem;
+  color: var(--color-pp-text-dim);
+  text-align: center;
 }
 
 .field-row {

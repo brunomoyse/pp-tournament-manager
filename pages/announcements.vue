@@ -70,7 +70,7 @@
 import type { GetClubAnnouncementsQuery } from '#gql'
 
 definePageMeta({
-  middleware: 'auth',
+  middleware: ['auth', 'paid'],
   title: 'nav.announcements',
 })
 
