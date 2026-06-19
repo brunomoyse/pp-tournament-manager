@@ -296,8 +296,8 @@ const handleLogin = async () => {
   }
 }
 
-const forgotPassword = async () => {
-  console.warn('Forgot password functionality not implemented yet.')
+const forgotPassword = () => {
+  router.push('/forgot-password')
 }
 </script>
 

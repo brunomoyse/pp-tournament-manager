@@ -1,0 +1,13 @@
+mutation CreateRedemptionCode($input: CreateRedemptionCodeInput!) {
+  createRedemptionCode(input: $input) {
+    id
+    code
+    plan
+    trialDays
+    maxUses
+    usedCount
+    expiresAt
+    note
+    createdAt
+  }
+}

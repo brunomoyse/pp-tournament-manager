@@ -1,0 +1,8 @@
+mutation RedeemCode($clubId: ID!, $code: String!) {
+  redeemCode(clubId: $clubId, code: $code) {
+    id
+    name
+    plan
+    subscriptionExpiresAt
+  }
+}

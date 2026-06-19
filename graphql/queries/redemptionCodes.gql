@@ -1,0 +1,13 @@
+query RedemptionCodes {
+  redemptionCodes {
+    id
+    code
+    plan
+    trialDays
+    maxUses
+    usedCount
+    expiresAt
+    note
+    createdAt
+  }
+}

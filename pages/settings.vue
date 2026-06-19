@@ -72,8 +72,35 @@
                 {{ t('settings.casinoHint') }}
                 <a :href="casinoContactHref" class="plan-link">{{ t('settings.casinoLink') }}</a>
               </p>
+
+              <div class="redeem">
+                <p class="redeem__label">{{ t('settings.redeemLabel') }}</p>
+                <div class="redeem__row">
+                  <input
+                    v-model="redeemCodeInput"
+                    class="redeem__input"
+                    :placeholder="t('settings.redeemPlaceholder')"
+                    :disabled="isRedeeming"
+                    autocapitalize="characters"
+                    autocomplete="off"
+                    spellcheck="false"
+                    @keyup.enter="redeem"
+                  />
+                  <PpButton
+                    :loading="isRedeeming"
+                    :disabled="isRedeeming || !redeemCodeInput.trim()"
+                    @click="redeem"
+                  >
+                    {{ t('settings.redeemButton') }}
+                  </PpButton>
+                </div>
+                <p v-if="redeemError" class="plan-error">{{ redeemError }}</p>
+              </div>
             </template>
-            <p v-else class="plan-note">{{ t('settings.planActive') }}</p>
+            <template v-else>
+              <p v-if="redeemSuccess" class="redeem__success">{{ redeemSuccess }}</p>
+              <p class="plan-note">{{ t('settings.planActive') }}</p>
+            </template>
           </section>
         </PpFadeUp>
       </div>
@@ -104,6 +131,11 @@ const casinoContactHref = 'mailto:cloud@nuagemagique.dev'
 
 const isUpgrading = ref(false)
 const upgradeError = ref('')
+
+const redeemCodeInput = ref('')
+const isRedeeming = ref(false)
+const redeemError = ref('')
+const redeemSuccess = ref('')
 
 // Current club's plan — defaults to FREE until `me` resolves.
 const currentPlan = computed<'FREE' | 'CLUB' | 'CASINO'>(
@@ -171,6 +203,30 @@ const startUpgrade = async () => {
     upgradeError.value = t('settings.upgradeError')
   } finally {
     isUpgrading.value = false
+  }
+}
+
+// Redeem a code to unlock the Club plan for a free trial window. The backend
+// flips the plan + sets the trial expiry; we refetch `me` so the UI reflects it.
+const redeem = async () => {
+  redeemError.value = ''
+  redeemSuccess.value = ''
+  const clubId = (authStore.currentUser as any)?.managedClub?.id
+  const code = redeemCodeInput.value.trim()
+  if (!clubId || !code) return
+
+  isRedeeming.value = true
+  try {
+    await GqlRedeemCode({ clubId, code })
+    redeemCodeInput.value = ''
+    await authStore.fetchMe()
+    // Plan has flipped to CLUB; the success note renders in the non-free branch.
+    redeemSuccess.value = t('settings.redeemSuccess')
+  } catch (err: any) {
+    // Surface the backend's specific message (invalid / expired / already used).
+    redeemError.value = err?.gqlErrors?.[0]?.message || t('settings.redeemError')
+  } finally {
+    isRedeeming.value = false
   }
 }
 
@@ -370,5 +426,58 @@ onMounted(() => {
 .plan-note {
   font-size: 0.85rem;
   color: var(--color-pp-text-muted);
+}
+
+/* Redeem-code block */
+.redeem {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-pp-border);
+}
+
+.redeem__label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--color-pp-text-dim);
+  margin-bottom: 0.6rem;
+}
+
+.redeem__row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.redeem__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.7rem 0.9rem;
+  border-radius: 0.7rem;
+  border: 1px solid var(--color-pp-border);
+  background-color: var(--color-pp-surface);
+  color: var(--color-pp-text);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.redeem__input::placeholder {
+  color: var(--color-pp-text-dim);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.redeem__input:focus {
+  outline: none;
+  border-color: var(--color-pp-gold);
+}
+
+.redeem__success {
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--color-pp-gold);
 }
 </style>

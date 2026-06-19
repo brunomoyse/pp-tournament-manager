@@ -107,7 +107,19 @@
     "forgotPasswordInfo": "Voer je emailadres in en we sturen je een link om je wachtwoord te resetten.",
     "sendResetLink": "Reset link verzenden",
     "invalidCredentials": "Ongeldig email of wachtwoord",
-    "loginFailedGeneric": "Inloggen mislukt. Controleer je inloggegevens en probeer opnieuw."
+    "loginFailedGeneric": "Inloggen mislukt. Controleer je inloggegevens en probeer opnieuw.",
+    "forgotPasswordTitle": "Wachtwoord vergeten",
+    "resetPasswordTitle": "Wachtwoord opnieuw instellen",
+    "resetPasswordSubtitle": "Kies een nieuw wachtwoord voor je account.",
+    "newPassword": "Nieuw wachtwoord",
+    "passwordWeak": "Minstens 8 tekens, met een letter en een cijfer",
+    "requestResetSuccess": "Als er een account bestaat voor dat e-mailadres, is er een herstellink onderweg. Check je inbox.",
+    "requestResetError": "Kon de herstellink niet versturen. Probeer opnieuw.",
+    "resetSuccess": "Wachtwoord bijgewerkt. Je kunt nu inloggen.",
+    "resetInvalid": "Deze herstellink is ongeldig of verlopen. Vraag een nieuwe aan.",
+    "resetError": "Er ging iets mis. Probeer opnieuw.",
+    "resetMissingToken": "Deze herstellink is ongeldig. Vraag een nieuwe aan.",
+    "backToLogin": "Terug naar inloggen"
   },
   "common": {
     "cancel": "Annuleren",
@@ -137,7 +149,8 @@
     "replayTour": "Rondleiding",
     "settings": "Instellingen",
     "announcements": "Aankondigingen",
-    "tables": "Tafels"
+    "tables": "Tafels",
+    "redemptionCodes": "Proefcodes"
   },
   "tables": {
     "title": "Tafels",
@@ -169,7 +182,40 @@
     "upgradeError": "Kon de upgrade niet starten. Probeer opnieuw.",
     "casinoHint": "Heb je een casino?",
     "casinoLink": "Neem contact op",
+    "redeemLabel": "Heb je een code?",
+    "redeemPlaceholder": "Voer je code in",
+    "redeemButton": "Activeren",
+    "redeemSuccess": "Code geactiveerd — je Club-abonnement is nu actief.",
+    "redeemError": "Kon deze code niet activeren. Probeer opnieuw.",
     "planActive": "Je betaalde abonnement is actief. Geniet van onbeperkt tafels en toernooien."
+  },
+  "redemptionCodes": {
+    "title": "Proefcodes",
+    "subtitle": "Genereer een eenmalige code voor een gratis Club-proef en stuur die naar een club om te activeren.",
+    "noteLabel": "Label (optioneel)",
+    "notePlaceholder": "bv. de club waarvoor de code is",
+    "durationLabel": "Proefduur",
+    "duration1Month": "1 maand",
+    "duration3Months": "3 maanden",
+    "duration6Months": "6 maanden",
+    "generate": "Genereer een code",
+    "freshLabel": "Nieuwe code — gekopieerd naar klembord",
+    "freshHint": "Stuur dit naar de club. Ze activeren het in Instellingen → Club-abonnement.",
+    "historyTitle": "Gegenereerde codes",
+    "emptyTitle": "Nog geen codes",
+    "emptyDescription": "Genereer een code om een gratis Club-proef weg te geven.",
+    "generated": "Code gegenereerd en gekopieerd.",
+    "generateError": "Kon geen code genereren. Probeer opnieuw.",
+    "fetchError": "Kon codes niet laden.",
+    "copyError": "Kon niet naar klembord kopiëren.",
+    "trialDays": "proef van {days} dagen",
+    "usesLabel": "{used}/{max} gebruikt",
+    "validUntil": "geldig tot {date}",
+    "status": {
+      "active": "Actief",
+      "redeemed": "Gebruikt",
+      "expired": "Verlopen"
+    }
   },
   "theme": {
     "label": "Thema",

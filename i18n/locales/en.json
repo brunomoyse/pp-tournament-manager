@@ -107,7 +107,19 @@
     "forgotPasswordInfo": "Enter your email address and we'll send you a link to reset your password.",
     "sendResetLink": "Send Reset Link",
     "invalidCredentials": "Invalid email or password",
-    "loginFailedGeneric": "Login failed. Please check your credentials and try again."
+    "loginFailedGeneric": "Login failed. Please check your credentials and try again.",
+    "forgotPasswordTitle": "Forgot password",
+    "resetPasswordTitle": "Reset password",
+    "resetPasswordSubtitle": "Choose a new password for your account.",
+    "newPassword": "New password",
+    "passwordWeak": "Use at least 8 characters, with a letter and a number",
+    "requestResetSuccess": "If an account exists for that email, a reset link is on its way. Check your inbox.",
+    "requestResetError": "Couldn’t send the reset link. Please try again.",
+    "resetSuccess": "Password updated. You can now log in.",
+    "resetInvalid": "This reset link is invalid or has expired. Request a new one.",
+    "resetError": "Something went wrong. Please try again.",
+    "resetMissingToken": "This reset link is invalid. Request a new one.",
+    "backToLogin": "Back to login"
   },
   "common": {
     "cancel": "Cancel",
@@ -137,7 +149,8 @@
     "replayTour": "Guided tour",
     "settings": "Settings",
     "announcements": "Announcements",
-    "tables": "Tables"
+    "tables": "Tables",
+    "redemptionCodes": "Trial codes"
   },
   "tables": {
     "title": "Tables",
@@ -169,7 +182,40 @@
     "upgradeError": "Couldn’t start the upgrade. Please try again.",
     "casinoHint": "Running a casino?",
     "casinoLink": "Talk to us",
+    "redeemLabel": "Have a code?",
+    "redeemPlaceholder": "Enter your code",
+    "redeemButton": "Redeem",
+    "redeemSuccess": "Code redeemed — your Club plan is now active.",
+    "redeemError": "Couldn’t redeem that code. Please try again.",
     "planActive": "Your paid plan is active. Enjoy unlimited tables and tournaments."
+  },
+  "redemptionCodes": {
+    "title": "Trial codes",
+    "subtitle": "Generate a single-use code for a free Club trial, then send it to a club to activate.",
+    "noteLabel": "Label (optional)",
+    "notePlaceholder": "e.g. the club this code is for",
+    "durationLabel": "Trial length",
+    "duration1Month": "1 month",
+    "duration3Months": "3 months",
+    "duration6Months": "6 months",
+    "generate": "Generate a code",
+    "freshLabel": "New code — copied to clipboard",
+    "freshHint": "Send this to the club. They activate it in Settings → Club plan.",
+    "historyTitle": "Generated codes",
+    "emptyTitle": "No codes yet",
+    "emptyDescription": "Generate a code to hand out a free Club trial.",
+    "generated": "Code generated and copied.",
+    "generateError": "Couldn’t generate a code. Please try again.",
+    "fetchError": "Couldn’t load codes.",
+    "copyError": "Couldn’t copy to clipboard.",
+    "trialDays": "{days}-day trial",
+    "usesLabel": "{used}/{max} used",
+    "validUntil": "valid until {date}",
+    "status": {
+      "active": "Active",
+      "redeemed": "Redeemed",
+      "expired": "Expired"
+    }
   },
   "theme": {
     "label": "Theme",

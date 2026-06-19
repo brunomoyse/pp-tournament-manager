@@ -140,6 +140,7 @@ import {
   logOutOutline,
   compassOutline,
   settingsOutline,
+  ticketOutline,
 } from 'ionicons/icons'
 import { useAuthStore } from '~/stores/useAuthStore'
 import { useTourStore } from '~/stores/useTourStore'
@@ -178,6 +179,9 @@ const isFreePlan = computed(
   () => ((authStore.currentUser as any)?.managedClub?.plan ?? 'FREE') === 'FREE',
 )
 
+// Platform admins get the trial-code generator; managers/players never see it.
+const isAdmin = computed(() => (authStore.currentUser as any)?.role === 'ADMIN')
+
 // Sidebar drawer shows everything; the bottom tab bar stays at the 5 primary items.
 const sidebarNavItems = computed(() => [
   ...navItems.value,
@@ -188,6 +192,9 @@ const sidebarNavItems = computed(() => [
         { to: '/leagues', icon: podiumOutline, label: t('nav.leagues') },
         { to: '/announcements', icon: megaphoneOutline, label: t('nav.announcements') },
       ]),
+  ...(isAdmin.value
+    ? [{ to: '/redemption-codes', icon: ticketOutline, label: t('nav.redemptionCodes') }]
+    : []),
 ])
 
 const isActive = (path: string) => {

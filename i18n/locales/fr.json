@@ -107,7 +107,19 @@
     "forgotPasswordInfo": "Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
     "sendResetLink": "Envoyer le lien de réinitialisation",
     "invalidCredentials": "Email ou mot de passe invalide",
-    "loginFailedGeneric": "Connexion échouée. Veuillez vérifier vos identifiants et réessayer."
+    "loginFailedGeneric": "Connexion échouée. Veuillez vérifier vos identifiants et réessayer.",
+    "forgotPasswordTitle": "Mot de passe oublié",
+    "resetPasswordTitle": "Réinitialiser le mot de passe",
+    "resetPasswordSubtitle": "Choisissez un nouveau mot de passe pour votre compte.",
+    "newPassword": "Nouveau mot de passe",
+    "passwordWeak": "Au moins 8 caractères, avec une lettre et un chiffre",
+    "requestResetSuccess": "Si un compte existe pour cet e-mail, un lien de réinitialisation arrive. Consultez votre boîte de réception.",
+    "requestResetError": "Impossible d’envoyer le lien de réinitialisation. Réessayez.",
+    "resetSuccess": "Mot de passe mis à jour. Vous pouvez vous connecter.",
+    "resetInvalid": "Ce lien de réinitialisation est invalide ou expiré. Demandez-en un nouveau.",
+    "resetError": "Une erreur est survenue. Réessayez.",
+    "resetMissingToken": "Ce lien de réinitialisation est invalide. Demandez-en un nouveau.",
+    "backToLogin": "Retour à la connexion"
   },
   "common": {
     "cancel": "Annuler",
@@ -137,7 +149,8 @@
     "replayTour": "Visite guidée",
     "settings": "Réglages",
     "announcements": "Annonces",
-    "tables": "Tables"
+    "tables": "Tables",
+    "redemptionCodes": "Codes d’essai"
   },
   "tables": {
     "title": "Tables",
@@ -169,7 +182,40 @@
     "upgradeError": "Impossible de démarrer la mise à niveau. Réessayez.",
     "casinoHint": "Vous gérez un casino ?",
     "casinoLink": "Contactez-nous",
+    "redeemLabel": "Vous avez un code ?",
+    "redeemPlaceholder": "Saisissez votre code",
+    "redeemButton": "Activer",
+    "redeemSuccess": "Code activé — votre formule Club est désormais active.",
+    "redeemError": "Impossible d’activer ce code. Réessayez.",
     "planActive": "Votre formule payante est active. Profitez de tables et tournois illimités."
+  },
+  "redemptionCodes": {
+    "title": "Codes d’essai",
+    "subtitle": "Générez un code à usage unique pour un essai Club gratuit, puis envoyez-le à un club pour l’activer.",
+    "noteLabel": "Libellé (facultatif)",
+    "notePlaceholder": "ex. le club destinataire du code",
+    "durationLabel": "Durée de l’essai",
+    "duration1Month": "1 mois",
+    "duration3Months": "3 mois",
+    "duration6Months": "6 mois",
+    "generate": "Générer un code",
+    "freshLabel": "Nouveau code — copié dans le presse-papiers",
+    "freshHint": "Envoyez-le au club. Il l’active dans Réglages → Formule Club.",
+    "historyTitle": "Codes générés",
+    "emptyTitle": "Aucun code",
+    "emptyDescription": "Générez un code pour offrir un essai Club gratuit.",
+    "generated": "Code généré et copié.",
+    "generateError": "Impossible de générer un code. Réessayez.",
+    "fetchError": "Impossible de charger les codes.",
+    "copyError": "Impossible de copier dans le presse-papiers.",
+    "trialDays": "essai de {days} jours",
+    "usesLabel": "{used}/{max} utilisé(s)",
+    "validUntil": "valide jusqu’au {date}",
+    "status": {
+      "active": "Actif",
+      "redeemed": "Utilisé",
+      "expired": "Expiré"
+    }
   },
   "theme": {
     "label": "Thème",
