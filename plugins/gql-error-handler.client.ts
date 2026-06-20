@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/vue'
+
 import { useAuthStore } from '~/stores/useAuthStore'
 
 export default defineNuxtPlugin(() => {
@@ -60,6 +62,8 @@ export default defineNuxtPlugin(() => {
     // toast instead of failing silently so the user knows the action didn't go
     // through. A generic message avoids leaking backend internals.
     console.error('[gql] request failed', err)
+    // Report to Sentry (no-op until the sentry plugin initialized a client).
+    Sentry.captureException(err)
     toast.error(translate('error.boundary.defaultMessage'))
   })
 })

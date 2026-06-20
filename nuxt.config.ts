@@ -78,6 +78,12 @@ export default defineNuxtConfig({
       // Base URL of the Mollie payments microservice (see tsb-service). Empty
       // until that service is deployed; the upgrade CTA falls back to contact.
       paymentsBaseUrl: process.env.NUXT_PUBLIC_PAYMENTS_BASE_URL || '',
+      // Sentry DSN (Sentry project pp-tournament-manager). Baked at build time
+      // (SPA). A browser DSN is write-only and ships in the bundle anyway, so
+      // the project DSN is the default; override per-env with NUXT_PUBLIC_SENTRY_DSN.
+      sentryDsn:
+        process.env.NUXT_PUBLIC_SENTRY_DSN ||
+        'https://a2bcbfef60cfef1b8ff91927d27b77f4@o4511241813819392.ingest.de.sentry.io/4511597219938384',
     },
   },
 })
