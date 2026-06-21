@@ -374,8 +374,10 @@ const clubStore = useClubStore()
 const templates = ref<BlindStructureTemplate[]>([])
 
 const fetchTemplates = async () => {
+  const clubId = clubStore.club?.id
+  if (!clubId) return
   try {
-    const { blindStructureTemplates } = await GqlGetBlindStructureTemplates()
+    const { blindStructureTemplates } = await GqlGetBlindStructureTemplates({ clubId })
     templates.value = blindStructureTemplates ?? []
   } catch (error) {
     console.error('Failed to fetch blind structure templates:', error)

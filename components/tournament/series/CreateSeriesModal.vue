@@ -157,8 +157,10 @@ const rakeEuros = ref<number>(0)
 const buyInCents = computed(() => Math.round((buyInEuros.value || 0) * 100))
 
 const fetchTemplates = async () => {
+  const clubId = clubStore.club?.id
+  if (!clubId) return
   try {
-    const { blindStructureTemplates } = await GqlGetBlindStructureTemplates()
+    const { blindStructureTemplates } = await GqlGetBlindStructureTemplates({ clubId })
     templates.value = blindStructureTemplates ?? []
   } catch (e) {
     console.error('Failed to fetch templates:', e)

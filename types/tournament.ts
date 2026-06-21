@@ -113,6 +113,7 @@ export interface PayoutStructureEntry {
 
 export interface PayoutTemplate {
   id: string
+  clubId?: string
   name: string
   description?: string | null
   minPlayers: number
@@ -135,6 +136,7 @@ export interface BlindStructureLevel {
 
 export interface BlindStructureTemplate {
   id: string
+  clubId?: string
   name: string
   description?: string | null
   levels: BlindStructureLevel[]

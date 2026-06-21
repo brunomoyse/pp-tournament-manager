@@ -213,6 +213,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const toast = useToast()
+const clubStore = useClubStore()
 const saving = ref(false)
 
 interface LevelEntry {
@@ -353,7 +354,9 @@ const handleSubmit = async () => {
     }
 
     if (props.mode === 'create') {
-      await GqlCreateBlindStructureTemplate({ input })
+      await GqlCreateBlindStructureTemplate({
+        input: { clubId: clubStore.club?.id ?? '', ...input },
+      })
     } else if (props.template) {
       await GqlUpdateBlindStructureTemplate({ input: { id: props.template.id, ...input } })
     }

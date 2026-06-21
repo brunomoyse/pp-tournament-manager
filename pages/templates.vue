@@ -38,7 +38,7 @@
                 class="search-input"
               />
             </div>
-            <PpButton v-if="isAdmin" magnetic @click="openPayoutCreate">
+            <PpButton v-if="canManage" magnetic @click="openPayoutCreate">
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('templates.addPayoutTemplate') }}
             </PpButton>
@@ -56,7 +56,7 @@
             :title="t('templates.noPayoutTemplates')"
             :description="t('templates.createFirstPayout')"
           >
-            <template v-if="isAdmin" #action>
+            <template v-if="canManage" #action>
               <PpButton @click="openPayoutCreate">
                 <IonIcon :icon="addOutline" class="icon-md" />
                 {{ t('templates.addPayoutTemplate') }}
@@ -70,7 +70,7 @@
               v-for="(tmpl, index) in filteredPayoutTemplates"
               :key="tmpl.id"
               :template="tmpl"
-              :is-admin="isAdmin"
+              :is-admin="canManage"
               class="pp-stagger-item"
               :style="{ animationDelay: `${index * 50}ms` }"
               @edit="openPayoutEdit"
@@ -92,7 +92,7 @@
                 class="search-input"
               />
             </div>
-            <PpButton v-if="isAdmin" magnetic @click="openBlindCreate">
+            <PpButton v-if="canManage" magnetic @click="openBlindCreate">
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('templates.addBlindStructure') }}
             </PpButton>
@@ -110,7 +110,7 @@
             :title="t('templates.noBlindStructures')"
             :description="t('templates.createFirstBlind')"
           >
-            <template v-if="isAdmin" #action>
+            <template v-if="canManage" #action>
               <PpButton @click="openBlindCreate">
                 <IonIcon :icon="addOutline" class="icon-md" />
                 {{ t('templates.addBlindStructure') }}
@@ -124,7 +124,7 @@
               v-for="(tmpl, index) in filteredBlindTemplates"
               :key="tmpl.id"
               :template="tmpl"
-              :is-admin="isAdmin"
+              :is-admin="canManage"
               class="pp-stagger-item"
               :style="{ animationDelay: `${index * 50}ms` }"
               @edit="openBlindEdit"
@@ -180,8 +180,13 @@ import type { PayoutTemplate, BlindStructureTemplate } from '~/types/tournament'
 const { t } = useI18n()
 const toast = useToast()
 const authStore = useAuthStore()
+const clubStore = useClubStore()
 
-const isAdmin = computed(() => authStore.currentUser?.role === 'ADMIN')
+// Templates are club-scoped: any admin or club manager can manage their club's
+// own templates (the backend enforces ownership per club).
+const canManage = computed(
+  () => authStore.currentUser?.role === 'ADMIN' || authStore.currentUser?.role === 'MANAGER',
+)
 
 // State
 const activeTab = ref<'payouts' | 'blinds'>('payouts')
@@ -227,8 +232,10 @@ const filteredBlindTemplates = computed(() => {
 
 // Fetch data
 const fetchPayoutTemplates = async () => {
+  const clubId = clubStore.club?.id
+  if (!clubId) return
   try {
-    const result = await GqlGetPayoutTemplates()
+    const result = await GqlGetPayoutTemplates({ clubId })
     payoutTemplates.value = (result?.payoutTemplates || []) as PayoutTemplate[]
   } catch (error) {
     console.error('Failed to fetch payout templates:', error)
@@ -236,8 +243,10 @@ const fetchPayoutTemplates = async () => {
 }
 
 const fetchBlindTemplates = async () => {
+  const clubId = clubStore.club?.id
+  if (!clubId) return
   try {
-    const result = await GqlGetBlindStructureTemplates()
+    const result = await GqlGetBlindStructureTemplates({ clubId })
     blindTemplates.value = (result?.blindStructureTemplates || []) as BlindStructureTemplate[]
   } catch (error) {
     console.error('Failed to fetch blind structure templates:', error)

@@ -235,9 +235,10 @@ query GetLeaderboard(
   }
 }
 
-query GetBlindStructureTemplates {
-  blindStructureTemplates {
+query GetBlindStructureTemplates($clubId: ID!) {
+  blindStructureTemplates(clubId: $clubId) {
     id
+    clubId
     name
     description
     levels {
@@ -254,9 +255,10 @@ query GetBlindStructureTemplates {
   }
 }
 
-query GetPayoutTemplates {
-  payoutTemplates {
+query GetPayoutTemplates($clubId: ID!) {
+  payoutTemplates(clubId: $clubId) {
     id
+    clubId
     name
     description
     minPlayers
@@ -270,9 +272,10 @@ query GetPayoutTemplates {
   }
 }
 
-query GetSuitablePayoutTemplates($playerCount: Int!) {
-  suitablePayoutTemplates(playerCount: $playerCount) {
+query GetSuitablePayoutTemplates($clubId: ID!, $playerCount: Int!) {
+  suitablePayoutTemplates(clubId: $clubId, playerCount: $playerCount) {
     id
+    clubId
     name
     description
     minPlayers

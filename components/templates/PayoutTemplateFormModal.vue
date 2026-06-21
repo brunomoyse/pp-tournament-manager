@@ -175,6 +175,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const toast = useToast()
+const clubStore = useClubStore()
 const saving = ref(false)
 
 interface PayoutEntry {
@@ -289,7 +290,7 @@ const handleSubmit = async () => {
     }
 
     if (props.mode === 'create') {
-      await GqlCreatePayoutTemplate({ input })
+      await GqlCreatePayoutTemplate({ input: { clubId: clubStore.club?.id ?? '', ...input } })
     } else if (props.template) {
       await GqlUpdatePayoutTemplate({ input: { id: props.template.id, ...input } })
     }

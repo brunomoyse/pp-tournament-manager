@@ -337,8 +337,9 @@ const availablePayoutTemplates = ref<PayoutTemplate[]>([])
 const fetchPayoutTemplates = async () => {
   try {
     const playerCount = orderedPlayers.value.length
-    if (playerCount > 0) {
-      const result = await GqlGetSuitablePayoutTemplates({ playerCount })
+    const clubId = tournamentStore.tournament?.clubId
+    if (playerCount > 0 && clubId) {
+      const result = await GqlGetSuitablePayoutTemplates({ clubId, playerCount })
       availablePayoutTemplates.value = result?.suitablePayoutTemplates || []
     }
   } catch (error) {
