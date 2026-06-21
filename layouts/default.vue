@@ -20,6 +20,7 @@
           v-for="item in sidebarNavItems"
           :key="item.to"
           :to="item.to"
+          :data-tour-nav="item.to"
           :class="['nav-link', isActive(item.to) ? 'nav-link--active' : 'nav-link--inactive']"
           @click="drawerOpen = false"
         >
@@ -99,6 +100,7 @@
           v-for="item in navItems"
           :key="item.to"
           :to="item.to"
+          :data-tour-nav="item.to"
           :class="['tab-item', isActive(item.to) ? 'tab-item--active' : 'tab-item--inactive']"
         >
           <IonIcon :icon="item.icon" class="tab-icon" />

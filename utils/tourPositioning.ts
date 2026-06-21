@@ -20,8 +20,9 @@ export type PopoverPlacement = 'top' | 'bottom' | 'left' | 'right'
  * (sidebar, tab bar), so visibility is judged from the client rect instead;
  * this also rejects the mobile sidebar parked off-screen at translateX(-100%).
  */
-export function findTourTarget(id: string): HTMLElement | null {
-  const candidates = document.querySelectorAll<HTMLElement>(`[data-tour="${id}"]`)
+/** First element matching `selector` that is actually visible in the viewport. */
+function pickVisible(selector: string): HTMLElement | null {
+  const candidates = document.querySelectorAll<HTMLElement>(selector)
   for (const el of candidates) {
     const rect = el.getBoundingClientRect()
     const visible =
@@ -35,6 +36,19 @@ export function findTourTarget(id: string): HTMLElement | null {
     if (visible) return el
   }
   return null
+}
+
+export function findTourTarget(id: string): HTMLElement | null {
+  return pickVisible(`[data-tour="${id}"]`)
+}
+
+/**
+ * The visible sidebar/tab-bar nav link for a given route (`data-tour-nav`).
+ * Used to spotlight + "press" the nav item before navigating, so a step that
+ * lives on another page reads as a deliberate click in the nav.
+ */
+export function findTourNavLink(route: string): HTMLElement | null {
+  return pickVisible(`[data-tour-nav="${route}"]`)
 }
 
 export function holeFromTarget(el: HTMLElement, padding = 8, radius = 14): HoleRect {

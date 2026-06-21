@@ -11,6 +11,7 @@ import {
   placePopover,
   tweenHole,
   waitForTourTarget,
+  findTourNavLink,
   prefersReducedMotion,
 } from '~/utils/tourPositioning'
 import type { TourStep } from '~/utils/tourSteps'
@@ -74,6 +75,21 @@ let resizeObserver: ResizeObserver | null = null
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
+/** Tween the hole and resolve when done (tracked so it can be cancelled). */
+const animateHole = (from: HoleRect, to: HoleRect, duration: number) =>
+  new Promise<void>((resolve) => {
+    cancelTween = tweenHole(from, to, setHole, { duration, onDone: resolve })
+  })
+
+/** Centered scale of a hole, used for the nav-link "press" cue. */
+const scaleHole = (h: HoleRect, f: number): HoleRect => ({
+  x: h.x + (h.w * (1 - f)) / 2,
+  y: h.y + (h.h * (1 - f)) / 2,
+  w: h.w * f,
+  h: h.h * f,
+  r: h.r,
+})
+
 const updateViewport = () => {
   vw.value = window.innerWidth
   vh.value = window.innerHeight
@@ -129,15 +145,26 @@ const goToStep = async (step: TourStep) => {
   tourStore.isTransitioning = true
   updateViewport()
 
-  // Iris-close on the page we're leaving.
+  // Page change: make it read as a click in the nav rather than a silent
+  // background swap. Move the spotlight onto the destination's sidebar/tab-bar
+  // link, give it a quick "press", then iris-close and navigate.
   if (route.path !== step.route) {
+    const navEl = !reduced ? findTourNavLink(step.route) : null
+    if (navEl) {
+      navEl.scrollIntoView({ block: 'nearest' })
+      const navHole = holeFromTarget(navEl, 6)
+      await animateHole(hole.value ?? collapsedHole(navHole), navHole, 360)
+      if (token !== sequence) return
+      // Press cue: a quick squeeze + release on the link.
+      await animateHole(navHole, scaleHole(navHole, 0.9), 110)
+      await animateHole(scaleHole(navHole, 0.9), navHole, 130)
+      await sleep(170)
+      if (token !== sequence) return
+    }
+
+    // Iris-close on the page we're leaving.
     if (hole.value && !reduced) {
-      await new Promise<void>((resolve) => {
-        cancelTween = tweenHole(hole.value!, collapsedHole(hole.value!), setHole, {
-          duration: 260,
-          onDone: resolve,
-        })
-      })
+      await animateHole(hole.value, collapsedHole(hole.value), 260)
     }
     if (token !== sequence) return
     await navigateTo(step.route)
@@ -309,7 +336,7 @@ onBeforeUnmount(detachListeners)
 }
 
 .tour-dim {
-  fill: rgba(10, 10, 12, 0.78);
+  fill: rgba(10, 10, 12, 0.58);
   pointer-events: fill;
   cursor: default;
 }
