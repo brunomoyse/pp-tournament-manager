@@ -12,6 +12,7 @@ export interface Tournament {
   lateRegistrationLevel?: number | null
   liveStatus: TournamentLiveStatus
   seatCap?: number | null
+  startingStack?: number | null
   startTime: string
   status: TournamentStatus
   title: string
@@ -327,6 +328,7 @@ export interface CreateTournamentInput {
   buyInCents: number
   rakeCents?: number
   seatCap?: number
+  startingStack?: number
   earlyBirdBonusChips?: number
   levelTwoBonusChips?: number
   voucherValueCents?: number
@@ -350,6 +352,7 @@ export interface UpdateTournamentInput {
   buyInCents?: number
   rakeCents?: number
   seatCap?: number
+  startingStack?: number
   earlyBirdBonusChips?: number
   levelTwoBonusChips?: number
   voucherValueCents?: number
@@ -373,6 +376,7 @@ export interface TournamentFormData {
   buyInCents: number
   rakeCents: number
   seatCap: number | null
+  startingStack: number | null
   earlyBirdBonusChips: number | null
   levelTwoBonusChips: number | null
   voucherValueCents: number | null

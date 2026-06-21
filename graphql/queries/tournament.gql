@@ -16,6 +16,7 @@ query GetTournaments(
       buyInCents
       rakeCents
       seatCap
+      startingStack
       status
       liveStatus
       createdAt
@@ -38,6 +39,7 @@ query GetTournament($id: UUID!) {
     buyInCents
     rakeCents
     seatCap
+    startingStack
     status
     liveStatus
     lateRegistrationLevel

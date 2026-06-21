@@ -79,6 +79,7 @@ mutation CreateTournament($input: CreateTournamentInput!) {
     buyInCents
     rakeCents
     seatCap
+    startingStack
     status
     liveStatus
     earlyBirdBonusChips
@@ -139,6 +140,7 @@ mutation UpdateTournament($input: UpdateTournamentInput!) {
     buyInCents
     rakeCents
     seatCap
+    startingStack
     status
     liveStatus
     earlyBirdBonusChips

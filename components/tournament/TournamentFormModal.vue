@@ -84,6 +84,21 @@
           </div>
         </div>
 
+        <!-- Starting stack (default chips on the initial buy-in) -->
+        <div class="tournament-form-field">
+          <label class="pp-label">
+            {{ t('tournament.startingStack') }}
+          </label>
+          <input
+            v-model.number="form.startingStack"
+            type="number"
+            min="0"
+            class="pp-input"
+            :placeholder="t('tournament.startingStackPlaceholder')"
+          />
+          <p class="tournament-form-help">{{ t('tournament.startingStackHelp') }}</p>
+        </div>
+
         <!-- Early Bird Bonus -->
         <div class="tournament-form-field">
           <label class="pp-label">
@@ -401,6 +416,7 @@ const form = ref<TournamentFormData>({
   buyInCents: 0,
   rakeCents: 0,
   seatCap: null,
+  startingStack: null,
   earlyBirdBonusChips: null,
   levelTwoBonusChips: null,
   voucherValueCents: null,
@@ -539,6 +555,7 @@ watch(
         buyInCents: props.tournament.buyInCents,
         rakeCents: props.tournament.rakeCents || 0,
         seatCap: props.tournament.seatCap || null,
+        startingStack: props.tournament.startingStack ?? null,
         earlyBirdBonusChips: props.tournament.earlyBirdBonusChips ?? null,
         levelTwoBonusChips: props.tournament.levelTwoBonusChips ?? null,
         voucherValueCents: props.tournament.voucherValueCents ?? null,
@@ -563,6 +580,7 @@ watch(
         buyInCents: 0,
         rakeCents: 0,
         seatCap: null,
+        startingStack: null,
         earlyBirdBonusChips: null,
         levelTwoBonusChips: null,
         voucherValueCents: null,
@@ -599,6 +617,7 @@ const handleSubmit = async () => {
           buyInCents: form.value.buyInCents,
           rakeCents: form.value.rakeCents || undefined,
           seatCap: form.value.seatCap || undefined,
+          startingStack: form.value.startingStack || undefined,
           earlyBirdBonusChips: form.value.earlyBirdBonusChips || undefined,
           levelTwoBonusChips: form.value.levelTwoBonusChips || undefined,
           voucherValueCents: form.value.voucherValueCents ?? undefined,
@@ -635,6 +654,7 @@ const handleSubmit = async () => {
           buyInCents: form.value.buyInCents,
           rakeCents: form.value.rakeCents || undefined,
           seatCap: form.value.seatCap || undefined,
+          startingStack: form.value.startingStack || undefined,
           earlyBirdBonusChips: form.value.earlyBirdBonusChips || undefined,
           levelTwoBonusChips: form.value.levelTwoBonusChips || undefined,
           voucherValueCents: form.value.voucherValueCents ?? undefined,
