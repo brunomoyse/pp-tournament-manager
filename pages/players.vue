@@ -220,6 +220,7 @@ import { downloadCsv, exportFilename } from '~/utils/exportCsv'
 import type { ClubPlayer } from '~/types/user'
 
 const clubStore = useClubStore()
+const tourStore = useTourStore()
 const { t, locale } = useI18n()
 const toast = useToast()
 
@@ -342,6 +343,10 @@ const fetchPlayers = async () => {
     loading.value = true
     const result = await GqlGetClubPlayers({ clubId: club.value.id })
     players.value = (result?.clubPlayers || []) as ClubPlayer[]
+    // Tick the dashboard "add your players" checklist item as soon as the
+    // club has at least one roster player (the leaderboard-based count only
+    // counts players who have actually played, so it never reflects this).
+    if (players.value.length > 0) tourStore.hasAddedPlayer = true
   } catch (error) {
     console.error('Failed to fetch roster:', error)
   } finally {

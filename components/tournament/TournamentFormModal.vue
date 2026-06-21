@@ -138,7 +138,7 @@
             type="number"
             min="0"
             class="pp-input"
-            :placeholder="t('tournament.unlimited')"
+            :placeholder="t('tournament.rebuyMaxPlaceholder')"
           />
         </div>
 
@@ -152,7 +152,7 @@
             type="number"
             min="0"
             class="pp-input"
-            :placeholder="t('tournament.earlyBirdBonusPlaceholder')"
+            :placeholder="t('tournament.addonChipsPlaceholder')"
           />
         </div>
 

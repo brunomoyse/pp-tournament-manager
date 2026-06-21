@@ -17,6 +17,8 @@ export const useTourStore = defineStore(
     const checklistDismissed = ref(false)
     const visitedTemplates = ref(false)
     const visitedReports = ref(false)
+    /** True once the club has at least one roster player (checklist signal). */
+    const hasAddedPlayer = ref(false)
 
     // Ephemeral tour state
     const isActive = ref(false)
@@ -96,6 +98,7 @@ export const useTourStore = defineStore(
       checklistDismissed.value = false
       visitedTemplates.value = false
       visitedReports.value = false
+      hasAddedPlayer.value = false
       isActive.value = false
       welcomeOpen.value = false
       currentStepIndex.value = 0
@@ -109,6 +112,7 @@ export const useTourStore = defineStore(
       checklistDismissed,
       visitedTemplates,
       visitedReports,
+      hasAddedPlayer,
       isActive,
       currentStepIndex,
       isTransitioning,
@@ -142,6 +146,7 @@ export const useTourStore = defineStore(
         'checklistDismissed',
         'visitedTemplates',
         'visitedReports',
+        'hasAddedPlayer',
       ],
     },
   },

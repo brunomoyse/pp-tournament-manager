@@ -59,8 +59,12 @@ const items = computed<ChecklistItem[]>(() => [
     icon: peopleOutline,
     labelKey: 'tour.checklist.items.addPlayers',
     route: '/players',
-    done: (props.playersCount ?? 0) > 0,
-    pending: props.playersCount === null,
+    // The dashboard count comes from the leaderboard (players who have *played*),
+    // so it stays 0 after merely adding roster players. The persisted
+    // hasAddedPlayer flag (set on the players page) ticks it as soon as the club
+    // has at least one player.
+    done: tourStore.hasAddedPlayer || (props.playersCount ?? 0) > 0,
+    pending: !tourStore.hasAddedPlayer && props.playersCount === null,
   },
   {
     id: 'exploreTemplates',

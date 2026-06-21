@@ -12,11 +12,22 @@
 
         <!-- Add table -->
         <PpFadeUp :delay="0.05">
-          <form class="add-panel" @submit.prevent="addTable">
+          <form class="add-panel" @submit.prevent="addTables">
             <div class="add-field">
-              <label class="pp-label">{{ t('tables.number') }}</label>
+              <label class="pp-label">{{ t('tables.quantity') }}</label>
               <input
-                v-model.number="form.tableNumber"
+                v-model.number="form.quantity"
+                type="number"
+                min="1"
+                max="50"
+                class="pp-input"
+                required
+              />
+            </div>
+            <div class="add-field">
+              <label class="pp-label">{{ t('tables.startNumber') }}</label>
+              <input
+                v-model.number="form.startNumber"
                 type="number"
                 min="1"
                 class="pp-input"
@@ -42,6 +53,7 @@
               {{ t('tables.add') }}
             </PpButton>
           </form>
+          <p class="range-hint">{{ rangePreview }}</p>
         </PpFadeUp>
 
         <p class="hint">{{ t('tables.defaultHint') }}</p>
@@ -116,8 +128,14 @@ const club = computed(() => clubStore.club)
 const loading = ref(true)
 const saving = ref(false)
 const tables = ref<ClubTable[]>([])
-const form = ref<{ tableNumber: number | null; maxSeats: number; isDefault: boolean }>({
-  tableNumber: null,
+const form = ref<{
+  quantity: number
+  startNumber: number
+  maxSeats: number
+  isDefault: boolean
+}>({
+  quantity: 1,
+  startNumber: 1,
   maxSeats: 9,
   isDefault: true,
 })
@@ -126,12 +144,27 @@ const sortedTables = computed(() =>
   [...tables.value].toSorted((a, b) => a.tableNumber - b.tableNumber),
 )
 
+/** Next free table number = highest existing + 1 (or 1 when empty). */
+const nextNumber = computed(() =>
+  tables.value.length ? Math.max(...tables.value.map((t) => t.tableNumber)) + 1 : 1,
+)
+
+const rangePreview = computed(() => {
+  const start = form.value.startNumber || 1
+  const qty = Math.max(1, form.value.quantity || 1)
+  return qty === 1
+    ? t('tables.addRangeHintOne', { number: start })
+    : t('tables.addRangeHint', { from: start, to: start + qty - 1, count: qty })
+})
+
 const fetchTables = async () => {
   if (!club.value) return
   try {
     loading.value = true
     const result = await GqlGetClubTables({ clubId: club.value.id })
     tables.value = (result?.clubTables || []) as ClubTable[]
+    // Prefill the next add to start right after the last existing table.
+    form.value.startNumber = nextNumber.value
   } catch (error) {
     console.error('Failed to fetch tables:', error)
   } finally {
@@ -139,26 +172,38 @@ const fetchTables = async () => {
   }
 }
 
-const addTable = async () => {
-  if (!club.value || !form.value.tableNumber) return
+const addTables = async () => {
+  if (!club.value) return
+  const start = form.value.startNumber || 1
+  const qty = Math.max(1, Math.min(50, form.value.quantity || 1))
   saving.value = true
+  let added = 0
+  let lastError: unknown = null
   try {
-    await GqlCreateClubTable({
-      input: {
-        clubId: club.value.id,
-        tableNumber: form.value.tableNumber,
-        maxSeats: form.value.maxSeats,
-        isDefault: form.value.isDefault,
-      },
-    })
-    form.value = {
-      tableNumber: null,
-      maxSeats: form.value.maxSeats,
-      isDefault: form.value.isDefault,
+    // No bulk mutation backend-side, so create sequentially. Skip duplicates
+    // gracefully (a number may already exist) and report how many landed.
+    for (let i = 0; i < qty; i++) {
+      try {
+        await GqlCreateClubTable({
+          input: {
+            clubId: club.value.id,
+            tableNumber: start + i,
+            maxSeats: form.value.maxSeats,
+            isDefault: form.value.isDefault,
+          },
+        })
+        added++
+      } catch (error) {
+        lastError = error
+      }
     }
     await fetchTables()
-  } catch (error) {
-    toast.error(extractError(error, t('tables.addFailed')))
+    form.value.quantity = 1
+    if (added > 0) {
+      toast.success(t('tables.addedCount', { count: added }))
+    } else if (lastError) {
+      toast.error(extractError(lastError, t('tables.addFailed')))
+    }
   } finally {
     saving.value = false
   }
@@ -275,6 +320,12 @@ onMounted(fetchTables)
   margin: 0.75rem 0 1.5rem;
   font-size: 0.8rem;
   color: var(--color-pp-text-dim);
+}
+
+.range-hint {
+  margin: 0.6rem 0 0;
+  font-size: 0.8rem;
+  color: var(--color-pp-gold-deep);
 }
 
 .tables-card {
