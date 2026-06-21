@@ -26,7 +26,9 @@
 
           <PpFadeUp :delay="0.11">
             <div class="plan-choice" role="radiogroup" :aria-label="t('onboarding.sectionPlan')">
+              <!-- BETA: Home Game plan hidden (gated on !isBeta) - Club is the only plan during the beta. -->
               <button
+                v-if="!isBeta"
                 type="button"
                 class="plan-card"
                 :class="{ 'plan-card--active': selectedPlan === 'free' }"
@@ -49,7 +51,11 @@
                 @click="selectedPlan = 'club'"
               >
                 <span class="plan-card__name">{{ t('onboarding.planClubTitle') }}</span>
-                <span class="plan-card__price">{{ t('onboarding.planClubPrice') }}</span>
+                <span class="plan-card__price">
+                  <s class="plan-card__price-was">{{ t('onboarding.planClubPrice') }}</s>
+                  {{ t('onboarding.planClubFree') }}
+                </span>
+                <span class="plan-card__beta">{{ t('onboarding.planBetaNote') }}</span>
                 <span class="plan-card__tagline">{{ t('onboarding.planClubTagline') }}</span>
               </button>
             </div>
@@ -156,8 +162,12 @@
             </div>
           </PpFadeUp>
 
-          <!-- Free home-game: just a name, no VAT/legal entity. -->
-          <PpFadeUp v-if="selectedPlan === 'free'" :delay="0.3">
+          <!--
+            Just a name, no VAT/legal entity. Normally free home-game only, but
+            during the beta (isBeta) the Club path also lands here - VAT/company
+            details are skipped while we accept everyone for free.
+          -->
+          <PpFadeUp v-if="selectedPlan === 'free' || isBeta" :delay="0.3">
             <div class="field">
               <label class="field-label">{{ t('onboarding.clubName') }}</label>
               <input
@@ -168,11 +178,25 @@
                 @input="clubNameError = ''"
               />
               <p v-if="clubNameError" class="field-error">{{ clubNameError }}</p>
-              <p v-else class="field-hint">{{ t('onboarding.homeGameNameHint') }}</p>
+              <p v-else class="field-hint">
+                {{
+                  selectedPlan === 'club'
+                    ? t('onboarding.clubNameHint')
+                    : t('onboarding.homeGameNameHint')
+                }}
+              </p>
             </div>
           </PpFadeUp>
 
-          <PpFadeUp v-if="selectedPlan === 'club'" :delay="0.3">
+          <!--
+            BETA: VAT number field is disabled while we accept everyone for free.
+            Kept (not deleted) and gated on `!isBeta` so flipping isBeta = false
+            restores the full paid-club VAT/VIES flow. (Can't use a literal HTML
+            comment here - the markup contains "--" in class names, which is
+            invalid inside an HTML comment.) VAT is also optional server-side
+            (pp-service onboard_club) during the beta.
+          -->
+          <PpFadeUp v-if="!isBeta && selectedPlan === 'club'" :delay="0.3">
             <div class="field">
               <label class="field-label">{{ t('onboarding.vatNumber') }}</label>
               <input
@@ -204,7 +228,8 @@
           <!-- Company details: revealed once the VAT number resolves (Club only) -->
           <PpFadeUp v-if="selectedPlan === 'club' && showCompanyDetails" :delay="0.04">
             <div class="company-details">
-              <div v-if="showReviewWarning" class="review-warning">
+              <!-- BETA: review warning disabled (gated on !isBeta) - we accept everyone for now. -->
+              <div v-if="!isBeta && showReviewWarning" class="review-warning">
                 {{ t('onboarding.reviewWarning') }}
               </div>
 
@@ -329,9 +354,19 @@ watch(
 
 const countries = ONBOARDING_COUNTRIES
 
+// BETA: free public beta. The ONLY plan offered is Club, for free: the Home Game
+// card is hidden, the €49/mo price is shown struck-through with a "free during
+// beta" note, and the VAT number / VIES lookup / company details are skipped
+// (Club onboards like the lightweight path but keeps plan = CLUB so it gets full
+// features). Flip to false to restore both plans and the paid Club flow - that
+// also re-enables the Home Game card, the VAT field, and the review warning in
+// the template. (Server-side, pp-service onboard_club treats VAT as optional
+// during the beta.)
+const isBeta = true
+
 // Plan: free home game (lightweight, no VAT) vs paid club (VAT + VIES).
-// Casino is sales-led and not selectable here.
-const selectedPlan = ref<'free' | 'club'>('free')
+// Casino is sales-led and not selectable here. During the beta we force Club.
+const selectedPlan = ref<'free' | 'club'>(isBeta ? 'club' : 'free')
 const casinoContactHref = 'mailto:cloud@nuagemagique.dev'
 
 // Account
@@ -403,8 +438,8 @@ const isFormValid = computed(() => {
     validateEmail(email.value) &&
     validatePassword(password.value) &&
     !!clubName.value
-  // Free home game: account + name only.
-  if (selectedPlan.value === 'free') return base
+  // Free home game (and any plan during the beta): account + name only.
+  if (isBeta || selectedPlan.value === 'free') return base
   // Paid club: full legal entity + verified VAT.
   return (
     base &&
@@ -494,8 +529,8 @@ const validateAll = (): boolean => {
       : ''
   clubNameError.value = clubName.value ? '' : t('onboarding.required')
 
-  // Free home game stops at account + club name.
-  if (selectedPlan.value === 'free') {
+  // Free home game (and any plan during the beta) stops at account + club name.
+  if (isBeta || selectedPlan.value === 'free') {
     return (
       !firstNameError.value &&
       !lastNameError.value &&
@@ -535,7 +570,9 @@ const handleSubmit = async () => {
 
   // Paid club only: the company must have been verified (or VIES unreachable).
   // If still idle, run the lookup now and bail so the user sees the result.
+  // BETA: skipped - VAT/company verification is off while we accept everyone.
   if (
+    !isBeta &&
     selectedPlan.value === 'club' &&
     (vatStatus.value === 'idle' || vatStatus.value === 'checking')
   ) {
@@ -552,8 +589,9 @@ const handleSubmit = async () => {
     country: country.value,
     // GraphQL ClubPlan enum is upper-case (FREE/CLUB).
     plan: selectedPlan.value === 'club' ? 'CLUB' : 'FREE',
-    // Free home game skips the legal-entity fields entirely.
-    ...(selectedPlan.value === 'club'
+    // Free home game (and any plan during the beta) skips the legal-entity
+    // fields entirely; VAT is optional server-side during the beta.
+    ...(!isBeta && selectedPlan.value === 'club'
       ? {
           address: address.value,
           city: city.value,
@@ -758,6 +796,21 @@ input:-webkit-autofill:focus {
   font-family: var(--font-mono);
   font-size: 0.78rem;
   color: var(--color-pp-gold);
+}
+/* BETA: struck-through original price shown before the free label. */
+.plan-card__price-was {
+  color: var(--color-pp-text-dim);
+  text-decoration: line-through;
+  margin-right: 0.35rem;
+  font-weight: 400;
+}
+/* BETA: "free during beta" note under the Club price. */
+.plan-card__beta {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-pp-gold-deep);
 }
 .plan-card__tagline {
   font-size: 0.75rem;

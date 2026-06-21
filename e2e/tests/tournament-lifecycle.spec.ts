@@ -296,7 +296,7 @@ test.describe.serial('Tournament Lifecycle', () => {
     const startButton = page.locator('button.w-full').filter({ hasText: 'Start' })
     await startButton.click()
 
-    // Verify clock is now running — button text changes to "PAUSE" and LIVE indicator appears
+    // Verify clock is now running - button text changes to "PAUSE" and LIVE indicator appears
     await expect(page.getByText('PAUSE')).toBeVisible({ timeout: 10_000 })
     await expect(page.getByText('LIVE')).toBeVisible()
   })

@@ -34,7 +34,7 @@ watch(
   { immediate: true },
 )
 
-// Checklist signals: visiting a section counts as exploring it — but only
+// Checklist signals: visiting a section counts as exploring it - but only
 // when the user navigates there themselves. The tour drives the route through
 // /templates and /reports as part of its steps, which must not pre-tick the
 // checklist items.

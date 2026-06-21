@@ -2,7 +2,7 @@
 import { IonIcon } from '@ionic/vue'
 
 /**
- * PpEmptyState: shared empty/zero-state for lists and panels — icon + title +
+ * PpEmptyState: shared empty/zero-state for lists and panels - icon + title +
  * description with an optional CTA in the `#action` slot. Replaces the per-page
  * `.empty-state`/`.centered-state` markup so every empty view looks the same.
  */

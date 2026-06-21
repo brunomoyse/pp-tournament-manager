@@ -248,7 +248,7 @@ const toggleSort = (field: 'name') => {
   }
 }
 
-// Computed — search + type filtering happen client-side over the club roster.
+// Computed - search + type filtering happen client-side over the club roster.
 const filteredPlayers = computed(() => {
   const searchLower = searchQuery.value.toLowerCase()
   return players.value.filter((player) => {
@@ -707,7 +707,7 @@ onMounted(fetchPlayers)
   display: flex;
 }
 
-/* Last seen — desktop/tablet only (hidden in the stacked phone layout). */
+/* Last seen - desktop/tablet only (hidden in the stacked phone layout). */
 .last-seen-cell {
   display: none;
 }
@@ -721,7 +721,7 @@ onMounted(fetchPlayers)
   }
 }
 
-/* Actions — quiet icon buttons; the destructive one only reddens on hover. */
+/* Actions - quiet icon buttons; the destructive one only reddens on hover. */
 .actions-cell {
   display: flex;
   align-items: center;

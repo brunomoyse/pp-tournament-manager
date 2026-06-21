@@ -2,7 +2,7 @@ import { test, expect, type APIRequestContext } from '@playwright/test'
 
 // Deeper player-app exclusion checks: a free club's tournament is unreachable
 // and unjoinable for players, but stays visible to its own manager; the upgrade
-// entry point is admin-only; and — as a positive control — paid clubs remain
+// entry point is admin-only; and - as a positive control - paid clubs remain
 // publicly listed while free ones never are.
 
 const GQL = process.env.PP_GRAPHQL ?? 'http://localhost:8080/graphql'

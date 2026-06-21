@@ -173,7 +173,7 @@ const navItems = computed(() => [
   { to: '/reports', icon: statsChartOutline, label: t('nav.reports') },
 ])
 
-// Free ("Home Game") clubs are a private host tool — player-facing features
+// Free ("Home Game") clubs are a private host tool - player-facing features
 // (announcements, leaderboards/leagues) aren't part of that tier, so hide them.
 const isFreePlan = computed(
   () => ((authStore.currentUser as any)?.managedClub?.plan ?? 'FREE') === 'FREE',

@@ -359,7 +359,7 @@ onMounted(fetchTables)
   height: 1.15rem;
 }
 
-/* Actions — quiet icon button; reddens only on hover (matches the players list). */
+/* Actions - quiet icon button; reddens only on hover (matches the players list). */
 .table-actions {
   display: flex;
   justify-content: flex-end;

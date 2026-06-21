@@ -190,7 +190,7 @@ const form = ref({
   payoutStructure: [{ position: 1, percentage: 100 }] as PayoutEntry[],
 })
 
-// Auto-generate ("pay the top N%") — fills the structure with a decaying curve
+// Auto-generate ("pay the top N%") - fills the structure with a decaying curve
 // that the manager can still fine-tune before saving.
 const autoPlayers = ref(20)
 const autoPercent = ref(15)

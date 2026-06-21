@@ -386,7 +386,7 @@ const cashReportCard = ref()
 const tournament = computed(() => tournamentStore.tournament)
 
 // Celebrate the moment a tournament finishes. Only on a live transition into
-// FINISHED (prev defined & not already finished) — navigating to an
+// FINISHED (prev defined & not already finished) - navigating to an
 // already-finished tournament shouldn't re-pop the celebration.
 const showCompletionCelebration = ref(false)
 watch(
@@ -446,7 +446,7 @@ const { data: playersData, refresh: refreshPlayers } = await useLazyAsyncData(
   () => GqlGetTournamentPlayers({ tournamentId: selectedTournamentId }),
 )
 
-// Club-player IDs already in this tournament — used to filter them out of the
+// Club-player IDs already in this tournament - used to filter them out of the
 // roster search in RegisterPlayerModal (registration is keyed on club_player).
 const clubPlayerIds = computed(() => {
   return (playersData.value?.tournamentPlayers?.items || [])
@@ -475,7 +475,7 @@ const exportPlayersCsv = () => {
     .map((tp: any) => {
       const key = tp.registration.clubPlayerId || tp.registration.userId
       return {
-        name: tp.displayName || tp.user?.username || tp.user?.email || '—',
+        name: tp.displayName || tp.user?.username || tp.user?.email || '-',
         status: tp.registration.status,
         seat: (key && seatByPlayer.value.get(key)) || '',
         registeredAt: tp.registration.registrationTime,

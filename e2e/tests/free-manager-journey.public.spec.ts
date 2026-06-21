@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 // End-to-end manager journey for a free ("Home Game") club: sign up through the
-// onboarding form (free path, no VAT), then confirm the app reflects the plan —
+// onboarding form (free path, no VAT), then confirm the app reflects the plan -
 // Settings shows the plan + upgrade CTA, and the paid-only routes are guarded.
 
 test.describe('Free club manager journey', () => {
@@ -17,7 +17,7 @@ test.describe('Free club manager journey', () => {
 
     await page.goto('/onboarding')
 
-    // Free (Home Game) is selected by default — fill the lightweight form.
+    // Free (Home Game) is selected by default - fill the lightweight form.
     await page.locator('input[autocomplete="given-name"]').fill('Ui')
     await page.locator('input[autocomplete="family-name"]').fill('Host')
     await page.locator('input[type="email"]').fill(email)
@@ -34,7 +34,7 @@ test.describe('Free club manager journey', () => {
     await expect(page.getByText('Home Game (Free)').first()).toBeVisible()
     await expect(page.getByRole('button', { name: /Upgrade to Club/i })).toBeVisible()
 
-    // The player-facing features are hidden from a free club's navigation —
+    // The player-facing features are hidden from a free club's navigation -
     // no Announcements / Leagues links, while the core nav stays intact.
     const nav = page.locator('.sidebar-nav')
     await expect(nav.locator('a[href="/tournaments"]')).toHaveCount(1)

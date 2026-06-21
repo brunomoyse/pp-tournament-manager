@@ -517,7 +517,7 @@ const handleSeatPlayer = async (player: any) => {
   }
 }
 
-// Cancel/remove registration — open the confirmation modal first (Agency: double-check
+// Cancel/remove registration - open the confirmation modal first (Agency: double-check
 // before a destructive action) instead of mutating straight from the dropdown.
 const requestCancelRegistration = (player: { id: string; name: string }) => {
   openMenuId.value = null

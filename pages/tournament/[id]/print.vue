@@ -83,7 +83,7 @@ import { formatPrice } from '~/utils'
 import { getRegistrationStatusLabel } from '~/utils/registrationStatus'
 
 // A printable paper document: light theme on purpose (ink on paper), distinct
-// from the dark app surface. No layout, no auth — fed by public queries so a
+// from the dark app surface. No layout, no auth - fed by public queries so a
 // document can be printed from a fresh tab.
 definePageMeta({ layout: false, title: 'nav.tournaments' })
 
@@ -168,7 +168,7 @@ const playerRows = computed(() =>
       const key = tp.registration.clubPlayerId || tp.registration.userId
       return {
         id: tp.registration.id,
-        name: tp.displayName || tp.user?.username || tp.user?.email || '—',
+        name: tp.displayName || tp.user?.username || tp.user?.email || '-',
         status: tp.registration.status,
         seat: (key && seatByPlayer.value.get(key)) || '',
       }

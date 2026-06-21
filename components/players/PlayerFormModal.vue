@@ -73,7 +73,7 @@ const { t } = useI18n()
 const toast = useToast()
 const clubStore = useClubStore()
 
-// Form state — roster entries carry a structured first/last name; email and
+// Form state - roster entries carry a structured first/last name; email and
 // account details belong to app users, who self-onboard and claim their entry.
 const form = ref<{ firstName: string; lastName: string }>({ firstName: '', lastName: '' })
 const saving = ref(false)
@@ -81,7 +81,7 @@ const saving = ref(false)
 const isFormValid = computed(() => !!form.value.firstName.trim())
 
 // Populate form when editing / reset on open. Legacy entries may have no
-// structured parts — fall back to the display name as the first-name seed.
+// structured parts - fall back to the display name as the first-name seed.
 watch(
   () => props.isOpen,
   (isOpen) => {

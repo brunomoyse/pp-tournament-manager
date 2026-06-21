@@ -137,7 +137,7 @@ const isRedeeming = ref(false)
 const redeemError = ref('')
 const redeemSuccess = ref('')
 
-// Current club's plan — defaults to FREE until `me` resolves.
+// Current club's plan - defaults to FREE until `me` resolves.
 const currentPlan = computed<'FREE' | 'CLUB' | 'CASINO'>(
   () => (authStore.currentUser as any)?.managedClub?.plan ?? 'FREE',
 )

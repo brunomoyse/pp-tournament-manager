@@ -6,7 +6,7 @@ setup('authenticate as manager', async ({ page }) => {
   // Navigate to login page
   await page.goto('/login')
 
-  // Ionic IonInput wraps native <input> in shadow DOM — Playwright pierces it by default
+  // Ionic IonInput wraps native <input> in shadow DOM - Playwright pierces it by default
   // Fill email field
   const emailInput = page.locator('ion-input[type="email"] input')
   await emailInput.waitFor({ state: 'visible' })

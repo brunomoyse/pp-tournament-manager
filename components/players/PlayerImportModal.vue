@@ -110,7 +110,7 @@
         </p>
         <ul class="results-skipped-list">
           <li v-for="(s, i) in result.skipped" :key="i">
-            <span class="results-skipped-name">{{ s.displayName || '—' }}</span>
+            <span class="results-skipped-name">{{ s.displayName || '-' }}</span>
             <span class="results-skipped-reason">{{ s.reason }}</span>
           </li>
         </ul>

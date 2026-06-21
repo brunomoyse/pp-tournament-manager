@@ -39,7 +39,7 @@ export default defineNuxtPlugin(() => {
       // Attempt to refresh the access token before logging out
       authStore.refreshAccessToken().then((newToken) => {
         if (!newToken) {
-          // Refresh failed — logout and redirect to login
+          // Refresh failed - logout and redirect to login
           authStore.logout()
 
           const currentPath = router.currentRoute.value.fullPath
@@ -52,7 +52,7 @@ export default defineNuxtPlugin(() => {
         // If refresh succeeded the token is updated for subsequent requests.
         // This is now only a safety net: the gql:auth:init hook refreshes the
         // token just-in-time before each request, so reaching here normally
-        // means the refresh token itself is gone (revoked/expired) — hence the
+        // means the refresh token itself is gone (revoked/expired) - hence the
         // logout above. The one operation that raced the expiry isn't retried.
       })
       return

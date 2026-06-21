@@ -105,7 +105,7 @@ const prizePool = computed(() =>
 )
 const buyInDisplay = computed(() => {
   const tournament = tournamentStore.tournament
-  if (!tournament) return '—'
+  if (!tournament) return '-'
   const buyIn = formatPrice(tournament.buyInCents, locale.value)
   if (tournament.rakeCents > 0) {
     const rake = formatPrice(tournament.rakeCents, locale.value)
@@ -115,7 +115,7 @@ const buyInDisplay = computed(() => {
 })
 const firstPrizeDisplay = computed(() => {
   const first = payoutPositions.value[0]
-  return first ? formatPrice(first.amountCents, locale.value) : '—'
+  return first ? formatPrice(first.amountCents, locale.value) : '-'
 })
 
 const showFullPayout = computed(() => {

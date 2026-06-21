@@ -96,7 +96,7 @@
       <div class="review pp-card">
         <p class="review-line">
           <span>{{ t('series.fields.title') }}</span
-          ><b>{{ form.title || '—' }}</b>
+          ><b>{{ form.title || '-' }}</b>
         </p>
         <p class="review-line">
           <span>{{ t('series.fields.buyIn') }}</span

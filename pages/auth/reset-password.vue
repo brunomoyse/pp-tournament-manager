@@ -128,7 +128,7 @@ const handleSubmit = async () => {
       toast.success(t('auth.resetSuccess'))
       await router.replace('/login')
     } else {
-      // Token invalid / expired / already used — backend signals via success:false.
+      // Token invalid / expired / already used - backend signals via success:false.
       error.value = t('auth.resetInvalid')
     }
   } catch {

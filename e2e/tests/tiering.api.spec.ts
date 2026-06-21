@@ -1,7 +1,7 @@
 import { test, expect, type APIRequestContext } from '@playwright/test'
 
 // API-level checks for the free ("Home Game") tier, run directly against the
-// pp-service GraphQL endpoint — no manager login required. Each run creates its
+// pp-service GraphQL endpoint - no manager login required. Each run creates its
 // own free club (unique email) so the tests are self-contained.
 
 const GQL = process.env.PP_GRAPHQL ?? 'http://localhost:8080/graphql'
@@ -22,7 +22,7 @@ async function gql(
 
 test.describe.configure({ mode: 'serial' })
 
-test.describe('Freemium tiering — free (Home Game) tier', () => {
+test.describe('Freemium tiering - free (Home Game) tier', () => {
   let token = ''
   let clubId = ''
 

@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/vue'
 
 /**
- * Crash/error reporting (Sentry project pp-tournament-manager). Client-only —
+ * Crash/error reporting (Sentry project pp-tournament-manager). Client-only -
  * this is an SPA (`ssr: false`), so all errors originate in the browser.
  * No-op when no DSN is configured (local dev without NUXT_PUBLIC_SENTRY_DSN).
  *
@@ -22,7 +22,7 @@ export default defineNuxtPlugin({
       dsn,
       // Keep manager PII (emails, names) out of events, mirroring the backend.
       sendDefaultPii: false,
-      // Errors only for the pilot — no performance tracing.
+      // Errors only for the pilot - no performance tracing.
       tracesSampleRate: 0,
     })
   },

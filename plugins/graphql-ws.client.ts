@@ -14,7 +14,7 @@ export default defineNuxtPlugin((_nuxtApp) => {
     ? createClient({
         url,
         // Runs on every (re)connect. Refresh just-in-time so a reconnect after
-        // the tab was suspended past expiry presents a valid token — the backend
+        // the tab was suspended past expiry presents a valid token - the backend
         // only authenticates at connection_init, so a stale token here means the
         // socket fails auth and retries forever, wedging live updates.
         connectionParams: async () => {

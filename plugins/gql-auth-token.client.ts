@@ -15,7 +15,7 @@ declare module '#app' {
 // nuxt-graphql-client awaits this hook before every request and uses the token
 // we set here (taking precedence over its cookie storage). We hand it a token
 // that's refreshed just-in-time when near expiry, so a request never leaves
-// with an already-expired access token — the manager's reactive refresh can't
+// with an already-expired access token - the manager's reactive refresh can't
 // retry the failed operation, so prevention is what keeps pages from blanking.
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.hook('gql:auth:init', async ({ token }) => {

@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [vue()],
   // NOTE: tests require `.nuxt/tsconfig.*` to exist (root tsconfig.json
   // references them). Generate it first with `DISABLE_CODEGEN=true nuxt prepare`
-  // — this is run by the `postinstall` hook, so a plain `npm ci` is enough in CI.
+  // - this is run by the `postinstall` hook, so a plain `npm ci` is enough in CI.
   test: {
     globals: true,
     environment: 'happy-dom',

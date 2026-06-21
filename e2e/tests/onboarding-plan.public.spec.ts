@@ -4,7 +4,7 @@ import { test, expect } from '@playwright/test'
 // (free) vs Club, and the free path must hide the VAT / legal-entity fields that
 // only the paid Club path needs.
 
-test.describe('Onboarding — plan choice (public)', () => {
+test.describe('Onboarding - plan choice (public)', () => {
   test.beforeEach(async ({ page }) => {
     // Pin English so text assertions are stable (app falls back to French).
     await page.addInitScript(() => window.localStorage.setItem('locale', 'en'))

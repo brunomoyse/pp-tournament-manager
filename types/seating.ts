@@ -38,7 +38,7 @@ export interface SeatAssignment {
 
 export interface SeatWithPlayer {
   assignment: SeatAssignment
-  /** Roster display name — works for account-less players. */
+  /** Roster display name - works for account-less players. */
   displayName: string
   /** App user, when the seated player has an account. */
   player?: User | null

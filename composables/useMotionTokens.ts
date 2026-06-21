@@ -1,5 +1,5 @@
 /**
- * Motion design tokens — shared timing + easing + spring presets so every
+ * Motion design tokens - shared timing + easing + spring presets so every
  * animation in the app feels like it came from the same place. Mirrors the
  * landing's framer-motion constants so cross-app polish stays in sync.
  */

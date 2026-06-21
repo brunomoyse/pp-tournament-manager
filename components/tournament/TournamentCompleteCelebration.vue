@@ -6,7 +6,7 @@ import { useI18n } from '~/composables/useI18n'
 import { useMotionTokens } from '~/composables/useMotionTokens'
 
 /**
- * Celebratory moment shown once when a tournament reaches FINISHED — a gold
+ * Celebratory moment shown once when a tournament reaches FINISHED - a gold
  * trophy flourish over the final results (Delight: mark the defining moment).
  * Champion name is optional; the full standings already render on the page.
  */

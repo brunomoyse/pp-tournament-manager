@@ -30,7 +30,7 @@
             <tr v-for="ty in entryTypes" :key="ty">
               <td class="cash-td cash-td--row">{{ t(`entries.${entryTypeKey(ty)}`) }}</td>
               <td v-for="m in methods" :key="m" class="cash-td cash-td--num">
-                {{ cell(ty, m) ? formatPrice(cell(ty, m), locale) : '—' }}
+                {{ cell(ty, m) ? formatPrice(cell(ty, m), locale) : '-' }}
               </td>
               <td class="cash-td cash-td--num cash-td--total">
                 {{ formatPrice(rowTotal(ty), locale) }}

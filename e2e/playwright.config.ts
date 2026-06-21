@@ -44,7 +44,7 @@ export default defineConfig({
       name: 'api',
       testMatch: /.*\.api\.spec\.ts/,
     },
-    // Public UI: the onboarding plan picker (no auth — onboarding is public).
+    // Public UI: the onboarding plan picker (no auth - onboarding is public).
     {
       name: 'public',
       testMatch: /.*\.public\.spec\.ts/,
