@@ -99,136 +99,158 @@
           <p class="tournament-form-help">{{ t('tournament.startingStackHelp') }}</p>
         </div>
 
-        <!-- Early Bird Bonus -->
-        <div class="tournament-form-field">
-          <label class="pp-label">
-            {{ t('tournament.earlyBirdBonus') }}
-          </label>
-          <input
-            v-model.number="form.earlyBirdBonusChips"
-            type="number"
-            min="0"
-            class="pp-input"
-            :placeholder="t('tournament.earlyBirdBonusPlaceholder')"
-          />
-        </div>
+        <!-- Optional features: each is opt-in via a checkbox; the inputs only
+             appear once the manager enables the feature. -->
+        <div class="tournament-form-options">
+          <p class="tournament-form-options-title">{{ t('tournament.optionsTitle') }}</p>
+          <p class="tournament-form-help">{{ t('tournament.optionsHint') }}</p>
 
-        <!-- Level-2 Bonus -->
-        <div class="tournament-form-field">
-          <label class="pp-label">
-            {{ t('tournament.levelTwoBonus') }}
+          <!-- Early-bird bonuses -->
+          <label class="tournament-form-toggle">
+            <input v-model="enableEarlyBird" type="checkbox" />
+            <span>{{ t('tournament.optEarlyBird') }}</span>
           </label>
-          <input
-            v-model.number="form.levelTwoBonusChips"
-            type="number"
-            min="0"
-            class="pp-input"
-            :placeholder="t('tournament.levelTwoBonusPlaceholder')"
-          />
-        </div>
+          <div v-if="enableEarlyBird" class="tournament-form-option-body">
+            <div class="tournament-form-field">
+              <label class="pp-label">{{ t('tournament.earlyBirdBonus') }}</label>
+              <input
+                v-model.number="form.earlyBirdBonusChips"
+                type="number"
+                min="0"
+                class="pp-input"
+                :placeholder="t('tournament.earlyBirdBonusPlaceholder')"
+              />
+            </div>
+            <div class="tournament-form-field">
+              <label class="pp-label">{{ t('tournament.levelTwoBonus') }}</label>
+              <input
+                v-model.number="form.levelTwoBonusChips"
+                type="number"
+                min="0"
+                class="pp-input"
+                :placeholder="t('tournament.levelTwoBonusPlaceholder')"
+              />
+            </div>
+          </div>
 
-        <!-- Mandatory Drink Voucher (euros) -->
-        <div class="tournament-form-field">
-          <label class="pp-label">
-            {{ t('tournament.voucherValue') }}
+          <!-- Re-entries -->
+          <label class="tournament-form-toggle">
+            <input v-model="enableReentry" type="checkbox" />
+            <span>{{ t('tournament.optReentry') }}</span>
           </label>
-          <input
-            v-model.number="voucherValueEuros"
-            type="number"
-            min="0"
-            step="0.5"
-            class="pp-input"
-            :placeholder="t('tournament.voucherValuePlaceholder')"
-          />
-          <p class="tournament-form-help">{{ t('tournament.voucherValueHelp') }}</p>
-        </div>
+          <div v-if="enableReentry" class="tournament-form-option-body">
+            <div class="tournament-form-field">
+              <label class="pp-label">{{ t('tournament.rebuyMax') }}</label>
+              <input
+                v-model.number="form.rebuyMax"
+                type="number"
+                min="0"
+                class="pp-input"
+                :placeholder="t('tournament.rebuyMaxPlaceholder')"
+              />
+            </div>
+          </div>
 
-        <!-- Rebuy max -->
-        <div class="tournament-form-field">
-          <label class="pp-label">
-            {{ t('tournament.rebuyMax') }}
+          <!-- Add-ons -->
+          <label class="tournament-form-toggle">
+            <input v-model="enableAddon" type="checkbox" />
+            <span>{{ t('tournament.optAddon') }}</span>
           </label>
-          <input
-            v-model.number="form.rebuyMax"
-            type="number"
-            min="0"
-            class="pp-input"
-            :placeholder="t('tournament.rebuyMaxPlaceholder')"
-          />
-        </div>
+          <div v-if="enableAddon" class="tournament-form-option-body">
+            <div class="tournament-form-field">
+              <label class="pp-label">{{ t('tournament.addonChips') }}</label>
+              <input
+                v-model.number="form.addonChips"
+                type="number"
+                min="0"
+                class="pp-input"
+                :placeholder="t('tournament.addonChipsPlaceholder')"
+              />
+            </div>
+            <div class="tournament-form-field">
+              <label class="pp-label">{{ t('tournament.addonPrice') }}</label>
+              <input
+                v-model.number="addonPriceEuros"
+                type="number"
+                min="0"
+                step="0.5"
+                class="pp-input"
+                :placeholder="t('tournament.voucherValuePlaceholder')"
+              />
+            </div>
+          </div>
 
-        <!-- Add-on chips -->
-        <div class="tournament-form-field">
-          <label class="pp-label">
-            {{ t('tournament.addonChips') }}
+          <!-- Mandatory drink voucher -->
+          <label class="tournament-form-toggle">
+            <input v-model="enableVoucher" type="checkbox" />
+            <span>{{ t('tournament.optVoucher') }}</span>
           </label>
-          <input
-            v-model.number="form.addonChips"
-            type="number"
-            min="0"
-            class="pp-input"
-            :placeholder="t('tournament.addonChipsPlaceholder')"
-          />
-        </div>
+          <div v-if="enableVoucher" class="tournament-form-option-body">
+            <div class="tournament-form-field">
+              <label class="pp-label">{{ t('tournament.voucherValue') }}</label>
+              <input
+                v-model.number="voucherValueEuros"
+                type="number"
+                min="0"
+                step="0.5"
+                class="pp-input"
+                :placeholder="t('tournament.voucherValuePlaceholder')"
+              />
+              <p class="tournament-form-help">{{ t('tournament.voucherValueHelp') }}</p>
+            </div>
+          </div>
 
-        <!-- Add-on price (euros) -->
-        <div class="tournament-form-field">
-          <label class="pp-label">
-            {{ t('tournament.addonPrice') }}
+          <!-- Late registration -->
+          <label class="tournament-form-toggle">
+            <input v-model="enableLateReg" type="checkbox" />
+            <span>{{ t('tournament.optLateReg') }}</span>
           </label>
-          <input
-            v-model.number="addonPriceEuros"
-            type="number"
-            min="0"
-            step="0.5"
-            class="pp-input"
-            :placeholder="t('tournament.voucherValuePlaceholder')"
-          />
-        </div>
+          <div v-if="enableLateReg" class="tournament-form-option-body">
+            <div class="tournament-form-field">
+              <label class="pp-label">{{ t('tournament.lateRegistrationLevel') }}</label>
+              <input
+                v-model.number="form.lateRegistrationLevel"
+                type="number"
+                min="1"
+                class="pp-input"
+                :placeholder="t('tournament.lateRegistrationLevelPlaceholder')"
+              />
+              <p class="tournament-form-help">{{ t('tournament.lateRegistrationLevelHelp') }}</p>
+            </div>
+          </div>
 
-        <!-- Late Registration Level -->
-        <div class="tournament-form-field">
-          <label class="pp-label">
-            {{ t('tournament.lateRegistrationLevel') }}
+          <!-- Bounty / Knockout -->
+          <label class="tournament-form-toggle">
+            <input v-model="enableBounty" type="checkbox" />
+            <span>{{ t('tournament.optBounty') }}</span>
           </label>
-          <input
-            v-model.number="form.lateRegistrationLevel"
-            type="number"
-            min="1"
-            class="pp-input"
-            :placeholder="t('tournament.lateRegistrationLevelPlaceholder')"
-          />
-          <p class="tournament-form-help">{{ t('tournament.lateRegistrationLevelHelp') }}</p>
-        </div>
-
-        <!-- Bounty / Knockout -->
-        <div class="tournament-form-field">
-          <label class="pp-label">{{ t('tournament.bountyType') }}</label>
-          <select v-model="form.bountyType" class="pp-select">
-            <option value="NONE">{{ t('tournament.bountyTypeNone') }}</option>
-            <option value="FIXED">{{ t('tournament.bountyTypeFixed') }}</option>
-            <option value="PROGRESSIVE">{{ t('tournament.bountyTypeProgressive') }}</option>
-          </select>
-          <p class="tournament-form-help">{{ t('tournament.bountyTypeHelp') }}</p>
-        </div>
-
-        <!-- Bounty amount (euros) -->
-        <div v-if="form.bountyType !== 'NONE'" class="tournament-form-field">
-          <label class="pp-label">
-            {{ t('tournament.bountyAmount') }} (EUR)
-            <span class="tournament-form-required">*</span>
-          </label>
-          <input
-            v-model.number="bountyAmountEuros"
-            type="number"
-            min="0"
-            step="0.5"
-            class="pp-input"
-          />
-          <p v-if="bountyTooLarge" class="tournament-form-error">
-            {{ t('tournament.bountyAmountTooLarge') }}
-          </p>
-          <p v-else class="tournament-form-help">{{ t('tournament.bountyAmountHelp') }}</p>
+          <div v-if="enableBounty" class="tournament-form-option-body">
+            <div class="tournament-form-field">
+              <label class="pp-label">{{ t('tournament.bountyType') }}</label>
+              <select v-model="form.bountyType" class="pp-select">
+                <option value="FIXED">{{ t('tournament.bountyTypeFixed') }}</option>
+                <option value="PROGRESSIVE">{{ t('tournament.bountyTypeProgressive') }}</option>
+              </select>
+              <p class="tournament-form-help">{{ t('tournament.bountyTypeHelp') }}</p>
+            </div>
+            <div class="tournament-form-field">
+              <label class="pp-label">
+                {{ t('tournament.bountyAmount') }} (EUR)
+                <span class="tournament-form-required">*</span>
+              </label>
+              <input
+                v-model.number="bountyAmountEuros"
+                type="number"
+                min="0"
+                step="0.5"
+                class="pp-input"
+              />
+              <p v-if="bountyTooLarge" class="tournament-form-error">
+                {{ t('tournament.bountyAmountTooLarge') }}
+              </p>
+              <p v-else class="tournament-form-help">{{ t('tournament.bountyAmountHelp') }}</p>
+            </div>
+          </div>
         </div>
 
         <!-- League (configurable leaderboard) -->
@@ -437,6 +459,56 @@ const form = ref<TournamentFormData>({
 
 const saving = ref(false)
 
+// Opt-in toggles for the optional features. Each reveals its inputs and, when
+// switched off, clears the underlying values so they are not submitted.
+const enableEarlyBird = ref(false)
+const enableReentry = ref(false)
+const enableAddon = ref(false)
+const enableVoucher = ref(false)
+const enableLateReg = ref(false)
+const enableBounty = ref(false)
+
+watch(enableEarlyBird, (on) => {
+  if (!on) {
+    form.value.earlyBirdBonusChips = null
+    form.value.levelTwoBonusChips = null
+  }
+})
+watch(enableReentry, (on) => {
+  if (!on) form.value.rebuyMax = null
+})
+watch(enableAddon, (on) => {
+  if (!on) {
+    form.value.addonChips = null
+    form.value.addonPriceCents = null
+  }
+})
+watch(enableVoucher, (on) => {
+  if (!on) form.value.voucherValueCents = null
+})
+watch(enableLateReg, (on) => {
+  if (!on) form.value.lateRegistrationLevel = null
+})
+watch(enableBounty, (on) => {
+  if (on) {
+    if (form.value.bountyType === 'NONE') form.value.bountyType = 'FIXED'
+  } else {
+    form.value.bountyType = 'NONE'
+    form.value.bountyAmountCents = null
+  }
+})
+
+/** Sync the opt-in toggles from the current form values (used on open). */
+const syncOptionTogglesFromForm = () => {
+  enableEarlyBird.value =
+    form.value.earlyBirdBonusChips != null || form.value.levelTwoBonusChips != null
+  enableReentry.value = form.value.rebuyMax != null
+  enableAddon.value = form.value.addonChips != null || form.value.addonPriceCents != null
+  enableVoucher.value = (form.value.voucherValueCents ?? 0) > 0
+  enableLateReg.value = form.value.lateRegistrationLevel != null
+  enableBounty.value = form.value.bountyType !== 'NONE'
+}
+
 // Computed for bounty amount in euros (display; stored as cents)
 const bountyAmountEuros = computed({
   get: () => (form.value.bountyAmountCents ?? 0) / 100,
@@ -599,6 +671,8 @@ watch(
         recurrenceEndDate: '',
       }
     }
+    // Derive the opt-in toggles from whatever values were just loaded.
+    if (isOpen) syncOptionTogglesFromForm()
   },
 )
 
@@ -744,6 +818,33 @@ const closeModal = () => {
   gap: 0.5rem;
   color: var(--color-pp-text-muted);
   cursor: pointer;
+}
+
+/* Optional-features block: checkbox rows with revealed inputs */
+.tournament-form-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--color-pp-border-strong);
+  border-radius: 0.75rem;
+  background-color: var(--color-pp-bg);
+}
+
+.tournament-form-options-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-pp-text);
+}
+
+/* Inputs revealed by a toggle, indented under it */
+.tournament-form-option-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: -0.15rem 0 0.35rem 1.65rem;
+  padding-left: 0.85rem;
+  border-left: 2px solid var(--color-pp-border-strong);
 }
 
 .tournament-form-error {
