@@ -958,42 +958,56 @@
     "resolveFailed": "Afrekenen van voorspellingen mislukt. Probeer het opnieuw."
   },
   "activity": {
+    "system": "Systeem",
     "clock": {
-      "start": "Klok gestart",
-      "pause": "Klok gepauzeerd",
-      "resume": "Klok hervat",
-      "level_advance": "Niveau doorgeschoven naar {level_number}",
-      "manual_advance": "Niveau handmatig doorgeschoven naar {level_number}",
-      "manual_revert": "Niveau teruggedraaid naar {level_number}",
+      "start": "{actor} startte de klok",
+      "pause": "{actor} pauzeerde de klok",
+      "resume": "{actor} hervatte de klok",
+      "level_advance": "Doorgeschoven naar niveau {level_number}",
+      "manual_advance": "{actor} schoof door naar niveau {level_number}",
+      "manual_revert": "{actor} draaide terug naar niveau {level_number}",
       "final_level_complete": "Laatste niveau voltooid"
     },
     "registration": {
-      "registered": "Speler ingeschreven",
-      "waitlisted": "Speler op wachtlijst gezet",
-      "cancelled": "Inschrijving geannuleerd",
-      "promoted": "Speler gepromoveerd van de wachtlijst",
-      "self_check_in": "Speler zelf ingecheckt",
-      "check_in": "Speler ingecheckt"
+      "registered": "{actor} schreef {subject} in",
+      "registered_self": "{actor} schreef zich in",
+      "waitlisted": "{actor} zette {subject} op de wachtlijst",
+      "waitlisted_self": "{actor} ging op de wachtlijst",
+      "cancelled": "{actor} annuleerde de inschrijving van {subject}",
+      "cancelled_self": "{actor} annuleerde zijn inschrijving",
+      "promoted": "{subject} gepromoveerd van de wachtlijst",
+      "promoted_self": "Gepromoveerd van de wachtlijst",
+      "self_check_in": "{actor} checkte zelf in",
+      "check_in": "{actor} checkte {subject} in"
     },
     "seating": {
-      "table_assigned": "Tafel {table_number} toegewezen",
-      "table_unassigned": "Tafel {table_number} verwijderd",
-      "player_seated": "Speler geplaatst op stoel {seat_number}",
-      "player_moved": "Speler verplaatst naar stoel {seat_number}",
-      "stack_updated": "Stack bijgewerkt naar {stack_size}",
-      "tables_balanced": "Tafels gebalanceerd ({players_moved} spelers verplaatst)",
-      "player_eliminated": "Speler geëlimineerd",
+      "table_assigned": "{actor} wees tafel {table_number} toe",
+      "table_unassigned": "{actor} verwijderde tafel {table_number}",
+      "player_seated": "{actor} plaatste een speler op stoel {seat_number}",
+      "player_moved": "{actor} verplaatste een speler naar stoel {seat_number}",
+      "stack_updated": "{actor} zette een stack op {stack_size}",
+      "tables_balanced": "{actor} balanceerde de tafels ({players_moved} spelers verplaatst)",
+      "player_eliminated": "{actor} elimineerde een speler",
       "bounty_collected": "Bounty geïnd"
     },
     "entry": {
-      "added": "Entry toegevoegd ({entry_type}, {amount_cents}c)",
-      "deleted": "Entry verwijderd ({entry_type}, {amount_cents}c)"
+      "added": "{actor} voegde een entry toe ({entry_type})",
+      "deleted": "{actor} verwijderde een entry ({entry_type})"
     },
     "result": {
-      "results_entered": "Resultaten ingevoerd voor {player_count} spelers"
+      "results_entered": "{actor} voerde resultaten in voor {player_count} spelers"
     },
     "tournament": {
-      "status_changed": "Status gewijzigd van {from_status} naar {to_status}"
+      "status_changed": "{actor} wijzigde de status naar {to_status}"
+    },
+    "status": {
+      "NotStarted": "Niet gestart",
+      "RegistrationOpen": "Inschrijvingen open",
+      "LateRegistration": "Late inschrijving",
+      "InProgress": "Bezig",
+      "Break": "Pauze",
+      "FinalTable": "Finaletafel",
+      "Finished": "Afgelopen"
     },
     "time": {
       "justNow": "Zojuist",

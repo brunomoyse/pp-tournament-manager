@@ -958,42 +958,56 @@
     "resolveFailed": "Failed to resolve predictions. Please try again."
   },
   "activity": {
+    "system": "System",
     "clock": {
-      "start": "Clock started",
-      "pause": "Clock paused",
-      "resume": "Clock resumed",
-      "level_advance": "Level advanced to {level_number}",
-      "manual_advance": "Level manually advanced to {level_number}",
-      "manual_revert": "Level reverted to {level_number}",
+      "start": "{actor} started the clock",
+      "pause": "{actor} paused the clock",
+      "resume": "{actor} resumed the clock",
+      "level_advance": "Advanced to level {level_number}",
+      "manual_advance": "{actor} advanced to level {level_number}",
+      "manual_revert": "{actor} reverted to level {level_number}",
       "final_level_complete": "Final level completed"
     },
     "registration": {
-      "registered": "Player registered",
-      "waitlisted": "Player added to waitlist",
-      "cancelled": "Registration cancelled",
-      "promoted": "Player promoted from waitlist",
-      "self_check_in": "Player self checked in",
-      "check_in": "Player checked in"
+      "registered": "{actor} registered {subject}",
+      "registered_self": "{actor} registered",
+      "waitlisted": "{actor} waitlisted {subject}",
+      "waitlisted_self": "{actor} joined the waitlist",
+      "cancelled": "{actor} cancelled {subject}'s registration",
+      "cancelled_self": "{actor} cancelled their registration",
+      "promoted": "{subject} promoted from the waitlist",
+      "promoted_self": "Promoted from the waitlist",
+      "self_check_in": "{actor} checked in",
+      "check_in": "{actor} checked in {subject}"
     },
     "seating": {
-      "table_assigned": "Table {table_number} assigned",
-      "table_unassigned": "Table {table_number} removed",
-      "player_seated": "Player seated at seat {seat_number}",
-      "player_moved": "Player moved to seat {seat_number}",
-      "stack_updated": "Stack updated to {stack_size}",
-      "tables_balanced": "Tables balanced ({players_moved} players moved)",
-      "player_eliminated": "Player eliminated",
+      "table_assigned": "{actor} assigned table {table_number}",
+      "table_unassigned": "{actor} removed table {table_number}",
+      "player_seated": "{actor} seated a player at seat {seat_number}",
+      "player_moved": "{actor} moved a player to seat {seat_number}",
+      "stack_updated": "{actor} set a stack to {stack_size}",
+      "tables_balanced": "{actor} balanced the tables ({players_moved} players moved)",
+      "player_eliminated": "{actor} eliminated a player",
       "bounty_collected": "Bounty collected"
     },
     "entry": {
-      "added": "Entry added ({entry_type}, {amount_cents}c)",
-      "deleted": "Entry deleted ({entry_type}, {amount_cents}c)"
+      "added": "{actor} added an entry ({entry_type})",
+      "deleted": "{actor} removed an entry ({entry_type})"
     },
     "result": {
-      "results_entered": "Results entered for {player_count} players"
+      "results_entered": "{actor} entered results for {player_count} players"
     },
     "tournament": {
-      "status_changed": "Status changed from {from_status} to {to_status}"
+      "status_changed": "{actor} changed the status to {to_status}"
+    },
+    "status": {
+      "NotStarted": "Not started",
+      "RegistrationOpen": "Registration open",
+      "LateRegistration": "Late registration",
+      "InProgress": "In progress",
+      "Break": "On break",
+      "FinalTable": "Final table",
+      "Finished": "Finished"
     },
     "time": {
       "justNow": "Just now",

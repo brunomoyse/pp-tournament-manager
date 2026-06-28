@@ -15,7 +15,9 @@ query GetTournamentActivityLog(
       eventCategory
       eventAction
       actorId
+      actorName
       subjectId
+      subjectName
       eventTime
       metadata
     }

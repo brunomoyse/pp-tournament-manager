@@ -3,7 +3,7 @@
     <h3 class="activity-title">{{ t('headings.recentActivity') }}</h3>
     <div class="activity-list" v-if="entries.length > 0">
       <div v-for="entry in entries" :key="entry.id" class="activity-item">
-        <div :class="['activity-dot', `activity-dot--${entry.eventCategory}`]"></div>
+        <div :class="['activity-dot', `activity-dot--${entry.eventCategory.toLowerCase()}`]"></div>
         <div class="activity-body">
           <span class="activity-message">{{ formatActivityMessage(entry) }}</span>
           <span class="activity-time">{{ formatRelativeTime(entry.eventTime) }}</span>
@@ -32,7 +32,9 @@ interface ActivityEntry {
   eventCategory: string
   eventAction: string
   actorId: string | null
+  actorName: string | null
   subjectId: string | null
+  subjectName: string | null
   eventTime: string
   metadata: Record<string, any>
 }
@@ -64,7 +66,9 @@ const activitySubQuery = `
         eventCategory
         eventAction
         actorId
+        actorName
         subjectId
+        subjectName
         eventTime
         metadata
       }
@@ -85,10 +89,41 @@ watch(activityUpdates, (raw: any) => {
   }
 })
 
+// Map a raw PascalCase tournament live-status (as stored in status_changed
+// metadata, e.g. "RegistrationOpen") to a localized label, falling back to the
+// raw value when no translation exists.
+function statusLabel(raw: unknown): string {
+  if (typeof raw !== 'string' || raw === '') return ''
+  const key = `activity.status.${raw}`
+  const label = t(key)
+  return label === key ? raw : label
+}
+
 function formatActivityMessage(entry: ActivityEntry): string {
-  const key = `activity.${entry.eventCategory}.${entry.eventAction}`
-  const translated = t(key, entry.metadata)
-  // If the key wasn't found, fall back to a generic display
+  const cat = entry.eventCategory.toLowerCase()
+  const meta = entry.metadata || {}
+  const params = {
+    ...meta,
+    actor: entry.actorName ?? t('activity.system'),
+    subject: entry.subjectName ?? '',
+    from_status: statusLabel(meta.from_status),
+    to_status: statusLabel(meta.to_status),
+  }
+
+  // A distinct subject means the actor acted on someone else (manager registers
+  // a player, checks them in, etc.). When the actor acted on themselves, prefer
+  // the "_self" phrasing. Account-less roster registrations have no subjectId but
+  // do carry a resolved subjectName, so they count as a distinct subject.
+  const distinctSubject = !!entry.subjectName && entry.actorId !== entry.subjectId
+  if (!distinctSubject) {
+    const selfKey = `activity.${cat}.${entry.eventAction}_self`
+    const selfTranslated = t(selfKey, params)
+    if (selfTranslated !== selfKey) return selfTranslated
+  }
+
+  const key = `activity.${cat}.${entry.eventAction}`
+  const translated = t(key, params)
+  // If the key wasn't found, fall back to a generic display.
   if (translated === key) {
     return `${entry.eventCategory}: ${entry.eventAction}`
   }

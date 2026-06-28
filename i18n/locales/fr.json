@@ -958,42 +958,56 @@
     "resolveFailed": "Échec du règlement des pronostics. Veuillez réessayer."
   },
   "activity": {
+    "system": "Système",
     "clock": {
-      "start": "Clock démarrée",
-      "pause": "Clock en pause",
-      "resume": "Clock reprise",
-      "level_advance": "Niveau avancé au {level_number}",
-      "manual_advance": "Niveau avancé manuellement au {level_number}",
-      "manual_revert": "Niveau revenu au {level_number}",
+      "start": "{actor} a démarré la clock",
+      "pause": "{actor} a mis la clock en pause",
+      "resume": "{actor} a repris la clock",
+      "level_advance": "Passage au niveau {level_number}",
+      "manual_advance": "{actor} est passé au niveau {level_number}",
+      "manual_revert": "{actor} est revenu au niveau {level_number}",
       "final_level_complete": "Dernier niveau terminé"
     },
     "registration": {
-      "registered": "Joueur inscrit",
-      "waitlisted": "Joueur ajouté à la liste d'attente",
-      "cancelled": "Inscription annulée",
-      "promoted": "Joueur promu de la liste d'attente",
-      "self_check_in": "Joueur enregistré automatiquement",
-      "check_in": "Joueur enregistré"
+      "registered": "{actor} a inscrit {subject}",
+      "registered_self": "{actor} s'est inscrit",
+      "waitlisted": "{actor} a mis {subject} en liste d'attente",
+      "waitlisted_self": "{actor} a rejoint la liste d'attente",
+      "cancelled": "{actor} a annulé l'inscription de {subject}",
+      "cancelled_self": "{actor} a annulé son inscription",
+      "promoted": "{subject} promu depuis la liste d'attente",
+      "promoted_self": "Promu depuis la liste d'attente",
+      "self_check_in": "{actor} s'est enregistré",
+      "check_in": "{actor} a enregistré {subject}"
     },
     "seating": {
-      "table_assigned": "Table {table_number} assignée",
-      "table_unassigned": "Table {table_number} retirée",
-      "player_seated": "Joueur placé au siège {seat_number}",
-      "player_moved": "Joueur déplacé au siège {seat_number}",
-      "stack_updated": "Stack mis à jour à {stack_size}",
-      "tables_balanced": "Tables équilibrées ({players_moved} joueurs déplacés)",
-      "player_eliminated": "Joueur éliminé",
+      "table_assigned": "{actor} a assigné la table {table_number}",
+      "table_unassigned": "{actor} a retiré la table {table_number}",
+      "player_seated": "{actor} a placé un joueur au siège {seat_number}",
+      "player_moved": "{actor} a déplacé un joueur au siège {seat_number}",
+      "stack_updated": "{actor} a mis un stack à {stack_size}",
+      "tables_balanced": "{actor} a équilibré les tables ({players_moved} joueurs déplacés)",
+      "player_eliminated": "{actor} a éliminé un joueur",
       "bounty_collected": "Bounty encaissé"
     },
     "entry": {
-      "added": "Entrée ajoutée ({entry_type}, {amount_cents}c)",
-      "deleted": "Entrée supprimée ({entry_type}, {amount_cents}c)"
+      "added": "{actor} a ajouté une entrée ({entry_type})",
+      "deleted": "{actor} a retiré une entrée ({entry_type})"
     },
     "result": {
-      "results_entered": "Résultats saisis pour {player_count} joueurs"
+      "results_entered": "{actor} a saisi les résultats pour {player_count} joueurs"
     },
     "tournament": {
-      "status_changed": "Statut changé de {from_status} à {to_status}"
+      "status_changed": "{actor} a changé le statut en {to_status}"
+    },
+    "status": {
+      "NotStarted": "Pas démarré",
+      "RegistrationOpen": "Inscriptions ouvertes",
+      "LateRegistration": "Inscriptions tardives",
+      "InProgress": "En cours",
+      "Break": "En pause",
+      "FinalTable": "Table finale",
+      "Finished": "Terminé"
     },
     "time": {
       "justNow": "À l'instant",
