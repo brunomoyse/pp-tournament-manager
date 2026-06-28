@@ -654,13 +654,10 @@ onBeforeUnmount(() => {
     linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)) padding-box,
     linear-gradient(var(--color-pp-surface), var(--color-pp-surface)) padding-box,
     linear-gradient(110deg, rgba(var(--pp-danger-rgb), 0.5), var(--color-pp-border) 45%) border-box;
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
+  transition: box-shadow 0.15s ease;
 }
 
 .live-strip:hover {
-  transform: translateY(-2px);
   box-shadow: 0 14px 40px -18px rgba(var(--pp-danger-rgb), 0.5);
 }
 
@@ -851,14 +848,12 @@ onBeforeUnmount(() => {
   cursor: pointer;
   transition:
     background-color 0.15s ease,
-    border-color 0.15s ease,
-    transform 0.15s ease;
+    border-color 0.15s ease;
 }
 
 .schedule-row:hover {
-  background-color: rgba(255, 255, 255, 0.04);
+  background-color: rgba(var(--pp-accent-rgb), 0.06);
   border-color: rgba(var(--pp-accent-rgb), 0.25);
-  transform: translateY(-2px);
 }
 
 .schedule-row__left {

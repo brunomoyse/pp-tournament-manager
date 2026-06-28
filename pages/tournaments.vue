@@ -485,13 +485,6 @@ onMounted(() => {
   position: relative;
   overflow: hidden;
   height: 100%;
-  transition: transform 0.15s ease;
-}
-
-/* PpCard deliberately neutralizes its own hover lift; the grid cards want it
-   back. The double class (.ppc is on the PpCard root) outspecifies that rule. */
-.tournament-card.ppc:hover {
-  transform: translateY(-3px);
 }
 
 .tournament-card__accent {
