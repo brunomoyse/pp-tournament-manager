@@ -10,6 +10,9 @@
       @click="expanded = !expanded"
       @keydown.enter.space.prevent="expanded = !expanded"
     >
+      <div class="card-icon">
+        <IonIcon :icon="trophyOutline" />
+      </div>
       <div class="card-header-left">
         <h3 class="card-title">{{ template.name }}</h3>
         <div class="card-meta">
@@ -70,7 +73,7 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { createOutline, trashOutline } from 'ionicons/icons'
+import { createOutline, trashOutline, trophyOutline } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 import type { PayoutTemplate } from '~/types/tournament'
 
@@ -120,6 +123,20 @@ const playerRange = computed(() => {
   gap: 0.75rem;
 }
 
+.card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  border-radius: 0.625rem;
+  background-color: rgba(var(--pp-accent-rgb), 0.12);
+  border: 1px solid rgba(var(--pp-accent-rgb), 0.25);
+  color: var(--color-pp-gold);
+  font-size: 1.25rem;
+}
+
 .card-header-left {
   min-width: 0;
   flex: 1;
@@ -128,7 +145,8 @@ const playerRange = computed(() => {
 .card-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #ffffff;
+  font-family: var(--font-display);
+  color: var(--color-pp-text);
   margin-bottom: 0.25rem;
 }
 
@@ -137,7 +155,7 @@ const playerRange = computed(() => {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-pp-text-muted);
 }
 
 .meta-badge {
@@ -147,20 +165,23 @@ const playerRange = computed(() => {
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 500;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .meta-separator {
-  color: rgba(255, 255, 255, 0.2);
+  color: var(--color-pp-border-strong);
 }
 
 .meta-text {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-pp-text-muted);
+  font-family: var(--font-mono);
 }
 
 .card-description {
   margin-top: 0.375rem;
   font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--color-pp-text-dim);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -169,7 +190,7 @@ const playerRange = computed(() => {
 .expand-icon {
   width: 1.25rem;
   height: 1.25rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--color-pp-text-dim);
   transition: transform 0.2s ease;
   flex-shrink: 0;
   margin-top: 0.125rem;
@@ -191,19 +212,22 @@ const playerRange = computed(() => {
 }
 
 .structure-table th {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-pp-text-muted);
+  font-family: var(--font-mono);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-size: 0.6875rem;
   padding: 0.375rem 0;
-  border-bottom: 1px solid rgba(84, 84, 95, 0.5);
+  border-bottom: 1px solid var(--color-pp-border-strong);
 }
 
 .structure-table td {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--color-pp-text);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   padding: 0.375rem 0;
-  border-bottom: 1px solid rgba(84, 84, 95, 0.3);
+  border-bottom: 1px solid var(--color-pp-border);
 }
 
 .text-right {

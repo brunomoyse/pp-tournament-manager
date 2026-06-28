@@ -64,8 +64,8 @@
             </template>
           </PpEmptyState>
 
-          <!-- Card Grid -->
-          <div v-else class="card-grid">
+          <!-- Card Grid (payouts: 3-up) -->
+          <div v-else class="card-grid card-grid--3">
             <TemplatesPayoutTemplateCard
               v-for="(tmpl, index) in filteredPayoutTemplates"
               :key="tmpl.id"
@@ -118,8 +118,8 @@
             </template>
           </PpEmptyState>
 
-          <!-- Card Grid -->
-          <div v-else class="card-grid">
+          <!-- Card Grid (blind structures: 2-up) -->
+          <div v-else class="card-grid card-grid--2">
             <TemplatesBlindStructureTemplateCard
               v-for="(tmpl, index) in filteredBlindTemplates"
               :key="tmpl.id"
@@ -389,7 +389,7 @@ onMounted(fetchAll)
 
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.2em;
   color: var(--color-pp-gold-deep);
@@ -405,40 +405,47 @@ onMounted(fetchAll)
   color: var(--color-pp-text);
 }
 
-/* Tabs */
+/* Segmented tabs */
 .tabs {
-  display: flex;
+  display: inline-flex;
   gap: 0.25rem;
   margin-bottom: 1.5rem;
-  background-color: var(--color-pp-surface-2);
-  border-radius: 0.75rem;
-  padding: 0.25rem;
-  border: 1px solid var(--color-pp-border-strong);
+  background-color: var(--color-pp-surface);
+  border-radius: 0.85rem;
+  padding: 0.3rem;
+  border: 1px solid var(--color-pp-border);
 }
 
 .tab {
-  flex: 1;
-  padding: 0.625rem 1rem;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 600;
+  padding: 0.5rem 1.1rem;
+  border-radius: 0.6rem;
+  border: 1px solid transparent;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
   text-align: center;
 }
 
 .tab--active {
-  background-color: rgba(var(--pp-accent-rgb), 0.15);
+  background-color: rgba(var(--pp-accent-rgb), 0.1);
   color: var(--color-pp-gold);
+  border-color: rgba(var(--pp-accent-rgb), 0.4);
 }
 
 .tab--inactive {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-pp-text-muted);
 }
 
 .tab--inactive:hover {
-  color: rgba(255, 255, 255, 0.8);
-  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--color-pp-text);
+  background-color: rgba(var(--pp-accent-rgb), 0.06);
 }
 
 /* Toolbar */
@@ -466,23 +473,29 @@ onMounted(fetchAll)
   left: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  width: 1.25rem;
-  height: 1.25rem;
-  color: rgba(255, 255, 255, 0.6);
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--color-pp-text-dim);
 }
 
 .search-input {
-  padding: 0.5rem 1rem 0.5rem 2.5rem;
+  height: 2.25rem;
+  padding: 0 0.9rem 0 2.4rem;
   background-color: var(--color-pp-bg);
-  border: 1px solid var(--color-pp-border-strong);
-  border-radius: 0.5rem;
-  color: #ffffff;
+  border: 1px solid var(--color-pp-border);
+  border-radius: 0.7rem;
+  color: var(--color-pp-text);
+  font-size: 0.85rem;
   width: 100%;
+}
+
+.search-input::placeholder {
+  color: var(--color-pp-text-dim);
 }
 
 @media (min-width: 640px) {
   .search-input {
-    width: 16rem;
+    width: 18rem;
   }
 }
 
@@ -499,35 +512,38 @@ onMounted(fetchAll)
 }
 
 .muted-text {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--color-pp-text-muted);
 }
 
 .empty-title {
   font-size: 1.125rem;
   font-weight: 500;
-  color: #ffffff;
+  font-family: var(--font-display);
+  color: var(--color-pp-text);
   margin-bottom: 0.5rem;
 }
 
 .empty-text {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--color-pp-text-muted);
   margin-bottom: 1.5rem;
 }
 
-/* Card Grid */
+/* Card grid: blind structures sit 2-up, payout presets 3-up. */
 .card-grid {
   display: grid;
   gap: 1rem;
+  grid-template-columns: 1fr;
 }
 
 @media (min-width: 768px) {
-  .card-grid {
+  .card-grid--2,
+  .card-grid--3 {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (min-width: 1280px) {
-  .card-grid {
+  .card-grid--3 {
     grid-template-columns: repeat(3, 1fr);
   }
 }
