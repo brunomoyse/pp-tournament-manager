@@ -519,7 +519,9 @@
     "noData": "No tournament data yet",
     "activePlayers": "Active players",
     "volumeThisMonth": "Volume (30 days)",
-    "winnings": "Winnings"
+    "winnings": "Winnings",
+    "games": "Games",
+    "played": "Played"
   },
   "tournaments": {
     "title": "All Tournaments",

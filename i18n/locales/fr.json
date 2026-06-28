@@ -519,7 +519,9 @@
     "noData": "Aucune donnée de tournoi",
     "activePlayers": "Joueurs actifs",
     "volumeThisMonth": "Volume (30 jours)",
-    "winnings": "Gains"
+    "winnings": "Gains",
+    "games": "Parties",
+    "played": "Jouées"
   },
   "tournaments": {
     "title": "Tous les tournois",

@@ -519,7 +519,9 @@
     "noData": "Nog geen toernooigegevens",
     "activePlayers": "Actieve spelers",
     "volumeThisMonth": "Volume (30 dagen)",
-    "winnings": "Winst"
+    "winnings": "Winst",
+    "games": "Partijen",
+    "played": "Gespeeld"
   },
   "tournaments": {
     "title": "Alle toernooien",
