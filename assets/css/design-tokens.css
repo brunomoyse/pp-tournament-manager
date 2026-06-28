@@ -29,6 +29,14 @@
   --color-pp-on-accent: #18181a;
   --color-pp-danger: #ef4444;
   --color-pp-success: #10b981;
+  --color-pp-info: #38bdf8;
+  --color-pp-warning: #fb923c;
+
+  /* Status channels (for rgba tints on pills, fill bars, trend lines). */
+  --pp-danger-rgb: 239, 68, 68;
+  --pp-success-rgb: 16, 185, 129;
+  --pp-info-rgb: 56, 189, 248;
+  --pp-warning-rgb: 251, 146, 60;
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Space Grotesk', 'Inter', sans-serif;
