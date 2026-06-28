@@ -987,6 +987,7 @@
       "player_moved": "{actor} verplaatste een speler naar stoel {seat_number}",
       "stack_updated": "{actor} zette een stack op {stack_size}",
       "tables_balanced": "{actor} balanceerde de tafels ({players_moved} spelers verplaatst)",
+      "auto_seated": "{actor} plaatste automatisch {player_count} spelers voor de late inschrijving",
       "player_eliminated": "{actor} elimineerde een speler",
       "bounty_collected": "Bounty geïnd"
     },

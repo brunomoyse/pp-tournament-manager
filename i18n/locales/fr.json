@@ -987,6 +987,7 @@
       "player_moved": "{actor} a déplacé un joueur au siège {seat_number}",
       "stack_updated": "{actor} a mis un stack à {stack_size}",
       "tables_balanced": "{actor} a équilibré les tables ({players_moved} joueurs déplacés)",
+      "auto_seated": "{actor} a placé automatiquement {player_count} joueurs pour les inscriptions tardives",
       "player_eliminated": "{actor} a éliminé un joueur",
       "bounty_collected": "Bounty encaissé"
     },
