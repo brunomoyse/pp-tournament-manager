@@ -1053,6 +1053,7 @@
   "display": {
     "tv": "TV",
     "openOnTv": "Open de klok op volledig scherm voor een tv of projector",
+    "openButton": "TV-weergave openen",
     "level": "Niveau",
     "break": "Pauze",
     "ante": "Ante",

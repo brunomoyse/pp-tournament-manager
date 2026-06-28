@@ -1053,6 +1053,7 @@
   "display": {
     "tv": "TV",
     "openOnTv": "Ouvrir la clock en plein écran pour un téléviseur ou un projecteur",
+    "openButton": "Affichage TV",
     "level": "Niveau",
     "break": "Pause",
     "ante": "Ante",

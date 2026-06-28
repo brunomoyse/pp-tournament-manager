@@ -1053,6 +1053,7 @@
   "display": {
     "tv": "TV",
     "openOnTv": "Open the full-screen clock for a TV or projector",
+    "openButton": "Open TV display",
     "level": "Level",
     "break": "Break",
     "ante": "Ante",

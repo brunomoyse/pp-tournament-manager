@@ -1,53 +1,43 @@
 <template>
   <ion-page class="page-bg">
-    <!-- Custom Header -->
+    <!-- Sub-header: back link, event identity, live + connection, TV display -->
     <div class="custom-header">
-      <!-- Top row with title and status -->
-      <div class="header-top">
-        <div class="header-brand" @click="goHome">
-          <img src="/assets/icon-no-bg.png" alt="Pocket Pair Logo" class="brand-logo" />
-          <h1 class="brand-title">{{ t('app.title') }}</h1>
-        </div>
-        <div class="header-info">
-          <!-- Club name and tournament name -->
-          <div class="header-subtitle">
-            {{ club?.name || t('status.loading') }} -
+      <div class="sub-header">
+        <button class="back-link" @click="goHome" :aria-label="t('common.back')">
+          <ion-icon :icon="chevronBackOutline" class="back-icon" />
+          <span>{{ t('common.back') }}</span>
+        </button>
+
+        <div class="sub-header__id">
+          <h1 class="sub-header__title">
             {{ tournament?.title || t('status.loadingTournament') }}
+          </h1>
+          <div class="sub-header__meta">
+            <span class="sub-header__club">{{ club?.name || t('status.loading') }}</span>
+            <PpStatusPill v-if="isLive" tone="live" dot>{{ t('status.live') }}</PpStatusPill>
+            <span class="connection-status">
+              <span class="status-dot" :class="`status-dot--${connectionStatusKey}`" />
+              <span class="status-label" :class="`status-label--${connectionStatusKey}`">
+                {{ connectionStatusLabel }}
+              </span>
+            </span>
           </div>
-          <!-- Connection status -->
-          <div class="connection-status">
-            <div
-              :class="[
-                'status-dot',
-                connectionStatus === 'connected'
-                  ? 'status-dot--connected'
-                  : connectionStatus === 'reconnecting'
-                    ? 'status-dot--reconnecting'
-                    : 'status-dot--offline',
-              ]"
-            ></div>
-            <span
-              :class="[
-                'status-label',
-                connectionStatus === 'connected'
-                  ? 'status-label--connected'
-                  : connectionStatus === 'reconnecting'
-                    ? 'status-label--reconnecting'
-                    : 'status-label--offline',
-              ]"
-              >{{
-                connectionStatus === 'connected'
-                  ? t('status.connected')
-                  : connectionStatus === 'reconnecting'
-                    ? t('status.reconnecting')
-                    : t('status.offline')
-              }}</span
-            >
-          </div>
+        </div>
+
+        <div class="sub-header__actions">
+          <PpButton
+            variant="secondary"
+            size="sm"
+            :title="t('display.openOnTv')"
+            @click="openTvDisplay"
+          >
+            <ion-icon :icon="tvOutline" class="icon-md" />
+            {{ t('display.openButton') }}
+          </PpButton>
         </div>
       </div>
 
-      <!-- Full width tab navigation -->
+      <!-- Segmented tab navigation -->
       <div class="tab-bar">
         <button
           v-for="tab in tabs"
@@ -280,7 +270,7 @@
                   </div>
                   <div>
                     <label class="info-label">{{ t('tournament.buyIn') }}</label>
-                    <p class="info-value">{{ formatPrice(tournament.buyInCents, locale) }}</p>
+                    <p class="info-value">{{ formatPrice(tournament.buyInCents) }}</p>
                   </div>
                   <div>
                     <label class="info-label">{{ t('tournament.startTime') }}</label>
@@ -338,6 +328,8 @@ import {
   qrCodeOutline,
   downloadOutline,
   printOutline,
+  chevronBackOutline,
+  tvOutline,
 } from 'ionicons/icons'
 import { useNetworkStatus } from '@/composables/useNetworkStatus'
 import { useTournamentStore } from '~/stores/useTournamentStore'
@@ -400,6 +392,31 @@ watch(
 const isPko = computed(() => (tournament.value?.bountyType ?? 'NONE') !== 'NONE')
 const clock = computed(() => tournamentStore.clock)
 const club = computed(() => clubStore.club)
+
+// Live pill: tournament is mid-flight or the clock is actively running.
+const isLive = computed(() => {
+  const liveStatuses = ['LATE_REGISTRATION', 'IN_PROGRESS', 'BREAK', 'FINAL_TABLE']
+  return (
+    clock.value?.status === 'RUNNING' || liveStatuses.includes(tournament.value?.liveStatus || '')
+  )
+})
+
+// Connection status reduced to a token + label for the sub-header indicator.
+const connectionStatusKey = computed(() => {
+  if (connectionStatus.value === 'connected') return 'connected'
+  if (connectionStatus.value === 'reconnecting') return 'reconnecting'
+  return 'offline'
+})
+const connectionStatusLabel = computed(() => {
+  if (connectionStatusKey.value === 'connected') return t('status.connected')
+  if (connectionStatusKey.value === 'reconnecting') return t('status.reconnecting')
+  return t('status.offline')
+})
+
+// Open the TV display (read-only big-screen clock) in a new tab.
+const openTvDisplay = () => {
+  window.open(`/tournament/${selectedTournamentId}/display`, '_blank', 'noopener')
+}
 
 // Edit modal state
 const showEditModal = ref(false)
@@ -791,128 +808,156 @@ onMounted(async () => {
   }
 }
 
-.header-top {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  padding-left: 3rem;
-}
-
-@media (min-width: 640px) {
-  .header-top {
-    flex-direction: row;
-  }
-}
-
-.header-brand {
+.sub-header {
   display: flex;
   align-items: center;
   gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Clear the fixed hamburger on phones; the rail replaces it on tablet+. */
+@media (max-width: 767px) {
+  .sub-header {
+    padding-left: 3rem;
+  }
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.7rem 0.4rem 0.5rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--color-pp-border);
+  background-color: var(--color-pp-surface);
+  color: var(--color-pp-text-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
   cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
-.brand-logo {
-  width: 3rem;
-  height: 3rem;
+.back-link:hover {
+  color: var(--color-pp-text);
+  border-color: var(--color-pp-border-strong);
 }
 
-.brand-title {
+.back-icon {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.sub-header__id {
+  min-width: 0;
+  flex: 1;
+}
+
+.sub-header__title {
   font-family: var(--font-display);
-  font-size: 1.65rem;
+  font-size: clamp(1.25rem, 2vw + 0.5rem, 1.65rem);
   line-height: 1.1;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--color-pp-text);
-  transition: color 0.2s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.brand-title:hover {
-  color: var(--color-pp-gold);
+.sub-header__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.3rem;
+  flex-wrap: wrap;
 }
 
-.header-info {
-  text-align: right;
-}
-
-.header-subtitle {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #ffffff;
-  margin-bottom: 0.25rem;
+.sub-header__club {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-pp-text-muted);
 }
 
 .connection-status {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .status-dot {
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.45rem;
+  height: 0.45rem;
   border-radius: 9999px;
 }
 
 .status-dot--connected {
-  background-color: var(--pp-green-500);
+  background-color: var(--color-pp-success);
 }
 
 .status-dot--reconnecting {
-  background-color: var(--pp-orange-500);
+  background-color: var(--color-pp-warning);
 }
 
 .status-dot--offline {
-  background-color: var(--pp-red-500);
+  background-color: var(--color-pp-danger);
 }
 
 .status-label {
-  font-size: 0.875rem;
-  text-transform: capitalize;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   font-weight: 500;
 }
 
 .status-label--connected {
-  color: var(--pp-green-500);
+  color: var(--color-pp-success);
 }
 
 .status-label--reconnecting {
-  color: var(--pp-orange-500);
+  color: var(--color-pp-warning);
 }
 
 .status-label--offline {
-  color: var(--pp-red-500);
+  color: #f87171;
 }
 
-/* Tab Bar */
+.sub-header__actions {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* Segmented tab bar */
 .tab-bar {
   display: flex;
   overflow-x: auto;
-  gap: 0.5rem;
-  background-color: rgba(36, 36, 42, 0.5);
-  padding: 0.5rem;
-  border-radius: 1rem;
-  border: 1px solid var(--color-pp-border-strong);
+  gap: 0.25rem;
+  background-color: var(--color-pp-surface);
+  padding: 0.3rem;
+  border-radius: 0.85rem;
+  border: 1px solid var(--color-pp-border);
 }
 
 .tab-button {
   flex: 1;
-  min-width: 0;
-  padding: 0.75rem 1rem;
-  border-radius: 9999px;
+  min-width: max-content;
+  padding: 0.55rem 1rem;
+  border-radius: 0.6rem;
+  border: 1px solid transparent;
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-weight: 500;
   transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
   white-space: nowrap;
   cursor: pointer;
 }
@@ -920,19 +965,16 @@ onMounted(async () => {
 .tab-button--active {
   background-color: rgba(var(--pp-accent-rgb), 0.1);
   color: var(--color-pp-gold);
-  border: 1px solid rgba(var(--pp-accent-rgb), 0.4);
-  box-shadow:
-    0 0 0 1px rgba(var(--pp-accent-rgb), 0.12),
-    0 8px 30px -10px rgba(var(--pp-accent-rgb), 0.25);
+  border-color: rgba(var(--pp-accent-rgb), 0.4);
 }
 
 .tab-button--inactive {
-  color: #ffffff;
-  border: 1px solid transparent;
+  color: var(--color-pp-text-muted);
 }
 
 .tab-button--inactive:hover {
-  background-color: rgba(36, 36, 42, 0.5);
+  color: var(--color-pp-text);
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 /* Tab Content */
