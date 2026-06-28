@@ -150,7 +150,12 @@
     "settings": "Instellingen",
     "announcements": "Aankondigingen",
     "tables": "Tafels",
-    "redemptionCodes": "Proefcodes"
+    "redemptionCodes": "Proefcodes",
+    "groupManage": "Beheer",
+    "groupClub": "Club",
+    "search": "Zoeken",
+    "searchHint": "Zoek toernooien, spelers",
+    "notifications": "Meldingen"
   },
   "tables": {
     "title": "Tafels",

@@ -1,39 +1,43 @@
 <template>
   <div class="layout-root">
-    <!-- [A] Backdrop overlay -->
+    <!-- [A] Backdrop overlay (mobile drawer only) -->
     <div v-if="drawerOpen" class="backdrop" @click="drawerOpen = false" />
 
-    <!-- [B] Sidebar drawer (always overlay, all sizes) -->
+    <!-- [B] Sidebar rail (overlay drawer on phones, pinned rail on tablet/desktop) -->
     <aside :class="['sidebar', drawerOpen ? 'sidebar--open' : 'sidebar--closed']">
-      <!-- Brand -->
-      <div class="sidebar-brand">
-        <img src="/assets/icon-no-bg.png" alt="PocketPair" class="sidebar-logo" />
-        <div class="sidebar-brand-text">
-          <div class="sidebar-title">PocketPair</div>
-          <div v-if="club" class="sidebar-club">{{ club.name }}</div>
+      <!-- Club switcher -->
+      <div class="club-switcher">
+        <div class="club-switcher__logo">
+          <img src="/assets/icon-no-bg.png" alt="PocketPair" />
+        </div>
+        <div class="club-switcher__text">
+          <div class="club-switcher__name">{{ club?.name || 'PocketPair' }}</div>
+          <div class="club-switcher__sub">{{ clubSubLabel }}</div>
         </div>
       </div>
 
-      <!-- Navigation -->
+      <!-- Grouped navigation -->
       <nav class="sidebar-nav pp-hide-scrollbar" data-tour="nav">
-        <NuxtLink
-          v-for="item in sidebarNavItems"
-          :key="item.to"
-          :to="item.to"
-          :data-tour-nav="item.to"
-          :class="['nav-link', isActive(item.to) ? 'nav-link--active' : 'nav-link--inactive']"
-          @click="drawerOpen = false"
-        >
-          <IonIcon
-            :icon="item.icon"
-            :class="['nav-icon', isActive(item.to) ? 'nav-icon--active' : 'nav-icon--inactive']"
-          />
-          <span class="nav-label">{{ item.label }}</span>
-          <div v-if="isActive(item.to)" class="nav-active-dot" />
-        </NuxtLink>
+        <div v-for="group in navGroups" :key="group.key" class="nav-group">
+          <p class="nav-group__label">{{ group.label }}</p>
+          <NuxtLink
+            v-for="item in group.items"
+            :key="item.to"
+            :to="item.to"
+            :data-tour-nav="item.to"
+            :class="['nav-link', isActive(item.to) ? 'nav-link--active' : 'nav-link--inactive']"
+            @click="drawerOpen = false"
+          >
+            <IonIcon
+              :icon="item.icon"
+              :class="['nav-icon', isActive(item.to) ? 'nav-icon--active' : 'nav-icon--inactive']"
+            />
+            <span class="nav-label">{{ item.label }}</span>
+          </NuxtLink>
+        </div>
       </nav>
 
-      <!-- Live Tournament Quick Access -->
+      <!-- Live tournament quick access -->
       <div v-if="activeTournamentId" class="live-section">
         <NuxtLink
           :to="`/tournament/${activeTournamentId}`"
@@ -45,10 +49,11 @@
             <div class="live-label">{{ t('status.live') }}</div>
             <div class="live-title">{{ activeTournamentTitle }}</div>
           </div>
+          <IonIcon :icon="chevronForwardOutline" class="live-chevron" />
         </NuxtLink>
       </div>
 
-      <!-- User info + logout -->
+      <!-- User footer -->
       <div class="sidebar-footer">
         <button type="button" class="footer-action" @click="replayTour">
           <IonIcon :icon="compassOutline" class="footer-action-icon" />
@@ -74,7 +79,7 @@
       </div>
     </aside>
 
-    <!-- Hamburger button (fixed, z-30 to sit above Ionic's ion-page z-0) -->
+    <!-- Hamburger button (phones only; fixed, z-30 above Ionic's ion-page z-0) -->
     <button @click="drawerOpen = true" class="hamburger-button" :aria-label="t('nav.menu')">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -88,12 +93,45 @@
       </svg>
     </button>
 
-    <!-- [C] Main Content -->
+    <!-- [C] Main column: top bar (tablet/desktop) + page content -->
     <main class="pp-main">
-      <slot />
+      <header class="topbar">
+        <div class="topbar__crumbs">
+          <span v-if="club" class="topbar__club">{{ club.name }}</span>
+          <IonIcon v-if="club" :icon="chevronForwardOutline" class="topbar__sep" />
+          <span class="topbar__page">{{ currentPageLabel }}</span>
+        </div>
+
+        <div class="topbar__actions">
+          <button type="button" class="topbar__search" @click="goToSearch">
+            <IonIcon :icon="searchOutline" class="topbar__search-icon" />
+            <span class="topbar__search-text">{{ t('nav.search') }}</span>
+            <kbd class="topbar__kbd">{{ searchShortcut }}</kbd>
+          </button>
+
+          <button
+            type="button"
+            class="topbar__bell"
+            :aria-label="t('nav.notifications')"
+            @click="openNotifications"
+          >
+            <IonIcon :icon="notificationsOutline" class="topbar__bell-icon" />
+            <span v-if="hasUnread" class="topbar__bell-dot" />
+          </button>
+
+          <PpButton size="sm" @click="openCreateTournament">
+            <IonIcon :icon="addOutline" class="icon-sm" />
+            {{ t('buttons.createTournament') }}
+          </PpButton>
+        </div>
+      </header>
+
+      <div class="pp-main__content">
+        <slot />
+      </div>
     </main>
 
-    <!-- [D] Bottom Tab Bar (phones only; tablets/desktop use the side rail) -->
+    <!-- [D] Bottom tab bar (phones only; tablets/desktop use the side rail) -->
     <div class="bottom-tab-bar">
       <div class="tab-bar-inner" data-tour="nav">
         <NuxtLink
@@ -122,6 +160,15 @@
       </div>
     </div>
 
+    <!-- Global quick-create tournament (top-bar CTA) -->
+    <TournamentFormModal
+      :isOpen="showCreateModal"
+      :tournament="null"
+      mode="create"
+      @close="showCreateModal = false"
+      @saved="onTournamentCreated"
+    />
+
     <!-- Onboarding: welcome modal + guided tour overlay -->
     <TourHost />
   </div>
@@ -130,6 +177,7 @@
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
 import TourHost from '~/components/tour/TourHost.vue'
+import TournamentFormModal from '~/components/tournament/TournamentFormModal.vue'
 import {
   homeOutline,
   trophyOutline,
@@ -143,6 +191,10 @@ import {
   compassOutline,
   settingsOutline,
   ticketOutline,
+  chevronForwardOutline,
+  searchOutline,
+  notificationsOutline,
+  addOutline,
 } from 'ionicons/icons'
 import { useAuthStore } from '~/stores/useAuthStore'
 import { useTourStore } from '~/stores/useTourStore'
@@ -163,10 +215,15 @@ const replayTour = () => {
 const club = computed(() => clubStore.club)
 const drawerOpen = ref(false)
 
-// Active tournament tracking (for the "LIVE" quick access)
+// Active tournament tracking (for the "LIVE" quick access + the bell's dot)
 const activeTournamentId = ref<string | null>(null)
 const activeTournamentTitle = ref('')
 
+// Mono sub-label under the club name in the switcher: prefer the club's city,
+// fall back to the product name so the slot never reads empty.
+const clubSubLabel = computed(() => (club.value as any)?.city || 'PocketPair')
+
+// Bottom tab bar keeps the 5 primary items (unchanged on phones).
 const navItems = computed(() => [
   { to: '/', icon: homeOutline, label: t('nav.dashboard') },
   { to: '/tournaments', icon: trophyOutline, label: t('nav.tournaments') },
@@ -176,7 +233,7 @@ const navItems = computed(() => [
 ])
 
 // Free ("Home Game") clubs are a private host tool - player-facing features
-// (announcements, leaderboards/leagues) aren't part of that tier, so hide them.
+// (announcements, leagues) aren't part of that tier, so hide them.
 const isFreePlan = computed(
   () => ((authStore.currentUser as any)?.managedClub?.plan ?? 'FREE') === 'FREE',
 )
@@ -184,25 +241,50 @@ const isFreePlan = computed(
 // Platform admins get the trial-code generator; managers/players never see it.
 const isAdmin = computed(() => (authStore.currentUser as any)?.role === 'ADMIN')
 
-// Sidebar drawer shows everything; the bottom tab bar stays at the 5 primary items.
-const sidebarNavItems = computed(() => [
-  ...navItems.value,
-  { to: '/tables', icon: gridOutline, label: t('nav.tables') },
-  ...(isFreePlan.value
-    ? []
-    : [
-        { to: '/leagues', icon: podiumOutline, label: t('nav.leagues') },
-        { to: '/announcements', icon: megaphoneOutline, label: t('nav.announcements') },
-      ]),
-  ...(isAdmin.value
-    ? [{ to: '/redemption-codes', icon: ticketOutline, label: t('nav.redemptionCodes') }]
-    : []),
-])
+// Rail navigation, split into "Manage" (daily operations) and "Club"
+// (configuration, analytics, communication). Plan/admin gating mirrors the
+// previous flat sidebar list.
+const navGroups = computed(() => {
+  const manage = [
+    { to: '/', icon: homeOutline, label: t('nav.dashboard') },
+    { to: '/tournaments', icon: trophyOutline, label: t('nav.tournaments') },
+    { to: '/players', icon: peopleOutline, label: t('nav.players') },
+    { to: '/tables', icon: gridOutline, label: t('nav.tables') },
+  ]
+  const clubItems = [
+    { to: '/templates', icon: constructOutline, label: t('nav.templates') },
+    { to: '/reports', icon: statsChartOutline, label: t('nav.reports') },
+    ...(isFreePlan.value
+      ? []
+      : [
+          { to: '/leagues', icon: podiumOutline, label: t('nav.leagues') },
+          { to: '/announcements', icon: megaphoneOutline, label: t('nav.announcements') },
+        ]),
+    ...(isAdmin.value
+      ? [{ to: '/redemption-codes', icon: ticketOutline, label: t('nav.redemptionCodes') }]
+      : []),
+  ]
+  return [
+    { key: 'manage', label: t('nav.groupManage'), items: manage },
+    { key: 'club', label: t('nav.groupClub'), items: clubItems },
+  ]
+})
 
 const isActive = (path: string) => {
   if (path === '/') return route.path === '/'
   return route.path.startsWith(path)
 }
+
+// Breadcrumb leaf: the active rail item, with sensible fallbacks for routes
+// that aren't in the rail (settings, tournament/series detail).
+const currentPageLabel = computed(() => {
+  const item = navGroups.value.flatMap((g) => g.items).find((i) => isActive(i.to))
+  if (item) return item.label
+  if (route.path.startsWith('/settings')) return t('nav.settings')
+  if (route.path.startsWith('/tournament/') || route.path.startsWith('/series/'))
+    return t('nav.tournaments')
+  return t('nav.dashboard')
+})
 
 const userInitials = computed(() => {
   const user = authStore.currentUser
@@ -224,6 +306,41 @@ const handleLogout = async () => {
   router.push('/login')
 }
 
+// Top-bar search affordance: a real entry point to the searchable surfaces.
+// Clicking it (or pressing the platform shortcut) lands on the tournaments
+// list, where the search field lives.
+const isMac = computed(
+  () => import.meta.client && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent),
+)
+const searchShortcut = computed(() => (isMac.value ? '⌘K' : 'Ctrl K'))
+const goToSearch = () => {
+  drawerOpen.value = false
+  router.push('/tournaments')
+}
+const onKeydown = (e: KeyboardEvent) => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault()
+    goToSearch()
+  }
+}
+
+// Notifications bell: the meaningful "needs attention" signal we have without a
+// new query is a live tournament, so the dot tracks that and the bell jumps to it.
+const hasUnread = computed(() => !!activeTournamentId.value)
+const openNotifications = () => {
+  if (activeTournamentId.value) router.push(`/tournament/${activeTournamentId.value}`)
+}
+
+// Global quick-create modal driven by the top-bar CTA.
+const showCreateModal = ref(false)
+const openCreateTournament = () => {
+  showCreateModal.value = true
+}
+const onTournamentCreated = (created?: { id?: string }) => {
+  showCreateModal.value = false
+  router.push(created?.id ? `/tournament/${created.id}` : '/tournaments')
+}
+
 // Auto-close drawer on route change
 watch(
   () => route.path,
@@ -232,13 +349,13 @@ watch(
   },
 )
 
-// Try to find an active tournament for the quick-access link
 onMounted(async () => {
+  window.addEventListener('keydown', onKeydown)
   if (!club.value) return
   try {
     const res = await GqlGetTournaments({ clubId: club.value.id })
     const tournaments = res.tournaments?.items || []
-    const active = tournaments.find((t: any) => t.status === 'IN_PROGRESS')
+    const active = tournaments.find((tournament: any) => tournament.status === 'IN_PROGRESS')
     if (active) {
       activeTournamentId.value = active.id
       activeTournamentTitle.value = active.title
@@ -246,6 +363,10 @@ onMounted(async () => {
   } catch {
     // Non-critical, silently fail
   }
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onKeydown)
 })
 </script>
 
@@ -280,8 +401,8 @@ onMounted(async () => {
   width: 15rem;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--color-pp-border-strong);
-  background-color: var(--color-pp-surface-2);
+  border-right: 1px solid var(--color-pp-border);
+  background-color: var(--color-pp-surface);
   transition: transform 0.3s ease;
 }
 
@@ -293,46 +414,57 @@ onMounted(async () => {
   transform: translateX(-100%);
 }
 
-/* Brand */
-.sidebar-brand {
+/* Club switcher */
+.club-switcher {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1.25rem 1rem;
-  border-bottom: 1px solid rgba(84, 84, 95, 0.5);
+  gap: 0.7rem;
+  padding: 1rem;
+  margin: 0.5rem;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-pp-border);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0));
 }
 
-.sidebar-logo {
+.club-switcher__logo {
   width: 2.25rem;
   height: 2.25rem;
   flex-shrink: 0;
+  border-radius: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-pp-border);
+  background-color: rgba(var(--pp-accent-rgb), 0.08);
 }
 
-.sidebar-brand-text {
+.club-switcher__logo img {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.club-switcher__text {
   min-width: 0;
 }
 
-.sidebar-title {
+.club-switcher__name {
   font-family: var(--font-display);
-  background: linear-gradient(180deg, var(--color-pp-gold) 0%, var(--color-pp-gold-deep) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
   font-weight: 600;
-  font-size: 1.1rem;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+  color: var(--color-pp-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.sidebar-club {
-  color: var(--color-pp-text-muted);
+.club-switcher__sub {
+  margin-top: 0.1rem;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.05em;
-  margin-top: 0.15rem;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-pp-text-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -341,12 +473,27 @@ onMounted(async () => {
 /* Navigation */
 .sidebar-nav {
   flex: 1;
-  padding: 1rem 0.75rem;
+  padding: 0.5rem 0.75rem 1rem;
   overflow-y: auto;
 }
 
-.sidebar-nav > * + * {
-  margin-top: 0.25rem;
+.nav-group + .nav-group {
+  margin-top: 1.25rem;
+}
+
+.nav-group__label {
+  padding: 0 0.85rem;
+  margin-bottom: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--color-pp-gold-deep);
+}
+
+.nav-group > .nav-link + .nav-link {
+  margin-top: 0.15rem;
 }
 
 .nav-link {
@@ -354,11 +501,11 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.6rem 0.85rem;
-  border-radius: 0.75rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 0.7rem;
   transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .nav-link--active {
@@ -370,26 +517,26 @@ onMounted(async () => {
   content: '';
   position: absolute;
   left: -0.75rem;
-  top: 22%;
-  bottom: 22%;
-  width: 2px;
-  border-radius: 2px;
+  top: 20%;
+  bottom: 20%;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
   background-color: var(--color-pp-gold);
   box-shadow: 0 0 12px rgba(var(--pp-accent-rgb), 0.45);
 }
 
 .nav-link--inactive {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--color-pp-text-muted);
 }
 
 .nav-link--inactive:hover {
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--color-pp-text);
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .nav-icon {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.2rem;
+  height: 1.2rem;
   flex-shrink: 0;
 }
 
@@ -398,11 +545,11 @@ onMounted(async () => {
 }
 
 .nav-icon--inactive {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-pp-text-dim);
 }
 
 .nav-link--inactive:hover .nav-icon--inactive {
-  color: #ffffff;
+  color: var(--color-pp-text);
 }
 
 .nav-label {
@@ -413,15 +560,7 @@ onMounted(async () => {
   white-space: nowrap;
 }
 
-.nav-active-dot {
-  margin-left: auto;
-  width: 0.375rem;
-  height: 0.375rem;
-  border-radius: 9999px;
-  background-color: var(--color-pp-gold);
-}
-
-/* Live Tournament Section */
+/* Live tournament section */
 .live-section {
   padding: 0 0.75rem 0.75rem;
 }
@@ -429,50 +568,62 @@ onMounted(async () => {
 .live-link {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border-radius: 0.75rem;
-  background-color: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  transition: all 0.2s ease;
+  gap: 0.7rem;
+  padding: 0.7rem 0.75rem;
+  border-radius: var(--radius-xl);
+  background-color: rgba(var(--pp-danger-rgb), 0.1);
+  border: 1px solid rgba(var(--pp-danger-rgb), 0.3);
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .live-link:hover {
-  background-color: rgba(239, 68, 68, 0.15);
+  background-color: rgba(var(--pp-danger-rgb), 0.16);
+  border-color: rgba(var(--pp-danger-rgb), 0.45);
 }
 
 .live-dot {
   width: 0.5rem;
   height: 0.5rem;
-  background-color: var(--pp-red-500);
+  background-color: var(--color-pp-danger);
   border-radius: 9999px;
   flex-shrink: 0;
 }
 
 .live-text {
   min-width: 0;
+  flex: 1;
 }
 
 .live-label {
-  color: var(--pp-red-400);
-  font-size: 0.75rem;
+  color: #f87171;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.18em;
 }
 
 .live-title {
-  color: #ffffff;
-  font-size: 0.875rem;
+  color: var(--color-pp-text);
+  font-size: 0.85rem;
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* Sidebar Footer / User */
+.live-chevron {
+  width: 1rem;
+  height: 1rem;
+  color: #f87171;
+  flex-shrink: 0;
+}
+
+/* Sidebar footer / user */
 .sidebar-footer {
-  border-top: 1px solid rgba(84, 84, 95, 0.5);
+  border-top: 1px solid var(--color-pp-border);
   padding: 0.75rem;
 }
 
@@ -481,26 +632,26 @@ onMounted(async () => {
   align-items: center;
   gap: 0.75rem;
   width: 100%;
-  padding: 0.6rem 0.75rem;
-  margin-bottom: 0.25rem;
-  border-radius: 0.75rem;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.875rem;
+  padding: 0.55rem 0.75rem;
+  margin-bottom: 0.15rem;
+  border-radius: 0.7rem;
+  color: var(--color-pp-text-muted);
+  font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
   transition:
-    color 0.2s ease,
-    background-color 0.2s ease;
+    color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .footer-action:hover {
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--color-pp-text);
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .footer-action-icon {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.2rem;
+  height: 1.2rem;
   flex-shrink: 0;
 }
 
@@ -508,7 +659,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 0.5rem 0.25rem;
 }
 
 .user-avatar {
@@ -520,8 +671,9 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   color: var(--color-pp-gold);
-  font-weight: 700;
-  font-size: 0.875rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.8rem;
   flex-shrink: 0;
 }
 
@@ -538,8 +690,8 @@ onMounted(async () => {
 }
 
 .user-name {
-  color: #ffffff;
-  font-size: 0.875rem;
+  color: var(--color-pp-text);
+  font-size: 0.85rem;
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -548,18 +700,20 @@ onMounted(async () => {
 
 .logout-button {
   padding: 0.375rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--color-pp-text-dim);
   border-radius: 0.5rem;
-  transition: all 0.2s ease;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
   cursor: pointer;
 }
 
 .logout-button:hover {
-  color: var(--pp-red-400);
-  background-color: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  background-color: rgba(var(--pp-danger-rgb), 0.1);
 }
 
-/* Hamburger Button */
+/* Hamburger button (phones) */
 .hamburger-button {
   position: fixed;
   /* Clear the status bar / notch on iPad + iPhone (Capacitor webview). */
@@ -574,14 +728,16 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.6);
-  transition: all 0.2s ease;
+  color: var(--color-pp-text-muted);
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
   box-shadow: var(--pp-shadow-lg);
   cursor: pointer;
 }
 
 .hamburger-button:hover {
-  color: #ffffff;
+  color: var(--color-pp-text);
 }
 
 .hamburger-button:active {
@@ -593,9 +749,21 @@ onMounted(async () => {
   height: 1.25rem;
 }
 
-/* Main Content */
+/* Main column */
 .pp-main {
   min-height: 100dvh;
+}
+
+/* The content wrapper is transparent on phones (display: contents) so the
+   page's absolutely-positioned <ion-page> keeps anchoring exactly as before;
+   the desktop block below turns it into the positioned, sized containing box. */
+.pp-main__content {
+  display: contents;
+}
+
+/* Top bar lives on tablet/desktop only; phones keep the hamburger + tab bar. */
+.topbar {
+  display: none;
 }
 
 /* Phones only: reserve space for the fixed bottom tab bar. */
@@ -603,15 +771,15 @@ onMounted(async () => {
   .pp-main {
     padding-bottom: 70px;
   }
+
+  /* Push ion-content down so page content clears the fixed hamburger button
+     (0.75rem top + 2.75rem button) plus the top safe-area inset. */
+  .pp-main :deep(ion-content) {
+    --padding-top: calc(56px + env(safe-area-inset-top));
+  }
 }
 
-/* Push ion-content down so page content clears the fixed hamburger button
-   (0.75rem top + 2.75rem button) plus the top safe-area inset. */
-.pp-main :deep(ion-content) {
-  --padding-top: calc(56px + env(safe-area-inset-top));
-}
-
-/* Bottom Tab Bar */
+/* Bottom tab bar */
 .bottom-tab-bar {
   position: fixed;
   bottom: 0;
@@ -625,17 +793,13 @@ onMounted(async () => {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Tablet (iPad portrait, 768px) and up: drop the bottom tab bar and switch to
-   the persistent side rail. The rail alone is enough navigation at this width;
-   phones (< 768px) keep the bottom tab bar + hamburger drawer. */
+/* Tablet (iPad portrait, 768px) and up: drop the bottom tab bar, pin the rail,
+   and show the top bar. */
 @media (min-width: 768px) {
   .bottom-tab-bar {
     display: none;
   }
 
-  /* Persistent rail: the sidebar is always pinned, so the mobile overlay
-     chrome (hamburger + backdrop) is dropped and both drawer states resolve
-     to fully visible. */
   .sidebar--open,
   .sidebar--closed {
     transform: translateX(0);
@@ -646,20 +810,159 @@ onMounted(async () => {
     display: none;
   }
 
-  /* Reserve the rail's width, then make .pp-main the positioned, full-height
-     containing block for the page's absolutely-positioned <ion-page>
-     (inset: 0). Without position+height here the ion-page would anchor to the
-     viewport and ignore the rail offset. */
+  /* Main column: a flex column of [top bar | content], offset by the rail. */
   .pp-main {
-    position: relative;
+    display: flex;
+    flex-direction: column;
     height: 100dvh;
     margin-left: 15rem;
   }
 
-  /* No fixed hamburger to clear on desktop. */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-shrink: 0;
+    height: 3.75rem;
+    padding: 0 1.5rem;
+    border-bottom: 1px solid var(--color-pp-border);
+    background-color: rgba(24, 24, 26, 0.7);
+    backdrop-filter: blur(12px);
+  }
+
+  /* Content fills the rest and is the positioned containing block for ion-page. */
+  .pp-main__content {
+    display: block;
+    position: relative;
+    flex: 1;
+    min-height: 0;
+  }
+
   .pp-main :deep(ion-content) {
     --padding-top: 0;
   }
+}
+
+/* Top bar: breadcrumb */
+.topbar__crumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.topbar__club {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-pp-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar__sep {
+  width: 0.85rem;
+  height: 0.85rem;
+  color: var(--color-pp-text-dim);
+  flex-shrink: 0;
+}
+
+.topbar__page {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-pp-text);
+  white-space: nowrap;
+}
+
+/* Top bar: actions */
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.topbar__search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.25rem;
+  padding: 0 0.6rem 0 0.7rem;
+  border-radius: 0.7rem;
+  border: 1px solid var(--color-pp-border);
+  background-color: var(--color-pp-bg);
+  color: var(--color-pp-text-muted);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.topbar__search:hover {
+  border-color: var(--color-pp-border-strong);
+  color: var(--color-pp-text);
+}
+
+.topbar__search-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.topbar__search-text {
+  font-size: 0.8rem;
+  min-width: 7rem;
+  text-align: left;
+}
+
+.topbar__kbd {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.35rem;
+  border: 1px solid var(--color-pp-border-strong);
+  color: var(--color-pp-text-dim);
+}
+
+.topbar__bell {
+  position: relative;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.7rem;
+  border: 1px solid var(--color-pp-border);
+  background-color: var(--color-pp-bg);
+  color: var(--color-pp-text-muted);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.topbar__bell:hover {
+  border-color: var(--color-pp-border-strong);
+  color: var(--color-pp-text);
+}
+
+.topbar__bell-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.topbar__bell-dot {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.55rem;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 9999px;
+  background-color: var(--color-pp-danger);
+  border: 2px solid var(--color-pp-bg);
 }
 
 .tab-bar-inner {
@@ -679,7 +982,9 @@ onMounted(async () => {
   padding: 0.75rem 1rem;
   min-height: 44px;
   border-radius: 0.75rem;
-  transition: all 0.2s ease;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
   cursor: pointer;
 }
 
@@ -688,7 +993,7 @@ onMounted(async () => {
 }
 
 .tab-item--inactive {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--color-pp-text-dim);
 }
 
 .tab-icon {

@@ -150,7 +150,12 @@
     "settings": "Réglages",
     "announcements": "Annonces",
     "tables": "Tables",
-    "redemptionCodes": "Codes d’essai"
+    "redemptionCodes": "Codes d’essai",
+    "groupManage": "Gestion",
+    "groupClub": "Club",
+    "search": "Rechercher",
+    "searchHint": "Rechercher tournois, joueurs",
+    "notifications": "Notifications"
   },
   "tables": {
     "title": "Tables",
