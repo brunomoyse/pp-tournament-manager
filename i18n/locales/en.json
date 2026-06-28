@@ -1293,6 +1293,10 @@
     "audienceClub": "Every player on your club roster will be notified.",
     "audiencePlatform": "Every PocketPair player will be notified.",
     "emptyTitle": "No announcements yet",
-    "emptyDescription": "Send your first announcement to reach your players."
+    "emptyDescription": "Send your first announcement to reach your players.",
+    "composeEyebrow": "Compose",
+    "composePrompt": "Broadcast to your players",
+    "composeHint": "Reaches your club roster and the players you choose.",
+    "past": "Past announcements"
   }
 }

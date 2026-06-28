@@ -1293,6 +1293,10 @@
     "audienceClub": "Alle spelers op je clubrooster krijgen een melding.",
     "audiencePlatform": "Alle PocketPair-spelers krijgen een melding.",
     "emptyTitle": "Nog geen aankondigingen",
-    "emptyDescription": "Verstuur je eerste aankondiging om je spelers te bereiken."
+    "emptyDescription": "Verstuur je eerste aankondiging om je spelers te bereiken.",
+    "composeEyebrow": "Opstellen",
+    "composePrompt": "Bericht aan je spelers",
+    "composeHint": "Bereikt je clubrooster en de spelers die je kiest.",
+    "past": "Eerdere aankondigingen"
   }
 }

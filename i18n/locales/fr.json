@@ -1293,6 +1293,10 @@
     "audienceClub": "Tous les joueurs de votre club seront notifiés.",
     "audiencePlatform": "Tous les joueurs PocketPair seront notifiés.",
     "emptyTitle": "Aucune annonce",
-    "emptyDescription": "Envoyez votre première annonce pour toucher vos joueurs."
+    "emptyDescription": "Envoyez votre première annonce pour toucher vos joueurs.",
+    "composeEyebrow": "Composer",
+    "composePrompt": "Diffusez à vos joueurs",
+    "composeHint": "Touche votre club et les joueurs que vous choisissez.",
+    "past": "Annonces passées"
   }
 }
