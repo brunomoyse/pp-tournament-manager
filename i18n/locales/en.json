@@ -531,7 +531,8 @@
     "noTournaments": "No tournaments found",
     "tryDifferentFilter": "Try a different search or filter",
     "createFirst": "Create your first tournament to get started",
-    "seats": "seats"
+    "seats": "seats",
+    "stack": "stack"
   },
   "players": {
     "title": "Player Management",

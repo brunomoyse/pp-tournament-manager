@@ -531,7 +531,8 @@
     "noTournaments": "Aucun tournoi trouvé",
     "tryDifferentFilter": "Essayez une autre recherche ou un autre filtre",
     "createFirst": "Créez votre premier tournoi pour commencer",
-    "seats": "places"
+    "seats": "places",
+    "stack": "tapis"
   },
   "players": {
     "title": "Gestion des joueurs",

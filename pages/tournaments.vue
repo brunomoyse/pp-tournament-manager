@@ -4,10 +4,8 @@
       <div class="page-container">
         <div class="page-header">
           <PpFadeUp>
-            <p class="eyebrow">{{ t('nav.tournaments') }}</p>
-            <h1 class="page-title">
-              <span>{{ t('tournaments.title') }}</span>
-            </h1>
+            <p class="eyebrow">{{ tournaments.length }} {{ t('nav.tournaments') }}</p>
+            <h1 class="page-title">{{ t('tournaments.title') }}</h1>
           </PpFadeUp>
           <PpFadeUp :delay="0.08" data-tour="create-tournament">
             <div class="header-actions">
@@ -23,9 +21,23 @@
           </PpFadeUp>
         </div>
 
-        <!-- Search and Filter Bar -->
+        <!-- Filter chips + search -->
         <div class="filter-bar">
-          <!-- Search Input -->
+          <div class="chips">
+            <button
+              v-for="chip in statusChips"
+              :key="chip.key || 'all'"
+              type="button"
+              class="chip"
+              :class="{ 'chip--active': statusFilter === chip.key }"
+              @click="statusFilter = chip.key"
+            >
+              <span v-if="chip.tone" class="chip__dot" :class="`chip__dot--${chip.tone}`" />
+              <span class="chip__label">{{ chip.label }}</span>
+              <span class="chip__count">{{ chip.count }}</span>
+            </button>
+          </div>
+
           <div class="search-wrapper">
             <IonIcon :icon="searchOutline" class="search-icon" />
             <input
@@ -36,22 +48,14 @@
               class="search-input"
             />
           </div>
-
-          <!-- Status Filter -->
-          <select v-model="statusFilter" class="status-filter" :aria-label="t('labels.status')">
-            <option value="">{{ t('tournaments.all') }}</option>
-            <option value="UPCOMING">{{ t('tournaments.upcoming') }}</option>
-            <option value="IN_PROGRESS">{{ t('tournaments.inProgress') }}</option>
-            <option value="COMPLETED">{{ t('tournaments.completed') }}</option>
-          </select>
         </div>
 
-        <!-- Loading State -->
+        <!-- Loading -->
         <div v-if="loading" class="loading-state">
           <IonSpinner name="crescent" class="spinner" />
         </div>
 
-        <!-- Tournaments Card Grid -->
+        <!-- Card grid -->
         <PpStagger
           v-else-if="filteredTournaments.length > 0"
           class="tournaments-grid"
@@ -60,39 +64,40 @@
           <PpStaggerItem v-for="tournament in filteredTournaments" :key="tournament.id">
             <PpCard
               interactive
-              padding="sm"
-              class="pp-shimmer-hover tournament-card"
+              padding="none"
+              class="tournament-card"
+              :class="`tournament-card--${toneFor(tournament.status)}`"
               @click="goToTournament(tournament.id)"
             >
-              <!-- Header: status badge + date -->
-              <div class="card-header">
-                <PpBadge :variant="getTournamentStatusVariant(tournament.status)">
-                  {{ getTournamentStatusLabel(tournament.status, t) }}
-                </PpBadge>
-                <span class="card-date">{{ formatDate(tournament.startTime) }}</span>
-              </div>
+              <span
+                class="tournament-card__accent"
+                :class="`accent--${toneFor(tournament.status)}`"
+              />
+              <div class="tournament-card__body">
+                <div class="card-header">
+                  <PpStatusPill
+                    :tone="toneFor(tournament.status)"
+                    :dot="tournament.status === 'IN_PROGRESS'"
+                  >
+                    {{ getTournamentStatusLabel(tournament.status, t) }}
+                  </PpStatusPill>
+                  <span class="card-date">{{ formatDate(tournament.startTime) }}</span>
+                </div>
 
-              <!-- Title -->
-              <h4 class="card-title">{{ tournament.title }}</h4>
+                <h4 class="card-title">{{ tournament.title }}</h4>
 
-              <!-- Description snippet -->
-              <p v-if="tournament.description" class="card-description pp-line-clamp-2">
-                {{ tournament.description }}
-              </p>
+                <p class="card-structure">{{ structureLine(tournament) }}</p>
 
-              <!-- Footer: buy-in + seats -->
-              <div class="card-footer">
-                <span class="card-buyin">{{ formatPrice(tournament.buyInCents, locale) }}</span>
-                <span v-if="tournament.seatCap" class="card-seats"
-                  >{{ tournament.seatCap }} {{ t('tournaments.seats') }}</span
-                >
-                <IonIcon :icon="chevronForwardOutline" class="card-chevron" />
+                <div class="card-footer">
+                  <span class="card-buyin">{{ formatPrice(tournament.buyInCents) }}</span>
+                  <IonIcon :icon="chevronForwardOutline" class="card-chevron" />
+                </div>
               </div>
             </PpCard>
           </PpStaggerItem>
         </PpStagger>
 
-        <!-- Empty State -->
+        <!-- Empty -->
         <PpEmptyState
           v-else
           :icon="trophyOutline"
@@ -106,7 +111,6 @@
       </div>
     </IonContent>
 
-    <!-- Tournament Form Modal -->
     <TournamentFormModal
       :isOpen="showTournamentModal"
       :tournament="null"
@@ -115,7 +119,6 @@
       @saved="onTournamentSaved"
     />
 
-    <!-- Multi-day series wizard -->
     <CreateSeriesModal
       :open="showSeriesModal"
       @close="showSeriesModal = false"
@@ -145,7 +148,7 @@ import TournamentFormModal from '~/components/tournament/TournamentFormModal.vue
 import CreateSeriesModal from '~/components/tournament/series/CreateSeriesModal.vue'
 import { useI18n } from '~/composables/useI18n'
 import { formatPrice } from '~/utils'
-import { getTournamentStatusLabel, getTournamentStatusVariant } from '~/utils/tournamentStatus'
+import { getTournamentStatusLabel } from '~/utils/tournamentStatus'
 
 const router = useRouter()
 const clubStore = useClubStore()
@@ -153,7 +156,6 @@ const { t, locale } = useI18n()
 
 const { club } = clubStore
 
-// State
 const loading = ref(true)
 const tournaments = ref<GetTournamentsQuery['tournaments']['items']>([])
 const searchQuery = ref('')
@@ -166,39 +168,79 @@ const onSeriesCreated = (id: string) => {
   router.push(`/series/${id}`)
 }
 
-// Filtered and sorted tournaments
+// Map the lifecycle status to a pill/accent tone (live = red, upcoming = sky,
+// completed = neutral). Anything mid-flight (late reg, break) reads as live.
+const toneFor = (status: string) => {
+  if (status === 'IN_PROGRESS') return 'live'
+  if (status === 'COMPLETED') return 'neutral'
+  return 'info'
+}
+
+const countByStatus = (status: string) =>
+  tournaments.value.filter((tournament) => tournament.status === status).length
+
+const statusChips = computed(() => [
+  { key: '' as const, label: t('tournaments.all'), count: tournaments.value.length, tone: '' },
+  {
+    key: 'IN_PROGRESS' as const,
+    label: t('tournaments.inProgress'),
+    count: countByStatus('IN_PROGRESS'),
+    tone: 'live',
+  },
+  {
+    key: 'UPCOMING' as const,
+    label: t('tournaments.upcoming'),
+    count: countByStatus('UPCOMING'),
+    tone: 'info',
+  },
+  {
+    key: 'COMPLETED' as const,
+    label: t('tournaments.completed'),
+    count: countByStatus('COMPLETED'),
+    tone: 'neutral',
+  },
+])
+
 const filteredTournaments = computed(() => {
   let result = [...tournaments.value]
 
-  // Filter by search query
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
     result = result.filter(
-      (t) => t.title.toLowerCase().includes(query) || t.description?.toLowerCase().includes(query),
+      (item) =>
+        item.title.toLowerCase().includes(query) || item.description?.toLowerCase().includes(query),
     )
   }
 
-  // Filter by status
   if (statusFilter.value) {
-    result = result.filter((t) => t.status === statusFilter.value)
+    result = result.filter((item) => item.status === statusFilter.value)
   }
 
-  // Sort by start time (most recent first)
-  result.sort(
+  return result.toSorted(
     (a, b) => new Date(b.startTime || '').getTime() - new Date(a.startTime || '').getTime(),
   )
-
-  return result
 })
 
-// Helper functions
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString(locale.value, {
+// be-FR integer formatting for stack sizes (dot thousands: 40.000).
+const numberFormatter = new Intl.NumberFormat('fr-BE', { maximumFractionDigits: 0 })
+
+// One-line structure description: prefer the tournament's own description,
+// otherwise compose stack + seats from real fields.
+const structureLine = (tournament: any) => {
+  if (tournament.description) return tournament.description
+  const parts: string[] = []
+  if (tournament.startingStack)
+    parts.push(`${numberFormatter.format(tournament.startingStack)} ${t('tournaments.stack')}`)
+  if (tournament.seatCap) parts.push(`${tournament.seatCap} ${t('tournaments.seats')}`)
+  return parts.join(' · ')
+}
+
+const formatDate = (dateString: string) =>
+  new Date(dateString).toLocaleDateString(locale.value, {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
   })
-}
 
 const goToTournament = (id: string) => {
   router.push(`/tournament/${id}`)
@@ -213,15 +255,11 @@ const onTournamentSaved = async () => {
   await fetchTournaments()
 }
 
-// Fetch tournaments
 const fetchTournaments = async () => {
   if (!club) return
-
   loading.value = true
   try {
-    const { tournaments: result } = await GqlGetTournaments({
-      clubId: club.id,
-    })
+    const { tournaments: result } = await GqlGetTournaments({ clubId: club.id })
     tournaments.value = result?.items || []
   } catch (error) {
     console.error('Failed to fetch tournaments:', error)
@@ -231,36 +269,30 @@ const fetchTournaments = async () => {
   }
 }
 
-// Initial fetch
 onMounted(() => {
   fetchTournaments()
 })
 </script>
 
 <style scoped>
-.page-bg {
-  background-color: var(--color-pp-bg);
-}
-
+.page-bg,
 .content-bg {
   background-color: var(--color-pp-bg);
 }
 
 .page-container {
-  padding: 1.5rem 1rem;
+  padding: 1.75rem 1rem 3rem;
 }
 
 @media (min-width: 640px) {
   .page-container {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding: 2rem 1.5rem 3rem;
   }
 }
 
 @media (min-width: 1024px) {
   .page-container {
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding: 2.5rem 2rem 4rem;
   }
 }
 
@@ -269,16 +301,17 @@ onMounted(() => {
   align-items: flex-end;
   justify-content: space-between;
   gap: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   flex-wrap: wrap;
 }
 
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.2em;
   color: var(--color-pp-gold-deep);
+  font-variant-numeric: tabular-nums;
 }
 
 .page-title {
@@ -291,23 +324,95 @@ onMounted(() => {
   color: var(--color-pp-text);
 }
 
-/* Filter Bar */
-.filter-bar {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+.icon-md {
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
-@media (min-width: 768px) {
-  .filter-bar {
-    flex-direction: row;
-  }
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Filter bar */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.chips {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.25rem;
+  padding: 0 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid var(--color-pp-border);
+  background-color: var(--color-pp-surface);
+  color: var(--color-pp-text-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.chip:hover {
+  color: var(--color-pp-text);
+  border-color: var(--color-pp-border-strong);
+}
+
+.chip--active {
+  color: var(--color-pp-gold);
+  border-color: rgba(var(--pp-accent-rgb), 0.4);
+  background-color: rgba(var(--pp-accent-rgb), 0.1);
+}
+
+.chip__dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 9999px;
+  background-color: var(--color-pp-text-dim);
+}
+.chip__dot--live {
+  background-color: var(--color-pp-danger);
+}
+.chip__dot--info {
+  background-color: var(--color-pp-info);
+}
+.chip__dot--neutral {
+  background-color: var(--color-pp-text-dim);
+}
+
+.chip__count {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-pp-text-dim);
+}
+
+.chip--active .chip__count {
+  color: var(--color-pp-gold);
 }
 
 .search-wrapper {
   position: relative;
   flex: 1;
+  min-width: 14rem;
+  max-width: 22rem;
 }
 
 .search-icon {
@@ -315,48 +420,30 @@ onMounted(() => {
   left: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  width: 1.25rem;
-  height: 1.25rem;
-  color: rgba(255, 255, 255, 0.4);
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--color-pp-text-dim);
 }
 
 .search-input {
   width: 100%;
-  padding: 0.75rem 1rem 0.75rem 2.5rem;
-  background-color: var(--color-pp-surface-2);
-  border: 1px solid var(--color-pp-border-strong);
-  border-radius: 0.5rem;
-  color: #ffffff;
+  height: 2.25rem;
+  padding: 0 0.9rem 0 2.4rem;
+  background-color: var(--color-pp-bg);
+  border: 1px solid var(--color-pp-border);
+  border-radius: 0.7rem;
+  color: var(--color-pp-text);
+  font-size: 0.85rem;
 }
 
 .search-input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--color-pp-text-dim);
 }
 
 .search-input:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(var(--pp-accent-rgb), 0.4);
   border-color: var(--color-pp-gold);
-}
-
-.status-filter {
-  padding: 0.75rem 1rem;
-  background-color: var(--color-pp-surface-2);
-  border: 1px solid var(--color-pp-border-strong);
-  border-radius: 0.5rem;
-  color: #ffffff;
-  min-width: 160px;
-}
-
-.status-filter:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(var(--pp-accent-rgb), 0.4);
-  border-color: var(--color-pp-gold);
-}
-
-select option {
-  background-color: var(--color-pp-surface-2);
-  color: white;
 }
 
 /* Loading */
@@ -373,87 +460,129 @@ select option {
   color: var(--color-pp-gold);
 }
 
-/* Tournaments Grid */
+/* Card grid */
 .tournaments-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
   .tournaments-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Box styling (bg/border/radius/padding) comes from <PpCard>. This only adds
-   the flex column so .card-footer's `margin-top: auto` pins it to the bottom
-   and footers align across the grid row. */
+@media (min-width: 1024px) {
+  .tournaments-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Card: PpCard owns surface/border/radius/hover. We add the status accent and
+   an inner flex column so the footer pins to the bottom across the row. */
 .tournament-card {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  transition: transform 0.15s ease;
+}
+
+/* PpCard deliberately neutralizes its own hover lift; the grid cards want it
+   back. The double class (.ppc is on the PpCard root) outspecifies that rule. */
+.tournament-card.ppc:hover {
+  transform: translateY(-3px);
+}
+
+.tournament-card__accent {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+}
+.accent--live {
+  background: linear-gradient(90deg, var(--color-pp-danger), rgba(var(--pp-danger-rgb), 0));
+}
+.accent--info {
+  background: linear-gradient(90deg, var(--color-pp-info), rgba(var(--pp-info-rgb), 0));
+}
+.accent--neutral {
+  background: linear-gradient(90deg, var(--color-pp-border-strong), transparent);
+}
+
+.tournament-card__body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding: 1.1rem 1.15rem 1rem;
 }
 
 .card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.75rem;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
 }
 
 .card-date {
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-pp-text-dim);
 }
 
 .card-title {
-  font-size: 1rem;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
   font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--color-pp-text);
-  margin-bottom: 0.25rem;
-  transition: color 0.2s ease;
+  margin-bottom: 0.35rem;
+  transition: color 0.15s ease;
 }
 
 .tournament-card:hover .card-title {
   color: var(--color-pp-gold);
 }
 
-.card-description {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.875rem;
-  margin-bottom: 0.75rem;
+.card-structure {
+  color: var(--color-pp-text-muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.875rem;
   margin-top: auto;
-  padding-top: 0.75rem;
-  border-top: 1px solid rgba(84, 84, 95, 0.3);
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--color-pp-border);
 }
 
 .card-buyin {
-  color: var(--color-pp-gold);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
   font-weight: 600;
-}
-
-.card-seats {
-  color: rgba(255, 255, 255, 0.4);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-pp-gold);
 }
 
 .card-chevron {
-  width: 1rem;
-  height: 1rem;
-  color: rgba(255, 255, 255, 0.3);
-  transition: color 0.2s ease;
+  width: 1.05rem;
+  height: 1.05rem;
+  color: var(--color-pp-text-dim);
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
 }
 
 .tournament-card:hover .card-chevron {
   color: var(--color-pp-gold);
+  transform: translateX(2px);
 }
-
-/* Empty State */
 </style>

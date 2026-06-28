@@ -531,7 +531,8 @@
     "noTournaments": "Geen toernooien gevonden",
     "tryDifferentFilter": "Probeer een andere zoekopdracht of filter",
     "createFirst": "Maak je eerste toernooi aan om te beginnen",
-    "seats": "plaatsen"
+    "seats": "plaatsen",
+    "stack": "stack"
   },
   "players": {
     "title": "Spelersbeheer",
