@@ -93,15 +93,25 @@
       <div v-if="activeTab === 'create'" class="create-tab">
         <form @submit.prevent="createAndRegister" class="create-form">
           <div>
-            <label class="pp-label">{{ t('players.displayName') }} *</label>
+            <label class="pp-label">{{ t('players.firstName') }} *</label>
             <input
-              v-model="newDisplayName"
+              v-model="newFirstName"
               type="text"
               required
               class="pp-input"
-              :placeholder="t('players.displayNamePlaceholder')"
+              :placeholder="t('players.firstNamePlaceholder')"
             />
-            <p class="create-hint">{{ t('players.displayNameHint') }}</p>
+          </div>
+
+          <div>
+            <label class="pp-label">{{ t('players.lastName') }}</label>
+            <input
+              v-model="newLastName"
+              type="text"
+              class="pp-input"
+              :placeholder="t('players.lastNamePlaceholder')"
+            />
+            <p class="create-hint">{{ t('players.nameHint') }}</p>
           </div>
 
           <div v-if="error" class="form-error">
@@ -149,7 +159,8 @@ const loadingRoster = ref(false)
 const registering = ref<string | null>(null)
 const creating = ref(false)
 const error = ref<string | null>(null)
-const newDisplayName = ref('')
+const newFirstName = ref('')
+const newLastName = ref('')
 
 // Search filters the loaded roster client-side, excluding already-registered players.
 const searchResults = computed(() => {
@@ -199,7 +210,8 @@ const createAndRegister = async () => {
     const createResult = await GqlCreateClubPlayer({
       input: {
         clubId: clubStore.club!.id,
-        displayName: newDisplayName.value.trim(),
+        firstName: newFirstName.value.trim(),
+        lastName: newLastName.value.trim(),
       },
     })
     const clubPlayerId = createResult?.createClubPlayer?.id
@@ -230,7 +242,8 @@ const close = () => {
   searchQuery.value = ''
   error.value = null
   activeTab.value = 'search'
-  newDisplayName.value = ''
+  newFirstName.value = ''
+  newLastName.value = ''
   emit('close')
 }
 
@@ -240,7 +253,8 @@ watch(
     if (isOpen) {
       searchQuery.value = ''
       error.value = null
-      newDisplayName.value = ''
+      newFirstName.value = ''
+      newLastName.value = ''
       activeTab.value = 'search'
       loadRoster()
     }
