@@ -4,13 +4,13 @@
       <div class="page-container">
         <div class="page-header">
           <PpFadeUp>
-            <p class="eyebrow">{{ t('nav.tables') }}</p>
+            <p class="eyebrow">{{ tables.length }} {{ t('nav.tables') }}</p>
             <h1 class="page-title">{{ t('tables.title') }}</h1>
             <p class="page-subtitle">{{ t('tables.subtitle') }}</p>
           </PpFadeUp>
         </div>
 
-        <!-- Add table -->
+        <!-- Inline add-tables config row -->
         <PpFadeUp :delay="0.05">
           <form class="add-panel" @submit.prevent="addTables">
             <div class="add-field">
@@ -52,27 +52,42 @@
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('tables.add') }}
             </PpButton>
+            <p class="range-hint">{{ rangePreview }}</p>
           </form>
-          <p class="range-hint">{{ rangePreview }}</p>
         </PpFadeUp>
 
         <p class="hint">{{ t('tables.defaultHint') }}</p>
 
-        <!-- Tables list -->
-        <div class="tables-card">
-          <div v-if="loading" class="centered-state">{{ t('status.loading') }}</div>
-          <div v-else-if="tables.length === 0" class="centered-state">
-            <IonIcon :icon="gridOutline" class="empty-icon" />
-            <p class="empty-text">{{ t('tables.empty') }}</p>
-          </div>
-          <div v-else class="tables-list">
-            <div v-for="table in sortedTables" :key="table.id" class="table-row">
-              <div class="table-id">
+        <!-- Table cards -->
+        <div v-if="loading" class="centered-state">{{ t('status.loading') }}</div>
+        <div v-else-if="tables.length === 0" class="centered-state">
+          <IonIcon :icon="gridOutline" class="empty-icon" />
+          <p class="empty-text">{{ t('tables.empty') }}</p>
+        </div>
+        <PpStagger v-else class="tables-grid" :stagger-children="0.04">
+          <PpStaggerItem v-for="table in sortedTables" :key="table.id">
+            <PpCard padding="none" class="table-card">
+              <div class="table-card__head">
                 <span class="table-num">#{{ table.tableNumber }}</span>
-                <span class="table-seats">{{ table.maxSeats }} {{ t('tables.seatsShort') }}</span>
+                <PpStatusPill v-if="table.isAssigned" tone="warning" dot>
+                  {{ t('tables.inUse') }}
+                </PpStatusPill>
               </div>
-              <div class="table-flags">
-                <PpBadge v-if="table.isAssigned" variant="warning">{{ t('tables.inUse') }}</PpBadge>
+
+              <div class="felt">
+                <div class="felt__oval">
+                  <span
+                    v-for="(pos, i) in seatPositions(table.maxSeats)"
+                    :key="i"
+                    class="seat-dot"
+                    :style="pos"
+                  />
+                  <span class="felt__count">{{ table.maxSeats }}</span>
+                </div>
+                <span class="felt__label">{{ table.maxSeats }} {{ t('tables.seatsShort') }}</span>
+              </div>
+
+              <div class="table-card__foot">
                 <button
                   type="button"
                   class="default-toggle"
@@ -85,8 +100,6 @@
                   />
                   {{ t('tables.defaultSet') }}
                 </button>
-              </div>
-              <div class="table-actions">
                 <button
                   type="button"
                   class="row-action row-action--danger"
@@ -98,9 +111,9 @@
                   <IonIcon :icon="trashOutline" class="row-action-icon" />
                 </button>
               </div>
-            </div>
-          </div>
-        </div>
+            </PpCard>
+          </PpStaggerItem>
+        </PpStagger>
       </div>
     </IonContent>
   </IonPage>
@@ -156,6 +169,19 @@ const rangePreview = computed(() => {
     ? t('tables.addRangeHintOne', { number: start })
     : t('tables.addRangeHint', { from: start, to: start + qty - 1, count: qty })
 })
+
+// Seat-dot positions around the oval felt (clockwise from the top), so each
+// card's graphic reflects its real seat count.
+const seatPositions = (seats: number) => {
+  const n = Math.max(1, seats)
+  return Array.from({ length: n }, (_, i) => {
+    const angle = (-90 + (360 * i) / n) * (Math.PI / 180)
+    return {
+      left: `${50 + 40 * Math.cos(angle)}%`,
+      top: `${50 + 32 * Math.sin(angle)}%`,
+    }
+  })
+}
 
 const fetchTables = async () => {
   if (!club.value) return
@@ -244,33 +270,32 @@ onMounted(fetchTables)
 }
 
 .page-container {
-  padding: 1.5rem 1rem;
+  padding: 1.75rem 1rem 3rem;
 }
 
 @media (min-width: 640px) {
   .page-container {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding: 2rem 1.5rem 3rem;
   }
 }
 
 @media (min-width: 1024px) {
   .page-container {
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding: 2.5rem 2rem 4rem;
   }
 }
 
 .page-header {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.2em;
   color: var(--color-pp-gold-deep);
+  font-variant-numeric: tabular-nums;
 }
 
 .page-title {
@@ -287,18 +312,20 @@ onMounted(fetchTables)
   margin-top: 0.4rem;
   color: var(--color-pp-text-muted);
   font-size: 0.9rem;
-  max-width: 40ch;
+  max-width: 44ch;
 }
 
+/* Add-tables config row */
 .add-panel {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
   gap: 1rem;
-  padding: 1rem;
-  background-color: var(--color-pp-surface-2);
-  border: 1px solid var(--color-pp-border-strong);
-  border-radius: 1rem;
+  padding: 1.1rem 1.25rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+  border: 1px solid var(--color-pp-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-card);
 }
 
 .add-field {
@@ -313,25 +340,23 @@ onMounted(fetchTables)
   gap: 0.5rem;
   color: var(--color-pp-text-muted);
   cursor: pointer;
-  padding-bottom: 0.5rem;
-}
-
-.hint {
-  margin: 0.75rem 0 1.5rem;
-  font-size: 0.8rem;
-  color: var(--color-pp-text-dim);
+  padding-bottom: 0.55rem;
+  font-size: 0.85rem;
 }
 
 .range-hint {
-  margin: 0.6rem 0 0;
-  font-size: 0.8rem;
+  flex-basis: 100%;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
   color: var(--color-pp-gold-deep);
 }
 
-.tables-card {
-  background-color: var(--color-pp-surface-2);
-  border: 1px solid var(--color-pp-border-strong);
-  border-radius: 1rem;
+.hint {
+  margin: 0.85rem 0 1.5rem;
+  font-size: 0.8rem;
+  color: var(--color-pp-text-dim);
 }
 
 .centered-state {
@@ -343,60 +368,128 @@ onMounted(fetchTables)
 .empty-icon {
   width: 3rem;
   height: 3rem;
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--color-pp-text-dim);
   margin: 0 auto 0.75rem;
 }
 
-.tables-list > * + * {
-  border-top: 1px solid var(--color-pp-border-strong);
-}
-
-.table-row {
+/* Card grid */
+.tables-grid {
   display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.85rem 1rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
 }
 
-.table-id {
+@media (min-width: 640px) {
+  .tables-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .tables-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.table-card {
   display: flex;
-  align-items: baseline;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1rem;
+  height: 100%;
+}
+
+.table-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 .table-num {
-  font-weight: 700;
-  font-size: 1.05rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
   color: var(--color-pp-text);
+  font-variant-numeric: tabular-nums;
 }
 
-.table-seats {
-  font-size: 0.8rem;
+/* Oval felt graphic */
+.felt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.felt__oval {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 9999px;
+  background:
+    radial-gradient(120% 120% at 50% 0%, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 60%),
+    radial-gradient(circle at 50% 50%, #1f3a2c, #14271d);
+  border: 1px solid rgba(52, 211, 153, 0.18);
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.45);
+}
+
+.seat-dot {
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -50%);
+}
+
+.felt__count {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.felt__label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   color: var(--color-pp-text-muted);
 }
 
-.table-flags {
+.table-card__foot {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: auto;
 }
 
 .default-toggle {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.25rem 0.6rem;
+  padding: 0.3rem 0.65rem;
   border-radius: 0.5rem;
-  border: 1px solid var(--color-pp-border-strong);
-  font-size: 0.75rem;
+  border: 1px solid var(--color-pp-border);
+  background: transparent;
+  font-size: 0.72rem;
   color: var(--color-pp-text-dim);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .default-toggle--on {
-  border-color: var(--color-pp-gold);
+  border-color: rgba(var(--pp-accent-rgb), 0.4);
   color: var(--color-pp-gold);
 }
 
@@ -410,20 +503,15 @@ onMounted(fetchTables)
   height: 1.15rem;
 }
 
-/* Actions - quiet icon button; reddens only on hover (matches the players list). */
-.table-actions {
-  display: flex;
-  justify-content: flex-end;
-}
-
+/* Delete action - quiet icon button, reddens on hover. */
 .row-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.1rem;
+  height: 2.1rem;
   border: none;
-  border-radius: 0.625rem;
+  border-radius: 0.6rem;
   background: transparent;
   color: var(--color-pp-text-muted);
   cursor: pointer;
@@ -454,11 +542,11 @@ onMounted(fetchTables)
 
 .row-action--danger:not(:disabled):hover {
   color: var(--color-pp-danger);
-  background-color: rgba(239, 68, 68, 0.12);
+  background-color: rgba(var(--pp-danger-rgb), 0.12);
 }
 
 .row-action-icon {
-  width: 1.15rem;
-  height: 1.15rem;
+  width: 1.1rem;
+  height: 1.1rem;
 }
 </style>
