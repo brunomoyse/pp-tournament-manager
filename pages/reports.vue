@@ -9,17 +9,17 @@
           </div>
         </PpFadeUp>
 
-        <!-- Period Selector Tabs -->
+        <!-- Period tabs -->
         <div class="period-tabs" data-tour="reports">
           <button
             v-for="period in periods"
             :key="period.value"
-            @click="selectedPeriod = period.value"
             :disabled="!!selectedConfigId"
             :class="[
               'period-tab',
               selectedPeriod === period.value ? 'period-tab--active' : 'period-tab--inactive',
             ]"
+            @click="selectedPeriod = period.value"
           >
             {{ t(period.label) }}
           </button>
@@ -35,80 +35,61 @@
           <NuxtLink to="/leagues" class="league-manage-link">{{ t('leagues.manage') }}</NuxtLink>
         </div>
 
-        <!-- Loading State -->
         <div v-if="loading" class="loading-state">
           <IonSpinner name="crescent" class="spinner" />
         </div>
 
-        <!-- Content -->
         <div v-else>
-          <!-- Stats Cards -->
+          <!-- Compact 6-up stat strip -->
           <div class="stats-grid">
-            <!-- Total Tournaments -->
-            <PpCard padding="sm" class="pp-poker-watermark" data-suit="&#9824;">
-              <div class="stat-header">
-                <span class="stat-label">{{ t('reports.tournaments') }}</span>
-                <IonIcon :icon="trophyOutline" class="stat-icon" />
-              </div>
-              <div class="stat-value">{{ stats.totalTournaments }}</div>
+            <PpCard padding="none" class="stat-tile">
+              <PpEyebrow size="sm">{{ t('reports.tournaments') }}</PpEyebrow>
+              <div class="stat-figure">{{ stats.totalTournaments }}</div>
             </PpCard>
 
-            <!-- Unique Players -->
-            <PpCard padding="sm" class="pp-poker-watermark" data-suit="&#9829;">
-              <div class="stat-header">
-                <span class="stat-label">{{ t('reports.players') }}</span>
-                <IonIcon :icon="peopleOutline" class="stat-icon" />
-              </div>
-              <div class="stat-value">{{ stats.totalPlayers }}</div>
+            <PpCard padding="none" class="stat-tile">
+              <PpEyebrow size="sm">{{ t('reports.players') }}</PpEyebrow>
+              <div class="stat-figure">{{ stats.totalPlayers }}</div>
             </PpCard>
 
-            <!-- Total Prize Pool -->
-            <PpCard padding="sm" class="pp-poker-watermark" data-suit="&#9830;">
-              <div class="stat-header">
-                <span class="stat-label">{{ t('reports.prizePool') }}</span>
-                <IonIcon :icon="cashOutline" class="stat-icon" />
-              </div>
-              <div class="stat-value">{{ formatPrice(stats.totalPrizePool, locale) }}</div>
+            <PpCard padding="none" class="stat-tile">
+              <PpEyebrow size="sm">{{ t('reports.prizePool') }}</PpEyebrow>
+              <div class="stat-figure">{{ formatPrice(stats.totalPrizePool) }}</div>
             </PpCard>
 
-            <!-- Average Buy-in -->
-            <PpCard padding="sm" class="pp-poker-watermark" data-suit="&#9827;">
-              <div class="stat-header">
-                <span class="stat-label">{{ t('reports.avgBuyIn') }}</span>
-                <IonIcon :icon="walletOutline" class="stat-icon" />
-              </div>
-              <div class="stat-value">{{ formatPrice(stats.avgBuyIn, locale) }}</div>
+            <PpCard padding="none" class="stat-tile">
+              <PpEyebrow size="sm">{{ t('reports.avgBuyIn') }}</PpEyebrow>
+              <div class="stat-figure">{{ formatPrice(stats.avgBuyIn) }}</div>
             </PpCard>
 
-            <!-- Top Winner -->
-            <PpCard padding="sm">
-              <div class="stat-header">
-                <span class="stat-label">{{ t('reports.topWinner') }}</span>
-                <IonIcon :icon="ribbonOutline" class="stat-icon" />
+            <PpCard padding="none" class="stat-tile">
+              <PpEyebrow size="sm">{{ t('reports.topWinner') }}</PpEyebrow>
+              <div class="stat-figure stat-figure--name pp-truncate">
+                {{ stats.topWinner?.name || '-' }}
               </div>
-              <div class="stat-value-name pp-truncate">{{ stats.topWinner?.name || '-' }}</div>
-              <div v-if="stats.topWinner" class="stat-subtitle-gold">
-                {{ formatPrice(stats.topWinner.winnings, locale) }}
+              <div v-if="stats.topWinner" class="stat-sub stat-sub--gold">
+                {{ formatPrice(stats.topWinner.winnings) }}
               </div>
             </PpCard>
 
-            <!-- Most Games -->
-            <PpCard padding="sm">
-              <div class="stat-header">
-                <span class="stat-label">{{ t('reports.mostGames') }}</span>
-                <IonIcon :icon="gameControllerOutline" class="stat-icon" />
+            <PpCard padding="none" class="stat-tile">
+              <PpEyebrow size="sm">{{ t('reports.mostGames') }}</PpEyebrow>
+              <div class="stat-figure stat-figure--name pp-truncate">
+                {{ stats.mostGames?.name || '-' }}
               </div>
-              <div class="stat-value-name pp-truncate">{{ stats.mostGames?.name || '-' }}</div>
-              <div v-if="stats.mostGames" class="stat-subtitle-muted">
-                {{ stats.mostGames.count }} {{ t('reports.tournaments').toLowerCase() }}
+              <div v-if="stats.mostGames" class="stat-sub">
+                {{ stats.mostGames.count }} {{ t('reports.games').toLowerCase() }}
               </div>
             </PpCard>
           </div>
 
-          <!-- Leaderboard Section -->
+          <!-- Leaderboard -->
           <div class="leaderboard-section">
             <div class="leaderboard-header">
-              <h2 class="leaderboard-title">{{ t('reports.leaderboard') }}</h2>
+              <div>
+                <PpEyebrow size="sm">{{ t('reports.players') }}</PpEyebrow>
+                <h2 class="leaderboard-title">{{ t('reports.leaderboard') }}</h2>
+              </div>
               <PpButton
                 variant="ghost"
                 size="sm"
@@ -120,84 +101,52 @@
               </PpButton>
             </div>
 
-            <!-- Empty State -->
             <div v-if="leaderboard.length === 0" class="leaderboard-empty">
               <IonIcon :icon="podiumOutline" class="leaderboard-empty-icon" />
               <p class="leaderboard-empty-text">{{ t('reports.noData') }}</p>
             </div>
 
-            <!-- Podium - Top 3 -->
+            <!-- Podium - top 3 -->
             <div v-if="leaderboard.length >= 3" class="podium">
-              <!-- 2nd Place -->
-              <div class="podium-entry podium-entry--second">
-                <div class="podium-avatar podium-avatar--second">
-                  {{ getInitials(leaderboard[1]?.user, leaderboard[1]?.displayName) }}
+              <div
+                v-for="spot in podiumOrder"
+                :key="spot.idx"
+                class="podium-entry"
+                :class="`podium-entry--${spot.place}`"
+              >
+                <div class="podium-avatar" :class="`podium-avatar--${spot.place}`">
+                  {{ getInitials(leaderboard[spot.idx]?.user, leaderboard[spot.idx]?.displayName) }}
                 </div>
-                <div class="podium-name">
-                  {{ getFullName(leaderboard[1]?.user, leaderboard[1]?.displayName) }}
+                <div class="podium-name" :class="{ 'podium-name--first': spot.place === 'first' }">
+                  {{ getFullName(leaderboard[spot.idx]?.user, leaderboard[spot.idx]?.displayName) }}
                 </div>
-                <div class="podium-points">
+                <div
+                  class="podium-points"
+                  :class="{ 'podium-points--first': spot.place === 'first' }"
+                >
                   {{
                     isLeagueView
-                      ? `${rankedLeaderboard[1]?.points} pts`
-                      : formatPrice(rankedLeaderboard[1]?.totalWinnings ?? 0, locale)
+                      ? `${rankedLeaderboard[spot.idx]?.points} pts`
+                      : formatPrice(rankedLeaderboard[spot.idx]?.totalWinnings ?? 0)
                   }}
                 </div>
-                <div class="podium-bar podium-bar--second">
-                  <span class="podium-rank podium-rank--second">2</span>
-                </div>
-              </div>
-
-              <!-- 1st Place -->
-              <div class="podium-entry podium-entry--first">
-                <div class="podium-avatar podium-avatar--first">
-                  {{ getInitials(leaderboard[0]?.user, leaderboard[0]?.displayName) }}
-                </div>
-                <div class="podium-name-first">
-                  {{ getFullName(leaderboard[0]?.user, leaderboard[0]?.displayName) }}
-                </div>
-                <div class="podium-points-first">
-                  {{
-                    isLeagueView
-                      ? `${rankedLeaderboard[0]?.points} pts`
-                      : formatPrice(rankedLeaderboard[0]?.totalWinnings ?? 0, locale)
-                  }}
-                </div>
-                <div class="podium-bar podium-bar--first">
-                  <span class="podium-rank podium-rank--first">1</span>
-                </div>
-              </div>
-
-              <!-- 3rd Place -->
-              <div class="podium-entry podium-entry--third">
-                <div class="podium-avatar podium-avatar--third">
-                  {{ getInitials(leaderboard[2]?.user, leaderboard[2]?.displayName) }}
-                </div>
-                <div class="podium-name">
-                  {{ getFullName(leaderboard[2]?.user, leaderboard[2]?.displayName) }}
-                </div>
-                <div class="podium-points">
-                  {{
-                    isLeagueView
-                      ? `${rankedLeaderboard[2]?.points} pts`
-                      : formatPrice(rankedLeaderboard[2]?.totalWinnings ?? 0, locale)
-                  }}
-                </div>
-                <div class="podium-bar podium-bar--third">
-                  <span class="podium-rank podium-rank--third">3</span>
+                <div class="podium-bar" :class="`podium-bar--${spot.place}`">
+                  <span class="podium-rank" :class="`podium-rank--${spot.place}`">{{
+                    spot.rank
+                  }}</span>
                 </div>
               </div>
             </div>
 
-            <!-- Leaderboard Table -->
+            <!-- Full table -->
             <div v-if="leaderboard.length > 0" class="table-wrapper">
               <table class="leaderboard-table">
                 <thead>
                   <tr class="table-head-row">
                     <th class="th-cell">{{ t('reports.rank') }}</th>
                     <th class="th-cell">{{ t('reports.player') }}</th>
-                    <th class="th-cell th-center">{{ t('reports.tournaments') }}</th>
-                    <th class="th-cell th-center">{{ t('reports.itmPercent') }}</th>
+                    <th class="th-cell th-center">{{ t('reports.played') }}</th>
+                    <th class="th-cell">{{ t('reports.itmPercent') }}</th>
                     <th class="th-cell th-center">{{ t('reports.roiPercent') }}</th>
                     <th class="th-cell th-right">{{ t('reports.netProfit') }}</th>
                     <th class="th-cell-last">
@@ -214,9 +163,8 @@
                       'table-row',
                       entry.rank <= 3 ? 'table-row--top3' : '',
                     ]"
-                    :style="{ animationDelay: `${index * 50}ms` }"
+                    :style="{ animationDelay: `${index * 40}ms` }"
                   >
-                    <!-- Rank -->
                     <td class="td-cell">
                       <div class="rank-cell">
                         <span v-if="entry.rank === 1" class="rank-medal">&#129351;</span>
@@ -225,7 +173,6 @@
                         <span v-else class="rank-number">{{ entry.rank }}</span>
                       </div>
                     </td>
-                    <!-- Player -->
                     <td class="td-cell">
                       <div class="player-cell">
                         <div class="player-cell-avatar">
@@ -246,32 +193,35 @@
                         </div>
                       </div>
                     </td>
-                    <!-- Tournaments -->
-                    <td class="td-cell td-center text-white">{{ entry.totalTournaments }}</td>
-                    <!-- ITM% -->
-                    <td class="td-cell td-center">
-                      <span :class="entry.itmPercentage >= 50 ? 'text-green' : 'text-white'">
-                        {{ entry.itmPercentage.toFixed(1) }}%
-                      </span>
+                    <td class="td-cell td-center num">{{ entry.totalTournaments }}</td>
+                    <td class="td-cell">
+                      <div class="itm-cell">
+                        <span class="num" :class="entry.itmPercentage >= 50 ? 'text-green' : ''">
+                          {{ entry.itmPercentage.toFixed(1) }}%
+                        </span>
+                        <PpFillBar
+                          class="itm-bar"
+                          :value="entry.itmPercentage"
+                          :max="100"
+                          tone="success"
+                          :height="4"
+                        />
+                      </div>
                     </td>
-                    <!-- ROI% -->
-                    <td class="td-cell td-center">
+                    <td class="td-cell td-center num">
                       <span :class="entry.roiPercentage >= 0 ? 'text-green' : 'text-red'">
                         {{ entry.roiPercentage >= 0 ? '+' : ''
                         }}{{ entry.roiPercentage.toFixed(1) }}%
                       </span>
                     </td>
-                    <!-- Net Profit -->
-                    <td class="td-cell td-right">
+                    <td class="td-cell td-right num">
                       <span :class="entry.netProfit >= 0 ? 'text-green' : 'text-red'">
-                        {{ entry.netProfit >= 0 ? '+' : ''
-                        }}{{ formatPrice(entry.netProfit, locale) }}
+                        {{ entry.netProfit >= 0 ? '+' : '' }}{{ formatPrice(entry.netProfit) }}
                       </span>
                     </td>
-                    <!-- Points (leagues) / Winnings (default stats view) -->
-                    <td class="td-cell-last">
+                    <td class="td-cell-last num">
                       <span class="points-value">
-                        {{ isLeagueView ? entry.points : formatPrice(entry.totalWinnings, locale) }}
+                        {{ isLeagueView ? entry.points : formatPrice(entry.totalWinnings) }}
                       </span>
                     </td>
                   </tr>
@@ -295,23 +245,13 @@ definePageMeta({
 })
 
 import { IonPage, IonContent, IonIcon, IonSpinner } from '@ionic/vue'
-import {
-  trophyOutline,
-  peopleOutline,
-  cashOutline,
-  walletOutline,
-  ribbonOutline,
-  gameControllerOutline,
-  podiumOutline,
-  downloadOutline,
-} from 'ionicons/icons'
+import { podiumOutline, downloadOutline } from 'ionicons/icons'
 import { useI18n } from '~/composables/useI18n'
 import { formatPrice } from '~/utils'
 import { downloadCsv, csvAmount, exportFilename } from '~/utils/exportCsv'
 
-const router = useRouter()
 const clubStore = useClubStore()
-const { t, locale } = useI18n()
+const { t } = useI18n()
 
 const { club } = clubStore
 
@@ -323,6 +263,13 @@ const periods = [
   { value: LeaderboardPeriod.ALL_TIME, label: 'reports.period.allTime' },
   { value: LeaderboardPeriod.LAST_30_DAYS, label: 'reports.period.last30Days' },
   { value: LeaderboardPeriod.LAST_7_DAYS, label: 'reports.period.last7Days' },
+]
+
+// Podium render order: 2nd, 1st, 3rd (so 1st sits centre and tallest).
+const podiumOrder = [
+  { idx: 1, place: 'second', rank: 2 },
+  { idx: 0, place: 'first', rank: 1 },
+  { idx: 2, place: 'third', rank: 3 },
 ]
 
 const selectedPeriod = ref<LeaderboardPeriod>(LeaderboardPeriod.CURRENT_YEAR)
@@ -508,29 +455,24 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-bg {
-  background-color: var(--color-pp-bg);
-}
-
+.page-bg,
 .content-bg {
   background-color: var(--color-pp-bg);
 }
 
 .page-container {
-  padding: 1.5rem 1rem;
+  padding: 1.75rem 1rem 3rem;
 }
 
 @media (min-width: 640px) {
   .page-container {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding: 2rem 1.5rem 3rem;
   }
 }
 
 @media (min-width: 1024px) {
   .page-container {
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding: 2.5rem 2rem 4rem;
   }
 }
 
@@ -540,7 +482,7 @@ onMounted(() => {
 
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.2em;
   color: var(--color-pp-gold-deep);
@@ -556,43 +498,55 @@ onMounted(() => {
   color: var(--color-pp-text);
 }
 
-/* Period Tabs */
+.icon-md {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Period tabs (segmented) */
 .period-tabs {
-  display: flex;
+  display: inline-flex;
   overflow-x: auto;
-  gap: 0.5rem;
-  background-color: rgba(36, 36, 42, 0.5);
-  padding: 0.5rem;
-  border-radius: 1rem;
-  border: 1px solid var(--color-pp-border-strong);
-  margin-bottom: 2rem;
+  gap: 0.25rem;
+  background-color: var(--color-pp-surface);
+  padding: 0.3rem;
+  border-radius: 0.85rem;
+  border: 1px solid var(--color-pp-border);
+  margin-bottom: 1.5rem;
 }
 
 .period-tab {
   flex: 1;
-  min-width: 0;
-  padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
+  min-width: max-content;
+  padding: 0.5rem 1rem;
+  border-radius: 0.6rem;
+  border: 1px solid transparent;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   font-weight: 500;
-  transition: all 0.2s ease;
   white-space: nowrap;
   cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .period-tab--active {
-  background-color: var(--color-pp-surface-2);
+  background-color: rgba(var(--pp-accent-rgb), 0.1);
   color: var(--color-pp-gold);
-  border: 1px solid rgba(var(--pp-accent-rgb), 0.4);
-  box-shadow: var(--pp-shadow-sm);
+  border-color: rgba(var(--pp-accent-rgb), 0.4);
 }
 
 .period-tab--inactive {
-  color: #ffffff;
-  border: 1px solid transparent;
+  color: var(--color-pp-text-muted);
 }
 
 .period-tab--inactive:hover {
-  background-color: rgba(36, 36, 42, 0.5);
+  color: var(--color-pp-text);
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .period-tab:disabled {
@@ -606,8 +560,8 @@ onMounted(() => {
   align-items: center;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-top: -1rem;
-  margin-bottom: 2rem;
+  margin-top: -0.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .league-label {
@@ -619,10 +573,10 @@ onMounted(() => {
 }
 
 .pp-select {
-  background-color: var(--color-pp-surface-2);
+  background-color: var(--color-pp-surface);
   color: var(--color-pp-text);
-  border: 1px solid var(--color-pp-border-strong);
-  border-radius: 0.75rem;
+  border: 1px solid var(--color-pp-border);
+  border-radius: 0.7rem;
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
 }
@@ -655,11 +609,11 @@ onMounted(() => {
   color: var(--color-pp-gold);
 }
 
-/* Stats Grid */
+/* Stat strip */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: 0.75rem;
   margin-bottom: 1.5rem;
 }
 
@@ -675,66 +629,63 @@ onMounted(() => {
   }
 }
 
-.stat-header {
+.stat-tile {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1rem 1.1rem;
+  min-height: 6rem;
 }
 
-.stat-label {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.75rem;
-}
-
-.stat-icon {
-  width: 1rem;
-  height: 1rem;
-  color: var(--color-pp-gold);
-}
-
-.stat-value {
+.stat-figure {
+  font-family: var(--font-display);
   font-size: 1.5rem;
-  line-height: 2rem;
-  font-weight: 700;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-pp-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-figure--name {
+  font-size: 1.05rem;
+  color: var(--color-pp-text);
+}
+
+.stat-sub {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--color-pp-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-sub--gold {
   color: var(--color-pp-gold);
 }
 
-.stat-value-name {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #ffffff;
-}
-
-.stat-subtitle-gold {
-  font-size: 0.75rem;
-  color: var(--color-pp-gold);
-}
-
-.stat-subtitle-muted {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-/* Leaderboard Section */
+/* Leaderboard */
 .leaderboard-section {
-  background-color: var(--color-pp-surface-2);
-  border-radius: 1rem;
-  padding: 1rem;
-  border: 1px solid var(--color-pp-border-strong);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+  border-radius: var(--radius-2xl);
+  padding: 1.25rem;
+  border: 1px solid var(--color-pp-border);
+  box-shadow: var(--shadow-card);
 }
 
 .leaderboard-header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .leaderboard-title {
-  font-size: 1.25rem;
+  margin-top: 0.3rem;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
   font-weight: 600;
+  letter-spacing: -0.02em;
   color: var(--color-pp-text);
 }
 
@@ -744,14 +695,14 @@ onMounted(() => {
 }
 
 .leaderboard-empty-icon {
-  width: 4rem;
-  height: 4rem;
-  color: rgba(255, 255, 255, 0.2);
+  width: 3.5rem;
+  height: 3.5rem;
+  color: var(--color-pp-text-dim);
   margin: 0 auto 1rem;
 }
 
 .leaderboard-empty-text {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--color-pp-text-muted);
 }
 
 /* Podium */
@@ -768,10 +719,6 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.podium-entry--second,
-.podium-entry--third {
   width: 7rem;
 }
 
@@ -780,13 +727,6 @@ onMounted(() => {
   .podium-entry--third {
     width: 9rem;
   }
-}
-
-.podium-entry--first {
-  width: 8rem;
-}
-
-@media (min-width: 768px) {
   .podium-entry--first {
     width: 10rem;
   }
@@ -797,42 +737,43 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-weight: 600;
   margin-bottom: 0.5rem;
 }
 
 .podium-avatar--second {
   width: 3.5rem;
   height: 3.5rem;
-  background-color: rgba(156, 163, 175, 0.2);
-  border: 2px solid rgba(156, 163, 175, 0.5);
-  color: #ffffff;
-  font-size: 1.125rem;
+  background-color: rgba(203, 213, 225, 0.18);
+  border: 2px solid rgba(203, 213, 225, 0.45);
+  color: #e2e8f0;
+  font-size: 1.05rem;
 }
 
 .podium-avatar--first {
-  width: 4rem;
-  height: 4rem;
+  width: 4.25rem;
+  height: 4.25rem;
   background-color: rgba(var(--pp-accent-rgb), 0.2);
   border: 2px solid rgba(var(--pp-accent-rgb), 0.6);
   color: var(--color-pp-gold);
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   box-shadow: 0 0 25px rgba(var(--pp-accent-rgb), 0.3);
 }
 
 .podium-avatar--third {
   width: 3.5rem;
   height: 3.5rem;
-  background-color: rgba(249, 115, 22, 0.15);
-  border: 2px solid rgba(249, 115, 22, 0.4);
-  color: var(--pp-orange-400);
-  font-size: 1.125rem;
+  background-color: rgba(var(--pp-warning-rgb), 0.15);
+  border: 2px solid rgba(var(--pp-warning-rgb), 0.4);
+  color: var(--color-pp-warning);
+  font-size: 1.05rem;
 }
 
 .podium-name {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--color-pp-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -840,26 +781,21 @@ onMounted(() => {
   text-align: center;
 }
 
-.podium-name-first {
+.podium-name--first {
   font-size: 1rem;
-  font-weight: 700;
   color: var(--color-pp-gold);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
-  text-align: center;
 }
 
 .podium-points {
-  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
   color: var(--color-pp-gold);
   font-weight: 500;
+  font-variant-numeric: tabular-nums;
 }
 
-.podium-points-first {
-  font-size: 0.875rem;
-  color: var(--color-pp-gold);
+.podium-points--first {
+  font-size: 0.85rem;
   font-weight: 600;
 }
 
@@ -873,7 +809,7 @@ onMounted(() => {
 }
 
 .podium-bar--second {
-  background-color: rgba(156, 163, 175, 0.2);
+  background-color: rgba(203, 213, 225, 0.16);
   height: 100px;
 }
 
@@ -885,29 +821,30 @@ onMounted(() => {
 }
 
 .podium-bar--third {
-  background-color: rgba(249, 115, 22, 0.1);
+  background-color: rgba(var(--pp-warning-rgb), 0.12);
   height: 75px;
 }
 
 .podium-rank {
-  font-weight: 900;
+  font-family: var(--font-display);
+  font-weight: 700;
   padding-bottom: 0.5rem;
 }
 
 .podium-rank--second {
-  font-size: 1.875rem;
-  color: rgba(156, 163, 175, 0.6);
+  font-size: 1.75rem;
+  color: rgba(203, 213, 225, 0.6);
 }
 
 .podium-rank--first {
-  font-size: 2.25rem;
-  color: rgba(var(--pp-accent-rgb), 0.4);
+  font-size: 2.1rem;
+  color: rgba(var(--pp-accent-rgb), 0.5);
   padding-bottom: 0.75rem;
 }
 
 .podium-rank--third {
-  font-size: 1.875rem;
-  color: rgba(249, 115, 22, 0.4);
+  font-size: 1.75rem;
+  color: rgba(var(--pp-warning-rgb), 0.5);
 }
 
 /* Table */
@@ -925,15 +862,23 @@ onMounted(() => {
   white-space: nowrap;
 }
 
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
 .table-head-row {
   text-align: left;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.875rem;
-  border-bottom: 1px solid var(--color-pp-border-strong);
+  color: var(--color-pp-text-dim);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid var(--color-pp-border);
 }
 
 .th-cell {
-  padding-bottom: 1rem;
+  padding-bottom: 0.85rem;
   padding-right: 1rem;
 }
 
@@ -946,25 +891,25 @@ onMounted(() => {
 }
 
 .th-cell-last {
-  padding-bottom: 1rem;
+  padding-bottom: 0.85rem;
   text-align: right;
 }
 
 .table-row {
-  border-bottom: 1px solid rgba(84, 84, 95, 0.5);
-  transition: background-color 0.2s ease;
+  border-bottom: 1px solid var(--color-pp-border);
+  transition: background-color 0.15s ease;
 }
 
 .table-row:hover {
-  background-color: rgba(24, 24, 26, 0.3);
+  background-color: rgba(255, 255, 255, 0.02);
 }
 
 .table-row--top3 {
-  background-color: rgba(24, 24, 26, 0.2);
+  background-color: rgba(255, 255, 255, 0.015);
 }
 
 .td-cell {
-  padding: 1rem 1rem 1rem 0;
+  padding: 0.85rem 1rem 0.85rem 0;
 }
 
 .td-center {
@@ -976,7 +921,7 @@ onMounted(() => {
 }
 
 .td-cell-last {
-  padding: 1rem 0;
+  padding: 0.85rem 0;
   text-align: right;
 }
 
@@ -987,11 +932,12 @@ onMounted(() => {
 }
 
 .rank-medal {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 .rank-number {
-  color: rgba(255, 255, 255, 0.6);
+  font-family: var(--font-mono);
+  color: var(--color-pp-text-muted);
   width: 2rem;
   text-align: center;
 }
@@ -1003,20 +949,23 @@ onMounted(() => {
 }
 
 .player-cell-avatar {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.4rem;
+  height: 2.4rem;
   border-radius: 9999px;
-  background-color: var(--color-pp-border-strong);
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--color-pp-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
-  font-weight: 500;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-pp-text);
+  flex-shrink: 0;
 }
 
 .player-cell-name {
   font-weight: 500;
-  color: #ffffff;
+  color: var(--color-pp-text);
 }
 
 .player-cell-name--gold {
@@ -1024,20 +973,29 @@ onMounted(() => {
 }
 
 .player-cell-username {
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-pp-text-dim);
 }
 
-.text-white {
-  color: #ffffff;
+/* ITM cell with mini bar */
+.itm-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 5rem;
+}
+
+.itm-bar {
+  max-width: 6rem;
 }
 
 .text-green {
-  color: var(--pp-green-400);
+  color: #34d399;
 }
 
 .text-red {
-  color: var(--pp-red-400);
+  color: #f87171;
 }
 
 .points-value {
