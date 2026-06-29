@@ -28,6 +28,17 @@ config.global.renderStubDefaultSlot = true
 ;(global as any).defineNuxtRouteMiddleware = vi.fn((fn: any) => fn)
 ;(global as any).definePageMeta = vi.fn()
 ;(global as any).navigateTo = vi.fn()
+
+// Mock pinia-plugin-persistedstate's auto-imported helper. Persisted stores call
+// it at definition time (e.g. `storage: piniaPluginPersistedstate.sessionStorage()`).
+// The persist plugin itself isn't installed in tests, so the returned storage is
+// never used — these stubs just need to evaluate without throwing.
+const noopStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} }
+;(global as any).piniaPluginPersistedstate = {
+  sessionStorage: () => noopStorage,
+  localStorage: () => noopStorage,
+  cookies: () => noopStorage,
+}
 ;(global as any).useRuntimeConfig = vi.fn(() => ({
   public: {
     apiBaseUrl: 'http://localhost:8080',

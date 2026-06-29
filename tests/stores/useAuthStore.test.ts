@@ -278,7 +278,7 @@ describe('useAuthStore', () => {
       expect(GqlGetMe).not.toHaveBeenCalled()
     })
 
-    it('should clear auth state if fetch fails', async () => {
+    it('should return null but preserve auth state when the fetch fails', async () => {
       const store = useAuthStore()
       store.authToken = 'invalid-token'
       store.currentUser = {
@@ -291,9 +291,11 @@ describe('useAuthStore', () => {
 
       const result = await store.fetchMe()
 
+      // fetchMe no longer tears down state on failure; the caller (initialize /
+      // error handler) decides whether to refresh the token or expire the session.
       expect(result).toBeNull()
-      expect(store.authToken).toBeNull()
-      expect(store.currentUser).toBeNull()
+      expect(store.authToken).toBe('invalid-token')
+      expect(store.currentUser).not.toBeNull()
     })
   })
 

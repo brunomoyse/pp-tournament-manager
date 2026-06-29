@@ -6,7 +6,8 @@ import { useAuthStore } from '~/stores/useAuthStore'
 // `defineNuxtRouteMiddleware` is stubbed in tests/setup.ts as `(fn) => fn`, so the
 // default export is the bare guard. `navigateTo` is a global vi.fn() from setup.
 const navigateTo = (globalThis as { navigateTo: ReturnType<typeof vi.fn> }).navigateTo
-const runGuard = () => (authMiddleware as (...a: unknown[]) => unknown)(undefined, undefined)
+const runGuard = (to: unknown = { fullPath: '/dashboard' }) =>
+  (authMiddleware as (...a: unknown[]) => unknown)(to, undefined)
 
 describe('auth route guard', () => {
   beforeEach(() => {
@@ -21,7 +22,11 @@ describe('auth route guard', () => {
     runGuard()
 
     expect(navigateTo).toHaveBeenCalledTimes(1)
-    expect(navigateTo).toHaveBeenCalledWith('/login')
+    // The guard preserves the intended destination so login can bounce back.
+    expect(navigateTo).toHaveBeenCalledWith({
+      path: '/login',
+      query: { redirect: '/dashboard' },
+    })
   })
 
   it('lets an authenticated visitor through without redirecting', () => {
