@@ -41,8 +41,18 @@ interface ActivityEntry {
 
 const entries = ref<ActivityEntry[]>([])
 
+// Reactive "now" so relative timestamps tick up on their own. New entries
+// stream in via the WS subscription, but the relative-time text only re-renders
+// when this advances. 30s suits the just-now / minutes / hours granularity.
+const now = ref(Date.now())
+let nowInterval: ReturnType<typeof setInterval> | null = null
+
 // Fetch initial entries
 onMounted(async () => {
+  nowInterval = setInterval(() => {
+    now.value = Date.now()
+  }, 30000)
+
   try {
     const response = await GqlGetTournamentActivityLog({
       tournamentId: props.tournamentId,
@@ -55,6 +65,10 @@ onMounted(async () => {
   } catch (e) {
     console.error('[ActivityFeed] Failed to load activity log:', e)
   }
+})
+
+onUnmounted(() => {
+  if (nowInterval) clearInterval(nowInterval)
 })
 
 // Subscribe for real-time updates
@@ -132,8 +146,8 @@ function formatActivityMessage(entry: ActivityEntry): string {
 
 function formatRelativeTime(dateStr: string): string {
   const date = new Date(dateStr)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
+  // Read the reactive `now` so each 30s tick re-renders the visible timestamps.
+  const diffMs = now.value - date.getTime()
   const diffSec = Math.floor(diffMs / 1000)
   const diffMin = Math.floor(diffSec / 60)
   const diffHour = Math.floor(diffMin / 60)
