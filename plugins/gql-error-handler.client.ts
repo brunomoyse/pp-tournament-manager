@@ -3,7 +3,6 @@ import * as Sentry from '@sentry/vue'
 import { useAuthStore } from '~/stores/useAuthStore'
 
 export default defineNuxtPlugin(() => {
-  const router = useRouter()
   const nuxtApp = useNuxtApp()
   const toast = useToast()
 
@@ -36,24 +35,18 @@ export default defineNuxtPlugin(() => {
 
       const authStore = useAuthStore()
 
-      // Attempt to refresh the access token before logging out
+      // Attempt to refresh the access token before signing out.
       authStore.refreshAccessToken().then((newToken) => {
         if (!newToken) {
-          // Refresh failed - logout and redirect to login
-          authStore.logout()
-
-          const currentPath = router.currentRoute.value.fullPath
-
-          router.push({
-            path: '/login',
-            query: currentPath !== '/login' ? { redirect: currentPath } : undefined,
-          })
+          // Refresh failed: the refresh token itself is gone (revoked/expired).
+          // sessionExpired() clears state, tells sibling tabs, and redirects to
+          // /login with a return path. The one operation that raced the expiry
+          // isn't retried.
+          authStore.sessionExpired()
         }
         // If refresh succeeded the token is updated for subsequent requests.
-        // This is now only a safety net: the gql:auth:init hook refreshes the
-        // token just-in-time before each request, so reaching here normally
-        // means the refresh token itself is gone (revoked/expired) - hence the
-        // logout above. The one operation that raced the expiry isn't retried.
+        // This is only a safety net: the gql:auth:init hook refreshes the token
+        // just-in-time before each request.
       })
       return
     }

@@ -302,8 +302,8 @@ const userName = computed(() => {
 })
 
 const handleLogout = async () => {
+  // logout() clears state, notifies other tabs, and redirects to /login.
   await authStore.logout()
-  router.push('/login')
 }
 
 // Top-bar search affordance: a real entry point to the searchable surfaces.
