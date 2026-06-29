@@ -118,7 +118,7 @@
               size="sm"
               :disabled="checkingIn === player.id"
               :loading="checkingIn === player.id"
-              @click="checkInPlayer(player.id)"
+              @click="checkInPlayer(player)"
             >
               <IonIcon
                 v-if="checkingIn !== player.id"
@@ -337,6 +337,8 @@ const filteredPlayers = computed(() => {
 
       return {
         id: playerId,
+        userId: tp.user?.id || null,
+        clubPlayerId: tp.registration.clubPlayerId,
         registrationId: tp.registration.id,
         lastName,
         firstName,
@@ -384,15 +386,21 @@ const getInitials = (name: string | null | undefined) => {
 }
 
 // Check in player function
-const checkInPlayer = async (playerId: string) => {
+const checkInPlayer = async (player: {
+  id: string
+  userId: string | null
+  clubPlayerId: string
+}) => {
   try {
-    checkingIn.value = playerId
+    checkingIn.value = player.id
 
-    // playerId here is either userId or clubPlayerId; pass it as userId for the mutation
+    // Account players check in by userId; account-less roster players by
+    // clubPlayerId (the backend takes the roster-native path for the latter).
     const result = await GqlCheckInPlayer({
       input: {
         tournamentId: selectedTournamentId,
-        userId: playerId,
+        userId: player.userId || undefined,
+        clubPlayerId: player.userId ? undefined : player.clubPlayerId,
         autoAssign: true,
         assignmentStrategy: AssignmentStrategy.BALANCED,
       },
@@ -404,23 +412,25 @@ const checkInPlayer = async (playerId: string) => {
       // Refresh the players data to get updated information
       await refreshPlayers()
 
-      // Auto-create initial entry
+      // Auto-create initial entry. Entries are user-id keyed today, so this only
+      // applies to account players; roster players are skipped (no entry yet).
       let entrySuccess = true
-      try {
-        await GqlAddTournamentEntry({
-          input: {
-            tournamentId: selectedTournamentId,
-            userId: playerId,
-            entryType: EntryType.INITIAL,
-          },
-        })
-      } catch {
-        entrySuccess = false
-      }
-
-      // Notify prize pool to refresh when entry was created
-      if (entrySuccess) {
-        $emit('entry-added')
+      if (player.userId) {
+        try {
+          await GqlAddTournamentEntry({
+            input: {
+              tournamentId: selectedTournamentId,
+              userId: player.userId,
+              entryType: EntryType.INITIAL,
+            },
+          })
+        } catch {
+          entrySuccess = false
+        }
+        // Notify prize pool to refresh when entry was created
+        if (entrySuccess) {
+          $emit('entry-added')
+        }
       }
 
       if (!wasSeated) {
@@ -432,7 +442,7 @@ const checkInPlayer = async (playerId: string) => {
       }
 
       // Emit event to notify parent components that players data has changed
-      $emit('player-checked-in', { playerId, result: result.checkInPlayer })
+      $emit('player-checked-in', { playerId: player.id, result: result.checkInPlayer })
     }
   } catch (error) {
     console.error('Failed to check in player:', error)
@@ -565,12 +575,13 @@ const checkInAllPlayers = async () => {
 
   for (const tp of players) {
     try {
-      // Use userId if available, otherwise use clubPlayerId
-      const playerId = tp.user?.id || tp.registration.clubPlayerId
+      // Account players check in by userId; roster players by clubPlayerId.
+      const userId: string | null = tp.user?.id || null
       const result = await GqlCheckInPlayer({
         input: {
           tournamentId: selectedTournamentId,
-          userId: playerId,
+          userId: userId || undefined,
+          clubPlayerId: userId ? undefined : tp.registration.clubPlayerId,
           autoAssign: true,
           assignmentStrategy: AssignmentStrategy.BALANCED,
         },
@@ -580,17 +591,19 @@ const checkInAllPlayers = async () => {
         seatedCount++
       }
 
-      // Auto-create initial entry
-      try {
-        await GqlAddTournamentEntry({
-          input: {
-            tournamentId: selectedTournamentId,
-            userId: playerId,
-            entryType: EntryType.INITIAL,
-          },
-        })
-      } catch {
-        // Entry failure is non-blocking
+      // Auto-create initial entry (account players only; entries are user-keyed).
+      if (userId) {
+        try {
+          await GqlAddTournamentEntry({
+            input: {
+              tournamentId: selectedTournamentId,
+              userId,
+              entryType: EntryType.INITIAL,
+            },
+          })
+        } catch {
+          // Entry failure is non-blocking
+        }
       }
 
       successCount++
