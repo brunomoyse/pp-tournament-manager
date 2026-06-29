@@ -398,8 +398,11 @@ const club = computed(() => clubStore.club)
 // Get available tables for move modal
 const availableTables = computed(() => seatingData.value?.tournamentSeatingChart?.tables || [])
 
-const isSeatOccupied = (tableData: any, seatNum: number) => {
-  return tableData.seats?.some((s: any) => s.assignment.seatNumber === seatNum)
+const isSeatOccupied = (
+  tableData: { seats?: { assignment: { seatNumber: number } }[] },
+  seatNum: number,
+) => {
+  return tableData.seats?.some((s) => s.assignment.seatNumber === seatNum)
 }
 
 const isCurrentSeat = (tableNumber: number, seatNum: number) => {
@@ -460,14 +463,13 @@ const isBreakingTable = ref(false)
 // Get tables with their empty status
 const tablesWithStatus = computed(() => {
   const tables = seatingData.value?.tournamentSeatingChart?.tables || []
-  return tables.map((tableData) => ({
-    ...tableData,
-    isEmpty: !tableData.seats || tableData.seats.length === 0,
-  }))
+  return tables.map((tableData) =>
+    Object.assign({ isEmpty: !tableData.seats || tableData.seats.length === 0 }, tableData),
+  )
 })
 
 // Check if there are any empty tables
-const hasEmptyTables = computed(() => tablesWithStatus.value.some((t) => t.isEmpty))
+const hasEmptyTables = computed(() => tablesWithStatus.value.some((tbl) => tbl.isEmpty))
 
 const openBreakTableModal = () => {
   showBreakTableModal.value = true
@@ -489,7 +491,7 @@ const breakTable = async (tableId: string) => {
       },
     })
     closeBreakTableModal()
-  } catch (error: any) {
+  } catch (error) {
     console.error('Failed to break table:', error)
     toast.error(t('toast.breakTableFailed'))
   } finally {
@@ -619,15 +621,17 @@ const handleSelectPlayerForSeat = (data: { tableId: string; seatNumber: number }
   showPlayerSelectionModal.value = true
 }
 
-const selectPlayerForSeat = async (playerId: string) => {
+const selectPlayerForSeat = async (clubPlayerId: string) => {
   if (!targetSeat.value) return
 
   try {
+    // Unassigned players are keyed by club_player_id (works for account and
+    // account-less roster players alike; the backend stamps the user link).
     await GqlAssignPlayerToSeat({
       input: {
         tournamentId: selectedTournamentId,
         clubTableId: targetSeat.value.tableId,
-        userId: playerId,
+        clubPlayerId,
         seatNumber: targetSeat.value.seatNumber,
       },
     })
@@ -659,7 +663,15 @@ const autoSeatPlayer = async (clubPlayerId: string) => {
   }
 }
 
-const getPlayerDisplayName = (player: any) => {
+const getPlayerDisplayName = (
+  player: {
+    displayName?: string
+    firstName?: string
+    lastName?: string
+    username?: string
+    user?: { firstName?: string; lastName?: string; username?: string } | null
+  } | null,
+) => {
   if (!player) return 'Unknown'
   // Prefer displayName (for new roster format)
   if (player.displayName) return player.displayName

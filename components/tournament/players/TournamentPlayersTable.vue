@@ -204,9 +204,18 @@ const tournamentStore = useTournamentStore()
 
 const route = useRoute()
 
+// Minimal shape of a player row passed to the action handlers. Account players
+// carry a userId; account-less roster players only a clubPlayerId.
+interface PlayerRow {
+  id: string
+  userId: string | null
+  clubPlayerId: string
+  name: string
+}
+
 // Define emits
 const $emit = defineEmits<{
-  'player-checked-in': [data: { playerId: string; result: any }]
+  'player-checked-in': [data: { playerId: string; result: unknown }]
   registerPlayer: []
   'entry-added': []
 }>()
@@ -225,7 +234,7 @@ const checkingInAll = ref(false)
 const checkInProgress = ref(0)
 const cancelling = ref<string | null>(null)
 const openMenuId = ref<string | null>(null)
-const playerToCancel = ref<{ id: string; name: string } | null>(null)
+const playerToCancel = ref<PlayerRow | null>(null)
 
 const toggleMenu = (playerId: string) => {
   openMenuId.value = openMenuId.value === playerId ? null : playerId
@@ -282,7 +291,9 @@ const tournamentPlayers = computed(() => playersData.value?.tournamentPlayers?.i
 
 // Get registered players for "Check In All" button
 const clubPlayers = computed(() =>
-  tournamentPlayers.value.filter((tp: any) => tp.registration.status === 'REGISTERED'),
+  tournamentPlayers.value.filter(
+    (tp: { registration: { status: string } }) => tp.registration.status === 'REGISTERED',
+  ),
 )
 
 // Filters and sorting
@@ -386,11 +397,7 @@ const getInitials = (name: string | null | undefined) => {
 }
 
 // Check in player function
-const checkInPlayer = async (player: {
-  id: string
-  userId: string | null
-  clubPlayerId: string
-}) => {
+const checkInPlayer = async (player: PlayerRow) => {
   try {
     checkingIn.value = player.id
 
@@ -455,7 +462,7 @@ const checkInPlayer = async (player: {
 // Handle seat player button click - auto-assign to best available seat
 const seatingPlayer = ref<string | null>(null)
 
-const handleSeatPlayer = async (player: any) => {
+const handleSeatPlayer = async (player: PlayerRow) => {
   const tables = seatingData.value?.tournamentSeatingChart?.tables || []
 
   if (tables.length === 0) {
@@ -464,7 +471,7 @@ const handleSeatPlayer = async (player: any) => {
   }
 
   // Find best table (balanced: fewest players)
-  let bestTable: any = null
+  let bestTable: (typeof tables)[number] | null = null
   let bestCount = Infinity
 
   for (const tableData of tables) {
@@ -482,7 +489,7 @@ const handleSeatPlayer = async (player: any) => {
   }
 
   // Find available seat number
-  const occupiedSeats = new Set(bestTable.seats.map((s: any) => s.assignment.seatNumber))
+  const occupiedSeats = new Set(bestTable.seats.map((s) => s.assignment.seatNumber))
   let seatNumber: number | null = null
   for (let i = 1; i <= bestTable.table.maxSeats; i++) {
     if (!occupiedSeats.has(i)) {
@@ -502,7 +509,8 @@ const handleSeatPlayer = async (player: any) => {
       input: {
         tournamentId: selectedTournamentId,
         clubTableId: bestTable.table.id,
-        userId: player.id,
+        userId: player.userId || undefined,
+        clubPlayerId: player.userId ? undefined : player.clubPlayerId,
         seatNumber,
       },
     })
@@ -529,9 +537,9 @@ const handleSeatPlayer = async (player: any) => {
 
 // Cancel/remove registration - open the confirmation modal first (Agency: double-check
 // before a destructive action) instead of mutating straight from the dropdown.
-const requestCancelRegistration = (player: { id: string; name: string }) => {
+const requestCancelRegistration = (player: PlayerRow) => {
   openMenuId.value = null
-  playerToCancel.value = { id: player.id, name: player.name }
+  playerToCancel.value = player
 }
 
 const confirmCancelRegistration = async () => {
@@ -542,7 +550,8 @@ const confirmCancelRegistration = async () => {
     await GqlCancelRegistration({
       input: {
         tournamentId: selectedTournamentId,
-        userId: player.id,
+        userId: player.userId || undefined,
+        clubPlayerId: player.userId ? undefined : player.clubPlayerId,
       },
     })
     await refreshPlayers()
@@ -573,10 +582,14 @@ const checkInAllPlayers = async () => {
   let seatedCount = 0
   let failCount = 0
 
+  // Sequential on purpose: each check-in auto-assigns a seat, so running them in
+  // parallel would race on seat selection (and the progress counter). Keep the
+  // awaits inside the loop.
   for (const tp of players) {
     try {
       // Account players check in by userId; roster players by clubPlayerId.
       const userId: string | null = tp.user?.id || null
+      // eslint-disable-next-line no-await-in-loop
       const result = await GqlCheckInPlayer({
         input: {
           tournamentId: selectedTournamentId,
@@ -594,6 +607,7 @@ const checkInAllPlayers = async () => {
       // Auto-create initial entry (account players only; entries are user-keyed).
       if (userId) {
         try {
+          // eslint-disable-next-line no-await-in-loop
           await GqlAddTournamentEntry({
             input: {
               tournamentId: selectedTournamentId,
