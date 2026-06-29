@@ -667,11 +667,19 @@ const { data: clockUpdates } = useGqlSubscription({
 })
 
 // Watch for subscription updates and update the store
-watch(clockUpdates, (raw) => {
+let lastClockLevel: number | null = null
+watch(clockUpdates, async (raw) => {
   const data = raw as { tournamentClockUpdates?: TournamentClock } | undefined
-  if (data?.tournamentClockUpdates) {
-    tournamentStore.setSelectedTournamentClock(data.tournamentClockUpdates)
+  const update = data?.tournamentClockUpdates
+  if (!update) return
+  tournamentStore.setSelectedTournamentClock(update)
+  // A level advance can auto-close late registration server-side (status flips
+  // to IN_PROGRESS). Refetch the tournament so the live status badge reflects it.
+  if (lastClockLevel !== null && update.currentLevel !== lastClockLevel) {
+    const response = await GqlGetTournament({ id: selectedTournamentId })
+    if (response.tournament) tournamentStore.setSelectedTournament(response.tournament)
   }
+  lastClockLevel = update.currentLevel
 })
 
 // --- Registration subscription ---
