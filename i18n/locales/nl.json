@@ -710,6 +710,11 @@
     "mustBeCheckedIn": "Spelers moeten ingecheckt zijn voordat ze geplaatst kunnen worden.",
     "unseatedPlayers": "Ingecheckt, niet geplaatst",
     "randomSeat": "Willekeurige stoel",
+    "balanceWarning": {
+      "rebalance": "Tafels zijn ongelijk — balanceer om binnen één speler te blijven.",
+      "consolidate": "Het veld past nu op {count} tafel(s) — voeg samen zodat er gespeeld blijft worden.",
+      "critical": "Verschil van 3+ spelers — balanceer nu; het spel hoort te pauzeren aan de korte tafel."
+    },
     "selectTableToRemove": "Selecteer een lege tafel om te verwijderen uit het toernooi:",
     "emptyCanBeRemoved": "Leeg - kan worden verwijderd",
     "playersSeated": "{count} spelers geplaatst",

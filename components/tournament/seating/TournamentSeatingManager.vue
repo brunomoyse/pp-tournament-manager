@@ -28,6 +28,35 @@
       </div>
     </div>
 
+    <!-- Balance warning: the director should rebalance / consolidate -->
+    <div
+      v-if="balanceWarning"
+      class="seating-manager__warning"
+      :class="{ 'seating-manager__warning--critical': balanceWarning === 'critical' }"
+      role="status"
+    >
+      <IonIcon :icon="alertCircleOutline" class="seating-manager__warning-icon" />
+      <div class="seating-manager__warning-text">
+        {{
+          balanceWarning === 'consolidate'
+            ? t('seating.balanceWarning.consolidate', { count: suggestedTableCount })
+            : balanceWarning === 'critical'
+              ? t('seating.balanceWarning.critical')
+              : t('seating.balanceWarning.rebalance')
+        }}
+      </div>
+      <PpButton
+        size="sm"
+        variant="primary"
+        :disabled="isBalancing"
+        :loading="isBalancing"
+        @click="balanceTables"
+      >
+        <IonIcon :icon="scaleOutline" class="seating-manager__action-icon" />
+        {{ isBalancing ? t('status.balancing') : t('buttons.balanceTables') }}
+      </PpButton>
+    </div>
+
     <!-- Tables Grid -->
     <div class="seating-manager__grid">
       <TournamentTableCard
@@ -347,6 +376,7 @@ import {
   unlinkOutline,
   gridOutline,
   shuffleOutline,
+  alertCircleOutline,
 } from 'ionicons/icons'
 import TournamentTableCard from './TournamentTableCard.vue'
 import AssignTableModal from './AssignTableModal.vue'
@@ -415,6 +445,22 @@ const isCurrentSeat = (tableNumber: number, seatNum: number) => {
 const unassignedPlayers = computed(
   () => seatingData.value?.tournamentSeatingChart?.unassignedPlayers || [],
 )
+
+// Minimal number of tables the field should occupy (backend suggestion).
+const suggestedTableCount = computed(
+  () => seatingData.value?.tournamentSeatingChart?.suggestedTableCount ?? 0,
+)
+
+// Balance warning surfaced to the manager (TDA thresholds, computed backend-side).
+// 'critical' (3+ spread) > 'consolidate' (fewer tables needed) > 'rebalance'.
+const balanceWarning = computed<'critical' | 'consolidate' | 'rebalance' | null>(() => {
+  const chart = seatingData.value?.tournamentSeatingChart
+  if (!chart) return null
+  if (chart.balanceCritical) return 'critical'
+  if (chart.needsConsolidation) return 'consolidate'
+  if (chart.needsRebalancing) return 'rebalance'
+  return null
+})
 
 // Bounty / PKO helpers
 const isPkoTournament = computed(() => (tournament.value?.bountyType ?? 'NONE') !== 'NONE')
@@ -732,6 +778,39 @@ defineExpose({ refreshSeatingData })
 .seating-manager__action-icon {
   width: 1rem;
   height: 1rem;
+}
+
+/* Balance warning banner */
+.seating-manager__warning {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: 0.875rem;
+  border: 1px solid color-mix(in srgb, var(--color-pp-gold) 35%, transparent);
+  background-color: color-mix(in srgb, var(--color-pp-gold) 10%, var(--color-pp-surface));
+}
+
+.seating-manager__warning--critical {
+  border-color: color-mix(in srgb, #f87171 45%, transparent);
+  background-color: color-mix(in srgb, #f87171 12%, var(--color-pp-surface));
+}
+
+.seating-manager__warning-icon {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color-pp-gold-strong);
+}
+
+.seating-manager__warning--critical .seating-manager__warning-icon {
+  color: #f87171;
+}
+
+.seating-manager__warning-text {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--color-pp-text);
 }
 
 /* Tables Grid */

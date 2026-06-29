@@ -34,6 +34,10 @@ query GetTournamentSeatingChart($tournamentId: UUID!) {
         lastName
       }
     }
+    needsRebalancing
+    needsConsolidation
+    balanceCritical
+    suggestedTableCount
   }
 }
 

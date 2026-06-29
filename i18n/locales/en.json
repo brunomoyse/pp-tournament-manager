@@ -710,6 +710,11 @@
     "mustBeCheckedIn": "Players must be checked in before they can be seated.",
     "unseatedPlayers": "Checked-in, not seated",
     "randomSeat": "Random seat",
+    "balanceWarning": {
+      "rebalance": "Tables are uneven — rebalance to keep them within one player.",
+      "consolidate": "The field now fits on {count} table(s) — consolidate to keep play going.",
+      "critical": "Tables are off by 3+ players — rebalance now; play should pause on the short table."
+    },
     "selectTableToRemove": "Select an empty table to remove from the tournament:",
     "emptyCanBeRemoved": "Empty - can be removed",
     "playersSeated": "{count} players seated",

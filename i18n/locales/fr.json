@@ -710,6 +710,11 @@
     "mustBeCheckedIn": "Les joueurs doivent être présents avant d'être assis.",
     "unseatedPlayers": "Présents, non assis",
     "randomSeat": "Siège aléatoire",
+    "balanceWarning": {
+      "rebalance": "Tables déséquilibrées — rééquilibrez pour rester à un joueur près.",
+      "consolidate": "Le terrain tient désormais sur {count} table(s) — regroupez pour que ça joue.",
+      "critical": "Écart de 3 joueurs ou plus — rééquilibrez maintenant ; le jeu doit s’arrêter sur la table courte."
+    },
     "selectTableToRemove": "Sélectionnez une table vide à retirer du tournoi :",
     "emptyCanBeRemoved": "Vide - peut être retirée",
     "playersSeated": "{count} joueurs assis",
