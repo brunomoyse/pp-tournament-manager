@@ -694,7 +694,11 @@
     "searchPrompt": "Zoek een bestaande speler om in te schrijven",
     "phoneOptional": "Telefoon (optioneel)",
     "creatingAndRegistering": "Aanmaken en inschrijven...",
-    "createAndRegister": "Speler aanmaken en inschrijven"
+    "createAndRegister": "Speler aanmaken en inschrijven",
+    "markPresent": "Markeer als aanwezig",
+    "markPresentHint": "Checkt de speler in in plaats van enkel ingeschreven te laten.",
+    "autoSeat": "Automatisch plaatsen",
+    "autoSeatHint": "Wijst meteen een willekeurige vrije stoel toe."
   },
   "seating": {
     "movePlayer": "Speler verplaatsen",
@@ -703,6 +707,8 @@
     "choosePlayerForSeat": "Kies een speler voor stoel {seat}",
     "noUnassignedPlayers": "Geen niet-toegewezen spelers beschikbaar.",
     "mustBeCheckedIn": "Spelers moeten ingecheckt zijn voordat ze geplaatst kunnen worden.",
+    "unseatedPlayers": "Ingecheckt, niet geplaatst",
+    "randomSeat": "Willekeurige stoel",
     "selectTableToRemove": "Selecteer een lege tafel om te verwijderen uit het toernooi:",
     "emptyCanBeRemoved": "Leeg - kan worden verwijderd",
     "playersSeated": "{count} spelers geplaatst",

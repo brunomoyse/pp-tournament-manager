@@ -694,7 +694,11 @@
     "searchPrompt": "Search for existing players to register",
     "phoneOptional": "Phone (optional)",
     "creatingAndRegistering": "Creating & Registering...",
-    "createAndRegister": "Create & Register Player"
+    "createAndRegister": "Create & Register Player",
+    "markPresent": "Mark as present",
+    "markPresentHint": "Checks the player in instead of leaving them only registered.",
+    "autoSeat": "Seat automatically",
+    "autoSeatHint": "Assigns the player to a random free seat right away."
   },
   "seating": {
     "movePlayer": "Move Player",
@@ -703,6 +707,8 @@
     "choosePlayerForSeat": "Choose a player to seat at position {seat}",
     "noUnassignedPlayers": "No unassigned players available.",
     "mustBeCheckedIn": "Players must be checked in before they can be seated.",
+    "unseatedPlayers": "Checked-in, not seated",
+    "randomSeat": "Random seat",
     "selectTableToRemove": "Select an empty table to remove from the tournament:",
     "emptyCanBeRemoved": "Empty - can be removed",
     "playersSeated": "{count} players seated",

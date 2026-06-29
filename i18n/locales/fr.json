@@ -694,7 +694,11 @@
     "searchPrompt": "Recherchez un joueur existant à inscrire",
     "phoneOptional": "Téléphone (optionnel)",
     "creatingAndRegistering": "Création et inscription...",
-    "createAndRegister": "Créer et inscrire le joueur"
+    "createAndRegister": "Créer et inscrire le joueur",
+    "markPresent": "Marquer présent",
+    "markPresentHint": "Enregistre le joueur comme présent au lieu de seulement inscrit.",
+    "autoSeat": "Asseoir automatiquement",
+    "autoSeatHint": "Attribue immédiatement un siège libre au hasard."
   },
   "seating": {
     "movePlayer": "Déplacer le joueur",
@@ -703,6 +707,8 @@
     "choosePlayerForSeat": "Choisissez un joueur pour le siège {seat}",
     "noUnassignedPlayers": "Aucun joueur non assigné disponible.",
     "mustBeCheckedIn": "Les joueurs doivent être présents avant d'être assis.",
+    "unseatedPlayers": "Présents, non assis",
+    "randomSeat": "Siège aléatoire",
     "selectTableToRemove": "Sélectionnez une table vide à retirer du tournoi :",
     "emptyCanBeRemoved": "Vide - peut être retirée",
     "playersSeated": "{count} joueurs assis",

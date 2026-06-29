@@ -200,6 +200,7 @@
           :isOpen="showRegisterPlayerModal"
           :tournamentId="selectedTournamentId"
           :clubPlayerIds="clubPlayerIds"
+          :liveStatus="tournament?.liveStatus || null"
           @close="showRegisterPlayerModal = false"
           @registered="handlePlayerRegistered"
         />

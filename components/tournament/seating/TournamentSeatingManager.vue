@@ -44,6 +44,39 @@
       />
     </div>
 
+    <!-- Unseated checked-in players -->
+    <div
+      v-if="seatingData?.tournamentSeatingChart?.tables?.length && unassignedPlayers.length > 0"
+      class="seating-manager__unseated"
+    >
+      <div class="seating-manager__unseated-header">
+        <h3 class="seating-manager__unseated-title">{{ t('seating.unseatedPlayers') }}</h3>
+        <span class="seating-manager__unseated-count">{{ unassignedPlayers.length }}</span>
+      </div>
+      <div class="seating-manager__unseated-list">
+        <div
+          v-for="player in unassignedPlayers"
+          :key="player.clubPlayerId"
+          class="seating-manager__unseated-row"
+        >
+          <div class="seating-manager__player-avatar">
+            {{ getInitialsFromDisplayName(player.displayName) }}
+          </div>
+          <div class="seating-manager__unseated-name">{{ player.displayName }}</div>
+          <PpButton
+            size="sm"
+            variant="secondary"
+            :disabled="autoSeatingPlayer === player.clubPlayerId"
+            :loading="autoSeatingPlayer === player.clubPlayerId"
+            @click="autoSeatPlayer(player.clubPlayerId)"
+          >
+            <IonIcon :icon="shuffleOutline" class="seating-manager__action-icon" />
+            {{ t('seating.randomSeat') }}
+          </PpButton>
+        </div>
+      </div>
+    </div>
+
     <!-- Loading State -->
     <div v-if="!seatingData" class="seating-manager__loading">
       <div class="seating-manager__loading-text">{{ t('messages.loadingSeatingChart') }}</div>
@@ -308,7 +341,13 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue'
-import { scaleOutline, linkOutline, unlinkOutline, gridOutline } from 'ionicons/icons'
+import {
+  scaleOutline,
+  linkOutline,
+  unlinkOutline,
+  gridOutline,
+  shuffleOutline,
+} from 'ionicons/icons'
 import TournamentTableCard from './TournamentTableCard.vue'
 import AssignTableModal from './AssignTableModal.vue'
 import { useTournamentStore } from '~/stores/useTournamentStore'
@@ -604,6 +643,22 @@ const closePlayerSelectionModal = () => {
   targetSeat.value = null
 }
 
+// Seat a single checked-in player on a random free seat.
+const autoSeatingPlayer = ref<string | null>(null)
+const autoSeatPlayer = async (clubPlayerId: string) => {
+  try {
+    autoSeatingPlayer.value = clubPlayerId
+    await GqlAutoSeatPlayer({
+      input: { tournamentId: selectedTournamentId, clubPlayerId },
+    })
+  } catch (error) {
+    console.error('Failed to auto-seat player:', error)
+    toast.error(t('toast.seatPlayerFailed'))
+  } finally {
+    autoSeatingPlayer.value = null
+  }
+}
+
 const getPlayerDisplayName = (player: any) => {
   if (!player) return 'Unknown'
   // Prefer displayName (for new roster format)
@@ -678,6 +733,68 @@ defineExpose({ refreshSeatingData })
   .seating-manager__grid {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+/* Unseated checked-in players */
+.seating-manager__unseated {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background-color: var(--color-pp-surface);
+  border: 1px solid var(--color-pp-border-strong);
+  border-radius: 1rem;
+}
+
+.seating-manager__unseated-header {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: 1rem;
+}
+
+.seating-manager__unseated-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.seating-manager__unseated-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.4rem;
+  border-radius: 9999px;
+  background-color: var(--color-pp-surface-2);
+  color: var(--color-pp-gold);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.seating-manager__unseated-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.seating-manager__unseated-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  background-color: var(--color-pp-bg);
+  border: 1px solid var(--color-pp-border);
+  border-radius: 0.625rem;
+}
+
+.seating-manager__unseated-name {
+  flex: 1;
+  min-width: 0;
+  font-weight: 500;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Loading State */

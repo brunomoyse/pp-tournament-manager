@@ -31,6 +31,19 @@ mutation AssignPlayerToSeat($input: AssignPlayerToSeatInput!) {
   }
 }
 
+mutation AutoSeatPlayer($input: AutoSeatPlayerInput!) {
+  autoSeatPlayer(input: $input) {
+    id
+    tournamentId
+    clubTableId
+    userId
+    seatNumber
+    stackSize
+    isCurrent
+    assignedAt
+  }
+}
+
 mutation MovePlayer($input: MovePlayerInput!) {
   movePlayer(input: $input) {
     id

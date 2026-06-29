@@ -128,6 +128,24 @@
           </PpButton>
         </form>
       </div>
+
+      <!-- Registration options (apply to both tabs) -->
+      <div class="register-options">
+        <label class="option-row">
+          <input v-model="markPresent" type="checkbox" class="option-checkbox" />
+          <span class="option-text">
+            <span class="option-label">{{ t('registerModal.markPresent') }}</span>
+            <span class="option-hint">{{ t('registerModal.markPresentHint') }}</span>
+          </span>
+        </label>
+        <label v-if="showAutoSeat" class="option-row">
+          <input v-model="autoSeat" type="checkbox" class="option-checkbox" />
+          <span class="option-text">
+            <span class="option-label">{{ t('registerModal.autoSeat') }}</span>
+            <span class="option-hint">{{ t('registerModal.autoSeatHint') }}</span>
+          </span>
+        </label>
+      </div>
     </div>
   </PpModal>
 </template>
@@ -145,6 +163,7 @@ const props = defineProps<{
   isOpen: boolean
   tournamentId: string
   clubPlayerIds: string[]
+  liveStatus?: string | null
 }>()
 
 const emit = defineEmits<{
@@ -161,6 +180,18 @@ const creating = ref(false)
 const error = ref<string | null>(null)
 const newFirstName = ref('')
 const newLastName = ref('')
+const markPresent = ref(false)
+const autoSeat = ref(false)
+
+// Auto-seating only makes sense once seating is live (late reg or later).
+const showAutoSeat = computed(() =>
+  ['LATE_REGISTRATION', 'IN_PROGRESS', 'BREAK', 'FINAL_TABLE'].includes(props.liveStatus || ''),
+)
+
+// Checking "auto-seat" implies the player is present.
+watch(autoSeat, (on) => {
+  if (on) markPresent.value = true
+})
 
 // Search filters the loaded roster client-side, excluding already-registered players.
 const searchResults = computed(() => {
@@ -190,7 +221,12 @@ const registerPlayer = async (clubPlayerId: string) => {
     registering.value = clubPlayerId
     error.value = null
     await GqlRegisterRosterPlayer({
-      input: { tournamentId: props.tournamentId, clubPlayerId },
+      input: {
+        tournamentId: props.tournamentId,
+        clubPlayerId,
+        checkIn: markPresent.value,
+        autoSeat: showAutoSeat.value && autoSeat.value,
+      },
     })
     emit('registered', { playerId: clubPlayerId })
     close()
@@ -218,7 +254,12 @@ const createAndRegister = async () => {
     if (!clubPlayerId) throw new Error('Failed to create player')
 
     await GqlRegisterRosterPlayer({
-      input: { tournamentId: props.tournamentId, clubPlayerId },
+      input: {
+        tournamentId: props.tournamentId,
+        clubPlayerId,
+        checkIn: markPresent.value,
+        autoSeat: showAutoSeat.value && autoSeat.value,
+      },
     })
 
     emit('registered', { playerId: clubPlayerId })
@@ -244,6 +285,8 @@ const close = () => {
   activeTab.value = 'search'
   newFirstName.value = ''
   newLastName.value = ''
+  markPresent.value = false
+  autoSeat.value = false
   emit('close')
 }
 
@@ -255,6 +298,8 @@ watch(
       error.value = null
       newFirstName.value = ''
       newLastName.value = ''
+      markPresent.value = false
+      autoSeat.value = false
       activeTab.value = 'search'
       loadRoster()
     }
@@ -458,6 +503,49 @@ watch(
 .form-error-text {
   color: var(--pp-red-400);
   font-size: 0.875rem;
+}
+
+/* Registration options */
+.register-options {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-pp-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.option-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  cursor: pointer;
+}
+
+.option-checkbox {
+  margin-top: 0.15rem;
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--color-pp-gold);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.option-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.option-hint {
+  font-size: 0.75rem;
+  color: var(--color-pp-text-dim);
 }
 
 .icon-md {
