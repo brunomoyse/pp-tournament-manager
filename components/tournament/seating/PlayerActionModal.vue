@@ -38,6 +38,7 @@
           <PpButton
             variant="danger"
             class="action-button-full"
+            test-id="player-bust"
             :disabled="processing"
             @click="handleStatusChange('ELIMINATED')"
           >
@@ -52,6 +53,7 @@
           <PpButton
             variant="secondary"
             class="action-button-full"
+            test-id="player-move"
             :disabled="processing"
             @click="handleTableMove"
           >

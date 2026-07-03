@@ -15,6 +15,8 @@
       <div
         v-for="player in finishedPlayers"
         :key="player.id"
+        data-testid="result-row"
+        :data-position="player.position"
         :class="[
           'results-card__row',
           player.position <= 3 ? 'results-card__row--podium' : 'results-card__row--regular',

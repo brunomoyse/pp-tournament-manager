@@ -41,10 +41,12 @@
 
         <div v-else>
           <!-- Compact 6-up stat strip -->
-          <div class="stats-grid">
+          <div class="stats-grid" data-testid="reports-stats">
             <PpCard padding="none" class="stat-tile">
               <PpEyebrow size="sm">{{ t('reports.tournaments') }}</PpEyebrow>
-              <div class="stat-figure">{{ stats.totalTournaments }}</div>
+              <div class="stat-figure" data-testid="stat-tournaments">
+                {{ stats.totalTournaments }}
+              </div>
             </PpCard>
 
             <PpCard padding="none" class="stat-tile">
@@ -93,6 +95,7 @@
               <PpButton
                 variant="ghost"
                 size="sm"
+                test-id="leaderboard-export"
                 :disabled="leaderboard.length === 0"
                 @click="exportLeaderboardCsv"
               >
@@ -158,6 +161,7 @@
                   <tr
                     v-for="(entry, index) in rankedLeaderboard"
                     :key="entry.clubPlayerId || entry.user?.id || index"
+                    data-testid="leaderboard-row"
                     :class="[
                       'pp-stagger-item',
                       'table-row',

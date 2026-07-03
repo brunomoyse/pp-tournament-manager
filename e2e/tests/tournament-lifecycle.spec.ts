@@ -121,4 +121,27 @@ test.describe.serial('Tournament Lifecycle', () => {
     await expect(page.getByRole('button', { name: /^PAUSE$/i })).toBeVisible({ timeout: 10_000 })
     await expect(getByTestId(page, 'clock-live-text')).toBeVisible()
   })
+
+  // ─── Step 12: Seating operation — bust a player ─────────────────────
+
+  test('Step 12: Bust a seated player and see BUSTED on the Players tab', async () => {
+    const victim = INITIAL_PLAYERS[0]
+
+    // Open the per-seat action modal for the victim, then the danger "Bust"
+    // action (no confirm for a non-PKO tournament).
+    await switchTab(page, 'seating')
+    await getByTestId(page, 'table-player-action')
+      .filter({ has: page.getByText(victim) })
+      .first()
+      .click()
+    const bust = getByTestId(page, 'player-bust')
+    await expect(bust).toBeVisible({ timeout: 10_000 })
+    await bust.click()
+
+    // Authoritative, subscription-backed view: the players table shows BUSTED.
+    await switchTab(page, 'players')
+    const row = playerRow(page, victim)
+    await expect(row).toBeVisible({ timeout: 10_000 })
+    await expect(row.getByText('Busted')).toBeVisible({ timeout: 15_000 })
+  })
 })

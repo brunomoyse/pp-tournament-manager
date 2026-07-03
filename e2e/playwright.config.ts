@@ -3,7 +3,11 @@ import { defineConfig, devices } from '@playwright/test'
 export default defineConfig({
   testDir: './tests',
   outputDir: './test-results',
-  timeout: 60_000,
+  // Generous per-test budget: the lifecycle steps drive heavy multi-player
+  // flows (register/check-in 6-8 players) against a shared dev server that
+  // slows under accumulated load across the serial suite. 60s occasionally
+  // clipped a register-heavy step at a load spike.
+  timeout: 120_000,
   expect: {
     timeout: 10_000,
   },

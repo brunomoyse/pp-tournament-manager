@@ -90,6 +90,8 @@
           v-for="seatData in seatedPlayers"
           :key="seatData.assignment.seatNumber"
           class="table-card__player-row"
+          data-testid="table-player-action"
+          :data-player-name="seatData.displayName || getPlayerFullName(seatData.player)"
           @click="openPlayerModal(seatData.assignment.seatNumber)"
         >
           <div class="table-card__player-info">

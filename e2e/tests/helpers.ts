@@ -197,7 +197,11 @@ export async function startClock(page: Page): Promise<void> {
  */
 export async function changeStatus(page: Page, actionLabel: string | RegExp): Promise<void> {
   await switchTab(page, 'overview')
-  await expect(page.getByText('Tournament Status')).toBeVisible({ timeout: 10_000 })
+  // Heading (not getByText) so a lingering "Tournament status updated" success
+  // toast from a prior change doesn't create a strict-mode double match.
+  await expect(page.getByRole('heading', { name: 'Tournament Status' })).toBeVisible({
+    timeout: 10_000,
+  })
   await page.getByRole('button', { name: actionLabel }).click()
 
   const dialog = page.locator('[role="dialog"]').first()
