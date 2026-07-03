@@ -8,5 +8,7 @@ pre-commit:
 
     - name: format
       glob: '*.{ts,vue,js,mjs,cjs,json,md,yml,yaml}'
+      exclude:
+        - package-lock.json
       run: npx oxfmt {staged_files}
       stage_fixed: true
