@@ -5,6 +5,11 @@ import { test, expect } from '@playwright/test'
 // Settings shows the plan + upgrade CTA, and the paid-only routes are guarded.
 
 test.describe('Free club manager journey', () => {
+  test.skip(
+    true,
+    'Home Game plan is hidden during the beta (isBeta=true in onboarding.vue) - re-enable when the free plan returns',
+  )
+
   test.beforeEach(async ({ page }) => {
     // Pin English so text assertions are stable (app falls back to French).
     await page.addInitScript(() => window.localStorage.setItem('locale', 'en'))

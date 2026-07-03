@@ -11,6 +11,11 @@ test.describe('Onboarding - plan choice (public)', () => {
   })
 
   test('offers both plans; Home Game hides VAT, Club reveals it', async ({ page }) => {
+    test.skip(
+      true,
+      'Home Game plan is hidden during the beta (isBeta=true in onboarding.vue) - re-enable when the free plan returns',
+    )
+
     await page.goto('/onboarding')
 
     const freeCard = page.getByRole('radio', { name: /Home Game/i })

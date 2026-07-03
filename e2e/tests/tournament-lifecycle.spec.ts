@@ -34,6 +34,27 @@ test.describe.serial('Tournament Lifecycle', () => {
     const context = await browser.newContext({
       storageState: 'e2e/.auth/manager.json',
     })
+    // Pin English so text assertions are stable (app falls back to French).
+    await context.addInitScript(() => window.localStorage.setItem('locale', 'en'))
+    // Mark the onboarding tour as completed - its welcome modal otherwise
+    // covers the dashboard on a fresh profile and blocks every click.
+    await context.addCookies([
+      {
+        name: 'tour',
+        value: encodeURIComponent(
+          JSON.stringify({
+            hasSeenWelcome: true,
+            tourCompleted: true,
+            checklistDismissed: true,
+            visitedTemplates: true,
+            visitedReports: true,
+            hasAddedPlayer: true,
+          }),
+        ),
+        domain: 'localhost',
+        path: '/',
+      },
+    ])
     page = await context.newPage()
     tournamentName = `E2E Test Tournament - ${Date.now()}`
   })
@@ -46,13 +67,14 @@ test.describe.serial('Tournament Lifecycle', () => {
 
   test('Step 1: Navigate to dashboard and create a tournament', async () => {
     await page.goto('/')
-    await expect(page.locator('h1')).toContainText('PocketPair')
+    // Dashboard h1 is a personal greeting ("Hello, <name>!") since the redesign.
+    await expect(page.locator('h1.page-title')).toBeVisible()
 
     // Click "Create Tournament" in the Quick Actions card
     await page.getByText('Create Tournament', { exact: false }).first().click()
 
     // Wait for the tournament form modal to appear
-    const modal = page.locator('.fixed.inset-0.z-50').first()
+    const modal = page.locator('[role="dialog"]').first()
     await expect(modal).toBeVisible()
     await expect(modal.locator('h2')).toContainText('Create Tournament')
 
@@ -94,15 +116,17 @@ test.describe.serial('Tournament Lifecycle', () => {
     await page.getByText(tournamentName).first().click()
 
     // Verify we're on the tournament detail page
-    await expect(page.getByText(tournamentName)).toBeVisible({ timeout: 10_000 })
-    await expect(page.getByText('Overview')).toBeVisible()
+    await expect(page).toHaveURL(/\/tournament\//, { timeout: 10_000 })
+    await expect(page.locator('.tab-button', { hasText: 'Overview' })).toBeVisible({
+      timeout: 10_000,
+    })
   })
 
   // ─── Step 2: Assign Tables ──────────────────────────────────────────
 
   test('Step 2: Assign tables to the tournament', async () => {
     // Click Seating tab
-    await page.getByText('Seating', { exact: true }).click()
+    await page.locator('.tab-button', { hasText: 'Seating' }).click()
 
     // Wait for seating content to load
     await expect(page.getByText('Table Management', { exact: false })).toBeVisible({
@@ -113,12 +137,9 @@ test.describe.serial('Tournament Lifecycle', () => {
     await page.getByText('Link Table(s)', { exact: false }).first().click()
 
     // Wait for the assign table modal
-    const modal = page.locator('.fixed.inset-0.z-50').first()
+    const modal = page.locator('[role="dialog"]').first()
     await expect(modal).toBeVisible()
     await expect(modal.locator('h3')).toContainText('Link Club Tables')
-
-    // Select 9-max format (should be default, but click to be sure)
-    await modal.getByText('9-max', { exact: true }).click()
 
     // Wait for club tables to load
     await expect(modal.locator('input[type="checkbox"]').first()).toBeVisible({ timeout: 10_000 })
@@ -132,20 +153,21 @@ test.describe.serial('Tournament Lifecycle', () => {
     }
 
     // Click the "Link N Tables" button
-    await modal.locator('button.pp-action-button--primary').last().click()
+    await modal.getByRole('button', { name: /Link \d+ Table/i }).click()
 
     // Wait for modal to close
     await expect(modal).toBeHidden({ timeout: 15_000 })
 
-    // Verify tables appear in the seating chart
-    await expect(page.getByText('Table', { exact: false })).toBeVisible()
+    // Verify tables appear in the seating chart (table cards, not the many
+    // other "Table" strings in nav/activity/heading).
+    await expect(page.locator('.table-card__title').first()).toBeVisible()
   })
 
   // ─── Step 3: Open Registration ──────────────────────────────────────
 
   test('Step 3: Open registration', async () => {
     // Switch to Overview tab
-    await page.getByText('Overview', { exact: true }).click()
+    await page.locator('.tab-button', { hasText: 'Overview' }).click()
 
     // Wait for the status card to load
     await expect(page.getByText('Tournament Status', { exact: false })).toBeVisible({
@@ -156,7 +178,7 @@ test.describe.serial('Tournament Lifecycle', () => {
     await page.getByText('Open Registration', { exact: true }).click()
 
     // Confirm in the dialog
-    const confirmDialog = page.locator('.fixed.inset-0.z-50').first()
+    const confirmDialog = page.locator('[role="dialog"]').first()
     await expect(confirmDialog).toBeVisible()
     await expect(confirmDialog.getByText('Change Status')).toBeVisible()
     await confirmDialog.getByText('Confirm', { exact: true }).click()
@@ -169,18 +191,18 @@ test.describe.serial('Tournament Lifecycle', () => {
 
   test('Step 4: Register players', async () => {
     // Switch to Players tab
-    await page.getByText('Players', { exact: true }).click()
+    await page.locator('.tab-button', { hasText: 'Players' }).click()
     await expect(page.getByText('Register Player')).toBeVisible({ timeout: 10_000 })
 
     for (const playerName of INITIAL_PLAYERS) {
       // Click "Register Player" to open modal
-      await page
-        .locator('button.pp-action-button--primary')
-        .filter({ hasText: 'Register Player' })
-        .click()
+      await page.getByRole('button', { name: 'Register Player' }).first().click()
 
-      // Wait for modal
-      const modal = page.locator('.fixed.inset-0.z-50').first()
+      // Scope to the register dialog specifically (its title = "Register Player")
+      // so the close/hidden checks aren't confused by other dialogs in the DOM.
+      const modal = page
+        .locator('[role="dialog"]')
+        .filter({ has: page.locator('.pp-modal-title', { hasText: 'Register Player' }) })
       await expect(modal).toBeVisible()
 
       // Search for the player
@@ -194,23 +216,20 @@ test.describe.serial('Tournament Lifecycle', () => {
 
       // Click "Register" on the first result
       await modal
-        .locator('button.pp-action-button--primary')
-        .filter({ hasText: 'Register' })
+        .getByRole('button', { name: /^Register/ })
         .first()
         .click()
 
-      // Wait for registration to complete (button changes to "Registering...")
-      // Then the player disappears from search results or modal closes
-      // Wait a moment for the operation to finish
-      await page.waitForTimeout(1_000)
-
-      // Close the modal (click backdrop or close button)
-      const closeButton = modal
-        .locator('button')
-        .filter({ has: page.locator('ion-icon') })
-        .first()
-      await closeButton.click()
-      await expect(modal).toBeHidden({ timeout: 5_000 })
+      // The modal auto-closes on a successful registration; only click Close
+      // if it's still open (e.g. the player was already registered).
+      if (await modal.isVisible().catch(() => false)) {
+        await modal
+          .getByRole('button', { name: 'Close' })
+          .first()
+          .click()
+          .catch(() => {})
+      }
+      await expect(modal).toBeHidden({ timeout: 10_000 })
 
       // Brief pause between registrations
       await page.waitForTimeout(500)
@@ -218,9 +237,9 @@ test.describe.serial('Tournament Lifecycle', () => {
 
     // Verify all 6 players show in the list with "Registered" status
     for (const playerName of INITIAL_PLAYERS) {
-      await expect(page.getByText(playerName, { exact: false }).first()).toBeVisible({
-        timeout: 5_000,
-      })
+      await expect(
+        page.locator('.player-row', { hasText: playerName }).locator('.player-name'),
+      ).toBeVisible({ timeout: 5_000 })
     }
   })
 
@@ -230,7 +249,7 @@ test.describe.serial('Tournament Lifecycle', () => {
     // We're already on the Players tab
     for (const playerName of PRE_START_CHECKIN) {
       // Find the player row and its Check In button
-      const playerRow = page.locator('.divide-y > div').filter({ hasText: playerName })
+      const playerRow = page.locator('.player-row').filter({ hasText: playerName })
       const checkInBtn = playerRow.locator('button').filter({ hasText: 'Check In' })
       await checkInBtn.click()
 
@@ -243,7 +262,7 @@ test.describe.serial('Tournament Lifecycle', () => {
 
     // Verify the remaining 2 players are still "Registered"
     for (const playerName of REMAINING_REGISTERED) {
-      const playerRow = page.locator('.divide-y > div').filter({ hasText: playerName })
+      const playerRow = page.locator('.player-row').filter({ hasText: playerName })
       await expect(playerRow.getByText('Registered')).toBeVisible()
     }
   })
@@ -252,7 +271,7 @@ test.describe.serial('Tournament Lifecycle', () => {
 
   test('Step 6: Verify seating chart shows 4 seated players', async () => {
     // Switch to Seating tab
-    await page.getByText('Seating', { exact: true }).click()
+    await page.locator('.tab-button', { hasText: 'Seating' }).click()
 
     // Wait for seating content
     await expect(page.getByText('Table Management')).toBeVisible({ timeout: 10_000 })
@@ -260,9 +279,9 @@ test.describe.serial('Tournament Lifecycle', () => {
     // Verify at least some players are shown in the seating chart
     // Each checked-in player should appear on a table card
     for (const playerName of PRE_START_CHECKIN) {
-      await expect(page.getByText(playerName, { exact: false }).first()).toBeVisible({
-        timeout: 5_000,
-      })
+      await expect(
+        page.locator('.player-row', { hasText: playerName }).locator('.player-name'),
+      ).toBeVisible({ timeout: 5_000 })
     }
   })
 
@@ -270,18 +289,18 @@ test.describe.serial('Tournament Lifecycle', () => {
 
   test('Step 7: Start late registration', async () => {
     // Switch to Overview tab
-    await page.getByText('Overview', { exact: true }).click()
+    await page.locator('.tab-button', { hasText: 'Overview' }).click()
     await expect(page.getByText('Tournament Status')).toBeVisible({ timeout: 10_000 })
 
-    // Click "Late Registration" button
-    await page.getByText('Late Registration', { exact: true }).click()
+    // REGISTRATION_OPEN -> LATE_REGISTRATION action is labelled "Start Tournament".
+    await page.getByRole('button', { name: 'Start Tournament' }).click()
 
     // Confirm in dialog
-    const confirmDialog = page.locator('.fixed.inset-0.z-50').first()
+    const confirmDialog = page.locator('[role="dialog"]').first()
     await expect(confirmDialog).toBeVisible()
     await confirmDialog.getByText('Confirm', { exact: true }).click()
 
-    // Verify status changes to LATE_REGISTRATION
+    // Verify status changes to LATE_REGISTRATION (stepper step becomes active).
     await expect(page.getByText('Late Registration').first()).toBeVisible({ timeout: 15_000 })
   })
 
@@ -289,28 +308,27 @@ test.describe.serial('Tournament Lifecycle', () => {
 
   test('Step 8: Start the clock', async () => {
     // Switch to Clock tab
-    await page.getByText('Clock', { exact: true }).click()
+    await page.locator('.tab-button', { hasText: 'Clock' }).click()
     await expect(page.getByText('Tournament Clock')).toBeVisible({ timeout: 10_000 })
 
-    // Click the main "START" button (large button)
-    const startButton = page.locator('button.w-full').filter({ hasText: 'Start' })
-    await startButton.click()
+    // Click the main START button (large gold clock control)
+    await page.getByRole('button', { name: /^START$/i }).click()
 
-    // Verify clock is now running - button text changes to "PAUSE" and LIVE indicator appears
-    await expect(page.getByText('PAUSE')).toBeVisible({ timeout: 10_000 })
-    await expect(page.getByText('LIVE')).toBeVisible()
+    // Verify clock is now running - control changes to PAUSE and LIVE badge appears
+    await expect(page.getByRole('button', { name: /^PAUSE$/i })).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByText('LIVE').first()).toBeVisible()
   })
 
   // ─── Step 9: Handle Late Registration Players ──────────────────────
 
   test('Step 9: Check in remaining + register & check in late players', async () => {
     // Switch to Players tab
-    await page.getByText('Players', { exact: true }).click()
+    await page.locator('.tab-button', { hasText: 'Players' }).click()
     await expect(page.getByText('Register Player')).toBeVisible({ timeout: 10_000 })
 
     // Check in the 2 remaining REGISTERED players
     for (const playerName of REMAINING_REGISTERED) {
-      const playerRow = page.locator('.divide-y > div').filter({ hasText: playerName })
+      const playerRow = page.locator('.player-row').filter({ hasText: playerName })
       const checkInBtn = playerRow.locator('button').filter({ hasText: 'Check In' })
       await checkInBtn.click()
       await expect(playerRow.getByText('Seated')).toBeVisible({ timeout: 10_000 })
@@ -320,11 +338,10 @@ test.describe.serial('Tournament Lifecycle', () => {
     // Register and check in 2 more late registration players
     for (const playerName of LATE_REG_PLAYERS) {
       // Register
-      await page
-        .locator('button.pp-action-button--primary')
-        .filter({ hasText: 'Register Player' })
-        .click()
-      const modal = page.locator('.fixed.inset-0.z-50').first()
+      await page.getByRole('button', { name: 'Register Player' }).first().click()
+      const modal = page
+        .locator('[role="dialog"]')
+        .filter({ has: page.locator('.pp-modal-title', { hasText: 'Register Player' }) })
       await expect(modal).toBeVisible()
 
       const searchInput = modal.locator('input[type="text"]')
@@ -333,23 +350,23 @@ test.describe.serial('Tournament Lifecycle', () => {
         timeout: 10_000,
       })
       await modal
-        .locator('button.pp-action-button--primary')
-        .filter({ hasText: 'Register' })
+        .getByRole('button', { name: /^Register/ })
         .first()
         .click()
-      await page.waitForTimeout(1_000)
 
-      // Close modal
-      const closeButton = modal
-        .locator('button')
-        .filter({ has: page.locator('ion-icon') })
-        .first()
-      await closeButton.click()
-      await expect(modal).toBeHidden({ timeout: 5_000 })
+      // Modal auto-closes on success; only click Close if still open.
+      if (await modal.isVisible().catch(() => false)) {
+        await modal
+          .getByRole('button', { name: 'Close' })
+          .first()
+          .click()
+          .catch(() => {})
+      }
+      await expect(modal).toBeHidden({ timeout: 10_000 })
       await page.waitForTimeout(500)
 
       // Check in
-      const playerRow = page.locator('.divide-y > div').filter({ hasText: playerName })
+      const playerRow = page.locator('.player-row').filter({ hasText: playerName })
       const checkInBtn = playerRow.locator('button').filter({ hasText: 'Check In' })
       await checkInBtn.click()
       await expect(playerRow.getByText('Seated')).toBeVisible({ timeout: 10_000 })
@@ -361,15 +378,16 @@ test.describe.serial('Tournament Lifecycle', () => {
 
   test('Step 10: Verify all 8 players are seated', async () => {
     // Switch to Seating tab
-    await page.getByText('Seating', { exact: true }).click()
+    await page.locator('.tab-button', { hasText: 'Seating' }).click()
     await expect(page.getByText('Table Management')).toBeVisible({ timeout: 10_000 })
 
-    // All 8 players should be visible in the seating chart
+    // All 8 players should be seated. In the seating chart the name shows in
+    // the per-table seated-players list (.table-card__player-name).
     const allPlayers = [...INITIAL_PLAYERS, ...LATE_REG_PLAYERS]
     for (const playerName of allPlayers) {
-      await expect(page.getByText(playerName, { exact: false }).first()).toBeVisible({
-        timeout: 5_000,
-      })
+      await expect(
+        page.locator('.table-card__player-name', { hasText: playerName }).first(),
+      ).toBeVisible({ timeout: 5_000 })
     }
   })
 
@@ -377,14 +395,14 @@ test.describe.serial('Tournament Lifecycle', () => {
 
   test('Step 11: Close late registration and move to IN_PROGRESS', async () => {
     // Switch to Overview tab
-    await page.getByText('Overview', { exact: true }).click()
+    await page.locator('.tab-button', { hasText: 'Overview' }).click()
     await expect(page.getByText('Tournament Status')).toBeVisible({ timeout: 10_000 })
 
-    // Click "Close Reg & Start" button
-    await page.getByText('Close Reg & Start', { exact: true }).click()
+    // LATE_REGISTRATION -> IN_PROGRESS action is labelled "Close Late Registration".
+    await page.getByRole('button', { name: 'Close Late Registration' }).click()
 
     // Confirm in dialog
-    const confirmDialog = page.locator('.fixed.inset-0.z-50').first()
+    const confirmDialog = page.locator('[role="dialog"]').first()
     await expect(confirmDialog).toBeVisible()
     await confirmDialog.getByText('Confirm', { exact: true }).click()
 
@@ -392,8 +410,8 @@ test.describe.serial('Tournament Lifecycle', () => {
     await expect(page.getByText('In Progress')).toBeVisible({ timeout: 15_000 })
 
     // Switch to Clock tab and verify clock is still running
-    await page.getByText('Clock', { exact: true }).click()
-    await expect(page.getByText('PAUSE')).toBeVisible({ timeout: 10_000 })
-    await expect(page.getByText('LIVE')).toBeVisible()
+    await page.locator('.tab-button', { hasText: 'Clock' }).click()
+    await expect(page.getByRole('button', { name: /^PAUSE$/i })).toBeVisible({ timeout: 10_000 })
+    await expect(page.locator('.clock-card__live-text')).toBeVisible()
   })
 })

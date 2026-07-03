@@ -6,20 +6,21 @@ setup('authenticate as manager', async ({ page }) => {
   // Navigate to login page
   await page.goto('/login')
 
-  // Ionic IonInput wraps native <input> in shadow DOM - Playwright pierces it by default
   // Fill email field
-  const emailInput = page.locator('ion-input[type="email"] input')
+  const emailInput = page.locator('input[type="email"]')
   await emailInput.waitFor({ state: 'visible' })
   await emailInput.fill('contact@brunomoyse.be')
 
   // Fill password field
-  const passwordInput = page
-    .locator('ion-input[type="password"] input, ion-input[type="text"] input')
-    .last()
-  await passwordInput.fill('admin')
+  await page.locator('input[type="password"]').fill('admin')
 
-  // Click the login button
-  await page.locator('ion-button.pp-login-button').click()
+  // Check "remember me": the session only reaches localStorage (which
+  // storageState captures) for remembered logins - plain logins live in
+  // sessionStorage, which Playwright does not persist.
+  await page.locator('input.remember-checkbox').check({ force: true })
+
+  // Submit the login form
+  await page.locator('button[type="submit"]').click()
 
   // Wait for redirect to dashboard
   await page.waitForURL('/', { timeout: 15_000 })
