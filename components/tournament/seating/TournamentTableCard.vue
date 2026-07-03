@@ -1,5 +1,10 @@
 <template>
-  <div class="table-card" data-table-card>
+  <div
+    class="table-card"
+    data-table-card
+    data-testid="table-card"
+    :data-table-number="table.tableNumber"
+  >
     <!-- Table Header -->
     <div class="table-card__header">
       <div class="table-card__header-left">
@@ -91,7 +96,7 @@
             <span class="table-card__player-seat"
               >{{ t('labels.seat') }} {{ seatData.assignment.seatNumber }}:</span
             >
-            <span class="table-card__player-name">{{
+            <span class="table-card__player-name" data-testid="table-card-player-name">{{
               seatData.displayName || getPlayerFullName(seatData.player)
             }}</span>
           </div>

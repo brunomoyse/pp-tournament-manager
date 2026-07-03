@@ -67,6 +67,8 @@
               padding="none"
               class="tournament-card"
               :class="`tournament-card--${toneFor(tournament.status)}`"
+              data-testid="tournament-card"
+              :data-tournament-title="tournament.title"
               @click="goToTournament(tournament.id)"
             >
               <span

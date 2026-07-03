@@ -18,6 +18,8 @@ const props = withDefaults(
     title?: string
     size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'
     closeOnBackdrop?: boolean
+    /** Stable e2e hook, emitted as `data-testid` on the dialog panel. */
+    testId?: string
   }>(),
   {
     size: 'md',
@@ -106,19 +108,31 @@ onBeforeUnmount(() => {
     <Transition name="pp-modal">
       <div v-if="open" class="pp-modal-overlay" role="dialog" aria-modal="true">
         <div class="pp-modal-backdrop" @click="onBackdrop" />
-        <div ref="panelRef" tabindex="-1" class="pp-modal-panel" :class="`pp-modal-panel--${size}`">
+        <div
+          ref="panelRef"
+          tabindex="-1"
+          class="pp-modal-panel"
+          :class="`pp-modal-panel--${size}`"
+          :data-testid="testId || undefined"
+        >
           <header v-if="title || $slots.header" class="pp-modal-header">
             <slot name="header">
               <h3 class="pp-modal-title">{{ title }}</h3>
             </slot>
-            <button type="button" class="pp-modal-close" aria-label="Close" @click="emit('close')">
+            <button
+              type="button"
+              class="pp-modal-close"
+              data-testid="modal-close"
+              aria-label="Close"
+              @click="emit('close')"
+            >
               <IonIcon :icon="closeOutline" />
             </button>
           </header>
           <div class="pp-modal-body">
             <slot />
           </div>
-          <footer v-if="$slots.footer" class="pp-modal-footer">
+          <footer v-if="$slots.footer" class="pp-modal-footer" data-testid="modal-footer">
             <slot name="footer" />
           </footer>
         </div>

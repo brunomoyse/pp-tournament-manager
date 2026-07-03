@@ -28,6 +28,12 @@ const props = withDefaults(
     loading?: boolean
     disabled?: boolean
     magnetic?: boolean
+    /**
+     * Stable e2e hook. Emitted as `data-testid` on the rendered element.
+     * The component has two root branches (Motion / component) so attribute
+     * fallthrough can't apply it — pass it explicitly.
+     */
+    testId?: string
   }>(),
   {
     variant: 'primary',
@@ -107,6 +113,7 @@ function onMagnetLeave() {
     :type="type"
     :disabled="isDisabled"
     :aria-busy="loading || undefined"
+    :data-testid="testId || undefined"
     :class="classes"
     :animate="{ x: mx, y: my }"
     :transition="spring.default"
@@ -126,6 +133,7 @@ function onMagnetLeave() {
     :disabled="is === 'button' ? isDisabled : undefined"
     :aria-busy="loading || undefined"
     :aria-disabled="is !== 'button' && isDisabled ? 'true' : undefined"
+    :data-testid="testId || undefined"
     :class="classes"
   >
     <span v-if="loading" class="pp-btn-spinner" aria-hidden="true" />

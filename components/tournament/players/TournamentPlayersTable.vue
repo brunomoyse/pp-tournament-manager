@@ -75,13 +75,20 @@
 
       <!-- Player Rows -->
       <div class="player-rows" role="rowgroup">
-        <div v-for="player in filteredPlayers" :key="player.id" class="player-row" role="row">
+        <div
+          v-for="player in filteredPlayers"
+          :key="player.id"
+          class="player-row"
+          role="row"
+          data-testid="player-row"
+          :data-player-name="player.name"
+        >
           <!-- Name Column -->
           <div class="player-name-col" role="cell">
             <div class="player-avatar">
               {{ getInitials(player.name) }}
             </div>
-            <h3 class="player-name">{{ player.name }}</h3>
+            <h3 class="player-name" data-testid="player-name">{{ player.name }}</h3>
           </div>
 
           <!-- Table / Seat Column -->

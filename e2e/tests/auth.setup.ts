@@ -1,6 +1,6 @@
 import { test as setup, expect } from '@playwright/test'
 
-const authFile = 'e2e/.auth/manager.json'
+import { AUTH_FILE, MANAGER_CREDENTIALS } from './helpers'
 
 setup('authenticate as manager', async ({ page }) => {
   // Navigate to login page
@@ -9,10 +9,10 @@ setup('authenticate as manager', async ({ page }) => {
   // Fill email field
   const emailInput = page.locator('input[type="email"]')
   await emailInput.waitFor({ state: 'visible' })
-  await emailInput.fill('contact@brunomoyse.be')
+  await emailInput.fill(MANAGER_CREDENTIALS.email)
 
   // Fill password field
-  await page.locator('input[type="password"]').fill('admin')
+  await page.locator('input[type="password"]').fill(MANAGER_CREDENTIALS.password)
 
   // Check "remember me": the session only reaches localStorage (which
   // storageState captures) for remembered logins - plain logins live in
@@ -27,5 +27,5 @@ setup('authenticate as manager', async ({ page }) => {
   await expect(page.locator('h1')).toContainText('PocketPair')
 
   // Save storage state for reuse
-  await page.context().storageState({ path: authFile })
+  await page.context().storageState({ path: AUTH_FILE })
 })

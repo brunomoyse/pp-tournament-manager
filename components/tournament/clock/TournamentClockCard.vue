@@ -11,7 +11,9 @@
       </div>
       <div v-if="clock?.status === 'RUNNING'" class="clock-card__live-badge">
         <div class="clock-card__live-dot pp-animate-pulse"></div>
-        <span class="clock-card__live-text">{{ t('status.live') }}</span>
+        <span class="clock-card__live-text" data-testid="clock-live-text">{{
+          t('status.live')
+        }}</span>
       </div>
       <div v-else-if="currentStructure?.isBreak && clock?.status" class="clock-card__break-badge">
         <span class="clock-card__break-text">{{ t('labels.breakTime') }}</span>
@@ -64,7 +66,7 @@
           </div>
 
           <!-- Timer -->
-          <div :class="['clock-card__timer-display', timerColorClass]">
+          <div :class="['clock-card__timer-display', timerColorClass]" data-testid="clock-timer">
             {{ formatDuration(timeRemaining) || '00:00' }}
           </div>
         </div>

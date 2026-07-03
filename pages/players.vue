@@ -20,7 +20,7 @@
               <IonIcon :icon="cloudUploadOutline" class="icon-md" />
               {{ t('players.import.button') }}
             </PpButton>
-            <PpButton magnetic @click="openCreateModal">
+            <PpButton magnetic test-id="add-player" @click="openCreateModal">
               <IonIcon :icon="addOutline" class="icon-md" />
               {{ t('players.addPlayer') }}
             </PpButton>
@@ -34,6 +34,7 @@
             <input
               v-model="searchQuery"
               type="text"
+              data-testid="player-search"
               :placeholder="t('players.searchPlaceholder')"
               class="search-input"
             />
@@ -93,6 +94,8 @@
                 v-for="(player, index) in pagedPlayers"
                 :key="player.id"
                 class="pp-stagger-item player-row"
+                data-testid="club-player-row"
+                :data-player-name="player.displayName"
                 :style="{ animationDelay: `${index * 40}ms` }"
               >
                 <div class="player-name-cell">
@@ -123,6 +126,7 @@
                   <button
                     type="button"
                     class="row-action"
+                    data-testid="player-edit"
                     :title="t('common.edit')"
                     :aria-label="t('common.edit')"
                     @click="openEditModal(player)"
@@ -133,6 +137,7 @@
                     v-if="!player.isClaimed"
                     type="button"
                     class="row-action row-action--danger"
+                    data-testid="player-anonymize"
                     :title="t('players.anonymize')"
                     :aria-label="t('players.anonymize')"
                     @click="confirmAnonymize(player)"

@@ -42,6 +42,7 @@
         <button
           v-for="tab in tabs"
           :key="tab.value"
+          :data-testid="`tab-${tab.value}`"
           @click="activeTab = tab.value"
           :class="[
             'tab-button',
