@@ -1,0 +1,10 @@
+mutation InviteClubManager($input: InviteClubManagerInput!) {
+  inviteClubManager(input: $input) {
+    createdAccount
+    emailSent
+  }
+}
+
+mutation RevokeClubManager($id: ID!) {
+  revokeClubManager(id: $id)
+}

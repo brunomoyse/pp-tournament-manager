@@ -1,0 +1,10 @@
+query GetClubManagers($clubId: ID!) {
+  clubManagers(clubId: $clubId) {
+    id
+    userId
+    email
+    firstName
+    lastName
+    assignedAt
+  }
+}

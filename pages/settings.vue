@@ -103,6 +103,71 @@
             </template>
           </section>
         </PpFadeUp>
+
+        <PpFadeUp :delay="0.16">
+          <section class="settings-section">
+            <div class="settings-section__head">
+              <h2 class="settings-section__title">{{ t('settings.teamTitle') }}</h2>
+              <p class="settings-section__help">{{ t('settings.teamHelp') }}</p>
+            </div>
+
+            <ul v-if="managers.length" class="team-list">
+              <li v-for="m in managers" :key="m.id" class="team-row">
+                <div class="team-row__info">
+                  <span class="team-row__name">
+                    {{ m.firstName }} {{ m.lastName ?? '' }}
+                    <span v-if="m.userId === myUserId" class="team-row__you">{{
+                      t('settings.teamYou')
+                    }}</span>
+                  </span>
+                  <span class="team-row__email">{{ m.email }}</span>
+                </div>
+                <PpButton
+                  v-if="m.userId !== myUserId"
+                  variant="ghost"
+                  size="sm"
+                  :disabled="isRevoking === m.id"
+                  data-testid="revoke-manager"
+                  @click="revokeManager(m)"
+                >
+                  {{ t('settings.teamRevoke') }}
+                </PpButton>
+              </li>
+            </ul>
+
+            <div class="redeem__row team-invite">
+              <input
+                v-model="inviteEmail"
+                type="email"
+                class="redeem__input"
+                :placeholder="t('settings.teamEmailPlaceholder')"
+                :disabled="isInviting"
+                autocomplete="off"
+                spellcheck="false"
+                data-testid="invite-email"
+                @keyup.enter="invite"
+              />
+              <input
+                v-model="inviteFirstName"
+                class="redeem__input team-invite__name"
+                :placeholder="t('settings.teamFirstNamePlaceholder')"
+                :disabled="isInviting"
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <PpButton
+                :loading="isInviting"
+                :disabled="isInviting || !inviteEmail.trim()"
+                data-testid="invite-submit"
+                @click="invite"
+              >
+                {{ t('settings.teamInviteButton') }}
+              </PpButton>
+            </div>
+            <p v-if="inviteError" class="plan-error">{{ inviteError }}</p>
+            <p v-if="inviteSuccess" class="redeem__success">{{ inviteSuccess }}</p>
+          </section>
+        </PpFadeUp>
       </div>
     </IonContent>
   </IonPage>
@@ -121,7 +186,7 @@ import { useThemeStore, THEMES } from '~/stores/useThemeStore'
 import { useI18n } from '~/composables/useI18n'
 import { useAuthStore } from '~/stores/useAuthStore'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const themeStore = useThemeStore()
 const themes = THEMES
 
@@ -230,10 +295,93 @@ const redeem = async () => {
   }
 }
 
+// ── Team (co-managers) ──────────────────────────────────────────────
+type TeamManager = {
+  id: string
+  userId: string
+  email: string
+  firstName: string
+  lastName?: string | null
+  assignedAt: string
+}
+
+const managers = ref<TeamManager[]>([])
+const inviteEmail = ref('')
+const inviteFirstName = ref('')
+const isInviting = ref(false)
+const isRevoking = ref<string | null>(null)
+const inviteError = ref('')
+const inviteSuccess = ref('')
+
+const myUserId = computed(() => (authStore.currentUser as any)?.id ?? '')
+const clubId = computed(() => (authStore.currentUser as any)?.managedClub?.id ?? '')
+
+const loadManagers = async () => {
+  if (!clubId.value) return
+  try {
+    const { clubManagers } = await GqlGetClubManagers({ clubId: clubId.value })
+    managers.value = (clubManagers ?? []) as TeamManager[]
+  } catch {
+    // List is non-critical; the section simply shows the invite form.
+  }
+}
+
+const invite = async () => {
+  inviteError.value = ''
+  inviteSuccess.value = ''
+  const email = inviteEmail.value.trim()
+  if (!clubId.value || !email) return
+
+  isInviting.value = true
+  try {
+    const { inviteClubManager } = await GqlInviteClubManager({
+      input: {
+        clubId: clubId.value,
+        email,
+        firstName: inviteFirstName.value.trim() || undefined,
+        locale: locale.value,
+      },
+    })
+    inviteEmail.value = ''
+    inviteFirstName.value = ''
+    inviteSuccess.value = !inviteClubManager.emailSent
+      ? t('settings.teamInviteNoEmail')
+      : inviteClubManager.createdAccount
+        ? t('settings.teamInviteSentNew')
+        : t('settings.teamInviteSentExisting')
+    await loadManagers()
+  } catch (err: any) {
+    inviteError.value = err?.gqlErrors?.[0]?.message || t('settings.teamInviteError')
+  } finally {
+    isInviting.value = false
+  }
+}
+
+const revokeManager = async (m: TeamManager) => {
+  inviteError.value = ''
+  inviteSuccess.value = ''
+  isRevoking.value = m.id
+  try {
+    await GqlRevokeClubManager({ id: m.id })
+    await loadManagers()
+  } catch (err: any) {
+    inviteError.value = err?.gqlErrors?.[0]?.message || t('settings.teamInviteError')
+  } finally {
+    isRevoking.value = null
+  }
+}
+
 // Refresh the plan on mount so returning from a successful checkout reflects
 // the upgrade immediately.
 onMounted(() => {
-  if (authStore.isAuthenticated) authStore.fetchMe().catch(() => {})
+  if (authStore.isAuthenticated) {
+    authStore
+      .fetchMe()
+      .catch(() => {})
+      .finally(() => {
+        void loadManagers()
+      })
+  }
 })
 </script>
 
@@ -479,5 +627,59 @@ onMounted(() => {
   margin-top: 0.6rem;
   font-size: 0.85rem;
   color: var(--color-pp-gold);
+}
+
+.team-list {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.team-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--pp-border);
+  border-radius: 12px;
+}
+
+.team-row__info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.team-row__name {
+  font-weight: 600;
+  color: var(--pp-text);
+}
+
+.team-row__you {
+  margin-left: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--pp-gold-deep);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.team-row__email {
+  font-size: 13px;
+  color: var(--pp-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.team-invite {
+  flex-wrap: wrap;
+}
+
+.team-invite__name {
+  max-width: 180px;
 }
 </style>
