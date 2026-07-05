@@ -111,8 +111,12 @@ export async function createAndOpenTournament(page: Page, name: string): Promise
   await modal.locator('button[type="submit"]').click()
   await expect(modal).toBeHidden({ timeout: 15_000 })
 
-  await page.getByText(name).first().click()
-  await expect(page).toHaveURL(/\/tournament\//, { timeout: 10_000 })
+  // The list refetches right after creation; a click can land on a card node
+  // Vue is about to replace and get swallowed. Retry click-then-navigate.
+  await expect(async () => {
+    await page.getByText(name).first().click()
+    await expect(page).toHaveURL(/\/tournament\//, { timeout: 3_000 })
+  }).toPass({ timeout: 20_000 })
   await expect(getByTestId(page, 'tab-overview')).toBeVisible({ timeout: 10_000 })
 
   return name
