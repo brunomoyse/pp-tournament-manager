@@ -151,7 +151,7 @@ jobs:
       - name: Seed fixtures
         run: |
           sudo apt-get update && sudo apt-get install -y postgresql-client
-          for f in _backend/pp-service/fixtures/*.sql; do
+          for f in _backend/fixtures/*.sql; do
             echo "seeding $(basename "$f")"
             PGPASSWORD=admin psql -h localhost -U postgres -d pocketpair -v ON_ERROR_STOP=1 -q -f "$f"
           done
