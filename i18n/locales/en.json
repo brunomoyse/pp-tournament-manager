@@ -180,7 +180,6 @@
   },
   "settings": {
     "title": "Settings",
-    "themeHelp": "Tailor the app's look and feel to your club.",
     "planTitle": "Club plan",
     "planHelp": "Your current plan and billing.",
     "currentPlan": "Current plan",
@@ -237,12 +236,6 @@
       "redeemed": "Redeemed",
       "expired": "Expired"
     }
-  },
-  "theme": {
-    "label": "Theme",
-    "pocketpair": "PocketPair",
-    "vip": "VIP Poker Club",
-    "clover": "Clover Poker Club"
   },
   "headings": {
     "activeTournaments": "Active Tournaments",

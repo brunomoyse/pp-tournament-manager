@@ -7,36 +7,6 @@
           <h1 class="page-title">{{ t('settings.title') }}</h1>
         </PpFadeUp>
 
-        <PpFadeUp :delay="0.08">
-          <section class="settings-section">
-            <div class="settings-section__head">
-              <h2 class="settings-section__title">{{ t('theme.label') }}</h2>
-              <p class="settings-section__help">{{ t('settings.themeHelp') }}</p>
-            </div>
-
-            <div class="theme-options" role="radiogroup" :aria-label="t('theme.label')">
-              <button
-                v-for="opt in themes"
-                :key="opt.id"
-                type="button"
-                role="radio"
-                class="theme-option"
-                :class="{ 'theme-option--active': themeStore.theme === opt.id }"
-                :aria-checked="themeStore.theme === opt.id"
-                @click="themeStore.setTheme(opt.id)"
-              >
-                <span class="theme-option__swatch" :style="{ backgroundColor: opt.swatch }" />
-                <span class="theme-option__name">{{ t(opt.labelKey) }}</span>
-                <IonIcon
-                  v-if="themeStore.theme === opt.id"
-                  :icon="checkmarkCircle"
-                  class="theme-option__check"
-                />
-              </button>
-            </div>
-          </section>
-        </PpFadeUp>
-
         <PpFadeUp :delay="0.12">
           <section class="settings-section">
             <div class="settings-section__head">
@@ -180,16 +150,11 @@ definePageMeta({
 })
 
 import { ref, computed, onMounted } from 'vue'
-import { IonPage, IonContent, IonIcon } from '@ionic/vue'
-import { checkmarkCircle } from 'ionicons/icons'
-import { useThemeStore, THEMES } from '~/stores/useThemeStore'
+import { IonPage, IonContent } from '@ionic/vue'
 import { useI18n } from '~/composables/useI18n'
 import { useAuthStore } from '~/stores/useAuthStore'
 
 const { t, locale } = useI18n()
-const themeStore = useThemeStore()
-const themes = THEMES
-
 const authStore = useAuthStore()
 const config = useRuntimeConfig()
 const casinoContactHref = 'mailto:cloud@nuagemagique.dev'
@@ -438,61 +403,6 @@ onMounted(() => {
   margin-bottom: 1rem;
   font-size: 0.85rem;
   color: var(--color-pp-text-muted);
-}
-
-.theme-options {
-  display: grid;
-  gap: 0.5rem;
-}
-
-.theme-option {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  width: 100%;
-  padding: 0.85rem 1rem;
-  border-radius: 0.9rem;
-  border: 1px solid var(--color-pp-border);
-  background-color: var(--color-pp-surface);
-  color: var(--color-pp-text-muted);
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    color 0.2s ease;
-}
-
-.theme-option:hover {
-  color: var(--color-pp-text);
-  border-color: var(--color-pp-border-strong);
-}
-
-.theme-option--active {
-  color: var(--color-pp-text);
-  border-color: var(--color-pp-gold);
-  background-color: var(--color-pp-surface-2);
-}
-
-.theme-option__swatch {
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 9999px;
-  flex-shrink: 0;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
-}
-
-.theme-option__name {
-  flex: 1;
-  text-align: left;
-}
-
-.theme-option__check {
-  width: 1.25rem;
-  height: 1.25rem;
-  color: var(--color-pp-gold);
-  flex-shrink: 0;
 }
 
 /* Club plan section */

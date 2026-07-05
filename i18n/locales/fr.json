@@ -180,7 +180,6 @@
   },
   "settings": {
     "title": "Réglages",
-    "themeHelp": "Personnalisez l'apparence de l'application selon votre club.",
     "planTitle": "Formule du club",
     "planHelp": "Votre formule actuelle et la facturation.",
     "currentPlan": "Formule actuelle",
@@ -237,12 +236,6 @@
       "redeemed": "Utilisé",
       "expired": "Expiré"
     }
-  },
-  "theme": {
-    "label": "Thème",
-    "pocketpair": "PocketPair",
-    "vip": "VIP Poker Club",
-    "clover": "Clover Poker Club"
   },
   "headings": {
     "activeTournaments": "Tournois actifs",
