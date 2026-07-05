@@ -202,7 +202,7 @@
     "teamHelp": "Invite co-managers by email — they get an account and full manager access to this club.",
     "teamYou": "You",
     "teamRevoke": "Remove",
-    "teamEmailPlaceholder": "email@example.com",
+    "teamEmailPlaceholder": "Email address",
     "teamFirstNamePlaceholder": "First name (optional)",
     "teamInviteButton": "Invite",
     "teamInviteSentNew": "Invitation sent — an account was created and a set-password link emailed.",

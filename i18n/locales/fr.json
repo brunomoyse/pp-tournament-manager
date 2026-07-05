@@ -202,7 +202,7 @@
     "teamHelp": "Invitez des co-gérants par e-mail — ils reçoivent un compte et un accès gérant complet à ce club.",
     "teamYou": "Vous",
     "teamRevoke": "Retirer",
-    "teamEmailPlaceholder": "email@exemple.com",
+    "teamEmailPlaceholder": "Adresse e-mail",
     "teamFirstNamePlaceholder": "Prénom (optionnel)",
     "teamInviteButton": "Inviter",
     "teamInviteSentNew": "Invitation envoyée — un compte a été créé et un lien pour définir le mot de passe a été envoyé par e-mail.",
