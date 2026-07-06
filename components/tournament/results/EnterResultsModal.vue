@@ -155,6 +155,25 @@
               </div>
             </div>
 
+            <!-- Chip Counts (for ICM deal type) -->
+            <div v-if="deal.dealType === 'ICM'" class="custom-payouts">
+              <label class="pp-label">{{ t('results.chipCounts') }}</label>
+              <p class="icm-hint">{{ t('results.chipCountsHint') }}</p>
+              <div v-for="pos in deal.affectedPositions" :key="pos" class="custom-payout-row">
+                <span class="custom-payout-label"
+                  >#{{ pos }} {{ orderedPlayers[pos - 1]?.name }}</span
+                >
+                <input
+                  v-model.number="chipCounts[pos]"
+                  type="number"
+                  min="0"
+                  step="1000"
+                  :placeholder="t('results.chipCountsPlaceholder')"
+                  class="pp-input icm-chip-input"
+                />
+              </div>
+            </div>
+
             <!-- Custom Payouts (for CUSTOM deal type) -->
             <div v-if="deal.dealType === 'CUSTOM'" class="custom-payouts">
               <label class="pp-label">{{ t('results.customAmount') }}</label>
@@ -281,7 +300,6 @@ import { useI18n } from '~/composables/useI18n'
 import { useTournamentStore } from '~/stores/useTournamentStore'
 import { formatPrice } from '~/utils'
 import type { DealType, PayoutTemplate } from '~/types/tournament'
-import { TournamentLiveStatus } from '~/types/enums'
 
 interface Props {
   isOpen: boolean
@@ -329,6 +347,8 @@ const deal = ref({
 })
 
 const customPayoutAmounts = ref<Record<number, number>>({})
+// Chip stacks per affected position, used to compute an ICM split server-side.
+const chipCounts = ref<Record<number, number>>({})
 
 // Payout template state
 const selectedPayoutTemplateId = ref('')
@@ -403,6 +423,7 @@ watch(
       includeDeal.value = false
       deal.value = { dealType: 'EVEN_SPLIT', affectedPositions: [], notes: '' }
       customPayoutAmounts.value = {}
+      chipCounts.value = {}
       selectedPayoutTemplateId.value = ''
       availablePayoutTemplates.value = []
       await fetchPlayersAndPayouts()
@@ -488,18 +509,21 @@ const submitResults = async () => {
           }))
       }
 
+      if (deal.value.dealType === 'ICM') {
+        dealInput.chipCounts = deal.value.affectedPositions
+          .filter((pos) => chipCounts.value[pos] && orderedPlayers.value[pos - 1])
+          .map((pos) => ({
+            userId: orderedPlayers.value[pos - 1]!.userId,
+            chips: Math.round(chipCounts.value[pos] || 0),
+          }))
+      }
+
       input.deal = dealInput
     }
 
+    // Entering results finishes the tournament atomically on the backend
+    // (results + deal + FINISHED transition commit together).
     await GqlEnterTournamentResults({ input })
-
-    // Auto-finish the tournament after results are entered
-    await GqlUpdateTournamentStatus({
-      input: {
-        tournamentId: props.tournamentId,
-        liveStatus: TournamentLiveStatus.FINISHED,
-      },
-    })
 
     errorMessage.value = ''
     toast.success(t('toast.resultsEnteredSuccess'))
@@ -802,6 +826,17 @@ const closeModal = () => {
 
 .custom-payouts > * + * {
   margin-top: 0.5rem;
+}
+
+.icm-hint {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.75rem;
+}
+
+.icm-chip-input {
+  flex: 1;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
 }
 
 .custom-payout-row {

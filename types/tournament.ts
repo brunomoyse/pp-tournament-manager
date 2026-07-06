@@ -181,6 +181,12 @@ export interface CustomPayout {
   amountCents: number
 }
 
+// Chip stacks fed to an ICM deal split (required for ICM, ignored otherwise)
+export interface ChipCountInput {
+  userId: string
+  chips: number
+}
+
 export interface PlayerDeal {
   id: string
   tournamentId: string
