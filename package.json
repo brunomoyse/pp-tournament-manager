@@ -28,7 +28,7 @@
     "@pinia/nuxt": "^0.11.3",
     "@sentry/vue": "^10.65.0",
     "@tailwindcss/vite": "^4.3.2",
-    "graphql-ws": "^6.0.8",
+    "graphql-ws": "^6.1.0",
     "motion-v": "^2.3.0",
     "nuxt": "^4.4.8",
     "nuxt-graphql-client": "^0.2.46",
