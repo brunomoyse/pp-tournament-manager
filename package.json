@@ -32,7 +32,7 @@
     "motion-v": "^2.3.0",
     "nuxt": "^4.4.8",
     "nuxt-graphql-client": "^0.2.46",
-    "pinia": "^3.0.4",
+    "pinia": "^4.0.2",
     "pinia-plugin-persistedstate": "^4.7.1",
     "qrcode": "^1.5.4",
     "tailwindcss": "^4.3.2",
