@@ -25,7 +25,7 @@
     "@capacitor/ios": "^8.4.1",
     "@capacitor/network": "^8.0.1",
     "@nuxtjs/ionic": "^1.0.2",
-    "@pinia/nuxt": "^0.11.3",
+    "@pinia/nuxt": "^1.0.1",
     "@sentry/vue": "^10.65.0",
     "@tailwindcss/vite": "^4.3.2",
     "graphql-ws": "^6.0.8",
