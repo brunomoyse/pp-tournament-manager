@@ -42,16 +42,16 @@
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
-    "@capacitor/cli": "^8.4.1",
-    "@playwright/test": "^1.61.1",
+    "@capacitor/cli": "^8.4.2",
+    "@playwright/test": "^1.62.0",
     "@types/qrcode": "^1.5.6",
-    "@vitejs/plugin-vue": "^6.0.7",
+    "@vitejs/plugin-vue": "^6.0.8",
     "@vitest/coverage-v8": "^4.1.10",
     "@vue/test-utils": "^2.4.11",
-    "happy-dom": "^20.10.6",
+    "happy-dom": "^20.11.1",
     "lefthook": "^2.1.10",
-    "oxfmt": "^0.58.0",
-    "oxlint": "^1.73.0",
+    "oxfmt": "^0.61.0",
+    "oxlint": "^1.76.0",
     "vitest": "^4.1.8"
   }
 }
