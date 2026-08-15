@@ -154,12 +154,6 @@
             <TournamentResultsDisplay class="results-section" />
           </template>
 
-          <!-- Prediction resolution (FINISHED; self-gates on the predictions feature flag) -->
-          <TournamentPredictionsCard
-            v-if="tournament?.liveStatus === 'FINISHED'"
-            class="results-section"
-          />
-
           <!-- Recent Activity -->
           <TournamentActivityFeed :tournament-id="selectedTournamentId" />
         </div>
@@ -346,7 +340,6 @@ import TournamentQRModal from '~/components/tournament/TournamentQRModal.vue'
 import EnterResultsModal from '~/components/tournament/results/EnterResultsModal.vue'
 import CloseFlightModal from '~/components/tournament/series/CloseFlightModal.vue'
 import TournamentResultsDisplay from '~/components/tournament/results/TournamentResultsDisplay.vue'
-import TournamentPredictionsCard from '~/components/tournament/overview/TournamentPredictionsCard.vue'
 import TournamentCashReportCard from '~/components/tournament/entries/TournamentCashReportCard.vue'
 import TournamentBountiesCard from '~/components/tournament/entries/TournamentBountiesCard.vue'
 import TournamentActivityFeed from '~/components/tournament/overview/TournamentActivityFeed.vue'

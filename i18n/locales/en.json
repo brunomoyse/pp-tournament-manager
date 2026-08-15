@@ -964,14 +964,6 @@
     "create": "Create",
     "search": "Search templates..."
   },
-  "predictions": {
-    "title": "Predictions",
-    "description": "Settle every open prediction for this tournament. Winners are paid from the prediction-points pool.",
-    "resolve": "Resolve predictions",
-    "resolving": "Resolving...",
-    "resolved": "{count} predictions resolved",
-    "resolveFailed": "Failed to resolve predictions. Please try again."
-  },
   "activity": {
     "system": "System",
     "clock": {

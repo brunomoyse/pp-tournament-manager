@@ -964,14 +964,6 @@
     "create": "Maken",
     "search": "Sjablonen zoeken..."
   },
-  "predictions": {
-    "title": "Voorspellingen",
-    "description": "Reken alle openstaande voorspellingen voor dit toernooi af. Winnaars worden uitbetaald uit de voorspellingspuntenpot.",
-    "resolve": "Voorspellingen afrekenen",
-    "resolving": "Afrekenen...",
-    "resolved": "{count} voorspellingen afgerekend",
-    "resolveFailed": "Afrekenen van voorspellingen mislukt. Probeer het opnieuw."
-  },
   "activity": {
     "system": "Systeem",
     "clock": {

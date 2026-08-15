@@ -964,14 +964,6 @@
     "create": "Créer",
     "search": "Rechercher des modèles..."
   },
-  "predictions": {
-    "title": "Pronostics",
-    "description": "Réglez tous les pronostics ouverts de ce tournoi. Les gagnants sont payés depuis la cagnotte de points de pronostic.",
-    "resolve": "Régler les pronostics",
-    "resolving": "Règlement...",
-    "resolved": "{count} pronostics réglés",
-    "resolveFailed": "Échec du règlement des pronostics. Veuillez réessayer."
-  },
   "activity": {
     "system": "Système",
     "clock": {
