@@ -198,6 +198,21 @@ query GetTournamentEntryStats($tournamentId: ID!) {
   }
 }
 
+# Public subset for the full-screen TV display, which runs all evening on a
+# club television with no session. totalAmountCents/totalRakeCents are
+# manager-only and resolve to null for a guest, so the TV must not ask for
+# them at all.
+query GetTournamentDisplayStats($tournamentId: ID!) {
+  tournamentEntryStats(tournamentId: $tournamentId) {
+    totalEntries
+    rebuyCount
+    reEntryCount
+    addonCount
+    totalChips
+    playersRemaining
+  }
+}
+
 query GetLeaderboard(
   $period: LeaderboardPeriod
   $pagination: PaginationInput

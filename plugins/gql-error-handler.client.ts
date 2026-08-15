@@ -31,9 +31,18 @@ export default defineNuxtPlugin(() => {
     })
 
     if (isAuthError) {
-      console.warn('Authentication error detected, attempting token refresh...')
-
       const authStore = useAuthStore()
+
+      // A guest has no session to expire. Without this guard, one auth error
+      // from a public page (the TV display runs unauthenticated all evening)
+      // would bounce the screen to /login and stay there. Nothing to refresh,
+      // nothing to clear — let the caller handle its own failed query.
+      if (!authStore.authToken) {
+        console.warn('[gql] auth error for an anonymous viewer; not redirecting')
+        return
+      }
+
+      console.warn('Authentication error detected, attempting token refresh...')
 
       // Attempt to refresh the access token before signing out.
       authStore.refreshAccessToken().then((newToken) => {

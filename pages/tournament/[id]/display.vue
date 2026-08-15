@@ -373,7 +373,7 @@ const loadStatic = async () => {
     payout.value = null
   }
   try {
-    const res = await GqlGetTournamentEntryStats({ tournamentId })
+    const res = await GqlGetTournamentDisplayStats({ tournamentId })
     entryStats.value = res?.tournamentEntryStats || null
   } catch {
     entryStats.value = null
