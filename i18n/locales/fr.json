@@ -30,7 +30,7 @@
       },
       "team": {
         "title": "Entourez-vous",
-        "desc": "Gérer un tournoi seul, c'est du sport. Invitez celles et ceux qui vous épaulent en salle : chacun reçoit ses identifiants et un accès complet au club."
+        "desc": "Gérer un tournoi seul, c'est du sport. Invitez celles et ceux qui vous épaulent en salle : chacun reçoit ses identifiants pour animer les événements, sans pouvoir modifier l'équipe."
       },
       "setup-guide": {
         "title": "Votre guide de démarrage",
@@ -185,6 +185,7 @@
     "redeemSuccess": "Code activé. Votre formule Club est désormais active.",
     "redeemError": "Impossible d’activer ce code. Réessayez.",
     "planActive": "Votre formule payante est active. Profitez de tables et tournois illimités.",
+    "planOwnerOnly": "Seul un propriétaire de ce club peut changer la formule.",
     "manageTeam": "Gérer l'équipe",
     "onboardingTitle": "Prise en main",
     "onboardingHelp": "Refaire la visite guidée et le guide de démarrage.",
@@ -192,13 +193,20 @@
   },
   "team": {
     "title": "Équipe",
-    "help": "Invitez des co-gérants par e-mail. Chacun reçoit son propre compte, avec le même accès au club que le vôtre.",
+    "help": "Invitez celles et ceux qui vous aident à faire tourner le club. Chacun reçoit ses propres identifiants, personne n'a besoin des vôtres.",
     "you": "Vous",
     "revoke": "Retirer",
     "revokeConfirm": "Confirmer le retrait",
-    "onlyYouHint": "Vous êtes pour l'instant le seul gérant. Invitez celles et ceux qui vous aident à faire tourner le club : chacun aura ses propres identifiants.",
+    "roleOwner": "Propriétaire",
+    "roleManager": "Gérant",
+    "makeOwner": "Nommer propriétaire",
+    "makeManager": "Passer gérant",
+    "inviteAs": "Inviter comme",
+    "readOnlyHint": "Seul un propriétaire peut inviter quelqu'un ou changer les rôles. Demandez à l'un des propriétaires ci-dessus.",
+    "lastOwnerError": "Un club doit garder au moins un propriétaire. Nommez d'abord quelqu'un d'autre.",
+    "onlyYouHint": "Vous êtes pour l'instant seul dans l'équipe. Gérant convient à la plupart des gens : cela couvre l'animation des événements, sans toucher à l'équipe ni à la formule.",
     "inviteTitle": "Inviter un co-gérant",
-    "inviteHelp": "Un co-gérant peut tout faire comme vous, y compris inviter et retirer d'autres gérants. Il n'existe pas encore de rôles limités : n'invitez que des personnes à qui vous confiez tout le club.",
+    "inviteHelp": "Les gérants animent les tournois, les joueurs et les tables, et voient cette équipe sans pouvoir la modifier. Les propriétaires peuvent en plus inviter, retirer, changer les rôles et faire évoluer l'abonnement.",
     "emailPlaceholder": "Adresse e-mail",
     "firstNamePlaceholder": "Prénom (optionnel)",
     "inviteButton": "Inviter",

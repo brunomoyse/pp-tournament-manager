@@ -80,6 +80,17 @@ export const useAuthStore = defineStore(
     const hasClub = computed(() => !!(currentUser.value as any)?.club)
     const isVerified = computed(() => (currentUser.value as any)?.verified ?? false)
     const isVip = computed(() => ((currentUser.value as any)?.vipLevel ?? 0) > 0)
+    /**
+     * The viewer's authority on their managed club. Owners manage the team and
+     * the plan; managers run everything else.
+     *
+     * This rides on the persisted `currentUser` snapshot, so a manager who was
+     * just promoted (or demoted) keeps the old answer until the next
+     * `fetchMe()`. That is fine: the gate only decides which controls to draw,
+     * and the server refuses anything it should not allow either way.
+     */
+    const clubRole = computed<string | null>(() => (currentUser.value as any)?.clubRole ?? null)
+    const isClubOwner = computed(() => clubRole.value === 'OWNER')
 
     // --- Persistence helpers ---------------------------------------------------
 
@@ -517,6 +528,8 @@ export const useAuthStore = defineStore(
       hasClub,
       isVerified,
       isVip,
+      clubRole,
+      isClubOwner,
 
       // Actions
       login,

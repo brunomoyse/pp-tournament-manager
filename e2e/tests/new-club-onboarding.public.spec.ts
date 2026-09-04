@@ -54,12 +54,14 @@ test.describe('New club onboarding (public)', () => {
     // The stat tiles stay hidden until there is something to count.
     await expect(page.locator('.stats-grid')).toHaveCount(0)
 
-    // Team is reachable and says plainly what an invite grants, since any
-    // co-manager can invite and remove other managers.
+    // Team is reachable, the founder is its owner, and the invite form explains
+    // what each role grants.
     await page.goto('/team')
-    await expect(page.getByText(/only manager so far/i)).toBeVisible()
-    await expect(page.getByText(/inviting and removing other managers/i)).toBeVisible()
+    await expect(page.getByText(/only one on the team so far/i)).toBeVisible()
+    await expect(getByTestId(page, 'manager-role')).toHaveText(/owner/i)
+    await expect(page.getByText(/owners can also invite, remove and change roles/i)).toBeVisible()
     await expect(getByTestId(page, 'invite-email')).toBeVisible()
+    await expect(getByTestId(page, 'invite-role')).toBeVisible()
 
     // The empty tournaments list offers a way out of itself.
     await page.goto('/tournaments')

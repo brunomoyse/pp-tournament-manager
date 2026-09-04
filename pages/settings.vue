@@ -27,7 +27,7 @@
               <span class="plan-badge" :class="`plan-badge--${currentPlan}`">{{ planLabel }}</span>
             </div>
 
-            <template v-if="currentPlan === 'FREE'">
+            <template v-if="currentPlan === 'FREE' && isClubOwner">
               <PpButton
                 block
                 size="lg"
@@ -66,6 +66,9 @@
                 </div>
                 <p v-if="redeemError" class="plan-error">{{ redeemError }}</p>
               </div>
+            </template>
+            <template v-else-if="currentPlan === 'FREE'">
+              <p class="plan-note">{{ t('settings.planOwnerOnly') }}</p>
             </template>
             <template v-else>
               <p v-if="redeemSuccess" class="redeem__success">{{ redeemSuccess }}</p>
@@ -121,6 +124,7 @@ const config = useRuntimeConfig()
 const casinoContactHref = 'mailto:cloud@nuagemagique.dev'
 
 const isUpgrading = ref(false)
+const isClubOwner = computed(() => authStore.isClubOwner)
 const upgradeError = ref('')
 
 const redeemCodeInput = ref('')

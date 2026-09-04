@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { TOUR_STEPS } from '~/utils/tourSteps'
+import { useAuthStore } from '~/stores/useAuthStore'
 
 /**
  * Onboarding state: first-run welcome, guided tour progress, and the
@@ -26,9 +27,15 @@ export const useTourStore = defineStore(
     const welcomeOpen = ref(false)
 
     // Getters
-    const steps = TOUR_STEPS
-    const currentStep = computed(() => (isActive.value ? steps[currentStepIndex.value] : undefined))
-    const isLastStep = computed(() => currentStepIndex.value === steps.length - 1)
+    // An invited manager gets the welcome and tour on their first login too, so
+    // drop the step that tells them to build the team: only owners can.
+    const steps = computed(() =>
+      useAuthStore().isClubOwner ? TOUR_STEPS : TOUR_STEPS.filter((s) => s.id !== 'team'),
+    )
+    const currentStep = computed(() =>
+      isActive.value ? steps.value[currentStepIndex.value] : undefined,
+    )
+    const isLastStep = computed(() => currentStepIndex.value === steps.value.length - 1)
     const shouldOfferWelcome = computed(
       () => !hasSeenWelcome.value && !tourCompleted.value && !isActive.value,
     )

@@ -8,6 +8,7 @@ mutation LoginUser($input: UserLoginInput!) {
       firstName
       lastName
       role
+      clubRole
       managedClub {
         id
         name

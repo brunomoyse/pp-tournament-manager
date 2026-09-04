@@ -8,3 +8,7 @@ mutation InviteClubManager($input: InviteClubManagerInput!) {
 mutation RevokeClubManager($id: ID!) {
   revokeClubManager(id: $id)
 }
+
+mutation SetClubManagerRole($id: ID!, $role: ClubRole!) {
+  setClubManagerRole(id: $id, role: $role)
+}

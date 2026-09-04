@@ -30,7 +30,7 @@
       },
       "team": {
         "title": "Haal je team erbij",
-        "desc": "In je eentje een toernooi draaien is zwaar. Nodig uit wie je in de zaal helpt: ze krijgen een eigen login en volledige toegang tot deze club."
+        "desc": "In je eentje een toernooi draaien is zwaar. Nodig uit wie je in de zaal helpt: ze krijgen een eigen login om events te draaien, zonder het team te kunnen wijzigen."
       },
       "setup-guide": {
         "title": "Je startgids",
@@ -185,6 +185,7 @@
     "redeemSuccess": "Code geactiveerd. Je Club-abonnement is nu actief.",
     "redeemError": "Kon deze code niet activeren. Probeer opnieuw.",
     "planActive": "Je betaalde abonnement is actief. Geniet van onbeperkt tafels en toernooien.",
+    "planOwnerOnly": "Alleen een eigenaar van deze club kan het abonnement wijzigen.",
     "manageTeam": "Team beheren",
     "onboardingTitle": "Op weg helpen",
     "onboardingHelp": "Doorloop de rondleiding en de startgids opnieuw.",
@@ -192,13 +193,20 @@
   },
   "team": {
     "title": "Team",
-    "help": "Nodig medebeheerders uit per e-mail. Ze krijgen een eigen account met dezelfde toegang tot deze club als jij.",
+    "help": "Nodig de mensen uit die je helpen de club te runnen. Iedereen krijgt een eigen login, dus niemand hoeft die van jou te gebruiken.",
     "you": "Jij",
     "revoke": "Verwijderen",
     "revokeConfirm": "Verwijderen bevestigen",
-    "onlyYouHint": "Voorlopig ben jij de enige beheerder. Nodig uit wie je helpt de club te runnen: iedereen krijgt een eigen login.",
+    "roleOwner": "Eigenaar",
+    "roleManager": "Beheerder",
+    "makeOwner": "Eigenaar maken",
+    "makeManager": "Beheerder maken",
+    "inviteAs": "Uitnodigen als",
+    "readOnlyHint": "Alleen een eigenaar kan mensen uitnodigen of rollen wijzigen. Vraag het aan een van de eigenaars hierboven.",
+    "lastOwnerError": "Een club heeft minstens één eigenaar nodig. Maak eerst iemand anders eigenaar.",
+    "onlyYouHint": "Voorlopig ben jij de enige in het team. Beheerder past bij de meeste mensen: daarmee draai je events, zonder het team of het abonnement te wijzigen.",
     "inviteTitle": "Nodig een medebeheerder uit",
-    "inviteHelp": "Een medebeheerder kan alles wat jij kan, ook andere beheerders uitnodigen en verwijderen. Beperkte rollen bestaan nog niet, dus nodig alleen mensen uit die je de hele club toevertrouwt.",
+    "inviteHelp": "Beheerders draaien toernooien, spelers en tafelindeling, en zien dit team zonder het te kunnen wijzigen. Eigenaars kunnen daarnaast uitnodigen, verwijderen, rollen wijzigen en het abonnement opwaarderen.",
     "emailPlaceholder": "E-mailadres",
     "firstNamePlaceholder": "Voornaam (optioneel)",
     "inviteButton": "Uitnodigen",

@@ -8,6 +8,7 @@ mutation OnboardClub($input: OnboardClubInput!) {
       firstName
       lastName
       role
+      clubRole
       managedClub {
         id
         name

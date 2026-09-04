@@ -30,7 +30,7 @@
       },
       "team": {
         "title": "Bring in your team",
-        "desc": "Running a tournament alone is hard work. Invite whoever helps you on the floor and they get their own login, with full access to this club."
+        "desc": "Running a tournament alone is hard work. Invite whoever helps you on the floor and they get their own login, able to run events without being able to change the team."
       },
       "setup-guide": {
         "title": "Your setup guide",
@@ -185,6 +185,7 @@
     "redeemSuccess": "Code redeemed. Your Club plan is now active.",
     "redeemError": "Couldn’t redeem that code. Please try again.",
     "planActive": "Your paid plan is active. Enjoy unlimited tables and tournaments.",
+    "planOwnerOnly": "Only an owner of this club can change the plan.",
     "manageTeam": "Manage team",
     "onboardingTitle": "Onboarding",
     "onboardingHelp": "Run through the guided tour and setup guide again.",
@@ -192,13 +193,20 @@
   },
   "team": {
     "title": "Team",
-    "help": "Invite co-managers by email. They get their own account with the same access to this club that you have.",
+    "help": "Invite the people who help you run the club. Everyone gets their own login, so nobody has to share yours.",
     "you": "You",
     "revoke": "Remove",
     "revokeConfirm": "Confirm removal",
-    "onlyYouHint": "You're the only manager so far. Invite whoever helps you run the club and they get their own login, so nobody has to share yours.",
+    "roleOwner": "Owner",
+    "roleManager": "Manager",
+    "makeOwner": "Make owner",
+    "makeManager": "Make manager",
+    "inviteAs": "Invite as",
+    "readOnlyHint": "Only an owner can invite people or change roles. Ask one of the owners above if you need someone added.",
+    "lastOwnerError": "A club needs at least one owner. Make someone else an owner first.",
+    "onlyYouHint": "You're the only one on the team so far. Manager is the right role for most people: it covers running events without touching the team or the plan.",
     "inviteTitle": "Invite a co-manager",
-    "inviteHelp": "A co-manager can do everything you can, including inviting and removing other managers. There are no limited roles yet, so invite only people you trust with the whole club.",
+    "inviteHelp": "Managers run tournaments, players and seating, and can see this team without changing it. Owners can also invite, remove and change roles, and upgrade the plan.",
     "emailPlaceholder": "Email address",
     "firstNamePlaceholder": "First name (optional)",
     "inviteButton": "Invite",
