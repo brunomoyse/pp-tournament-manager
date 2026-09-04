@@ -6,6 +6,9 @@ on:
       - main
     tags:
       - 'v*'
+  # Validate every PR (Dependabot's included) with the no-secret jobs below.
+  # Deploy jobs stay push-only via their `github.event_name == 'push'` guards.
+  pull_request:
   workflow_dispatch:
     inputs:
       version:
@@ -21,7 +24,7 @@ env:
 
 jobs:
   check:
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     name: Lint + Format Check
     runs-on: ubuntu-latest
     # GraphQL codegen (run by `nuxt prepare` in postinstall) introspects the
@@ -52,7 +55,7 @@ jobs:
   # ── Unit tests (auto on every push) ──────────────────────────────────────────
 
   test:
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     name: Unit Tests
     runs-on: ubuntu-latest
     # `nuxt prepare` (postinstall) generates the `.nuxt/tsconfig.*` files vitest
@@ -75,6 +78,36 @@ jobs:
 
       - name: Run unit tests
         run: npm test -- run
+
+  # ── Build (PRs only) ─────────────────────────────────────────────────────────
+  #
+  # On push the Docker image jobs already run `nuxt build`, so this would be
+  # duplicate work. On a PR nothing compiled the app before, which is exactly the
+  # gate a dependency bump needs: lint and unit tests happily pass while a bad
+  # upgrade blows up at build time. Needs no secrets, so it works for Dependabot.
+
+  build_check:
+    if: github.event_name == 'pull_request'
+    name: Build (Nuxt)
+    runs-on: ubuntu-latest
+    env:
+      DISABLE_CODEGEN: 'true'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
 
   # ── End-to-end tests (auto on every push) ────────────────────────────────────
   #
