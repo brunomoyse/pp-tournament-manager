@@ -23,13 +23,13 @@
                 </div>
                 <PpButton
                   v-if="m.userId !== myUserId"
-                  variant="ghost"
+                  :variant="confirmingRevoke === m.id ? 'danger' : 'ghost'"
                   size="sm"
                   :disabled="isRevoking === m.id"
                   data-testid="revoke-manager"
-                  @click="revokeManager(m)"
+                  @click="onRevokeClick(m)"
                 >
-                  {{ t('team.revoke') }}
+                  {{ confirmingRevoke === m.id ? t('team.revokeConfirm') : t('team.revoke') }}
                 </PpButton>
               </li>
             </ul>
@@ -91,7 +91,7 @@ definePageMeta({
   title: 'nav.team',
 })
 
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { IonPage, IonContent } from '@ionic/vue'
 import { useI18n } from '~/composables/useI18n'
 import { useAuthStore } from '~/stores/useAuthStore'
@@ -113,6 +113,8 @@ const inviteEmail = ref('')
 const inviteFirstName = ref('')
 const isInviting = ref(false)
 const isRevoking = ref<string | null>(null)
+const confirmingRevoke = ref<string | null>(null)
+let confirmTimerId: ReturnType<typeof setTimeout> | null = null
 const inviteError = ref('')
 const inviteSuccess = ref('')
 
@@ -160,6 +162,21 @@ const invite = async () => {
   }
 }
 
+// Removing a manager is immediate and irreversible from here, so the first
+// click only arms the button; it disarms itself if nothing follows.
+const onRevokeClick = (m: TeamManager) => {
+  if (confirmTimerId) clearTimeout(confirmTimerId)
+  if (confirmingRevoke.value !== m.id) {
+    confirmingRevoke.value = m.id
+    confirmTimerId = setTimeout(() => {
+      confirmingRevoke.value = null
+    }, 4000)
+    return
+  }
+  confirmingRevoke.value = null
+  void revokeManager(m)
+}
+
 const revokeManager = async (m: TeamManager) => {
   inviteError.value = ''
   inviteSuccess.value = ''
@@ -176,6 +193,10 @@ const revokeManager = async (m: TeamManager) => {
 
 onMounted(() => {
   if (authStore.isAuthenticated) void loadManagers()
+})
+
+onUnmounted(() => {
+  if (confirmTimerId) clearTimeout(confirmTimerId)
 })
 </script>
 
