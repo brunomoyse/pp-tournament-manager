@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, toRaw } from 'vue'
 import { useClubStore } from './useClubStore'
 // Use a flexible user type to match GraphQL response
 interface AuthUser {
@@ -128,9 +128,22 @@ export const useAuthStore = defineStore(
       }, REFRESH_INTERVAL_MS)
     }
 
+    // BroadcastChannel serialises with the structured clone algorithm, which
+    // cannot handle Vue's reactive Proxy. Posting `currentUser.value` straight
+    // in throws DataCloneError, and because this runs inside storeAuthState it
+    // used to abort login/register before `setSelectedClub` ran, leaving a
+    // freshly signed-up owner staring at "No Club Found". Post a raw snapshot,
+    // and never let a cross-tab convenience break authentication.
     const broadcastAuth = () => {
-      if (authChannel && authToken.value) {
-        authChannel.postMessage({ kind: 'auth', token: authToken.value, user: currentUser.value })
+      if (!authChannel || !authToken.value) return
+      try {
+        authChannel.postMessage({
+          kind: 'auth',
+          token: authToken.value,
+          user: currentUser.value ? (toRaw(currentUser.value) as AuthUser) : null,
+        })
+      } catch {
+        // This tab is authenticated either way; siblings recover on next load.
       }
     }
 

@@ -6,7 +6,9 @@ import { getByTestId } from './helpers'
 // beta signup path (Club is the only selectable plan).
 //
 // This file exists because nothing covered the first-run experience end to end,
-// which is how the "No Club Found" bug below survived.
+// which is how the "No Club Found" bug survived: broadcastAuth() posted a Vue
+// reactive Proxy over a BroadcastChannel, and the DataCloneError aborted
+// storeAuthState before register() could select the new club.
 
 test.describe('New club onboarding (public)', () => {
   test.beforeEach(async ({ page }) => {
@@ -28,14 +30,18 @@ test.describe('New club onboarding (public)', () => {
     return email
   }
 
+  /** Dismiss the onboarding welcome modal the dashboard opens with. */
+  async function skipWelcome(page: import('@playwright/test').Page) {
+    await expect(page.getByText('Welcome to PocketPair')).toBeVisible({ timeout: 15_000 })
+    await page.getByRole('button', { name: /Skip for now/i }).click()
+  }
+
   test('the dashboard opens on the setup guide, not a wall of zeros', async ({ page }) => {
     await signUp(page, 'onboarding')
 
-    // Dismiss whatever the dashboard opens with. Today that is the "No Club
-    // Found" alert (see the fixme below); once that is fixed it is the tour
-    // welcome modal. Either way the assertions underneath are the point.
-    const dialogButton = page.getByRole('button', { name: /^(OK|Skip for now)$/i }).first()
-    await dialogButton.click({ timeout: 15_000 })
+    // The club is selected by the time the dashboard mounts, so the tour starts
+    // instead of the "No Club Found" alert.
+    await skipWelcome(page)
 
     // Setup guide: four outcome-based items, none of them done yet.
     await expect(page.getByText('0/4')).toBeVisible()
@@ -55,17 +61,9 @@ test.describe('New club onboarding (public)', () => {
     ).toBeVisible()
   })
 
-  // KNOWN FAILURE. A freshly signed-up owner is greeted by "No Club Found" and
-  // the onboarding tour never starts, because the club store is empty on the
-  // dashboard. The backend is not at fault: the onboardClub response carries a
-  // populated `user.managedClub` (verified over the wire), and
-  // `useAuthStore.register()` calls `setSelectedClub` with it, yet neither the
-  // in-memory store nor its persisted copy holds a club by the time the
-  // dashboard mounts. Un-fixme once the store plumbing is fixed.
-  test.fixme('a fresh club can reach a creatable tournament form', async ({ page }) => {
+  test('a fresh club can reach a creatable tournament form', async ({ page }) => {
     await signUp(page, 'creatable')
-
-    await page.getByRole('button', { name: /Skip for now/i }).click({ timeout: 15_000 })
+    await skipWelcome(page)
 
     await page.goto('/tournaments')
     await page
