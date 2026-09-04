@@ -46,8 +46,6 @@ export async function newManagerContext(browser: Browser): Promise<BrowserContex
           hasSeenWelcome: true,
           tourCompleted: true,
           checklistDismissed: true,
-          visitedTemplates: true,
-          visitedReports: true,
           hasAddedPlayer: true,
         }),
       ),

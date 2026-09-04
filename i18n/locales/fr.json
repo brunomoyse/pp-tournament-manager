@@ -20,14 +20,6 @@
       "skip": "Plus tard"
     },
     "steps": {
-      "dashboard-stats": {
-        "title": "Votre club en un coup d'œil",
-        "desc": "Tournois en cours, nombre de joueurs, tendance des buy-ins : le tableau de bord réunit l'essentiel dès la connexion."
-      },
-      "nav": {
-        "title": "Tout à portée de clic",
-        "desc": "Tableau de bord, tournois, joueurs, modèles et rapports : tout est accessible d'ici, en un clic."
-      },
       "create-tournament": {
         "title": "Créez votre premier tournoi",
         "desc": "Définissez le buy-in, la structure des blinds et l'horaire. PocketPair gère ensuite la clock, le placement et les gains."
@@ -36,13 +28,9 @@
         "title": "Constituez votre base de joueurs",
         "desc": "Ajoutez vos habitués une fois pour toutes et retrouvez-les partout. Inscriptions, check-ins et statistiques restent rattachés à chaque joueur."
       },
-      "templates": {
-        "title": "On configure une fois, on réutilise sans fin",
-        "desc": "Vos structures de blinds et grilles de gains sont enregistrées ici comme modèles : lancer le prochain tournoi ne prend plus que quelques secondes."
-      },
-      "reports": {
-        "title": "Maîtrisez vos chiffres",
-        "desc": "Fréquentation, prize pools et classements sur la période de votre choix. Tout ce qu'il faut pour suivre la progression de votre club."
+      "team": {
+        "title": "Entourez-vous",
+        "desc": "Gérer un tournoi seul, c'est du sport. Invitez celles et ceux qui vous épaulent en salle : chacun reçoit ses identifiants et un accès complet au club."
       },
       "setup-guide": {
         "title": "Votre guide de démarrage",
@@ -55,11 +43,10 @@
       "dismiss": "Masquer",
       "completed": "Tout est en place. Votre club est prêt.",
       "items": {
-        "takeTour": "Faire la visite guidée",
         "createTournament": "Créer votre premier tournoi",
         "addPlayers": "Ajouter vos joueurs",
-        "exploreTemplates": "Explorer les modèles",
-        "viewReports": "Consulter vos rapports"
+        "inviteTeam": "Inviter votre équipe",
+        "runTournament": "Faire tourner un tournoi"
       }
     }
   },
@@ -141,6 +128,7 @@
     "dashboard": "Tableau de bord",
     "tournaments": "Tournois",
     "players": "Joueurs",
+    "team": "Équipe",
     "templates": "Modèles",
     "reports": "Rapports",
     "menu": "Menu",
@@ -197,17 +185,26 @@
     "redeemSuccess": "Code activé. Votre formule Club est désormais active.",
     "redeemError": "Impossible d’activer ce code. Réessayez.",
     "planActive": "Votre formule payante est active. Profitez de tables et tournois illimités.",
-    "teamTitle": "Équipe",
-    "teamHelp": "Invitez des co-gérants par e-mail — ils reçoivent un compte et un accès gérant complet à ce club.",
-    "teamYou": "Vous",
-    "teamRevoke": "Retirer",
-    "teamEmailPlaceholder": "Adresse e-mail",
-    "teamFirstNamePlaceholder": "Prénom (optionnel)",
-    "teamInviteButton": "Inviter",
-    "teamInviteSentNew": "Invitation envoyée — un compte a été créé et un lien pour définir le mot de passe a été envoyé par e-mail.",
-    "teamInviteSentExisting": "Ajouté comme gérant — la personne a été prévenue par e-mail.",
-    "teamInviteNoEmail": "Ajouté comme gérant, mais l'e-mail d'invitation n'a pas pu être envoyé.",
-    "teamInviteError": "L'invitation n'a pas pu aboutir. Veuillez réessayer."
+    "manageTeam": "Gérer l'équipe",
+    "onboardingTitle": "Prise en main",
+    "onboardingHelp": "Refaire la visite guidée et le guide de démarrage.",
+    "replayTour": "Revoir la visite"
+  },
+  "team": {
+    "title": "Équipe",
+    "help": "Invitez des co-gérants par e-mail — ils reçoivent un compte et un accès gérant complet à ce club.",
+    "you": "Vous",
+    "revoke": "Retirer",
+    "onlyYouHint": "Vous êtes pour l'instant le seul gérant. Invitez celles et ceux qui vous aident à faire tourner le club : chacun aura ses propres identifiants.",
+    "inviteTitle": "Inviter un co-gérant",
+    "inviteHelp": "La personne obtient un accès gérant complet à ce club.",
+    "emailPlaceholder": "Adresse e-mail",
+    "firstNamePlaceholder": "Prénom (optionnel)",
+    "inviteButton": "Inviter",
+    "inviteSentNew": "Invitation envoyée — un compte a été créé et un lien pour définir le mot de passe a été envoyé par e-mail.",
+    "inviteSentExisting": "Ajouté comme gérant — la personne a été prévenue par e-mail.",
+    "inviteNoEmail": "Ajouté comme gérant, mais l'e-mail d'invitation n'a pas pu être envoyé.",
+    "inviteError": "L'invitation n'a pas pu aboutir. Veuillez réessayer."
   },
   "redemptionCodes": {
     "title": "Codes d’essai",
@@ -526,7 +523,8 @@
     "volumeThisMonth": "Volume (30 jours)",
     "winnings": "Gains",
     "games": "Parties",
-    "played": "Jouées"
+    "played": "Jouées",
+    "noDataHint": "Les classements et la fréquentation apparaîtront une fois votre premier tournoi joué."
   },
   "tournaments": {
     "title": "Tous les tournois",

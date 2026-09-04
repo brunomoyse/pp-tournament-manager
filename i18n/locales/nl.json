@@ -20,14 +20,6 @@
       "skip": "Later misschien"
     },
     "steps": {
-      "dashboard-stats": {
-        "title": "Je club in één oogopslag",
-        "desc": "Lopende toernooien, spelersaantallen en gemiddelde buy-ins: het dashboard houdt het belangrijkste in beeld zodra je inlogt."
-      },
-      "nav": {
-        "title": "Alles binnen handbereik",
-        "desc": "Dashboard, toernooien, spelers, sjablonen en rapporten: zo vind je je weg in PocketPair."
-      },
       "create-tournament": {
         "title": "Maak je eerste toernooi",
         "desc": "Stel de buy-in, blindenstructuur en planning in. PocketPair regelt daarna de klok, de tafelindeling en de uitbetalingen."
@@ -36,13 +28,9 @@
         "title": "Bouw je spelersbestand op",
         "desc": "Voeg je vaste spelers één keer toe en gebruik ze overal. Inschrijvingen, check-ins en statistieken blijven aan elke speler gekoppeld."
       },
-      "templates": {
-        "title": "Eén keer instellen, altijd hergebruiken",
-        "desc": "Blindenstructuren en uitbetalingsschema's staan hier als sjablonen, zodat een volgend toernooi in enkele seconden klaarstaat."
-      },
-      "reports": {
-        "title": "Ken je cijfers",
-        "desc": "Opkomst, prijzenpotten en klassementen over elke periode. Alles om de groei van je club te volgen."
+      "team": {
+        "title": "Haal je team erbij",
+        "desc": "In je eentje een toernooi draaien is zwaar. Nodig uit wie je in de zaal helpt: ze krijgen een eigen login en volledige toegang tot deze club."
       },
       "setup-guide": {
         "title": "Je startgids",
@@ -55,11 +43,10 @@
       "dismiss": "Verbergen",
       "completed": "Alles is ingesteld. Je club is klaar.",
       "items": {
-        "takeTour": "Volg de rondleiding",
         "createTournament": "Maak je eerste toernooi",
         "addPlayers": "Voeg je spelers toe",
-        "exploreTemplates": "Verken de sjablonen",
-        "viewReports": "Bekijk je rapporten"
+        "inviteTeam": "Nodig je team uit",
+        "runTournament": "Draai een toernooi"
       }
     }
   },
@@ -141,6 +128,7 @@
     "dashboard": "Dashboard",
     "tournaments": "Toernooien",
     "players": "Spelers",
+    "team": "Team",
     "templates": "Sjablonen",
     "reports": "Rapporten",
     "menu": "Menu",
@@ -197,17 +185,26 @@
     "redeemSuccess": "Code geactiveerd. Je Club-abonnement is nu actief.",
     "redeemError": "Kon deze code niet activeren. Probeer opnieuw.",
     "planActive": "Je betaalde abonnement is actief. Geniet van onbeperkt tafels en toernooien.",
-    "teamTitle": "Team",
-    "teamHelp": "Nodig medebeheerders uit per e-mail — ze krijgen een account en volledige beheerderstoegang tot deze club.",
-    "teamYou": "Jij",
-    "teamRevoke": "Verwijderen",
-    "teamEmailPlaceholder": "E-mailadres",
-    "teamFirstNamePlaceholder": "Voornaam (optioneel)",
-    "teamInviteButton": "Uitnodigen",
-    "teamInviteSentNew": "Uitnodiging verzonden — er is een account aangemaakt en een link om het wachtwoord in te stellen gemaild.",
-    "teamInviteSentExisting": "Toegevoegd als beheerder — de persoon is per e-mail op de hoogte gebracht.",
-    "teamInviteNoEmail": "Toegevoegd als beheerder, maar de uitnodigingsmail kon niet worden verzonden.",
-    "teamInviteError": "De uitnodiging is niet gelukt. Probeer het opnieuw."
+    "manageTeam": "Team beheren",
+    "onboardingTitle": "Op weg helpen",
+    "onboardingHelp": "Doorloop de rondleiding en de startgids opnieuw.",
+    "replayTour": "Rondleiding opnieuw"
+  },
+  "team": {
+    "title": "Team",
+    "help": "Nodig medebeheerders uit per e-mail — ze krijgen een account en volledige beheerderstoegang tot deze club.",
+    "you": "Jij",
+    "revoke": "Verwijderen",
+    "onlyYouHint": "Voorlopig ben jij de enige beheerder. Nodig uit wie je helpt de club te runnen: iedereen krijgt een eigen login.",
+    "inviteTitle": "Nodig een medebeheerder uit",
+    "inviteHelp": "Ze krijgen volledige beheerderstoegang tot deze club.",
+    "emailPlaceholder": "E-mailadres",
+    "firstNamePlaceholder": "Voornaam (optioneel)",
+    "inviteButton": "Uitnodigen",
+    "inviteSentNew": "Uitnodiging verzonden — er is een account aangemaakt en een link om het wachtwoord in te stellen gemaild.",
+    "inviteSentExisting": "Toegevoegd als beheerder — de persoon is per e-mail op de hoogte gebracht.",
+    "inviteNoEmail": "Toegevoegd als beheerder, maar de uitnodigingsmail kon niet worden verzonden.",
+    "inviteError": "De uitnodiging is niet gelukt. Probeer het opnieuw."
   },
   "redemptionCodes": {
     "title": "Proefcodes",
@@ -526,7 +523,8 @@
     "volumeThisMonth": "Volume (30 dagen)",
     "winnings": "Winst",
     "games": "Partijen",
-    "played": "Gespeeld"
+    "played": "Gespeeld",
+    "noDataHint": "Klassementen en opkomst verschijnen zodra je eerste toernooi gespeeld is."
   },
   "tournaments": {
     "title": "Alle toernooien",

@@ -3,9 +3,11 @@
  * tagged with `data-tour="<id>"`. Title/description i18n keys are derived from
  * the id: `tour.steps.<id>.title` / `tour.steps.<id>.desc`.
  *
- * The same `data-tour` value may exist on several elements (e.g. sidebar nav
- * on desktop AND the bottom tab bar on mobile); the engine picks whichever
- * one is actually visible in the viewport.
+ * Kept deliberately short: the tour exists to get a new club owner to their
+ * first tournament, not to narrate the menu. Steps that spotlighted the
+ * dashboard stats, the nav rail, templates and reports were dropped — a new
+ * club's stats are all zero, the nav explains itself, every club is seeded with
+ * default templates, and there is nothing to report on yet.
  */
 export interface TourStep {
   /** Step id; doubles as the `data-tour` attribute value. */
@@ -19,11 +21,8 @@ export interface TourStep {
 }
 
 export const TOUR_STEPS: TourStep[] = [
-  { id: 'dashboard-stats', route: '/', padding: 12 },
-  { id: 'nav', route: '/', placement: 'right', padding: 8 },
   { id: 'create-tournament', route: '/tournaments' },
   { id: 'add-players', route: '/players' },
-  { id: 'templates', route: '/templates', padding: 10 },
-  { id: 'reports', route: '/reports', padding: 10 },
+  { id: 'team', route: '/team', padding: 10 },
   { id: 'setup-guide', route: '/', padding: 12 },
 ]

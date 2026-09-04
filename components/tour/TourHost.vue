@@ -34,20 +34,6 @@ watch(
   { immediate: true },
 )
 
-// Checklist signals: visiting a section counts as exploring it - but only
-// when the user navigates there themselves. The tour drives the route through
-// /templates and /reports as part of its steps, which must not pre-tick the
-// checklist items.
-watch(
-  () => route.path,
-  (path) => {
-    if (tourStore.isActive) return
-    if (path.startsWith('/templates')) tourStore.visitedTemplates = true
-    if (path.startsWith('/reports')) tourStore.visitedReports = true
-  },
-  { immediate: true },
-)
-
 // Logout mid-tour: this component lives in the default layout, which only
 // unmounts when the user really leaves the authenticated app (login and
 // club-registration pages use layout: false). Cleaning up here is more

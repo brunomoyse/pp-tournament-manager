@@ -73,11 +73,19 @@
           <TourChecklistCard
             :tournaments-count="isLoading ? null : tournaments.length"
             :players-count="allTimeLeaderboard ? (allTimeLeaderboard.totalCount ?? 0) : null"
+            :managers-count="managersCount"
+            :has-finished-tournament="hasFinishedTournament"
           />
         </PpFadeUp>
 
-        <!-- Stat row -->
-        <PpStagger class="stats-grid" :stagger-children="0.05" data-tour="dashboard-stats">
+        <!-- Stat row. A brand-new club would read 0 / 0 / €0,00 / 0 under flat sparklines.
+             The setup guide above already occupies this space with a real
+             next action, so the tiles wait until there is something to count. -->
+        <PpStagger
+          v-if="isLoading || tournaments.length > 0"
+          class="stats-grid"
+          :stagger-children="0.05"
+        >
           <PpStaggerItem>
             <PpStatTile
               :kicker="t('headings.activeTournaments')"
@@ -269,7 +277,28 @@ const clubStore = useClubStore()
 const { t, locale } = useI18n()
 
 const { currentUser } = authStore
-const { club } = clubStore
+// Not `const { club } = clubStore` — destructuring Pinia state snapshots it at
+// setup and it never updates again. A freshly signed-up owner reached the
+// dashboard before the club store had settled and was then stuck on
+// "No Club Found" forever, with the onboarding tour gated behind the same flag.
+const club = computed(() => clubStore.club)
+
+// The club can land a tick or two after this page mounts (right after signup),
+// so give it a moment before concluding there isn't one.
+const waitForClub = () =>
+  new Promise<typeof club.value>((resolve) => {
+    if (club.value) return resolve(club.value)
+    const timer = setTimeout(() => {
+      stop()
+      resolve(null)
+    }, 5000)
+    const stop = watch(club, (value) => {
+      if (!value) return
+      clearTimeout(timer)
+      stop()
+      resolve(value)
+    })
+  })
 
 const tournaments = ref<GetTournamentsQuery['tournaments']['items']>([])
 const allTimeLeaderboard = ref<GetLeaderboardQuery['leaderboard'] | null>(null)
@@ -277,6 +306,14 @@ const weekLeaderboard = ref<GetLeaderboardQuery['leaderboard'] | null>(null)
 const monthLeaderboard = ref<GetLeaderboardQuery['leaderboard'] | null>(null)
 
 const isLoading = ref(true)
+// Setup-guide signals. null = not loaded yet, so the checklist shows the item as
+// pending rather than flashing it as incomplete.
+const managersCount = ref<number | null>(null)
+const hasFinishedTournament = computed(() =>
+  isLoading.value
+    ? null
+    : tournaments.value.some((t) => t.status === 'COMPLETED' || t.status === 'FINISHED'),
+)
 const showTournamentModal = ref(false)
 
 // Full detail of the live tournament (clock + structure + registrations) so the
@@ -492,7 +529,7 @@ const loadLiveDetail = async () => {
 
 const onTournamentSaved = async (newTournament?: any) => {
   closeTournamentModal()
-  if (!club) return
+  if (!club.value) return
 
   if (newTournament) {
     const optimisticTournament = {
@@ -506,7 +543,7 @@ const onTournamentSaved = async (newTournament?: any) => {
   }
 
   try {
-    const res = await GqlGetTournaments({ clubId: club.id })
+    const res = await GqlGetTournaments({ clubId: club.value.id })
     tournaments.value = res.tournaments?.items || []
   } catch (error) {
     console.error('Failed to refresh tournaments:', error)
@@ -522,7 +559,8 @@ onMounted(async () => {
     now.value = Date.now()
   }, 1000)
 
-  if (!club) {
+  const activeClub = await waitForClub()
+  if (!activeClub) {
     const alert = await alertController.create({
       header: t('alerts.noClub.header'),
       message: t('alerts.noClub.message'),
@@ -535,21 +573,29 @@ onMounted(async () => {
 
   try {
     isLoading.value = true
-    const tournamentsRes = await GqlGetTournaments({ clubId: club.id })
+    const tournamentsRes = await GqlGetTournaments({ clubId: activeClub.id })
     tournaments.value = tournamentsRes.tournaments?.items || []
     isLoading.value = false
 
     loadLiveDetail()
 
+    GqlGetClubManagers({ clubId: activeClub.id })
+      .then((res) => {
+        managersCount.value = res.clubManagers?.length ?? 0
+      })
+      .catch(() => {
+        // Non-critical: the checklist item just stays pending.
+      })
+
     Promise.all([
       GqlGetLeaderboard({
-        clubId: club.id,
+        clubId: activeClub.id,
         period: LeaderboardPeriod.ALL_TIME,
         pagination: { limit: 200 },
       }),
-      GqlGetLeaderboard({ clubId: club.id, period: LeaderboardPeriod.LAST_7_DAYS }),
+      GqlGetLeaderboard({ clubId: activeClub.id, period: LeaderboardPeriod.LAST_7_DAYS }),
       GqlGetLeaderboard({
-        clubId: club.id,
+        clubId: activeClub.id,
         period: LeaderboardPeriod.LAST_30_DAYS,
         pagination: { limit: 200 },
       }),

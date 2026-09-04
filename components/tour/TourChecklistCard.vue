@@ -4,25 +4,28 @@ import { IonIcon } from '@ionic/vue'
 import {
   checkmarkOutline,
   closeOutline,
-  compassOutline,
   trophyOutline,
   peopleOutline,
-  constructOutline,
-  statsChartOutline,
+  personAddOutline,
+  flagOutline,
 } from 'ionicons/icons'
 import { useTourStore } from '~/stores/useTourStore'
 import { useI18n } from '~/composables/useI18n'
 import { useToast } from '~/composables/useToast'
 
 /**
- * TourChecklistCard: the dashboard "Setup guide". Items tick themselves off
- * from real data; when everything is done the card celebrates once and
- * retires itself. Counts arrive as props from the dashboard's existing
- * queries (`null` = still loading, treated as not-yet-complete).
+ * TourChecklistCard: the dashboard "Setup guide". Every item is an outcome the
+ * club has actually reached, never a page it has merely visited, so finishing
+ * the list means the club is genuinely running. Counts arrive as props from the
+ * dashboard's existing queries (`null` = still loading, treated as not-yet-done).
  */
 const props = defineProps<{
   tournamentsCount: number | null
   playersCount: number | null
+  /** Club managers including the owner; more than one means someone was invited. */
+  managersCount: number | null
+  /** Whether any tournament has been run through to completion. */
+  hasFinishedTournament: boolean | null
 }>()
 
 const tourStore = useTourStore()
@@ -39,13 +42,6 @@ interface ChecklistItem {
 }
 
 const items = computed<ChecklistItem[]>(() => [
-  {
-    id: 'takeTour',
-    icon: compassOutline,
-    labelKey: 'tour.checklist.items.takeTour',
-    done: tourStore.tourCompleted,
-    pending: false,
-  },
   {
     id: 'createTournament',
     icon: trophyOutline,
@@ -67,20 +63,21 @@ const items = computed<ChecklistItem[]>(() => [
     pending: !tourStore.hasAddedPlayer && props.playersCount === null,
   },
   {
-    id: 'exploreTemplates',
-    icon: constructOutline,
-    labelKey: 'tour.checklist.items.exploreTemplates',
-    route: '/templates',
-    done: tourStore.visitedTemplates,
-    pending: false,
+    id: 'inviteTeam',
+    icon: personAddOutline,
+    labelKey: 'tour.checklist.items.inviteTeam',
+    route: '/team',
+    // The owner is always a manager, so a second row is the signal.
+    done: (props.managersCount ?? 0) > 1,
+    pending: props.managersCount === null,
   },
   {
-    id: 'viewReports',
-    icon: statsChartOutline,
-    labelKey: 'tour.checklist.items.viewReports',
-    route: '/reports',
-    done: tourStore.visitedReports,
-    pending: false,
+    id: 'runTournament',
+    icon: flagOutline,
+    labelKey: 'tour.checklist.items.runTournament',
+    route: '/tournaments',
+    done: props.hasFinishedTournament === true,
+    pending: props.hasFinishedTournament === null,
   },
 ])
 
@@ -110,10 +107,6 @@ watch(allDone, (done) => {
 
 const onItemClick = (item: ChecklistItem) => {
   if (item.done) return
-  if (item.id === 'takeTour') {
-    tourStore.startTour()
-    return
-  }
   if (item.route) navigateTo(item.route)
 }
 </script>
@@ -162,7 +155,7 @@ const onItemClick = (item: ChecklistItem) => {
             class="checklist-item"
             :class="{
               'checklist-item--done': item.done,
-              'checklist-item--link': !item.done && (!!item.route || item.id === 'takeTour'),
+              'checklist-item--link': !item.done && !!item.route,
             }"
             @click="onItemClick(item)"
           >

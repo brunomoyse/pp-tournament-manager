@@ -273,7 +273,12 @@
           <label class="pp-label">
             {{ t('tournament.selectTemplate') }} <span class="tournament-form-required">*</span>
           </label>
-          <select v-model="form.templateId" required class="pp-select">
+          <select
+            v-model="form.templateId"
+            required
+            class="pp-select"
+            data-testid="template-select"
+          >
             <option value="" disabled>{{ t('tournament.selectTemplatePlaceholder') }}</option>
             <option v-for="template in templates" :key="template.id" :value="template.id">
               {{ template.name }}

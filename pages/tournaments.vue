@@ -109,7 +109,16 @@
               ? t('tournaments.tryDifferentFilter')
               : t('tournaments.createFirst')
           "
-        />
+        >
+          <!-- Only offer the CTA when the list is genuinely empty; with a filter
+               applied, the way out is clearing the filter, not creating. -->
+          <template v-if="!searchQuery && !statusFilter" #action>
+            <PpButton @click="createTournament">
+              <IonIcon :icon="addOutline" class="icon-md" />
+              {{ t('buttons.createTournament') }}
+            </PpButton>
+          </template>
+        </PpEmptyState>
       </div>
     </IonContent>
 

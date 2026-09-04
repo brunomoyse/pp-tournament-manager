@@ -15,8 +15,6 @@ export const useTourStore = defineStore(
     /** True once the tour was finished OR explicitly skipped. */
     const tourCompleted = ref(false)
     const checklistDismissed = ref(false)
-    const visitedTemplates = ref(false)
-    const visitedReports = ref(false)
     /** True once the club has at least one roster player (checklist signal). */
     const hasAddedPlayer = ref(false)
 
@@ -96,8 +94,6 @@ export const useTourStore = defineStore(
       hasSeenWelcome.value = false
       tourCompleted.value = false
       checklistDismissed.value = false
-      visitedTemplates.value = false
-      visitedReports.value = false
       hasAddedPlayer.value = false
       isActive.value = false
       welcomeOpen.value = false
@@ -110,8 +106,6 @@ export const useTourStore = defineStore(
       hasSeenWelcome,
       tourCompleted,
       checklistDismissed,
-      visitedTemplates,
-      visitedReports,
       hasAddedPlayer,
       isActive,
       currentStepIndex,
@@ -140,14 +134,7 @@ export const useTourStore = defineStore(
   },
   {
     persist: {
-      pick: [
-        'hasSeenWelcome',
-        'tourCompleted',
-        'checklistDismissed',
-        'visitedTemplates',
-        'visitedReports',
-        'hasAddedPlayer',
-      ],
+      pick: ['hasSeenWelcome', 'tourCompleted', 'checklistDismissed', 'hasAddedPlayer'],
     },
   },
 )

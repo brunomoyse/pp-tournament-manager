@@ -17,7 +17,7 @@
       </div>
 
       <!-- Grouped navigation -->
-      <nav class="sidebar-nav pp-hide-scrollbar" data-tour="nav">
+      <nav class="sidebar-nav pp-hide-scrollbar">
         <div v-for="group in navGroups" :key="group.key" class="nav-group">
           <p class="nav-group__label">{{ group.label }}</p>
           <NuxtLink
@@ -133,7 +133,7 @@
 
     <!-- [D] Bottom tab bar (phones only; tablets/desktop use the side rail) -->
     <div class="bottom-tab-bar">
-      <div class="tab-bar-inner" data-tour="nav">
+      <div class="tab-bar-inner">
         <NuxtLink
           v-for="item in navItems"
           :key="item.to"
@@ -182,6 +182,7 @@ import {
   homeOutline,
   trophyOutline,
   peopleOutline,
+  personAddOutline,
   constructOutline,
   statsChartOutline,
   podiumOutline,
@@ -252,6 +253,7 @@ const navGroups = computed(() => {
     { to: '/tables', icon: gridOutline, label: t('nav.tables') },
   ]
   const clubItems = [
+    { to: '/team', icon: personAddOutline, label: t('nav.team') },
     { to: '/templates', icon: constructOutline, label: t('nav.templates') },
     { to: '/reports', icon: statsChartOutline, label: t('nav.reports') },
     ...(isFreePlan.value

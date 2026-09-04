@@ -10,7 +10,7 @@
         </PpFadeUp>
 
         <!-- Period tabs -->
-        <div class="period-tabs" data-tour="reports">
+        <div class="period-tabs">
           <button
             v-for="period in periods"
             :key="period.value"
@@ -107,6 +107,12 @@
             <div v-if="leaderboard.length === 0" class="leaderboard-empty">
               <IonIcon :icon="podiumOutline" class="leaderboard-empty-icon" />
               <p class="leaderboard-empty-text">{{ t('reports.noData') }}</p>
+              <!-- Reports are the one page a new club cannot fill from here, so
+                   say where the data comes from instead of dead-ending. -->
+              <p class="leaderboard-empty-hint">{{ t('reports.noDataHint') }}</p>
+              <PpButton variant="secondary" size="sm" @click="navigateTo('/tournaments')">
+                {{ t('buttons.createTournament') }}
+              </PpButton>
             </div>
 
             <!-- Podium - top 3 -->
@@ -703,6 +709,13 @@ onMounted(() => {
   height: 3.5rem;
   color: var(--color-pp-text-dim);
   margin: 0 auto 1rem;
+}
+
+.leaderboard-empty-hint {
+  margin-bottom: 0.9rem;
+  font-size: 0.8rem;
+  color: var(--color-pp-text-dim);
+  text-align: center;
 }
 
 .leaderboard-empty-text {

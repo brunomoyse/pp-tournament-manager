@@ -20,14 +20,6 @@
       "skip": "Skip for now"
     },
     "steps": {
-      "dashboard-stats": {
-        "title": "Your club at a glance",
-        "desc": "Live tournaments, player counts and buy-in trends. The dashboard keeps the essentials in view from the moment you sign in."
-      },
-      "nav": {
-        "title": "Everything one click away",
-        "desc": "Dashboard, tournaments, players, templates and reports: this is how you move around PocketPair."
-      },
       "create-tournament": {
         "title": "Create your first tournament",
         "desc": "Set the buy-in, blind structure and schedule. PocketPair handles the clock, seating and payouts from there."
@@ -36,13 +28,9 @@
         "title": "Build your player base",
         "desc": "Add your regulars once and reuse them everywhere. Registrations, check-ins and statistics stay linked to each player."
       },
-      "templates": {
-        "title": "Set up once, reuse forever",
-        "desc": "Blind structures and payout schemes live here as templates, so launching the next tournament takes seconds."
-      },
-      "reports": {
-        "title": "Know your numbers",
-        "desc": "Attendance, prize pools and leaderboards over any period. Everything you need to follow your club's progress."
+      "team": {
+        "title": "Bring in your team",
+        "desc": "Running a tournament alone is hard work. Invite whoever helps you on the floor and they get their own login, with full access to this club."
       },
       "setup-guide": {
         "title": "Your setup guide",
@@ -55,11 +43,10 @@
       "dismiss": "Dismiss",
       "completed": "Setup complete. Your club is ready.",
       "items": {
-        "takeTour": "Take the tour",
         "createTournament": "Create your first tournament",
         "addPlayers": "Add your players",
-        "exploreTemplates": "Explore templates",
-        "viewReports": "Check your reports"
+        "inviteTeam": "Invite your team",
+        "runTournament": "Run a tournament"
       }
     }
   },
@@ -141,6 +128,7 @@
     "dashboard": "Dashboard",
     "tournaments": "Tournaments",
     "players": "Players",
+    "team": "Team",
     "templates": "Templates",
     "reports": "Reports",
     "menu": "Menu",
@@ -197,17 +185,26 @@
     "redeemSuccess": "Code redeemed. Your Club plan is now active.",
     "redeemError": "Couldn’t redeem that code. Please try again.",
     "planActive": "Your paid plan is active. Enjoy unlimited tables and tournaments.",
-    "teamTitle": "Team",
-    "teamHelp": "Invite co-managers by email — they get an account and full manager access to this club.",
-    "teamYou": "You",
-    "teamRevoke": "Remove",
-    "teamEmailPlaceholder": "Email address",
-    "teamFirstNamePlaceholder": "First name (optional)",
-    "teamInviteButton": "Invite",
-    "teamInviteSentNew": "Invitation sent — an account was created and a set-password link emailed.",
-    "teamInviteSentExisting": "Added as manager — they have been notified by email.",
-    "teamInviteNoEmail": "Added as manager, but the invitation email could not be sent.",
-    "teamInviteError": "Could not complete the invitation. Please try again."
+    "manageTeam": "Manage team",
+    "onboardingTitle": "Onboarding",
+    "onboardingHelp": "Run through the guided tour and setup guide again.",
+    "replayTour": "Replay the tour"
+  },
+  "team": {
+    "title": "Team",
+    "help": "Invite co-managers by email — they get an account and full manager access to this club.",
+    "you": "You",
+    "revoke": "Remove",
+    "onlyYouHint": "You're the only manager so far. Invite whoever helps you run the club and they get their own login, so nobody has to share yours.",
+    "inviteTitle": "Invite a co-manager",
+    "inviteHelp": "They get full manager access to this club.",
+    "emailPlaceholder": "Email address",
+    "firstNamePlaceholder": "First name (optional)",
+    "inviteButton": "Invite",
+    "inviteSentNew": "Invitation sent — an account was created and a set-password link emailed.",
+    "inviteSentExisting": "Added as manager — they have been notified by email.",
+    "inviteNoEmail": "Added as manager, but the invitation email could not be sent.",
+    "inviteError": "Could not complete the invitation. Please try again."
   },
   "redemptionCodes": {
     "title": "Trial codes",
@@ -526,7 +523,8 @@
     "volumeThisMonth": "Volume (30 days)",
     "winnings": "Winnings",
     "games": "Games",
-    "played": "Played"
+    "played": "Played",
+    "noDataHint": "Leaderboards and attendance appear once your first tournament has been played."
   },
   "tournaments": {
     "title": "All Tournaments",
