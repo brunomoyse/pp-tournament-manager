@@ -164,11 +164,26 @@ test.describe.serial('Tournament Lifecycle', () => {
 
     // Open the per-seat action modal for the victim, then the danger "Bust"
     // action (no confirm for a non-PKO tournament).
+    //
+    // Aim at the seat's own name attribute, and check whose modal actually
+    // opened before acting on it. This is what caught the seating chart serving
+    // every player ever seated at the physical table: clicking Damien's row
+    // opened the modal of someone from an older tournament, and a run silently
+    // busted the wrong player.
     await switchTab(page, 'seating')
-    await getByTestId(page, 'table-player-action')
-      .filter({ has: page.getByText(victim) })
-      .first()
-      .click()
+    const openedFor = getByTestId(page, 'player-action-name')
+    await expect(async () => {
+      if (await openedFor.isVisible()) {
+        await page.keyboard.press('Escape')
+        await expect(openedFor).toBeHidden()
+      }
+      await page
+        .locator(`[data-testid="table-player-action"][data-player-name*="${victim}"]`)
+        .first()
+        .click()
+      await expect(openedFor).toContainText(victim, { timeout: 3_000 })
+    }).toPass({ timeout: 30_000 })
+
     const bust = getByTestId(page, 'player-bust')
     await expect(bust).toBeVisible({ timeout: 10_000 })
     await bust.click()

@@ -10,7 +10,9 @@
             }}</span>
           </div>
           <div class="player-details">
-            <h3 class="player-name">{{ getPlayerDisplayName(player) }}</h3>
+            <h3 class="player-name" data-testid="player-action-name">
+              {{ getPlayerDisplayName(player) }}
+            </h3>
             <div class="player-location">
               <span class="location-item">
                 <IonIcon :icon="locationOutline" class="icon-sm" />

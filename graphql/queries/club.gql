@@ -1,5 +1,8 @@
-query GetClubTables($clubId: UUID!) {
-  clubTables(clubId: $clubId) {
+# excludeTournamentId is for the assign-tables picker: a table the tournament
+# being edited already holds is not a conflict for it, so isAssigned means
+# "held by some other live tournament". Omit it to ask about the club at large.
+query GetClubTables($clubId: UUID!, $excludeTournamentId: UUID) {
+  clubTables(clubId: $clubId, excludeTournamentId: $excludeTournamentId) {
     id
     clubId
     tableNumber

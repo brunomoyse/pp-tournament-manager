@@ -186,7 +186,12 @@ const fetchClubTables = async () => {
 
   try {
     loading.value = true
-    const result = await GqlGetClubTables({ clubId: props.clubId })
+    // Exclude ourselves: tables this tournament already holds are ours to keep,
+    // not a conflict, which is exactly the rule the server applies on assign.
+    const result = await GqlGetClubTables({
+      clubId: props.clubId,
+      excludeTournamentId: props.tournamentId,
+    })
     clubTables.value = result?.clubTables || []
   } catch (error) {
     console.error('Failed to fetch club tables:', error)
