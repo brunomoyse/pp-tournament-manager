@@ -31,9 +31,12 @@ const LATE_REG_PLAYERS = ['Manu', 'Fabien']
 const PRE_START_CHECKIN = INITIAL_PLAYERS.slice(0, 4)
 const REMAINING_REGISTERED = INITIAL_PLAYERS.slice(4)
 
+const GQL = process.env.PP_GRAPHQL ?? 'http://localhost:8080/graphql'
+
 test.describe.serial('Tournament Lifecycle', () => {
   let page: Page
   let tournamentName: string
+  let tournamentId = ''
 
   test.beforeAll(async ({ browser }) => {
     const context = await newManagerContext(browser)
@@ -41,12 +44,44 @@ test.describe.serial('Tournament Lifecycle', () => {
     tournamentName = `E2E Test Tournament - ${Date.now()}`
   })
 
-  test.afterAll(async () => {
+  // Hand the tables back. A live tournament holds the tables it is linked to,
+  // so without this the suite poisoned its own fixture: each run consumed 2 of
+  // the seeded club's 4 tables for good, and the next run against the same seed
+  // failed at "Assign tables" with nothing left to link.
+  //
+  // Done over the API rather than the UI on purpose: from the UI, ending a
+  // tournament that still has players seated opens the results modal instead of
+  // finishing it, so there is no button that just releases the tables.
+  // Best-effort throughout, so a cleanup problem can never bury the failure
+  // that got us here.
+  test.afterAll(async ({ playwright }) => {
+    try {
+      const token = await page.evaluate(() => {
+        const raw = window.localStorage.getItem('auth-backup')
+        return raw ? ((JSON.parse(raw) as { authToken?: string }).authToken ?? null) : null
+      })
+      if (token && tournamentId) {
+        const api = await playwright.request.newContext()
+        await api.post(GQL, {
+          headers: { Authorization: `Bearer ${token}` },
+          data: {
+            query:
+              'mutation($i:UpdateTournamentStatusInput!){updateTournamentStatus(input:$i){id liveStatus}}',
+            variables: { i: { tournamentId, liveStatus: 'FINISHED' } },
+          },
+        })
+        await api.dispose()
+      }
+    } catch {
+      // pp-service/fixtures still resets the club if this ever stops working.
+    }
     await page.close()
   })
 
   test('Step 1: Create a tournament and open it', async () => {
     await createAndOpenTournament(page, tournamentName)
+    tournamentId = /\/tournament\/([0-9a-f-]{36})/.exec(page.url())?.[1] ?? ''
+    expect(tournamentId, 'tournament id should be in the URL').not.toBe('')
   })
 
   test('Step 2: Assign tables to the tournament', async () => {
