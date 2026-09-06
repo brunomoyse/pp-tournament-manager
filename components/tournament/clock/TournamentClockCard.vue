@@ -466,9 +466,12 @@ const pauseClock = async () => {
       tournamentStore.setSelectedTournamentClock(response.pauseTournamentClock as TournamentClock)
     }
   } catch (error) {
-    // Revert on failure
+    // Revert on failure. Say so: the optimistic UI already showed PAUSED, and
+    // silently snapping back to RUNNING mid-tournament reads as the clock
+    // un-pausing itself in front of a room full of players.
     if (prev) tournamentStore.setSelectedTournamentClock(prev)
     console.error('Failed to pause clock:', error)
+    toast.error(t('toast.clockPauseFailed'))
   }
 }
 
@@ -491,9 +494,10 @@ const resumeClock = async () => {
       tournamentStore.setSelectedTournamentClock(response.resumeTournamentClock as TournamentClock)
     }
   } catch (error) {
-    // Revert on failure
+    // Revert on failure, and tell the manager, for the same reason as pause.
     if (prev) tournamentStore.setSelectedTournamentClock(prev)
     console.error('Failed to resume clock:', error)
+    toast.error(t('toast.clockResumeFailed'))
   }
 }
 
@@ -576,7 +580,10 @@ const confirmStartTournament = async () => {
     await startClock()
     showStartConfirm.value = false
   } catch (error) {
+    // Starting is two mutations plus a refetch; without this the confirm dialog
+    // just closes and nothing happens, which looks like a dead button.
     console.error('Failed to start tournament:', error)
+    toast.error(t('toast.startTournamentFailed'))
   } finally {
     isStarting.value = false
   }

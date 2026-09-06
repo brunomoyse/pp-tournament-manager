@@ -784,7 +784,10 @@
     "checkInAllSomeUnseated": "{seated} sur {count} joueurs placés. {unseated} validé(s) sans siège.",
     "seatPlayerSuccess": "{name} assigné à la table {table}, siège {seat}.",
     "noTablesForSeating": "Aucune table liée au tournoi. Liez des tables d'abord.",
-    "noSeatsAvailable": "Toutes les places sont occupées. Aucun siège disponible."
+    "noSeatsAvailable": "Toutes les places sont occupées. Aucun siège disponible.",
+    "clockPauseFailed": "Échec de la mise en pause. L'horloge tourne toujours.",
+    "clockResumeFailed": "Échec de la reprise. L'horloge est toujours en pause.",
+    "startTournamentFailed": "Échec du démarrage du tournoi. Veuillez réessayer."
   },
   "statusWorkflow": {
     "title": "Statut du tournoi",
@@ -883,7 +886,9 @@
     "useExistingPayout": "Utiliser la structure de gains existante",
     "submitError": "Échec de la soumission des résultats. Veuillez réessayer.",
     "submitErrorTitle": "Erreur de soumission",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "unknownPlayer": "Joueur inconnu",
+    "noResults": "Aucun résultat enregistré pour ce tournoi."
   },
   "clock": {
     "startConfirmTitle": "Démarrer le tournoi",

@@ -137,9 +137,17 @@ export async function linkTables(page: Page, max = 2): Promise<void> {
   const count = Math.min(await checkboxes.count(), max)
   for (let i = 0; i < count; i++) await checkboxes.nth(i).check()
 
+  expect(count, 'the picker offered no selectable table').toBeGreaterThan(0)
+
   await modal.getByRole('button', { name: /Link \d+ Table/i }).click()
   await expect(modal).toBeHidden({ timeout: 15_000 })
-  await expect(getByTestId(page, 'table-card').first()).toBeVisible()
+
+  // Not just "a card appeared". An exact count would be wrong: creating a
+  // tournament already auto-assigns the club's default tables, so the picker
+  // tops that up rather than starting from nothing.
+  await expect(async () => {
+    expect(await getByTestId(page, 'table-card').count()).toBeGreaterThanOrEqual(count)
+  }).toPass({ timeout: 15_000 })
 }
 
 /** Register a batch of existing club players into the open tournament. */
@@ -182,6 +190,33 @@ export async function checkinPlayers(page: Page, names: string[]): Promise<void>
     await expect(row.getByText('Seated')).toBeVisible({ timeout: 10_000 })
     await page.waitForTimeout(500)
   }
+}
+
+/**
+ * Assert the seating chart shows exactly these players and nobody else.
+ *
+ * Checking only that each expected name is present is what let a real bug ship:
+ * the chart was serving every player ever seated at the physical table, so it
+ * listed strangers from other tournaments alongside the right names and every
+ * "is Damien on the chart?" assertion still passed. Count and set membership
+ * both matter.
+ */
+export async function expectExactlySeated(page: Page, expected: string[]): Promise<void> {
+  await expect(async () => {
+    const shown = (await getByTestId(page, 'table-card-player-name').allTextContents())
+      .map((n) => n.trim())
+      .filter(Boolean)
+
+    expect(shown, `seated players on the chart: ${shown.join(', ')}`).toHaveLength(expected.length)
+
+    for (const name of expected) {
+      const hits = shown.filter((s) => s.includes(name))
+      expect(hits, `${name} should hold exactly one seat, got ${hits.length}`).toHaveLength(1)
+    }
+
+    const strangers = shown.filter((s) => !expected.some((name) => s.includes(name)))
+    expect(strangers, `nobody else belongs on this chart: ${strangers.join(', ')}`).toEqual([])
+  }).toPass({ timeout: 15_000 })
 }
 
 /** Start the tournament clock from the Clock tab and confirm it runs. */

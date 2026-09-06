@@ -83,7 +83,7 @@
               <h2 class="settings-section__title">{{ t('team.title') }}</h2>
               <p class="settings-section__help">{{ t('team.help') }}</p>
             </div>
-            <PpButton block variant="secondary" data-testid="manage-team" @click="goToTeam">
+            <PpButton block variant="secondary" test-id="manage-team" @click="goToTeam">
               {{ t('settings.manageTeam') }}
             </PpButton>
           </section>
@@ -95,7 +95,7 @@
               <h2 class="settings-section__title">{{ t('settings.onboardingTitle') }}</h2>
               <p class="settings-section__help">{{ t('settings.onboardingHelp') }}</p>
             </div>
-            <PpButton block variant="secondary" data-testid="replay-tour" @click="replayTour">
+            <PpButton block variant="secondary" test-id="replay-tour" @click="replayTour">
               {{ t('settings.replayTour') }}
             </PpButton>
           </section>

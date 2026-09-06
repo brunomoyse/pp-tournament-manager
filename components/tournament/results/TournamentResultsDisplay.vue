@@ -6,7 +6,7 @@
     </div>
 
     <!-- Loading -->
-    <div v-if="!playersData" class="results-card__loading">
+    <div v-if="!resultsData" class="results-card__loading">
       {{ t('status.loading') }}
     </div>
 
@@ -56,7 +56,7 @@
 
     <!-- No Results -->
     <div v-else class="results-card__empty">
-      {{ t('results.noRemainingPlayers') }}
+      {{ t('results.noResults') }}
     </div>
   </div>
 </template>
@@ -70,18 +70,17 @@ import { useTournamentStore } from '~/stores/useTournamentStore'
 
 const route = useRoute()
 const { t, locale } = useI18n()
-const tournamentStore = useTournamentStore()
 
 const selectedTournamentId = route.params.id as string
 
-// Fetch tournament players to get results
-const { data: playersData } = await useLazyAsyncData(`results-${selectedTournamentId}`, () =>
-  GqlGetTournamentPlayers({ tournamentId: selectedTournamentId }),
-)
-
-// Also fetch payout data
-const { data: payoutData } = await useLazyAsyncData(`results-payout-${selectedTournamentId}`, () =>
-  GqlGetTournamentPayout({ tournamentId: selectedTournamentId }),
+// The results the manager actually entered. This screen used to re-derive
+// standings from GetTournamentPlayers in whatever order the API returned them,
+// assigning position = index + 1 and joining prize money by that index, so the
+// player shown as 1st was arbitrary and the money beside each name was wrong.
+// tournamentResults carries the real finalPosition/prizeCents, and the payout
+// print sheet has always used it.
+const { data: resultsData } = await useLazyAsyncData(`results-${selectedTournamentId}`, () =>
+  GqlGetTournamentResults({ tournamentId: selectedTournamentId }),
 )
 
 interface FinishedPlayer {
@@ -93,51 +92,17 @@ interface FinishedPlayer {
 }
 
 const finishedPlayers = computed<FinishedPlayer[]>(() => {
-  const tournament = tournamentStore.tournament
-  const registrations = tournament?.registrations || []
-  const players = playersData.value?.tournamentPlayers?.items || []
-  const positions = payoutData.value?.tournamentPayout?.positions || []
+  const rows = resultsData.value?.tournamentResults || []
 
-  // Build a map of registration results from the tournament registrations
-  // For finished tournaments, we rely on the registration statuses (BUSTED players have positions)
-  // Actually, we need the results - let's use payout positions + busted players
-  const bustedPlayers = players
-    .filter(
-      (tp: any) =>
-        tp.registration.status === 'BUSTED' ||
-        tp.registration.status === 'SEATED' ||
-        tp.registration.status === 'CHECKED_IN',
-    )
-    .map((tp: any) => {
-      // Prefer displayName, fall back to building from user fields
-      const displayName =
-        tp.displayName ||
-        (tp.user
-          ? tp.user.lastName && tp.user.firstName
-            ? `${tp.user.lastName} ${tp.user.firstName}`
-            : `${tp.user.firstName || ''} ${tp.user.lastName || ''}`.trim()
-          : '')
-      const playerId = tp.user?.id || tp.registration.clubPlayerId
-      return {
-        id: playerId,
-        name: displayName || tp.user?.username || tp.user?.email || 'Unknown',
-        registrationStatus: tp.registration.status,
-      }
-    })
-
-  // For now, display players sorted - we don't have individual result data in this query
-  // The positions from payout give us the structure
-  return bustedPlayers.map((player, index) => {
-    const position = index + 1
-    const payoutPos = positions.find((p: any) => p.position === position)
-    return {
-      id: player.id,
-      name: player.name,
-      position,
-      prizeCents: payoutPos?.amountCents || 0,
-      points: 0,
-    }
-  })
+  return [...rows]
+    .map((r: any) => ({
+      id: `${r.finalPosition}`,
+      name: r.displayName || t('results.unknownPlayer'),
+      position: r.finalPosition,
+      prizeCents: r.prizeCents ?? 0,
+      points: r.points ?? 0,
+    }))
+    .sort((a, b) => a.position - b.position)
 })
 </script>
 

@@ -784,7 +784,10 @@
     "checkInAllSomeUnseated": "{seated} of {count} players seated. {unseated} checked in without a seat.",
     "seatPlayerSuccess": "{name} assigned to Table {table}, Seat {seat}.",
     "noTablesForSeating": "No tables linked to the tournament. Link tables first.",
-    "noSeatsAvailable": "All seats are full. No available seat found."
+    "noSeatsAvailable": "All seats are full. No available seat found.",
+    "clockPauseFailed": "Failed to pause the clock. It is still running.",
+    "clockResumeFailed": "Failed to resume the clock. It is still paused.",
+    "startTournamentFailed": "Failed to start the tournament. Please try again."
   },
   "statusWorkflow": {
     "title": "Tournament Status",
@@ -883,7 +886,9 @@
     "useExistingPayout": "Use existing payout structure",
     "submitError": "Failed to submit results. Please try again.",
     "submitErrorTitle": "Submission Error",
-    "retry": "Retry"
+    "retry": "Retry",
+    "unknownPlayer": "Unknown player",
+    "noResults": "No results recorded for this tournament."
   },
   "clock": {
     "startConfirmTitle": "Start Tournament",

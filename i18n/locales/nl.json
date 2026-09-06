@@ -784,7 +784,10 @@
     "checkInAllSomeUnseated": "{seated} van {count} spelers geplaatst. {unseated} ingecheckt zonder stoel.",
     "seatPlayerSuccess": "{name} toegewezen aan tafel {table}, stoel {seat}.",
     "noTablesForSeating": "Geen tafels gekoppeld aan het toernooi. Koppel eerst tafels.",
-    "noSeatsAvailable": "Alle stoelen zijn bezet. Geen beschikbare stoel gevonden."
+    "noSeatsAvailable": "Alle stoelen zijn bezet. Geen beschikbare stoel gevonden.",
+    "clockPauseFailed": "Klok pauzeren mislukt. De klok loopt nog.",
+    "clockResumeFailed": "Klok hervatten mislukt. De klok staat nog op pauze.",
+    "startTournamentFailed": "Toernooi starten mislukt. Probeer opnieuw."
   },
   "statusWorkflow": {
     "title": "Toernooi status",
@@ -883,7 +886,9 @@
     "useExistingPayout": "Bestaande uitbetalingsstructuur gebruiken",
     "submitError": "Resultaten verzenden mislukt. Probeer opnieuw.",
     "submitErrorTitle": "Verzendfout",
-    "retry": "Opnieuw proberen"
+    "retry": "Opnieuw proberen",
+    "unknownPlayer": "Onbekende speler",
+    "noResults": "Geen resultaten geregistreerd voor dit toernooi."
   },
   "clock": {
     "startConfirmTitle": "Toernooi starten",

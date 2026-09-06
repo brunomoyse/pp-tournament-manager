@@ -725,10 +725,28 @@ const seatingSubQuery = `
 
 const clubId = computed(() => clubStore.club?.id)
 
-const { data: seatingUpdates } = useGqlSubscription({
+const {
+  data: seatingUpdates,
+  execute: subscribeSeating,
+  stop: stopSeating,
+} = useGqlSubscription({
   query: seatingSubQuery,
   variables: { clubId: clubId.value || '' },
-  immediate: !!clubId.value,
+  immediate: false,
+})
+
+// `variables` and `immediate` are read once, at setup, but the club id arrives
+// with the store and can hydrate later. Passing a snapshot meant that on a cold
+// load this subscription either never started or subscribed to an empty club
+// id, so no seating event ever reached the page: the chart only refreshed when
+// you switched tabs and it remounted. Moving a player then left them showing in
+// their old seat until the manager clicked away and back.
+onMounted(() => {
+  if (clubId.value) subscribeSeating({ clubId: clubId.value })
+})
+watch(clubId, (id) => {
+  if (id) subscribeSeating({ clubId: id })
+  else stopSeating()
 })
 
 watch(seatingUpdates, async (data: any) => {
