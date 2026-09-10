@@ -378,11 +378,13 @@ const applyPayoutTemplate = () => {
   )
   if (!template) return
 
-  const totalPrize = (tournamentStore.tournament?.buyInCents || 0) * orderedPlayers.value.length
+  // The pool the server will actually pay from: the recorded entries, minus the
+  // bounty slice, excluding vouchers. Deriving it as buy-in x players here made
+  // the preview disagree with the saved result on any night with a rebuy.
   payoutPositions.value = template.payoutStructure.map((entry) => ({
     position: entry.position,
     percentage: entry.percentage,
-    amountCents: Math.round((totalPrize * entry.percentage) / 100),
+    amountCents: Math.round((totalPrizePool.value * entry.percentage) / 100),
   }))
 }
 
@@ -400,11 +402,13 @@ const stepLabels = computed<Record<number, string>>(() => ({
 
 // Fetch payout structure
 const payoutPositions = ref<any[]>([])
+const totalPrizePool = ref(0)
 
 const fetchPayoutData = async () => {
   try {
     const result = await GqlGetTournamentPayout({ tournamentId: props.tournamentId })
     payoutPositions.value = result?.tournamentPayout?.positions || []
+    totalPrizePool.value = result?.tournamentPayout?.totalPrizePool || 0
   } catch (error) {
     console.error('Failed to fetch payout data:', error)
   }

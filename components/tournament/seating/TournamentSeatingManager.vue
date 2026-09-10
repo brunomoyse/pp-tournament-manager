@@ -403,13 +403,22 @@ const clubStore = useClubStore()
 const showAssignTableModal = ref(false)
 const isBalancing = ref(false)
 const showMoveModal = ref(false)
-const playerToMove = ref<{ playerId: string; fromTable: number; fromSeat: number } | null>(null)
+const playerToMove = ref<{
+  playerId: string
+  clubPlayerId: string
+  fromTable: number
+  fromSeat: number
+} | null>(null)
 const showPlayerSelectionModal = ref(false)
 const targetSeat = ref<{ tableId: string; seatNumber: number } | null>(null)
 
 // Bounty / PKO: when eliminating, ask who made the knockout.
 const showHunterModal = ref(false)
-const pendingElimination = ref<{ playerId: string; name: string } | null>(null)
+const pendingElimination = ref<{
+  playerId: string
+  clubPlayerId: string
+  name: string
+} | null>(null)
 
 // Lifted busy state for PlayerActionModal so its buttons reflect real async work
 const playerActionProcessing = ref(false)
@@ -569,7 +578,11 @@ const handleTablesAssigned = () => {
   // Subscription will refresh; nothing to do here.
 }
 
-const handlePlayerStatusChanged = async (data: { playerId: string; status: string }) => {
+const handlePlayerStatusChanged = async (data: {
+  playerId: string
+  clubPlayerId: string
+  status: string
+}) => {
   if (playerActionProcessing.value) return
   if (data.status !== 'ELIMINATED') return
 
@@ -577,22 +590,30 @@ const handlePlayerStatusChanged = async (data: { playerId: string; status: strin
   if (isPkoTournament.value) {
     pendingElimination.value = {
       playerId: data.playerId,
-      name: getSeatedPlayerName(data.playerId),
+      clubPlayerId: data.clubPlayerId,
+      name: getSeatedPlayerName(data.playerId, data.clubPlayerId),
     }
     showHunterModal.value = true
     return
   }
 
-  await runElimination(data.playerId, null)
+  await runElimination(data.playerId, data.clubPlayerId, null)
 }
 
-const runElimination = async (playerId: string, hunterUserId: string | null) => {
+const runElimination = async (
+  playerId: string,
+  clubPlayerId: string,
+  hunterUserId: string | null,
+) => {
   if (playerActionProcessing.value) return
   playerActionProcessing.value = true
   try {
+    // Account players bust by userId; account-less roster players by
+    // clubPlayerId, which is the only id a walk-in has.
     await GqlEliminatePlayer({
       tournamentId: selectedTournamentId,
-      userId: playerId,
+      userId: playerId || undefined,
+      clubPlayerId: playerId ? undefined : clubPlayerId,
       hunterUserId: hunterUserId ?? undefined,
     })
     // Subscription will refresh seating data; no manual refetch needed.
@@ -604,11 +625,13 @@ const runElimination = async (playerId: string, hunterUserId: string | null) => 
   }
 }
 
-const getSeatedPlayerName = (playerId: string): string => {
+const getSeatedPlayerName = (playerId: string, clubPlayerId: string): string => {
   const tables = seatingData.value?.tournamentSeatingChart?.tables || []
   for (const td of tables) {
     for (const s of td.seats || []) {
-      if (s.assignment?.userId === playerId) return s.displayName
+      const matchesUser = !!playerId && s.assignment?.userId === playerId
+      const matchesRoster = !!clubPlayerId && s.assignment?.clubPlayerId === clubPlayerId
+      if (matchesUser || matchesRoster) return s.displayName
     }
   }
   return ''
@@ -618,7 +641,7 @@ const confirmHunter = async (hunterUserId: string | null) => {
   const victim = pendingElimination.value
   if (!victim) return
   showHunterModal.value = false
-  await runElimination(victim.playerId, hunterUserId)
+  await runElimination(victim.playerId, victim.clubPlayerId, hunterUserId)
   pendingElimination.value = null
 }
 
@@ -629,6 +652,7 @@ const closeHunterModal = () => {
 
 const handlePlayerMove = async (data: {
   playerId: string
+  clubPlayerId: string
   fromTable: number
   fromSeat: number
 }) => {
@@ -644,7 +668,8 @@ const executePlayerMove = async (targetTableId: string, targetSeatNumber: number
     await GqlMovePlayer({
       input: {
         tournamentId: selectedTournamentId,
-        userId: playerToMove.value.playerId,
+        userId: playerToMove.value.playerId || undefined,
+        clubPlayerId: playerToMove.value.playerId ? undefined : playerToMove.value.clubPlayerId,
         newClubTableId: targetTableId,
         newSeatNumber: targetSeatNumber,
       },

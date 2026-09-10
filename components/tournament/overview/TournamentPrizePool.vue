@@ -6,7 +6,9 @@
     </div>
 
     <!-- Hero prize pool -->
-    <div class="prize-hero">{{ prizePool || t('status.loading') }}</div>
+    <div data-testid="prize-pool-total" class="prize-hero">
+      {{ prizePool || t('status.loading') }}
+    </div>
 
     <!-- Entry context subtitle -->
     <div v-if="entryStats" class="prize-subtitle">
@@ -26,7 +28,9 @@
       </div>
       <div class="prize-grid-item">
         <div class="prize-grid-label">{{ t('prizePool.entries') }}</div>
-        <div class="prize-grid-value">{{ entryStats?.totalEntries || 0 }}</div>
+        <div data-testid="prize-pool-entries" class="prize-grid-value">
+          {{ entryStats?.totalEntries || 0 }}
+        </div>
       </div>
       <div v-if="entryStats?.totalRakeCents" class="prize-grid-item">
         <div class="prize-grid-label">{{ t('prizePool.rakeCollected') }}</div>

@@ -1,6 +1,7 @@
 import { test, expect, type Page } from '@playwright/test'
 
 import {
+  BUY_IN_CENTS,
   changeStatus,
   checkinPlayers,
   createAndOpenTournament,
@@ -9,6 +10,7 @@ import {
   linkTables,
   newManagerContext,
   playerRow,
+  readPrizePool,
   registerPlayers,
   startClock,
   switchTab,
@@ -20,7 +22,8 @@ import {
  * Validates the full tournament management flow end to end:
  * create → link tables → open registration → register → check in (auto-seat)
  * → verify seating → late registration → start clock → late players →
- * verify final seating → move to IN_PROGRESS.
+ * verify final seating → prize pool and a rebuy → move to IN_PROGRESS →
+ * bust → break → level changes → move a player.
  *
  * All structural interactions go through the stable `data-testid` hooks (via
  * the helpers). Only i18n status labels and confirm dialogs are matched by
@@ -143,7 +146,50 @@ test.describe.serial('Tournament Lifecycle', () => {
     await expectExactlySeated(page, [...INITIAL_PLAYERS, ...LATE_REG_PLAYERS])
   })
 
-  test('Step 11: Close late registration and move to IN_PROGRESS', async () => {
+  // ─── The money: every check-in is a buy-in ──────────────────────────
+
+  test('Step 11: The prize pool counts every checked-in player', async () => {
+    await switchTab(page, 'overview')
+
+    const seated = [...INITIAL_PLAYERS, ...LATE_REG_PLAYERS]
+    await expect(getByTestId(page, 'prize-pool-entries')).toHaveText(String(seated.length), {
+      timeout: 15_000,
+    })
+    await expect(async () => {
+      expect(await readPrizePool(page)).toBe(seated.length * BUY_IN_CENTS)
+    }).toPass({ timeout: 15_000 })
+  })
+
+  // ─── Rebuys, the other half of the cash desk ─────────────────────────
+
+  test('Step 12: Sell a rebuy from the players table', async () => {
+    await switchTab(page, 'overview')
+    const before = await readPrizePool(page)
+
+    await switchTab(page, 'players')
+    const buyer = INITIAL_PLAYERS[1]
+    const row = playerRow(page, buyer)
+    await row.getByRole('button', { name: 'Actions' }).click()
+
+    const addEntry = getByTestId(page, 'player-add-entry')
+    await expect(addEntry).toBeVisible({ timeout: 10_000 })
+    await addEntry.click()
+
+    // The modal opens on REBUY at the tournament's buy-in, which is the common
+    // case; the manager only touches it to change the amount or the method.
+    const submit = getByTestId(page, 'add-entry-submit')
+    await expect(submit).toBeVisible({ timeout: 10_000 })
+    await submit.click()
+    await expect(submit).toBeHidden({ timeout: 15_000 })
+
+    // The rebuy has to reach the pool the payouts are computed from, live.
+    await switchTab(page, 'overview')
+    await expect(async () => {
+      expect(await readPrizePool(page)).toBe(before + BUY_IN_CENTS)
+    }).toPass({ timeout: 15_000 })
+  })
+
+  test('Step 13: Close late registration and move to IN_PROGRESS', async () => {
     // LATE_REGISTRATION → IN_PROGRESS action is labelled "Close Late Registration".
     await changeStatus(page, 'Close Late Registration')
     await expect(page.getByText('In Progress')).toBeVisible({ timeout: 15_000 })
@@ -153,9 +199,9 @@ test.describe.serial('Tournament Lifecycle', () => {
     await expect(getByTestId(page, 'clock-live-text')).toBeVisible()
   })
 
-  // ─── Step 12: Seating operation — bust a player ─────────────────────
+  // ─── Step 14: Seating operation — bust a player ─────────────────────
 
-  test('Step 12: Bust a seated player and see BUSTED on the Players tab', async () => {
+  test('Step 14: Bust a seated player and see BUSTED on the Players tab', async () => {
     const victim = VICTIM
 
     // Open the per-seat action modal for the victim, then the danger "Bust"
@@ -198,9 +244,9 @@ test.describe.serial('Tournament Lifecycle', () => {
     )
   })
 
-  // ─── Step 13: the break, which every club takes every hour ───────────
+  // ─── Step 15: the break, which every club takes every hour ───────────
 
-  test('Step 13: Pause the clock for a break and resume it', async () => {
+  test('Step 15: Pause the clock for a break and resume it', async () => {
     await switchTab(page, 'clock')
 
     // The Start/Pause button renders even when the store holds no clock, and
@@ -219,9 +265,9 @@ test.describe.serial('Tournament Lifecycle', () => {
     await expect(getByTestId(page, 'clock-live-text')).toBeVisible({ timeout: 10_000 })
   })
 
-  // ─── Step 14: level changes, and getting one back ────────────────────
+  // ─── Step 16: level changes, and getting one back ────────────────────
 
-  test('Step 14: Advance a blind level, then revert it', async () => {
+  test('Step 16: Advance a blind level, then revert it', async () => {
     await switchTab(page, 'clock')
     const activeLevel = page.locator('.structure-level--active .structure-level-number')
     await expect(activeLevel).toBeVisible({ timeout: 10_000 })
@@ -245,9 +291,9 @@ test.describe.serial('Tournament Lifecycle', () => {
     await expect(activeLevel).toHaveText(String(before), { timeout: 15_000 })
   })
 
-  // ─── Step 15: moving a player, the other half of seat management ─────
+  // ─── Step 17: moving a player, the other half of seat management ─────
 
-  test('Step 15: Move a player to the other table and see them land there', async () => {
+  test('Step 17: Move a player to the other table and see them land there', async () => {
     const survivors = [...INITIAL_PLAYERS, ...LATE_REG_PLAYERS].filter((n) => n !== VICTIM)
     await switchTab(page, 'seating')
 
@@ -333,7 +379,7 @@ test.describe.serial('Tournament Lifecycle', () => {
   //
   // When it is fixed this test starts passing, Playwright flags the unexpected
   // pass, and this annotation and the reload above should both come out.
-  test('Step 16: the chart updates live after a move (known bug)', async () => {
+  test('Step 18: the chart updates live after a move (known bug)', async () => {
     test.fail()
 
     const survivors = [...INITIAL_PLAYERS, ...LATE_REG_PLAYERS].filter((n) => n !== VICTIM)

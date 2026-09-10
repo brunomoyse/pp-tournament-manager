@@ -176,8 +176,10 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   seatPlayer: [data: { tableId: string; seatNumber: number; playerId: string }]
-  statusChanged: [data: { playerId: string; status: string }]
-  movePlayer: [data: { playerId: string; fromTable: number; fromSeat: number }]
+  statusChanged: [data: { playerId: string; clubPlayerId: string; status: string }]
+  movePlayer: [
+    data: { playerId: string; clubPlayerId: string; fromTable: number; fromSeat: number },
+  ]
   selectPlayerForSeat: [data: { tableId: string; seatNumber: number }]
 }>()
 
@@ -279,14 +281,18 @@ const getPlayerFullName = (player: any) => {
 // Event handlers
 const openPlayerModal = (seatNumber: number) => {
   const seatData = props.seats?.find((s) => s.assignment.seatNumber === seatNumber)
-  const player = seatData?.player
-  if (!player) return
+  if (!seatData) return
 
-  selectedPlayer.value = player
+  // An account-less roster player has no `player` object at all: their seat
+  // carries a display name and a club_player_id, and that is enough to bust or
+  // move them. Bailing out on a missing `player` used to make walk-ins
+  // unclickable on the chart, with no way to bust them from the floor.
+  const clubPlayerId = seatData.assignment?.clubPlayerId || ''
+  selectedPlayer.value = seatData.player
+    ? { ...seatData.player, clubPlayerId }
+    : { id: '', clubPlayerId, firstName: seatData.displayName || '', lastName: null }
   selectedSeatNumber.value = seatNumber
-  // Use userId if available, otherwise use clubPlayerId
-  const playerId = player.id || seatData?.assignment?.clubPlayerId
-  selectedPlayerStatus.value = lookupPlayerStatus(playerId)
+  selectedPlayerStatus.value = lookupPlayerStatus(seatData.player?.id || clubPlayerId)
   showPlayerModal.value = true
 }
 
@@ -306,12 +312,17 @@ const closePlayerModal = () => {
   selectedSeatNumber.value = 0
 }
 
-const handleStatusChanged = (data: { playerId: string; status: string }) => {
+const handleStatusChanged = (data: { playerId: string; clubPlayerId: string; status: string }) => {
   emit('statusChanged', data)
   closePlayerModal()
 }
 
-const handleMovePlayer = (data: { playerId: string; fromTable: number; fromSeat: number }) => {
+const handleMovePlayer = (data: {
+  playerId: string
+  clubPlayerId: string
+  fromTable: number
+  fromSeat: number
+}) => {
   emit('movePlayer', data)
   closePlayerModal()
 }

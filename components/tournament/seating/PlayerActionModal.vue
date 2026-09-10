@@ -83,7 +83,10 @@ import {
 const { t } = useI18n()
 
 interface Player {
+  /** The app user id, empty for an account-less roster player. */
   id: string
+  /** The club roster id, which every seated player has. */
+  clubPlayerId?: string | null
   firstName: string
   lastName?: string | null
 }
@@ -103,8 +106,10 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   close: []
-  'status-changed': [data: { playerId: string; status: string }]
-  'move-player': [data: { playerId: string; fromTable: number; fromSeat: number }]
+  'status-changed': [data: { playerId: string; clubPlayerId: string; status: string }]
+  'move-player': [
+    data: { playerId: string; clubPlayerId: string; fromTable: number; fromSeat: number },
+  ]
 }>()
 
 // Helper functions
@@ -134,6 +139,7 @@ const handleStatusChange = (newStatus: string) => {
   if (!props.player || props.processing) return
   emit('status-changed', {
     playerId: props.player.id,
+    clubPlayerId: props.player.clubPlayerId || '',
     status: newStatus,
   })
 }
@@ -142,6 +148,7 @@ const handleTableMove = () => {
   if (!props.player || props.processing) return
   emit('move-player', {
     playerId: props.player.id,
+    clubPlayerId: props.player.clubPlayerId || '',
     fromTable: props.tableNumber,
     fromSeat: props.seatNumber,
   })

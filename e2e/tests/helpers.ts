@@ -81,6 +81,34 @@ export function playerRow(page: Page, name: string) {
  * Create a tournament from the dashboard and open its detail page.
  * Returns the tournament name so the caller can assert against it later.
  */
+/**
+ * Buy-in of every tournament the suite creates. Exported so money assertions
+ * and the create form cannot drift apart.
+ */
+export const BUY_IN_CENTS = 2500
+
+/**
+ * Money as `formatPrice` renders it, back to cents. Handles both the
+ * `1,234.50` and `1.234,50` groupings, and the literal `0,00€` used for zero.
+ */
+export function toCents(text: string): number {
+  const cleaned = text.replaceAll(/[^\d.,]/g, '')
+  if (!cleaned) return 0
+  const lastSep = Math.max(cleaned.lastIndexOf('.'), cleaned.lastIndexOf(','))
+  if (lastSep === -1) return Number(cleaned) * 100
+  const whole = cleaned.slice(0, lastSep).replaceAll(/[.,]/g, '')
+  const frac = cleaned
+    .slice(lastSep + 1)
+    .padEnd(2, '0')
+    .slice(0, 2)
+  return Number(whole) * 100 + Number(frac)
+}
+
+/** The prize pool as the overview card currently shows it, in cents. */
+export async function readPrizePool(page: Page): Promise<number> {
+  return toCents((await getByTestId(page, 'prize-pool-total').innerText()).trim())
+}
+
 export async function createAndOpenTournament(page: Page, name: string): Promise<string> {
   await page.goto('/')
   await expect(page.locator('h1.page-title')).toBeVisible()
@@ -97,7 +125,7 @@ export async function createAndOpenTournament(page: Page, name: string): Promise
   await modal.locator('input[type="datetime-local"]').fill(startTime.toISOString().slice(0, 16))
 
   const numberInputs = modal.locator('input[type="number"]')
-  await numberInputs.first().fill('25') // buy-in EUR
+  await numberInputs.first().fill(String(BUY_IN_CENTS / 100)) // buy-in EUR
   await numberInputs.nth(1).fill('18') // seat cap
 
   const templateSelect = modal.locator('select')

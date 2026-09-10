@@ -17,6 +17,7 @@
             v-for="type in entryTypes"
             :key="type.value"
             type="button"
+            :data-testid="`entry-type-${type.value}`"
             @click="form.entryType = type.value"
             :class="[
               'entry-type-button',
@@ -30,7 +31,7 @@
 
       <!-- Payment Method -->
       <div class="form-group">
-        <label class="pp-label">{{ t('entries.paymentMethod') }}</label>
+        <label class="pp-label">{{ t('payment.method') }}</label>
         <div class="payment-method-grid">
           <button
             v-for="method in paymentMethods"
@@ -84,12 +85,13 @@
 
     <!-- Actions Footer -->
     <template #footer>
-      <PpButton variant="secondary" @click="closeModal">
+      <PpButton variant="secondary" test-id="add-entry-cancel" @click="closeModal">
         {{ t('buttons.cancel') }}
       </PpButton>
       <PpButton
         variant="primary"
         type="submit"
+        test-id="add-entry-submit"
         :disabled="submitting"
         :loading="submitting"
         @click="handleSubmit"
@@ -115,7 +117,8 @@ import { EntryType, PaymentMethod } from '~/types/enums'
 interface Props {
   isOpen: boolean
   tournamentId: string
-  player: { id: string; name: string } | null
+  /** Account players carry a userId; account-less roster players only a clubPlayerId. */
+  player: { name: string; userId?: string | null; clubPlayerId?: string | null } | null
   defaultAmountCents?: number
   defaultEntryType?: EntryType
 }
@@ -194,7 +197,8 @@ const handleSubmit = async () => {
     await GqlAddTournamentEntry({
       input: {
         tournamentId: props.tournamentId,
-        userId: props.player.id,
+        userId: props.player.userId || undefined,
+        clubPlayerId: props.player.userId ? undefined : props.player.clubPlayerId,
         entryType: form.value.entryType,
         amountCents: form.value.amountCents || undefined,
         chipsReceived: form.value.chipsReceived || undefined,

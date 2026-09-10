@@ -155,6 +155,14 @@
               </button>
               <div v-if="openMenuId === player.id" class="dropdown-menu">
                 <button
+                  data-testid="player-add-entry"
+                  class="dropdown-item"
+                  @click="requestAddEntry(player)"
+                >
+                  <IonIcon :icon="cashOutline" class="icon-md" />
+                  {{ t('entries.addEntry') }}
+                </button>
+                <button
                   @click="requestCancelRegistration(player)"
                   :disabled="cancelling === player.id"
                   class="dropdown-item dropdown-item--danger"
@@ -171,6 +179,17 @@
         </div>
       </div>
     </div>
+
+    <!-- Rebuys, re-entries and add-ons -->
+    <AddEntryModal
+      :is-open="!!playerForEntry"
+      :tournament-id="selectedTournamentId"
+      :player="playerForEntry"
+      :default-amount-cents="tournamentStore.tournament?.buyInCents || 0"
+      :default-entry-type="EntryType.REBUY"
+      @close="playerForEntry = null"
+      @entry-added="onEntryAdded"
+    />
 
     <!-- Cancel registration confirmation -->
     <CancelRegistrationConfirmModal
@@ -195,6 +214,7 @@ import {
   ellipsisVerticalOutline,
   trashOutline,
   swapVerticalOutline,
+  cashOutline,
 } from 'ionicons/icons'
 import { AssignmentStrategy } from '@/types/seating'
 import { useI18n } from '~/composables/useI18n'
@@ -204,6 +224,7 @@ import {
 } from '~/utils/registrationStatus'
 import { EntryType } from '~/types/enums'
 import CancelRegistrationConfirmModal from './CancelRegistrationConfirmModal.vue'
+import AddEntryModal from '../entries/AddEntryModal.vue'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -242,6 +263,19 @@ const checkInProgress = ref(0)
 const cancelling = ref<string | null>(null)
 const openMenuId = ref<string | null>(null)
 const playerToCancel = ref<PlayerRow | null>(null)
+const playerForEntry = ref<PlayerRow | null>(null)
+
+// Rebuys and add-ons are money, so they go through the modal (amount, payment
+// method, chips) rather than a one-click dropdown item.
+const requestAddEntry = (player: PlayerRow) => {
+  openMenuId.value = null
+  playerForEntry.value = player
+}
+
+const onEntryAdded = () => {
+  playerForEntry.value = null
+  $emit('entry-added')
+}
 
 const toggleMenu = (playerId: string) => {
   openMenuId.value = openMenuId.value === playerId ? null : playerId
@@ -426,25 +460,25 @@ const checkInPlayer = async (player: PlayerRow) => {
       // Refresh the players data to get updated information
       await refreshPlayers()
 
-      // Auto-create initial entry. Entries are user-id keyed today, so this only
-      // applies to account players; roster players are skipped (no entry yet).
+      // Auto-create the initial entry, keyed the same way the check-in was:
+      // by userId for account players, by clubPlayerId for walk-ins. Skipping
+      // the latter kept their buy-in out of the prize pool and the cash report.
       let entrySuccess = true
-      if (player.userId) {
-        try {
-          await GqlAddTournamentEntry({
-            input: {
-              tournamentId: selectedTournamentId,
-              userId: player.userId,
-              entryType: EntryType.INITIAL,
-            },
-          })
-        } catch {
-          entrySuccess = false
-        }
-        // Notify prize pool to refresh when entry was created
-        if (entrySuccess) {
-          $emit('entry-added')
-        }
+      try {
+        await GqlAddTournamentEntry({
+          input: {
+            tournamentId: selectedTournamentId,
+            userId: player.userId || undefined,
+            clubPlayerId: player.userId ? undefined : player.clubPlayerId,
+            entryType: EntryType.INITIAL,
+          },
+        })
+      } catch {
+        entrySuccess = false
+      }
+      // Notify prize pool to refresh when entry was created
+      if (entrySuccess) {
+        $emit('entry-added')
       }
 
       if (!wasSeated) {
@@ -611,20 +645,20 @@ const checkInAllPlayers = async () => {
         seatedCount++
       }
 
-      // Auto-create initial entry (account players only; entries are user-keyed).
-      if (userId) {
-        try {
-          // eslint-disable-next-line no-await-in-loop
-          await GqlAddTournamentEntry({
-            input: {
-              tournamentId: selectedTournamentId,
-              userId,
-              entryType: EntryType.INITIAL,
-            },
-          })
-        } catch {
-          // Entry failure is non-blocking
-        }
+      // Auto-create the initial entry, keyed like the check-in above so a
+      // walk-in's buy-in reaches the prize pool too.
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        await GqlAddTournamentEntry({
+          input: {
+            tournamentId: selectedTournamentId,
+            userId: userId || undefined,
+            clubPlayerId: userId ? undefined : tp.registration.clubPlayerId,
+            entryType: EntryType.INITIAL,
+          },
+        })
+      } catch {
+        // Entry failure is non-blocking
       }
 
       successCount++
