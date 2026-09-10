@@ -281,24 +281,35 @@ const toggleMenu = (playerId: string) => {
   openMenuId.value = openMenuId.value === playerId ? null : playerId
 }
 
-// Close menu on click outside
-onMounted(() => {
-  document.addEventListener('click', (e: MouseEvent) => {
-    if (openMenuId.value && !(e.target as HTMLElement).closest('.relative')) {
-      openMenuId.value = null
-    }
-  })
-})
+// Close the row menu on a click outside it.
+//
+// This matched `.relative` — a Tailwind class this table has never used — so
+// the very click that opened a menu bubbled to here and closed it again: the
+// per-player Actions menu could not be opened at all, taking Remove (and now
+// Add entry) with it. The listener also outlived the component; it is removed
+// on unmount now.
+const closeMenuOnOutsideClick = (e: MouseEvent) => {
+  if (!openMenuId.value) return
+  if ((e.target as HTMLElement).closest('.dropdown-wrapper')) return
+  openMenuId.value = null
+}
+
+onMounted(() => document.addEventListener('click', closeMenuOnOutsideClick))
+onBeforeUnmount(() => document.removeEventListener('click', closeMenuOnOutsideClick))
 
 // Fetch tournament players with reactive data
 const selectedTournamentId = route.params.id as string
-const { data: playersData, refresh: refreshPlayersData } = await useLazyAsyncData(
+// Deliberately not awaited: a top-level await in <script setup> makes
+// defineExpose a no-op (the component instance is gone by the time it runs), so
+// every parent-driven refresh below silently does nothing. useLazyAsyncData
+// returns immediately with null data anyway, which the template already handles.
+const { data: playersData, refresh: refreshPlayersData } = useLazyAsyncData(
   `players-${selectedTournamentId}`,
   () => GqlGetTournamentPlayers({ tournamentId: selectedTournamentId }),
 )
 
 // Fetch seating chart to build userId -> seat lookup
-const { data: seatingData, refresh: refreshSeating } = await useLazyAsyncData(
+const { data: seatingData, refresh: refreshSeating } = useLazyAsyncData(
   `players-seating-${selectedTournamentId}`,
   () => GqlGetTournamentSeatingChart({ tournamentId: selectedTournamentId }),
 )

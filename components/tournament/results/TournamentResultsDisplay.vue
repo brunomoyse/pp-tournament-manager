@@ -79,7 +79,7 @@ const selectedTournamentId = route.params.id as string
 // player shown as 1st was arbitrary and the money beside each name was wrong.
 // tournamentResults carries the real finalPosition/prizeCents, and the payout
 // print sheet has always used it.
-const { data: resultsData } = await useLazyAsyncData(`results-${selectedTournamentId}`, () =>
+const { data: resultsData } = useLazyAsyncData(`results-${selectedTournamentId}`, () =>
   GqlGetTournamentResults({ tournamentId: selectedTournamentId }),
 )
 

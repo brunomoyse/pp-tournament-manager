@@ -108,7 +108,11 @@ const entryTypeKey = (ty: string) =>
     BONUS: 'bonus',
   })[ty] || ty.toLowerCase()
 
-const { data, refresh } = await useLazyAsyncData(`cash-report-${props.tournamentId}`, () =>
+// Deliberately not awaited: a top-level await in <script setup> makes
+// defineExpose a no-op (the component instance is gone by the time it runs), so
+// every parent-driven refresh below silently does nothing. useLazyAsyncData
+// returns immediately with null data anyway, which the template already handles.
+const { data, refresh } = useLazyAsyncData(`cash-report-${props.tournamentId}`, () =>
   GqlGetTournamentCashReport({ tournamentId: props.tournamentId }),
 )
 

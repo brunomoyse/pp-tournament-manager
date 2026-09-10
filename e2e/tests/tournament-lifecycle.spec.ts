@@ -352,8 +352,9 @@ test.describe.serial('Tournament Lifecycle', () => {
     await target.locator('button.seating-manager__move-seat:not([disabled])').first().click()
     await expect(moveDialog).toBeHidden({ timeout: 15_000 })
 
-    // The move itself must stick. Reload rather than trusting the live chart:
-    // see the known-failing test below for why that distinction matters.
+    // The move must stick server-side, not just on screen: reload and look
+    // again. The step below covers the other half, that the live chart keeps up
+    // without a reload.
     await page.reload()
     await switchTab(page, 'seating')
     await expect(getByTestId(page, 'table-card').first()).toBeVisible({ timeout: 15_000 })
@@ -365,23 +366,17 @@ test.describe.serial('Tournament Lifecycle', () => {
     await expectExactlySeated(page, survivors)
   })
 
-  // ─── Known bug, kept red on purpose ──────────────────────────────────
+  // ─── The chart has to keep up with the floor ─────────────────────────
   //
-  // After a move the seating chart keeps showing the player in their old seat
-  // until the page is reloaded or the tab is switched. Verified against the
-  // server: with the DB holding "Damien, table 4 seat 1", the API returns table
-  // 4 and the rendered chart still listed him under table 1 eight seconds later.
-  // The subscription is not the culprit; PLAYER_MOVED arrives over the socket
-  // and the page does refetch GetTournamentSeatingChart.
+  // This was red for a while: after a move the chart kept showing the player in
+  // their old seat until the page was reloaded or the tab switched. The
+  // subscription and the refetch were both fine; the seating component's
+  // `defineExpose` sat after a top-level `await`, which makes it a no-op, so
+  // the page's `refreshSeatingData()` call silently did nothing.
   //
-  // This matters on a live floor: the manager moves a player, the screen
+  // It matters on a live floor: the manager moves a player, the screen
   // disagrees, and they move them again or seat someone into an occupied chair.
-  //
-  // When it is fixed this test starts passing, Playwright flags the unexpected
-  // pass, and this annotation and the reload above should both come out.
-  test('Step 18: the chart updates live after a move (known bug)', async () => {
-    test.fail()
-
+  test('Step 18: the chart updates live after a move', async () => {
     const survivors = [...INITIAL_PLAYERS, ...LATE_REG_PLAYERS].filter((n) => n !== VICTIM)
     await switchTab(page, 'seating')
     await expect(getByTestId(page, 'table-card').first()).toBeVisible({ timeout: 15_000 })

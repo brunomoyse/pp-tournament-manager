@@ -59,7 +59,11 @@ import { formatPrice } from '~/utils'
 const props = defineProps<{ tournamentId: string }>()
 const { t, locale } = useI18n()
 
-const { data, refresh } = await useLazyAsyncData(`bounties-${props.tournamentId}`, () =>
+// Deliberately not awaited: a top-level await in <script setup> makes
+// defineExpose a no-op (the component instance is gone by the time it runs), so
+// every parent-driven refresh below silently does nothing. useLazyAsyncData
+// returns immediately with null data anyway, which the template already handles.
+const { data, refresh } = useLazyAsyncData(`bounties-${props.tournamentId}`, () =>
   GqlGetTournamentBounties({ tournamentId: props.tournamentId }),
 )
 

@@ -425,7 +425,11 @@ const playerActionProcessing = ref(false)
 
 // Fetch seating data
 const selectedTournamentId = route.params.id as string
-const { data: seatingData, refresh: refreshSeatingData } = await useLazyAsyncData(
+// Deliberately not awaited: a top-level await in <script setup> makes
+// defineExpose a no-op (the component instance is gone by the time it runs), so
+// every parent-driven refresh below silently does nothing. useLazyAsyncData
+// returns immediately with null data anyway, which the template already handles.
+const { data: seatingData, refresh: refreshSeatingData } = useLazyAsyncData(
   `seating-${selectedTournamentId}`,
   () => GqlGetTournamentSeatingChart({ tournamentId: selectedTournamentId }),
 )
